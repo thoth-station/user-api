@@ -1,0 +1,45 @@
+swagger: "2.0"
+info:
+  title: Thoth user API
+  version: "0.1"
+basePath: "/api/v1/"
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /analyze:
+    post:
+      operationId: thoth_user_api.api_v1.api_analyze
+      summary: Analyze the given image asynchronously.
+      parameters:
+        - name: image
+          in: query
+          required: true
+          description: Name of image - can also specify remote registry to pull image from.
+          type: string
+        - name: analyzer
+          in: query
+          required: true
+          description: Name of analyzer (OpenShift build) to be triggered
+          type: string
+          items:
+            type: string
+          enum:
+            - 'thoth-dependency-extract'
+        - name: debug
+          in: query
+          required: false
+          description: Run the given analyzer in a verbose mode so developers can debug analyzer (requires access to the OpenShift console).
+          type: boolean
+          default: false
+        - name: timeout
+          in: query
+          required: false
+          description: Give a timeout to commands run inside the analyzer container.
+          type: integer
+      responses:
+        202:
+          description: Successful response.
+        400:
+          description: On invalid request.

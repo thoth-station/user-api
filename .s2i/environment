@@ -1,0 +1,9 @@
+#
+# This script defines s2i environment variables.
+#   see: https://github.com/sclorg/s2i-python-container/blob/master/3.6/README.md#environment-variables
+#
+
+APP_MODULE=thoth_user_api.entrypoint:app
+UPGRADE_PIP_TO_LATEST=1
+ENABLE_PIPENV=1
+WEB_CONCURRENCY=4
