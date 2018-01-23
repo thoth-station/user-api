@@ -26,7 +26,7 @@ paths:
           items:
             type: string
           enum:
-            - 'thoth-dependency-extract'
+            - 'fridex/thoth-dependency-extract'
         - name: debug
           in: query
           required: false
