@@ -15,7 +15,6 @@ def run_analyzer(image: str, analyzer: str, debug=False, timeout=None):
                                                      Configuration.THOTH_ANALYZER_NAMESPACE)
 
     name_prefix = "{}-{}".format(analyzer, image.rsplit('/', maxsplit=1)[-1]).replace(':', '-').replace('/', '-')
-    # TODO: labels
     payload = {
         "apiVersion": "v1",
         "kind": "Pod",
@@ -64,4 +63,4 @@ def run_analyzer(image: str, analyzer: str, debug=False, timeout=None):
     if response.status_code / 100 != 2:
         _LOGGER.error(response.text)
     response.raise_for_status()
-    # TODO: return pod name
+    return response.json()['metadata']['name']

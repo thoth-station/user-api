@@ -10,8 +10,8 @@ _LOGGER.setLevel(logging.INFO)
 
 def api_analyze(image, analyzer, debug=False, timeout=None):
     try:
-        run_analyzer(image, analyzer, debug=debug, timeout=timeout)
+        analysis_id = run_analyzer(image, analyzer, debug=debug, timeout=timeout)
     except Exception as exc:
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {'error': str(exc)}, 400
-    return {}, 202
+    return {'analysis_id': analysis_id}, 202
