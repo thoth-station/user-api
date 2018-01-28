@@ -57,6 +57,22 @@ paths:
         400:
           description: On invalid request.
 
+  /analysis-log:
+    get:
+      operationId: thoth_user_api.api_v1.api_analysis_log
+      summary: Show logs of requested analyzes.
+      parameters:
+        - name: analysis_id
+          in: query
+          required: true
+          description: An ID of requested analyzis.
+          type: string
+      responses:
+        200:
+          description: Successful response.
+        400:
+          description: On invalid request.
+
 definitions:
   BuildLog:
     type: object

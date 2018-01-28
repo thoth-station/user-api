@@ -2,6 +2,7 @@
 
 import logging
 
+from .utils import get_analysis_log
 from .utils import run_analyzer
 from .parsing import parse_buildlog
 
@@ -24,3 +25,10 @@ def api_parse_buildlog(buildlog_info):
     except Exception as exc:
         return {'error': str(exc)}, 400
 
+
+def api_analysis_log(analysis_id):
+    try:
+        analysis_log = get_analysis_log(analysis_id)
+    except Exception as exc:
+        return {'error': str(exc)}, 400
+    return {'analysis_log': analysis_log, 'analysis_id': analysis_id}, 200

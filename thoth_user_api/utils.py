@@ -64,3 +64,23 @@ def run_analyzer(image: str, analyzer: str, debug=False, timeout=None):
         _LOGGER.error(response.text)
     response.raise_for_status()
     return response.json()['metadata']['name']
+
+
+def get_analysis_log(analysis_id):
+    # TODO: check that the given pod is analyzer (to prevent getting logs of other pods)
+    endpoint = "{}/api/v1/namespaces/{}/pods/{}/log".format(Configuration.KUBERNETES_API_URL,
+                                                            Configuration.THOTH_ANALYZER_NAMESPACE,
+                                                            analysis_id)
+    response = requests.get(
+        endpoint,
+        headers={
+            'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
+            'Content-Type': 'application/json'
+        },
+        verify=False
+    )
+    _LOGGER.debug("OpenShift master response: %r", response.text)
+    if response.status_code / 100 != 2:
+        _LOGGER.error(response.text)
+    response.raise_for_status()
+    return response.text
