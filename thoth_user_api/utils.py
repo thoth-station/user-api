@@ -43,7 +43,8 @@ def run_analyzer(image: str, analyzer: str, debug=False, timeout=None):
                     {"name": "THOTH_ANALYZED_IMAGE", "value": str(image)},
                     {"name": "THOTH_ANALYZER", "value": str(analyzer)},
                     {"name": "THOTH_ANALYZER_DEBUG", "value": str(int(debug))},
-                    {"name": "THOTH_ANALYZER_TIMEOUT", "value": str(timeout or 0)}
+                    {"name": "THOTH_ANALYZER_TIMEOUT", "value": str(timeout or 0)},
+                    {"name": "THOTH_RESULT_API_HOSTNAME", "value": Configuration.THOTH_RESULT_API_HOSTNAME}
                 ]
             }]
         }
