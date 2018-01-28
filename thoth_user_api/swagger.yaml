@@ -39,3 +39,35 @@ paths:
           description: Successful response.
         400:
           description: On invalid request.
+
+  /parse-buildlog:
+    post:
+      operationId: thoth_user_api.api_v1.api_parse_buildlog
+      summary: Parse Docker build log and show installed packages.
+      parameters:
+        - name: buildlog_info
+          in: body
+          required: true
+          description: A a full build log.
+          schema:
+            $ref: "#/definitions/BuildLog"
+      responses:
+        200:
+          description: Successful response.
+        400:
+          description: On invalid request.
+
+definitions:
+  BuildLog:
+    type: object
+    required:
+      - 'buildlog'
+    additionalProperties: false
+    properties:
+      buildlog:
+        type: string
+        description: A full build log that was output during image build.
+        example: >
+          Collecting tensorflow
+            Downloading tensorflow-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (41.2MB)
+          Successfully installed tensorflow-1.4.1

@@ -3,6 +3,7 @@
 import logging
 
 from .utils import run_analyzer
+from .parsing import parse_buildlog
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.setLevel(logging.INFO)
@@ -15,3 +16,11 @@ def api_analyze(image, analyzer, debug=False, timeout=None):
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {'error': str(exc)}, 400
     return {'analysis_id': analysis_id}, 202
+
+
+def api_parse_buildlog(buildlog_info):
+    try:
+        return parse_buildlog(buildlog_info.get('buildlog', '')), 200
+    except Exception as exc:
+        return {'error': str(exc)}, 400
+
