@@ -1,4 +1,5 @@
 import os
+import datetime
 
 
 def _get_api_token():
@@ -17,3 +18,5 @@ class Configuration:
     KUBERNETES_API_TOKEN = os.getenv('KUBERNETES_API_TOKEN', _get_api_token())
     THOTH_ANALYZER_NAMESPACE = os.environ['THOTH_ANALYZER_NAMESPACE']
     SWAGGER_YAML_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'swagger.yaml')
+    THOTH_ANALYZER_HARD_TIMEOUT = int(os.getenv('THOTH_ANALYZER_HARD_TIMEOUT',
+                                                datetime.timedelta(hours=24).total_seconds()))

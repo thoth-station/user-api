@@ -28,6 +28,14 @@ def run_analyzer(image: str, analyzer: str, debug=False, timeout=None):
             "containers": [{
                 "name": analyzer.rsplit('/', maxsplit=1)[-1],
                 "image": analyzer,
+                "livenessProbe": {
+                    "tcpSocket": {
+                        "port": 8080
+                    },
+                    "initialDelaySeconds": Configuration.THOTH_ANALYZER_HARD_TIMEOUT,
+                    "failureThreshold": 1,
+                    "periodSeconds": 10
+                },
                 "env": [
                     {"name": "THOTH_ANALYZED_IMAGE", "value": str(image)},
                     {"name": "THOTH_ANALYZER", "value": str(analyzer)},
