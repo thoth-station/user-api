@@ -21,7 +21,7 @@ def api_parse_log(log_info: dict):
     if not log_info:
         return {'error': 'No log provided'}, 400
     try:
-        return parse_log(log_info.get('buildlog', '')), 200
+        return parse_log(log_info.get('log', '')), 200
     except Exception as exc:
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {'error': str(exc)}, 400
