@@ -14,6 +14,7 @@ def run_analyzer(image: str, analyzer: str, debug=False, timeout=None):
     endpoint = "{}/api/v1/namespaces/{}/pods".format(Configuration.KUBERNETES_API_URL,
                                                      Configuration.THOTH_ANALYZER_NAMESPACE)
 
+    # TODO: resource limits
     name_prefix = "{}-{}".format(analyzer, image.rsplit('/', maxsplit=1)[-1]).replace(':', '-').replace('/', '-')
     payload = {
         "apiVersion": "v1",
