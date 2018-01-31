@@ -2,6 +2,7 @@
 
 from .utils import get_pod_log
 from .utils import run_analyzer
+from .utils import run_pod
 from .parsing import parse_log
 
 
@@ -42,3 +43,23 @@ def api_pod_log(pod_id: str):
     except Exception as exc:
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {'error': str(exc), 'pod_id': pod_id}, 400
+
+
+def api_run(image: str, environment: dict, cpu_request: str=None, memory_request: str=None):
+    try:
+        return {
+            'image': image,
+            'environment': environment,
+            'cpu_request': cpu_request,
+            'memory_request': memory_request,
+            'pod_id': run_pod(image, environment, cpu_request=cpu_request, memory_request=memory_request)
+        }, 202
+    except Exception as exc:
+        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        return {
+            'error': str(exc),
+            'image': image,
+            'environment': environment,
+            'cpu_request': cpu_request,
+            'memory_request': memory_request
+        }, 400

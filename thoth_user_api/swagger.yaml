@@ -22,7 +22,7 @@ paths:
         - name: analyzer
           in: query
           required: true
-          description: Name of analyzer (OpenShift build) to be triggered
+          description: Name of analyzer (OpenShift build) to be triggered.
           type: string
         - name: debug
           in: query
@@ -38,6 +38,33 @@ paths:
         - name: cpu-request
           in: query
           required: false
+          description: CPU request for the analyzer run.
+          type: string
+        - name: memory-request
+          in: query
+          required: false
+          description: Memory request for the analyzer run.
+          type: string
+      responses:
+        202:
+          description: Successful response.
+        400:
+          description: On invalid request.
+
+  /run:
+    post:
+      tags: [Management]
+      operationId: thoth_user_api.api_v1.api_run
+      summary: Run the given image inside cluster.
+      parameters:
+        - name: image
+          in: query
+          required: true
+          description: Name of image - can also specify remote registry to pull image from.
+          type: string
+        - name: cpu-request
+          in: query
+          required: false
           description: CPU request for the analyzer run
           type: string
         - name: memory-request
@@ -45,6 +72,12 @@ paths:
           required: false
           description: Memory request for the analyzer run
           type: string
+        - name: environment
+          in: body
+          required: false
+          description: Environment variables supplied to the pod.
+          schema:
+            $ref: "#/definitions/Environment"
       responses:
         202:
           description: Successful response.
@@ -100,3 +133,19 @@ definitions:
           Collecting tensorflow
             Downloading tensorflow-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (41.2MB)
           Successfully installed tensorflow-1.4.1
+  Environment:
+    type: array
+    description: Environment variables supplied on deployment.
+    items:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          description: Name of the supplied environemnt variable.
+          example: 'DEBUG'
+        value:
+          type: string
+          description: Value of the supplied environment variable.
+          example: '1'
+
