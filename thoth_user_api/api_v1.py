@@ -5,11 +5,13 @@ from .utils import run_analyzer
 from .parsing import parse_log
 
 
-def api_analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None):
+def api_analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None,
+                cpu_request: str=None, memory_request: str=None):
     """Run an analyzer in a restricted namespace."""
     try:
         return {
-            'analysis_id': run_analyzer(image, analyzer, debug=debug, timeout=timeout),
+            'analysis_id': run_analyzer(image, analyzer, debug=debug, timeout=timeout,
+                                        cpu_request=cpu_request, memory_request=memory_request),
         }, 202
     except Exception as exc:
         # TODO: for production we will need to filter out some errors so they are not exposed to users.

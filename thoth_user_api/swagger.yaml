@@ -35,6 +35,16 @@ paths:
           required: false
           description: Give a timeout to commands run inside the analyzer container.
           type: integer
+        - name: cpu-request
+          in: query
+          required: false
+          description: CPU request for the analyzer run
+          type: string
+        - name: memory-request
+          in: query
+          required: false
+          description: Memory request for the analyzer run
+          type: string
       responses:
         202:
           description: Successful response.

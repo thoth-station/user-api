@@ -8,13 +8,13 @@ from .configuration import Configuration
 _LOGGER = logging.getLogger(__name__)
 
 
-def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None) -> str:
+def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None,
+                 cpu_request: str=None, memory_request: str=None) -> str:
     """Run an analyzer for the given image."""
     # We don't care about secret as we run inside the cluster. All builds should hard-code it to secret.
     endpoint = "{}/api/v1/namespaces/{}/pods".format(Configuration.KUBERNETES_API_URL,
                                                      Configuration.THOTH_ANALYZER_NAMESPACE)
 
-    # TODO: resource limits
     name_prefix = "{}-{}".format(analyzer, image.rsplit('/', maxsplit=1)[-1]).replace(':', '-').replace('/', '-')
     payload = {
         "apiVersion": "v1",
@@ -50,6 +50,10 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
                 "limits": {
                     "memory": Configuration.THOTH_MIDDLEEND_POD_MEMORY_LIMIT,
                     "cpu": Configuration.THOTH_MIDDLEEND_POD_CPU_LIMIT
+                },
+                "requests": {
+                    "memory": memory_request or Configuration.THOTH_MIDDLEEND_POD_MEMORY_REQUEST,
+                    "cpu": cpu_request or Configuration.THOTH_MIDDLEEND_POD_CPU_REQUEST
                 }
             }]
         }
