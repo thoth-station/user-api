@@ -43,7 +43,7 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
             "generateName": name_prefix + '-',
             "namespace": Configuration.THOTH_ANALYZER_NAMESPACE,
             "labels": {
-                "thothtype": "analyzer"
+                "thothtype": "userpod"
             }
         },
         "spec": {
@@ -95,7 +95,7 @@ def run_pod(image: str, environment: dict, cpu_request: str=None, memory_request
             "generateName": name_prefix + '-',
             "namespace": Configuration.THOTH_ANALYZER_NAMESPACE,
             "labels": {
-                "thothtype": "analyzer"
+                "thothtype": "userpod"
             }
         },
         "spec": {
