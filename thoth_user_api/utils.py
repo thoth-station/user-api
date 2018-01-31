@@ -47,13 +47,15 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
                     {"name": "THOTH_ANALYZER_TIMEOUT", "value": str(timeout or 0)},
                     {"name": "THOTH_RESULT_API_HOSTNAME", "value": Configuration.THOTH_RESULT_API_HOSTNAME}
                 ],
-                "limits": {
-                    "memory": Configuration.THOTH_MIDDLEEND_POD_MEMORY_LIMIT,
-                    "cpu": Configuration.THOTH_MIDDLEEND_POD_CPU_LIMIT
-                },
-                "requests": {
-                    "memory": memory_request or Configuration.THOTH_MIDDLEEND_POD_MEMORY_REQUEST,
-                    "cpu": cpu_request or Configuration.THOTH_MIDDLEEND_POD_CPU_REQUEST
+                "resources": {
+                    "limits": {
+                        "memory": Configuration.THOTH_MIDDLEEND_POD_MEMORY_LIMIT,
+                        "cpu": Configuration.THOTH_MIDDLEEND_POD_CPU_LIMIT
+                    },
+                    "requests": {
+                        "memory": memory_request or Configuration.THOTH_MIDDLEEND_POD_MEMORY_REQUEST,
+                        "cpu": cpu_request or Configuration.THOTH_MIDDLEEND_POD_CPU_REQUEST
+                    }
                 }
             }]
         }
