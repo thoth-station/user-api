@@ -10,7 +10,7 @@ produces:
 paths:
   /analyze:
     post:
-      tags: []
+      tags: [Management]
       operationId: thoth_user_api.api_v1.api_analyze
       summary: Analyze the given image asynchronously.
       parameters:
@@ -53,6 +53,7 @@ paths:
 
   /parse-log:
     post:
+      tags: [Utils]
       operationId: thoth_user_api.api_v1.api_parse_log
       summary: Parse Docker build log or installation log and show installed packages.
       parameters:
@@ -70,6 +71,7 @@ paths:
 
   /pod-log:
     get:
+      tags: [Management]
       operationId: thoth_user_api.api_v1.api_pod_log
       summary: Show logs of requested analyzes.
       parameters:
