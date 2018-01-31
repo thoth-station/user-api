@@ -8,7 +8,7 @@ from .configuration import Configuration
 _LOGGER = logging.getLogger(__name__)
 
 
-def run_analyzer(image: str, analyzer: str, debug=False, timeout=None):
+def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None) -> str:
     """Run an analyzer for the given image."""
     # We don't care about secret as we run inside the cluster. All builds should hard-code it to secret.
     endpoint = "{}/api/v1/namespaces/{}/pods".format(Configuration.KUBERNETES_API_URL,
@@ -65,18 +65,19 @@ def run_analyzer(image: str, analyzer: str, debug=False, timeout=None):
         json=payload,
         verify=False
     )
-    _LOGGER.debug("OpenShift master response: %r", response.text)
+    _LOGGER.debug("Kubernetes master response (%d): %r", response.status_code, response.text)
     if response.status_code / 100 != 2:
         _LOGGER.error(response.text)
     response.raise_for_status()
+
     return response.json()['metadata']['name']
 
 
-def get_analysis_log(analysis_id):
-    # TODO: check that the given pod is analyzer (to prevent getting logs of other pods)
+def get_pod_log(pod_id: str) -> str:
+    """Get log of a pod based on assigned pod ID."""
     endpoint = "{}/api/v1/namespaces/{}/pods/{}/log".format(Configuration.KUBERNETES_API_URL,
                                                             Configuration.THOTH_ANALYZER_NAMESPACE,
-                                                            analysis_id)
+                                                            pod_id)
     response = requests.get(
         endpoint,
         headers={
@@ -85,8 +86,9 @@ def get_analysis_log(analysis_id):
         },
         verify=False
     )
-    _LOGGER.debug("OpenShift master response: %r", response.text)
+    _LOGGER.debug("Kubernetes master response (%d): %r", response.status_code, response.text)
     if response.status_code / 100 != 2:
         _LOGGER.error(response.text)
     response.raise_for_status()
+
     return response.text

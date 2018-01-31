@@ -71,13 +71,12 @@ def api_v1():
 
 @app.route('/readiness')
 def api_readiness():
-    # TODO: extend
     return jsonify(None)
 
 
 @app.route('/liveness')
 def api_liveness():
-    # TODO: extend
+    # TODO: ask kubernetes master for response
     return jsonify(None)
 
 

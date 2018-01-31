@@ -1,34 +1,39 @@
 #!/usr/bin/env python3
 
-import logging
-
-from .utils import get_analysis_log
+from .utils import get_pod_log
 from .utils import run_analyzer
-from .parsing import parse_buildlog
-
-_LOGGER = logging.getLogger(__name__)
-_LOGGER.setLevel(logging.INFO)
+from .parsing import parse_log
 
 
-def api_analyze(image, analyzer, debug=False, timeout=None):
+def api_analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None):
+    """Run an analyzer in a restricted namespace."""
     try:
-        analysis_id = run_analyzer(image, analyzer, debug=debug, timeout=timeout)
+        return {
+            'analysis_id': run_analyzer(image, analyzer, debug=debug, timeout=timeout),
+        }, 202
+    except Exception as exc:
+        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        return {'error': str(exc), 'image': image, 'analyzer': analyzer, 'debug': debug, 'timeout': timeout}, 400
+
+
+def api_parse_log(log_info: dict):
+    """Parse image build log or install log endpoint handler."""
+    if not log_info:
+        return {'error': 'No log provided'}, 400
+    try:
+        return parse_log(log_info.get('buildlog', '')), 200
     except Exception as exc:
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {'error': str(exc)}, 400
-    return {'analysis_id': analysis_id}, 202
 
 
-def api_parse_buildlog(buildlog_info):
+def api_pod_log(pod_id: str):
+    """Get pod log based on analysis id."""
     try:
-        return parse_buildlog(buildlog_info.get('buildlog', '')), 200
+        return {
+            'pod_id': pod_id,
+            'pod_log': get_pod_log(pod_id)
+        }
     except Exception as exc:
-        return {'error': str(exc)}, 400
-
-
-def api_analysis_log(analysis_id):
-    try:
-        analysis_log = get_analysis_log(analysis_id)
-    except Exception as exc:
-        return {'error': str(exc)}, 400
-    return {'analysis_log': analysis_log, 'analysis_id': analysis_id}, 200
+        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        return {'error': str(exc), 'pod_id': pod_id}, 400
