@@ -31,6 +31,9 @@ def api_parse_log(log_info: dict):
 
 def api_pod_log(pod_id: str):
     """Get pod log based on analysis id."""
+    if pod_id in ('thoth-result-api', 'thoth-image-puller'):
+        return {'error': "Cannot view pod logs"}, 403
+
     try:
         return {
             'pod_id': pod_id,
