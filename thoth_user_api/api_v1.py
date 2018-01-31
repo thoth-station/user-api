@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
+from .parsing import parse_log
 from .utils import get_pod_log
+from .utils import get_pod_status
 from .utils import run_analyzer
 from .utils import run_pod
-from .parsing import parse_log
 
 
 def api_analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None,
@@ -45,7 +46,23 @@ def api_pod_log(pod_id: str):
         return {'error': str(exc), 'pod_id': pod_id}, 400
 
 
+def api_pod_status(pod_id: str):
+    """Get status for a pod."""
+    if pod_id == 'thoth-result-api':
+        return {'error': "Cannot view pod logs"}, 403
+
+    try:
+        return {
+            'pod_id': pod_id,
+            'status': get_pod_status(pod_id)
+        }
+    except Exception as exc:
+        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        return {'error': str(exc), 'pod_id': pod_id}, 400
+
+
 def api_run(image: str, environment: dict, cpu_request: str=None, memory_request: str=None):
+    """Run an image."""
     try:
         return {
             'image': image,

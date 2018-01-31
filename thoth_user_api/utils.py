@@ -143,9 +143,29 @@ def get_pod_log(pod_id: str) -> str:
         },
         verify=False
     )
-    _LOGGER.debug("Kubernetes master response (%d): %r", response.status_code, response.text)
+    _LOGGER.debug("Kubernetes master response for pod log (%d): %r", response.status_code, response.text)
     if response.status_code / 100 != 2:
         _LOGGER.error(response.text)
     response.raise_for_status()
 
     return response.text
+
+
+def get_pod_status(pod_id: str) -> dict:
+    """Get status entry for a pod."""
+    endpoint = "{}/api/v1/namespaces/{}/pods/{}".format(Configuration.KUBERNETES_API_URL,
+                                                        Configuration.THOTH_ANALYZER_NAMESPACE,
+                                                        pod_id)
+    response = requests.get(
+        endpoint,
+        headers={
+            'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
+            'Content-Type': 'application/json'
+        },
+        verify=False
+    )
+    _LOGGER.debug("Kubernetes master response for pod status (%d): %r", response.status_code, response.text)
+    if response.status_code / 100 != 2:
+        _LOGGER.error(response.text)
+    response.raise_for_status()
+    return response.json()['status']['containerStatuses'][0]['state']

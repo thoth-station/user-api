@@ -106,12 +106,29 @@ paths:
     get:
       tags: [Management]
       operationId: thoth_user_api.api_v1.api_pod_log
-      summary: Show logs of requested analyzes.
+      summary: Show logs of a pod.
       parameters:
         - name: pod_id
           in: query
           required: true
-          description: An ID of requested analyzis.
+          description: An ID of requested pod.
+          type: string
+      responses:
+        200:
+          description: Successful response.
+        400:
+          description: On invalid request.
+
+  /pod-status:
+    get:
+      tags: [Management]
+      operationId: thoth_user_api.api_v1.api_pod_status
+      summary: Show pod status.
+      parameters:
+        - name: pod_id
+          in: query
+          required: true
+          description: An ID of requested pod.
           type: string
       responses:
         200:
