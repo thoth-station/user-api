@@ -13,7 +13,7 @@ def _get_api_token():
 
 class Configuration:
     # Please provide explicitly.
-    APP_SECRET_KEY = os.environ['APP_SECRET_KEY']
+    APP_SECRET_KEY = os.environ['THOTH_USER_API_APP_SECRET_KEY']
     KUBERNETES_API_URL = os.getenv('KUBERNETES_API_URL', 'https://kubernetes.default.svc.cluster.local')
     KUBERNETES_API_TOKEN = os.getenv('KUBERNETES_API_TOKEN', _get_api_token())
     THOTH_ANALYZER_NAMESPACE = os.environ['THOTH_ANALYZER_NAMESPACE']
@@ -21,3 +21,5 @@ class Configuration:
     THOTH_ANALYZER_HARD_TIMEOUT = int(os.getenv('THOTH_ANALYZER_HARD_TIMEOUT',
                                                 datetime.timedelta(hours=24).total_seconds()))
     THOTH_RESULT_API_HOSTNAME = os.environ['THOTH_RESULT_API_HOSTNAME']
+    THOTH_MIDDLEEND_POD_MEMORY_LIMIT = os.getenv('THOTH_MIDDLEEND_POD_MEMORY_LIMIT', '0.5Gi')
+    THOTH_MIDDLEEND_POD_CPU_LIMIT = os.getenv('THOTH_MIDDLEEND_POD_CPU_LIMIT', '0.5')
