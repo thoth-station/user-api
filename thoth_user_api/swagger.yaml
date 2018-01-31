@@ -10,6 +10,7 @@ produces:
 paths:
   /analyze:
     post:
+      tags: []
       operationId: thoth_user_api.api_v1.api_analyze
       summary: Analyze the given image asynchronously.
       parameters:
@@ -57,7 +58,7 @@ paths:
         400:
           description: On invalid request.
 
-  /analysis-log:
+  /pod-log:
     get:
       operationId: thoth_user_api.api_v1.api_pod_log
       summary: Show logs of requested analyzes.
