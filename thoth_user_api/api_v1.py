@@ -33,9 +33,8 @@ def api_parse_log(log_info: dict):
 
 def api_pod_log(pod_id: str):
     """Get pod log based on analysis id."""
-    # TODO: fix - should be with generated part
-    if pod_id == 'thoth-result-api':
-        return {'error': "Cannot view pod logs"}, 403
+    if pod_id.rsplit(maxsplit=1)[0] == 'thoth-result-api':
+        return {'error': "Cannot view pod logs, see OpenShift logs directly to browse thoth-result-api logs"}, 403
 
     try:
         return {
@@ -49,9 +48,8 @@ def api_pod_log(pod_id: str):
 
 def api_pod_status(pod_id: str):
     """Get status for a pod."""
-    # TODO: fix - should be with generated part
-    if pod_id == 'thoth-result-api':
-        return {'error': "Cannot view pod logs"}, 403
+    if pod_id.rsplit(maxsplit=1)[0] == 'thoth-result-api':
+        return {'error': "Cannot view pod logs, see OpenShift logs directly to browse thoth-result-api logs"}, 403
 
     try:
         return {
