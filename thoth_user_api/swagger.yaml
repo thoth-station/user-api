@@ -86,7 +86,7 @@ paths:
 
   /parse-log:
     post:
-      tags: [Utils]
+      tags: [Buildlogs]
       operationId: thoth_user_api.api_v1.api_parse_log
       summary: Parse Docker build log or installation log and show installed packages.
       parameters:
@@ -101,6 +101,43 @@ paths:
           description: Successful response.
         400:
           description: On invalid request.
+
+  /buildlog:
+    post:
+      tags: [Buildlogs]
+      operationId: thoth_user_api.api_v1.api_post_buildlog
+      summary: Store the given build log.
+      parameters:
+        - name: log_info
+          in: body
+          required: true
+          description: Build log to be stored.
+          schema:
+            $ref: "#/definitions/Log"
+      responses:
+        202:
+          description: Successful response.
+        400:
+          description: On invalid request.
+
+  /buildlog/{log_id}:
+    get:
+      tags: [Buildlogs]
+      operationId: thoth_user_api.api_v1.api_get_buildlog
+      summary: Retrieve the given build log.
+      parameters:
+        - name: log_id
+          in: path
+          required: true
+          type: string
+          description: Build log to be retrieved.
+      responses:
+        200:
+          description: Successful response.
+        400:
+          description: On invalid request.
+        404:
+          description: The given build log does not exist.
 
   /pod-log:
     get:

@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
 
+import hashlib
+import json
+import os
+import re
+
+from .configuration import Configuration
 from .parsing import parse_log
 from .utils import get_pod_log
 from .utils import get_pod_status
 from .utils import run_analyzer
 from .utils import run_pod
+
+_BUILDLOG_ID_RE = re.compile(r'[a-zA-Z0-9]+')
 
 
 def api_analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None,
@@ -80,3 +88,37 @@ def api_run(image: str, environment: dict, cpu_request: str=None, memory_request
             'cpu_request': cpu_request,
             'memory_request': memory_request
         }, 400
+
+
+def api_post_buildlog(log_info: dict):
+    """Store the given build log."""
+    content = json.dumps(log_info, sort_keys=True, indent=2)
+    log_id = hashlib.sha256(content.encode()).hexdigest()
+
+    with open(os.path.join(Configuration.THOTH_BUILDLOGS_PERSISTENT_VOLUME_PATH, log_id + '.json'), 'w') as output_file:
+        output_file.write(content)
+
+    return {
+        'log_id': log_id
+    }, 202
+
+
+def api_get_buildlog(log_id: str):
+    """Retrieve the given buildlog."""
+    if not _BUILDLOG_ID_RE.fullmatch(log_id):
+        return {
+            'error': 'Invalid buildllog identifier {!r}'.format(log_id),
+            'log_id': log_id
+        }, 400
+
+    log_file = os.path.join(Configuration.THOTH_BUILDLOGS_PERSISTENT_VOLUME_PATH, log_id + '.json')
+    try:
+        with open(log_file, 'r') as build_log:
+            content = json.load(build_log)
+    except FileNotFoundError:
+        return {
+            'error': 'Buildlog file with id {!r} was not found'.format(log_id),
+            'log_id': log_id
+        }, 404
+
+    return content, 200
