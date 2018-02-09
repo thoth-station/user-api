@@ -26,7 +26,8 @@ class Configuration:
     THOTH_ANALYZER_HARD_TIMEOUT = int(os.getenv('THOTH_ANALYZER_HARD_TIMEOUT',
                                                 datetime.timedelta(hours=24).total_seconds()))
     THOTH_RESULT_API_HOSTNAME = os.environ['THOTH_RESULT_API_HOSTNAME']
-    THOTH_ANALYZER_OUTPUT = 'http://' + THOTH_RESULT_API_HOSTNAME + '/api/v1/result'
+    THOTH_ANALYZER_OUTPUT = 'http://' + THOTH_RESULT_API_HOSTNAME + '/api/v1/analysis-result'
+    THOTH_SOLVER_OUTPUT = 'http://' + THOTH_RESULT_API_HOSTNAME + '/api/v1/solver-result'
     THOTH_BUILDLOGS_PERSISTENT_VOLUME_PATH = os.environ['THOTH_BUILDLOGS_PERSISTENT_VOLUME_PATH']
     THOTH_MIDDLEEND_POD_MEMORY_LIMIT = os.getenv('THOTH_MIDDLEEND_POD_MEMORY_LIMIT', '0.5Gi')
     THOTH_MIDDLEEND_POD_CPU_LIMIT = os.getenv('THOTH_MIDDLEEND_POD_CPU_LIMIT', '0.5')
