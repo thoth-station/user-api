@@ -51,6 +51,7 @@ def api_run(image: str, environment: dict, cpu_request: str=None, memory_request
 
 def api_solve(solver: str, packages: dict, debug: bool=False, cpu_request: str=None, memory_request: str=None):
     """Run a solver in a restricted namespace."""
+    packages = packages.pop('requirements', '')
     params = locals()
     try:
         return {
