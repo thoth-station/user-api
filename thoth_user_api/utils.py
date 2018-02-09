@@ -43,7 +43,8 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
             "generateName": name_prefix + '-',
             "namespace": Configuration.THOTH_ANALYZER_NAMESPACE,
             "labels": {
-                "thothtype": "userpod"
+                "thothtype": "userpod",
+                "thothpod": "analyzer"
             }
         },
         "spec": {
@@ -80,7 +81,62 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
             }]
         }
     }
+
     _LOGGER.debug("Requesting to run analyzer %r with payload %s", analyzer, template)
+    return _do_run(template)
+
+
+def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=True,
+               cpu_request: str=None, memory_request: str=None) -> str:
+    """Run a solver for the given packages."""
+    name_prefix = "{}-{}".format(solver, solver.rsplit('/', maxsplit=1)[-1]).replace(':', '-').replace('/', '-')
+    template = {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+            "generateName": name_prefix + '-',
+            "namespace": Configuration.THOTH_ANALYZER_NAMESPACE,
+            "labels": {
+                "thothtype": "userpod",
+                "thothpod": "analyzer"
+            }
+        },
+        "spec": {
+            "restartPolicy": "Never",
+            "automountServiceAccountToken": False,
+            "containers": [{
+                "name": solver.rsplit('/', maxsplit=1)[-1],
+                "image": solver,
+                "livenessProbe": {
+                    "tcpSocket": {
+                        "port": 8080
+                    },
+                    "initialDelaySeconds": Configuration.THOTH_ANALYZER_HARD_TIMEOUT,
+                    "failureThreshold": 1,
+                    "periodSeconds": 10
+                },
+                "env": [
+                    {"name": "THOTH_SOLVER", "value": str(solver)},
+                    {"name": "THOTH_SOLVER_TRANSITIVE", "value": str(int(transitive))},
+                    {"name": "THOTH_SOLVER_PACKAGES", "value": str(packages)},
+                    {"name": "THOTH_SOLVER_DEBUG", "value": str(int(debug))},
+                    {"name": "THOTH_SOLVER_OUTPUT", "value": Configuration.THOTH_ANALYZER_OUTPUT}
+                ],
+                "resources": {
+                    "limits": {
+                        "memory": Configuration.THOTH_MIDDLEEND_POD_MEMORY_LIMIT,
+                        "cpu": Configuration.THOTH_MIDDLEEND_POD_CPU_LIMIT
+                    },
+                    "requests": {
+                        "memory": memory_request or Configuration.THOTH_MIDDLEEND_POD_MEMORY_REQUEST,
+                        "cpu": cpu_request or Configuration.THOTH_MIDDLEEND_POD_CPU_REQUEST
+                    }
+                }
+            }]
+        }
+    }
+
+    _LOGGER.debug("Requesting to run solver %r with payload %s", solver, template)
     return _do_run(template)
 
 
@@ -95,7 +151,8 @@ def run_pod(image: str, environment: dict, cpu_request: str=None, memory_request
             "generateName": name_prefix + '-',
             "namespace": Configuration.THOTH_ANALYZER_NAMESPACE,
             "labels": {
-                "thothtype": "userpod"
+                "thothtype": "userpod",
+                "thothpod": "pod"
             }
         },
         "spec": {

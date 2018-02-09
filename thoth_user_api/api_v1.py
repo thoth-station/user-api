@@ -11,6 +11,7 @@ from .utils import get_pod_log
 from .utils import get_pod_status
 from .utils import run_analyzer
 from .utils import run_pod
+from .utils import run_solver
 
 _BUILDLOG_ID_RE = re.compile(r'[a-zA-Z0-9]+')
 
@@ -18,14 +19,50 @@ _BUILDLOG_ID_RE = re.compile(r'[a-zA-Z0-9]+')
 def api_analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None,
                 cpu_request: str=None, memory_request: str=None):
     """Run an analyzer in a restricted namespace."""
+    params = locals()
     try:
         return {
-            'analysis_id': run_analyzer(image, analyzer, debug=debug, timeout=timeout,
-                                        cpu_request=cpu_request, memory_request=memory_request),
+            'analysis_id': run_analyzer(**params),
+            'parameters': params
         }, 202
     except Exception as exc:
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
-        return {'error': str(exc), 'image': image, 'analyzer': analyzer, 'debug': debug, 'timeout': timeout}, 400
+        return {
+            'error': str(exc),
+            'parameters': params
+        }, 400
+
+
+def api_run(image: str, environment: dict, cpu_request: str=None, memory_request: str=None):
+    """Run an image."""
+    params = locals()
+    try:
+        return {
+            'pod_id': run_pod(**params),
+            'parameters': params
+        }, 202
+    except Exception as exc:
+        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        return {
+            'error': str(exc),
+            'parameters': params
+        }, 400
+
+
+def api_solve(solver: str, packages: dict, debug: bool=False, cpu_request: str=None, memory_request: str=None):
+    """Run a solver in a restricted namespace."""
+    params = locals()
+    try:
+        return {
+            'analysis_id': run_solver(**params),
+            'parameters': params
+        }, 202
+    except Exception as exc:
+        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        return {
+            'error': str(exc),
+            'parameters': params
+        }, 400
 
 
 def api_parse_log(log_info: dict):
@@ -69,27 +106,6 @@ def api_pod_status(pod_id: str):
         return {'error': str(exc), 'pod_id': pod_id}, 400
 
 
-def api_run(image: str, environment: dict, cpu_request: str=None, memory_request: str=None):
-    """Run an image."""
-    try:
-        return {
-            'image': image,
-            'environment': environment,
-            'cpu_request': cpu_request,
-            'memory_request': memory_request,
-            'pod_id': run_pod(image, environment, cpu_request=cpu_request, memory_request=memory_request)
-        }, 202
-    except Exception as exc:
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
-        return {
-            'error': str(exc),
-            'image': image,
-            'environment': environment,
-            'cpu_request': cpu_request,
-            'memory_request': memory_request
-        }, 400
-
-
 def api_post_buildlog(log_info: dict):
     """Store the given build log."""
     content = json.dumps(log_info, sort_keys=True, indent=2)
@@ -107,7 +123,7 @@ def api_get_buildlog(log_id: str):
     """Retrieve the given buildlog."""
     if not _BUILDLOG_ID_RE.fullmatch(log_id):
         return {
-            'error': 'Invalid buildllog identifier {!r}'.format(log_id),
+            'error': 'Invalid buildlog identifier {!r}'.format(log_id),
             'log_id': log_id
         }, 400
 

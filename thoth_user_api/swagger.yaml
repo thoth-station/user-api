@@ -47,7 +47,52 @@ paths:
           type: string
       responses:
         202:
-          description: Successful response.
+          description: Successful response with analyzer (pod) id.
+        400:
+          description: On invalid request.
+
+  /solve:
+    post:
+      tags: [Management]
+      operationId: thoth_user_api.api_v1.api_solve
+      summary: Solve the given application stack.
+      parameters:
+        - name: solver
+          in: query
+          required: true
+          description: Name of solver (OpenShift build) to be triggered.
+          type: string
+        - name: debug
+          in: query
+          required: false
+          description: Run the given analyzer in a verbose mode so developers can debug analyzer (requires access to the OpenShift console).
+          type: boolean
+          default: false
+        - name: cpu-request
+          in: query
+          required: false
+          description: CPU request for the analyzer run.
+          type: string
+        - name: memory-request
+          in: query
+          required: false
+          description: Memory request for the analyzer run.
+          type: string
+        - name: packages
+          in: body
+          required: true
+          description: Packages to be solved.
+          schema:
+            $ref: "#/definitions/Requirements"
+        - name: transitive
+          in: query
+          required: false
+          description: Packages to be solved.
+          type: boolean
+          default: true
+      responses:
+        202:
+          description: Successful response with solver (pod) id.
         400:
           description: On invalid request.
 
@@ -80,7 +125,7 @@ paths:
             $ref: "#/definitions/Environment"
       responses:
         202:
-          description: Successful response.
+          description: Successful response with pod id.
         400:
           description: On invalid request.
 
@@ -187,6 +232,17 @@ definitions:
           Collecting tensorflow
             Downloading tensorflow-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (41.2MB)
           Successfully installed tensorflow-1.4.1
+  Requirements:
+    type: object
+    required:
+      - 'requirements'
+    additionalProperties: false
+    properties:
+      requirements:
+        type: string
+        description: Requirements as stated in the requirements.txt file.
+        example: >
+          selinon==1.0.0.rc3
   Environment:
     type: array
     description: Environment variables supplied on deployment.
