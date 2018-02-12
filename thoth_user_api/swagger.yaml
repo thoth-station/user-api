@@ -184,7 +184,7 @@ paths:
         404:
           description: The given build log does not exist.
 
-  /pod-log:
+  /log:
     get:
       tags: [Management]
       operationId: thoth_user_api.api_v1.api_pod_log
@@ -201,7 +201,7 @@ paths:
         400:
           description: On invalid request.
 
-  /pod-status:
+  /status:
     get:
       tags: [Management]
       operationId: thoth_user_api.api_v1.api_pod_status
