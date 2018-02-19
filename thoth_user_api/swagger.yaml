@@ -242,7 +242,7 @@ definitions:
         type: string
         description: Requirements as stated in the requirements.txt file.
         example: >
-          selinon==1.0.0.rc3
+          selinon==1.0.0rc3
   Environment:
     type: array
     description: Environment variables supplied on deployment.
