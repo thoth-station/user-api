@@ -22,7 +22,7 @@ class Configuration:
     KUBERNETES_API_URL = os.getenv('KUBERNETES_API_URL', 'https://kubernetes.default.svc.cluster.local')
     KUBERNETES_API_TOKEN = os.getenv('KUBERNETES_API_TOKEN') or _get_api_token()
 
-    THOTH_ANALYZER_NAMESPACE = os.environ['THOTH_ANALYZER_NAMESPACE']
+    THOTH_MIDDLEEND_NAMESPACE = os.environ['THOTH_MIDDLEEND_NAMESPACE']
     THOTH_BACKEND_NAMESPACE = os.environ['THOTH_BACKEND_NAMESPACE']
     THOTH_ANALYZER_HARD_TIMEOUT = int(os.getenv('THOTH_ANALYZER_HARD_TIMEOUT',
                                                 datetime.timedelta(hours=24).total_seconds()))

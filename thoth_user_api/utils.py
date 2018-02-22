@@ -41,7 +41,7 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
         "kind": "Pod",
         "metadata": {
             "generateName": name_prefix + '-',
-            "namespace": Configuration.THOTH_ANALYZER_NAMESPACE,
+            "namespace": Configuration.THOTH_MIDDLEEND_NAMESPACE,
             "labels": {
                 "thothtype": "userpod",
                 "thothpod": "analyzer"
@@ -83,7 +83,7 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
     }
 
     _LOGGER.debug("Requesting to run analyzer %r with payload %s", analyzer, template)
-    return _do_run(template, Configuration.THOTH_ANALYZER_NAMESPACE)
+    return _do_run(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
 
 
 def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=True,
@@ -95,7 +95,7 @@ def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=T
         "kind": "Pod",
         "metadata": {
             "generateName": name_prefix + '-',
-            "namespace": Configuration.THOTH_ANALYZER_NAMESPACE,
+            "namespace": Configuration.THOTH_MIDDLEEND_NAMESPACE,
             "labels": {
                 "thothtype": "userpod",
                 "thothpod": "analyzer"
@@ -137,7 +137,7 @@ def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=T
     }
 
     _LOGGER.debug("Requesting to run solver %r with payload %s", solver, template)
-    return _do_run(template, Configuration.THOTH_ANALYZER_NAMESPACE)
+    return _do_run(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
 
 
 def run_pod(image: str, environment: dict, cpu_request: str=None, memory_request: str=None) -> str:
@@ -149,7 +149,7 @@ def run_pod(image: str, environment: dict, cpu_request: str=None, memory_request
         "kind": "Pod",
         "metadata": {
             "generateName": name_prefix + '-',
-            "namespace": Configuration.THOTH_ANALYZER_NAMESPACE,
+            "namespace": Configuration.THOTH_MIDDLEEND_NAMESPACE,
             "labels": {
                 "thothtype": "userpod",
                 "thothpod": "pod"
@@ -184,7 +184,7 @@ def run_pod(image: str, environment: dict, cpu_request: str=None, memory_request
         }
     }
     _LOGGER.debug("Requesting to run pod with image %r with payload %s", image, template)
-    return _do_run(template, Configuration.THOTH_ANALYZER_NAMESPACE)
+    return _do_run(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
 
 
 def run_sync() -> str:
@@ -213,7 +213,7 @@ def run_sync() -> str:
 def get_pod_log(pod_id: str) -> str:
     """Get log of a pod based on assigned pod ID."""
     endpoint = "{}/api/v1/namespaces/{}/pods/{}/log".format(Configuration.KUBERNETES_API_URL,
-                                                            Configuration.THOTH_ANALYZER_NAMESPACE,
+                                                            Configuration.THOTH_MIDDLEEND_NAMESPACE,
                                                             pod_id)
     response = requests.get(
         endpoint,
@@ -234,7 +234,7 @@ def get_pod_log(pod_id: str) -> str:
 def get_pod_status(pod_id: str) -> dict:
     """Get status entry for a pod."""
     endpoint = "{}/api/v1/namespaces/{}/pods/{}".format(Configuration.KUBERNETES_API_URL,
-                                                        Configuration.THOTH_ANALYZER_NAMESPACE,
+                                                        Configuration.THOTH_MIDDLEEND_NAMESPACE,
                                                         pod_id)
     response = requests.get(
         endpoint,
