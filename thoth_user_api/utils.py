@@ -226,3 +226,22 @@ def get_pod_status(pod_id: str) -> dict:
         _LOGGER.error(response.text)
     response.raise_for_status()
     return response.json()['status']['containerStatuses'][0]['state']
+
+
+def get_cronjob(cronjob_name: str) -> dict:
+    endpoint = '{}/apis/batch/v1beta1/namespaces/{}/cronjobs/{}'.format(Configuration.KUBERNETES_API_URL,
+                                                                        Configuration.THOTH_BACKEND_NAMESPACE,
+                                                                        cronjob_name)
+    response = requests.get(
+        endpoint,
+        headers={
+            'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
+            'Content-Type': 'application/json'
+        },
+        verify=False
+    )
+    _LOGGER.debug("Kubernetes master response for cronjob query with HTTP status code %d", response.status_code)
+    if 200 <= response.status_code <= 399:
+        _LOGGER.error(response.text)
+    response.raise_for_status()
+    return response.json()
