@@ -11,6 +11,7 @@ from .utils import get_pod_log
 from .utils import get_pod_status
 from .utils import run_analyzer
 from .utils import run_pod
+from .utils import run_sync
 from .utils import run_solver
 
 _BUILDLOG_ID_RE = re.compile(r'[a-zA-Z0-9]+')
@@ -63,6 +64,19 @@ def api_solve(solver: str, packages: dict, debug: bool=False, cpu_request: str=N
         return {
             'error': str(exc),
             'parameters': params
+        }, 400
+
+
+def api_sync():
+    """Sync results to graph database."""
+    try:
+        return {
+            'pod_id': run_sync(),
+        }, 202
+    except Exception as exc:
+        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        return {
+            'error': str(exc),
         }, 400
 
 

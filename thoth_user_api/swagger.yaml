@@ -129,6 +129,17 @@ paths:
         400:
           description: On invalid request.
 
+  /sync:
+    post:
+      tags: [Management]
+      operationId: thoth_user_api.api_v1.api_sync
+      summary: Force sync to graph database.
+      responses:
+        202:
+          description: Successful response with pod id.
+        400:
+          description: On invalid request.
+
   /parse-log:
     post:
       tags: [Buildlogs]

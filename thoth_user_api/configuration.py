@@ -23,6 +23,7 @@ class Configuration:
     KUBERNETES_API_TOKEN = os.getenv('KUBERNETES_API_TOKEN') or _get_api_token()
 
     THOTH_ANALYZER_NAMESPACE = os.environ['THOTH_ANALYZER_NAMESPACE']
+    THOTH_BACKEND_NAMESPACE = os.environ['THOTH_BACKEND_NAMESPACE']
     THOTH_ANALYZER_HARD_TIMEOUT = int(os.getenv('THOTH_ANALYZER_HARD_TIMEOUT',
                                                 datetime.timedelta(hours=24).total_seconds()))
     THOTH_RESULT_API_HOSTNAME = os.environ['THOTH_RESULT_API_HOSTNAME']

@@ -8,11 +8,11 @@ from .configuration import Configuration
 _LOGGER = logging.getLogger(__name__)
 
 
-def _do_run(template: dict) -> str:
+def _do_run(template: dict, namespace: str) -> str:
     """Run defined template in Kubernetes."""
     # We don't care about secret as we run inside the cluster. All builds should hard-code it to secret.
     endpoint = "{}/api/v1/namespaces/{}/pods".format(Configuration.KUBERNETES_API_URL,
-                                                     Configuration.THOTH_ANALYZER_NAMESPACE)
+                                                     namespace)
     _LOGGER.debug("Sending POST request to Kubernetes master %r", Configuration.KUBERNETES_API_URL)
     response = requests.post(
         endpoint,
@@ -83,7 +83,7 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
     }
 
     _LOGGER.debug("Requesting to run analyzer %r with payload %s", analyzer, template)
-    return _do_run(template)
+    return _do_run(template, Configuration.THOTH_ANALYZER_NAMESPACE)
 
 
 def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=True,
@@ -109,7 +109,7 @@ def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=T
                 "image": solver,
                 "livenessProbe": {
                     "tcpSocket": {
-                        "port": 8080
+                        "port": 80
                     },
                     "initialDelaySeconds": Configuration.THOTH_ANALYZER_HARD_TIMEOUT,
                     "failureThreshold": 1,
@@ -137,7 +137,7 @@ def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=T
     }
 
     _LOGGER.debug("Requesting to run solver %r with payload %s", solver, template)
-    return _do_run(template)
+    return _do_run(template, Configuration.THOTH_ANALYZER_NAMESPACE)
 
 
 def run_pod(image: str, environment: dict, cpu_request: str=None, memory_request: str=None) -> str:
@@ -163,7 +163,7 @@ def run_pod(image: str, environment: dict, cpu_request: str=None, memory_request
                 "image": image,
                 "livenessProbe": {
                     "tcpSocket": {
-                        "port": 8080
+                        "port": 80
                     },
                     "initialDelaySeconds": Configuration.THOTH_ANALYZER_HARD_TIMEOUT,
                     "failureThreshold": 1,
@@ -184,7 +184,30 @@ def run_pod(image: str, environment: dict, cpu_request: str=None, memory_request
         }
     }
     _LOGGER.debug("Requesting to run pod with image %r with payload %s", image, template)
-    return _do_run(template)
+    return _do_run(template, Configuration.THOTH_ANALYZER_NAMESPACE)
+
+
+def run_sync() -> str:
+    """Run a graph sync."""
+    # Let's reuse pod definition from the cronjob definition so any changes in deployed application work out of the box.
+    cronjob_def = get_cronjob('thoth-graph-sync-job')
+    pod_spec = cronjob_def['spec']['jobTemplate']['spec']['template']['spec']
+    template = {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+            "generateName": 'thoth-graph-sync-',
+            "namespace": Configuration.THOTH_BACKEND_NAMESPACE,
+            "labels": {
+                "thothtype": "userpod",
+                "thothpod": "pod",
+                "name": "thoth-graph-sync"
+            }
+        },
+        "spec": pod_spec
+    }
+    _LOGGER.debug("Requesting to run graph sync")
+    return _do_run(template, Configuration.THOTH_BACKEND_NAMESPACE)
 
 
 def get_pod_log(pod_id: str) -> str:
@@ -229,9 +252,9 @@ def get_pod_status(pod_id: str) -> dict:
 
 
 def get_cronjob(cronjob_name: str) -> dict:
-    endpoint = '{}/apis/batch/v1beta1/namespaces/{}/cronjobs/{}'.format(Configuration.KUBERNETES_API_URL,
-                                                                        Configuration.THOTH_BACKEND_NAMESPACE,
-                                                                        cronjob_name)
+    endpoint = '{}/apis/batch/v2alpha1/namespaces/{}/cronjobs/{}'.format(Configuration.KUBERNETES_API_URL,
+                                                                         Configuration.THOTH_BACKEND_NAMESPACE,
+                                                                         cronjob_name)
     response = requests.get(
         endpoint,
         headers={
