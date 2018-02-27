@@ -12,6 +12,7 @@ flask-script = "*"
 requests = "*"
 gunicorn = "*"
 attrs = "*"
+thoth-common = "*"
 
 
 [dev-packages]
