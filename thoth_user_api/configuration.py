@@ -20,6 +20,7 @@ class Configuration:
     SWAGGER_YAML_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'swagger.yaml')
 
     KUBERNETES_API_URL = os.getenv('KUBERNETES_API_URL', 'https://kubernetes.default.svc.cluster.local')
+    KUBERNETES_VERIFY_TLS = bool(os.getenv('KUBERNETES_VERIFY_TLS', True))
     KUBERNETES_API_TOKEN = os.getenv('KUBERNETES_API_TOKEN') or _get_api_token()
 
     THOTH_MIDDLEEND_NAMESPACE = os.environ['THOTH_MIDDLEEND_NAMESPACE']

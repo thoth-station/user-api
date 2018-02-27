@@ -21,7 +21,7 @@ def _do_run(template: dict, namespace: str) -> str:
             'Content-Type': 'application/json'
         },
         json=template,
-        verify=False
+        verify=Configuration.KUBERNETES_VERIFY_TLS
     )
     _LOGGER.debug("Kubernetes master response (%d) from %r: %r",
                   response.status_code, Configuration.KUBERNETES_API_URL, response.text)
@@ -221,7 +221,7 @@ def get_pod_log(pod_id: str) -> str:
             'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
             'Content-Type': 'application/json'
         },
-        verify=False
+        verify=Configuration.KUBERNETES_VERIFY_TLS
     )
     _LOGGER.debug("Kubernetes master response for pod log (%d): %r", response.status_code, response.text)
     if response.status_code / 100 != 2:
@@ -242,7 +242,7 @@ def get_pod_status(pod_id: str) -> dict:
             'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
             'Content-Type': 'application/json'
         },
-        verify=False
+        verify=Configuration.KUBERNETES_VERIFY_TLS
     )
     _LOGGER.debug("Kubernetes master response for pod status (%d): %r", response.status_code, response.text)
     if response.status_code / 100 != 2:
@@ -261,7 +261,7 @@ def get_cronjob(cronjob_name: str) -> dict:
             'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
             'Content-Type': 'application/json'
         },
-        verify=False
+        verify=Configuration.KUBERNETES_VERIFY_TLS
     )
     _LOGGER.debug("Kubernetes master response for cronjob query with HTTP status code %d", response.status_code)
     if 200 <= response.status_code <= 399:
