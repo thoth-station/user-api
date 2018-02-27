@@ -8,7 +8,7 @@ from .configuration import Configuration
 _LOGGER = logging.getLogger(__name__)
 
 
-def _do_run(template: dict, namespace: str) -> str:
+def _do_run_pod(template: dict, namespace: str) -> str:
     """Run defined template in Kubernetes."""
     # We don't care about secret as we run inside the cluster. All builds should hard-code it to secret.
     endpoint = "{}/api/v1/namespaces/{}/pods".format(Configuration.KUBERNETES_API_URL,
@@ -83,7 +83,7 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
     }
 
     _LOGGER.debug("Requesting to run analyzer %r with payload %s", analyzer, template)
-    return _do_run(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
+    return _do_run_pod(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
 
 
 def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=True,
@@ -137,7 +137,7 @@ def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=T
     }
 
     _LOGGER.debug("Requesting to run solver %r with payload %s", solver, template)
-    return _do_run(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
+    return _do_run_pod(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
 
 
 def run_pod(image: str, environment: dict, cpu_request: str=None, memory_request: str=None) -> str:
@@ -184,7 +184,7 @@ def run_pod(image: str, environment: dict, cpu_request: str=None, memory_request
         }
     }
     _LOGGER.debug("Requesting to run pod with image %r with payload %s", image, template)
-    return _do_run(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
+    return _do_run_pod(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
 
 
 def run_sync() -> str:
@@ -207,7 +207,7 @@ def run_sync() -> str:
         "spec": pod_spec
     }
     _LOGGER.debug("Requesting to run graph sync")
-    return _do_run(template, Configuration.THOTH_BACKEND_NAMESPACE)
+    return _do_run_pod(template, Configuration.THOTH_BACKEND_NAMESPACE)
 
 
 def get_pod_log(pod_id: str) -> str:
