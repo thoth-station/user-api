@@ -51,6 +51,36 @@ paths:
         400:
           description: On invalid request.
 
+  /advise:
+    post:
+      tags: [Management]
+      operationId: thoth_user_api.api_v1.api_advise
+      summary: Give recommendations and advises for the given application stack.
+      parameters:
+        - name: debug
+          in: query
+          required: false
+          description: Run adviser in verbose mode.
+          type: boolean
+          default: false
+        - name: packages
+          in: body
+          required: true
+          description: Packages to be solved.
+          schema:
+            $ref: "#/definitions/Requirements"
+        - name: packages_only
+          in: query
+          required: false
+          description: Packages to be solved.
+          type: boolean
+          default: false
+      responses:
+        202:
+          description: Successful response with solver (pod) id.
+        400:
+          description: On invalid request.
+
   /solve:
     post:
       tags: [Management]

@@ -9,10 +9,11 @@ from .configuration import Configuration
 from .parsing import parse_log
 from .utils import get_pod_log
 from .utils import get_pod_status
+from .utils import run_adviser
 from .utils import run_analyzer
 from .utils import run_pod
-from .utils import run_sync
 from .utils import run_solver
+from .utils import run_sync
 
 _BUILDLOG_ID_RE = re.compile(r'[a-zA-Z0-9]+')
 
@@ -57,6 +58,23 @@ def api_solve(solver: str, packages: dict, debug: bool=False, cpu_request: str=N
     try:
         return {
             'analysis_id': run_solver(**params),
+            'parameters': params
+        }, 202
+    except Exception as exc:
+        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        return {
+            'error': str(exc),
+            'parameters': params
+        }, 400
+
+
+def api_advise(packages: dict, debug: bool=False, packages_only: bool=False):
+    """Compute results for the given package or package stack using adviser."""
+    packages = packages.pop('requirements', '')
+    params = locals()
+    try:
+        return {
+            'analysis_id': run_adviser(**params),
             'parameters': params
         }, 202
     except Exception as exc:

@@ -140,6 +140,46 @@ def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=T
     return _do_run_pod(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
 
 
+def run_adviser(packages: str, debug: bool=False, packages_only: bool=False) -> str:
+    """Request to run adviser in the backend part."""
+    template = {
+        "apiVersion": "v1",
+        "kind": "Pod",
+        "metadata": {
+            "generateName": 'fridex-thoth-adviser-',
+            "namespace": Configuration.THOTH_BACKEND_NAMESPACE,
+            "labels": {
+                "thothpod": "analyzer"
+            }
+        },
+        "spec": {
+            "restartPolicy": "Never",
+            "automountServiceAccountToken": False,
+            "containers": [{
+                "name": "thoth-adviser",
+                "image": "fridex/thoth-adviser",
+                "livenessProbe": {
+                    "tcpSocket": {
+                        "port": 80
+                    },
+                    "initialDelaySeconds": Configuration.THOTH_ANALYZER_HARD_TIMEOUT,
+                    "failureThreshold": 1,
+                    "periodSeconds": 10
+                },
+                "env": [
+                    {"name": "THOTH_ADVISER_PACKAGES", "value": str(packages.replace('\n', '\\n'))},
+                    {"name": "THOTH_ADVISER_DEBUG", "value": str(int(debug))},
+                    {"name": "THOTH_ADVISER_PACKAGES_ONLY", "value": str(int(packages_only))},
+                    {"name": "THOTH_ADVISER_OUTPUT", "value": Configuration.THOTH_ADVISER_OUTPUT}
+                ],
+            }]
+        }
+    }
+
+    _LOGGER.debug("Requesting to run adviser with payload %s", template)
+    return _do_run_pod(template, Configuration.THOTH_BACKEND_NAMESPACE)
+
+
 def run_pod(image: str, environment: dict, cpu_request: str=None, memory_request: str=None) -> str:
     """Run a container inside a pod."""
     # We don't care about secret as we run inside the cluster. All builds should hard-code it to secret.
