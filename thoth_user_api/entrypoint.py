@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-from datetime import datetime
-import json
+
 import logging
+
+import requests
 
 from flask import redirect, jsonify
 import connexion
@@ -66,7 +67,8 @@ def api_readiness():
 
 @app.route('/liveness')
 def api_liveness():
-    # TODO: ask kubernetes master for response
+    response = requests.get(Configuration.KUBERNETES_API_URL, verify=Configuration.KUBERNETES_VERIFY_TLS)
+    response.raise_for_status()
     return jsonify(None)
 
 
