@@ -8,7 +8,7 @@ import re
 from .configuration import Configuration
 from .parsing import parse_log
 from .utils import get_pod_log
-from .utils import get_pod_status
+from .utils import get_pod_status as do_get_pod_status
 from .utils import run_adviser
 from .utils import run_analyzer
 from .utils import run_pod
