@@ -18,8 +18,8 @@ from .utils import run_sync
 _BUILDLOG_ID_RE = re.compile(r'[a-zA-Z0-9]+')
 
 
-def api_analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None,
-                cpu_request: str=None, memory_request: str=None):
+def analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None,
+            cpu_request: str=None, memory_request: str=None):
     """Run an analyzer in a restricted namespace."""
     params = locals()
     try:
@@ -35,7 +35,7 @@ def api_analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None,
         }, 400
 
 
-def api_run(image: str, environment: dict, cpu_request: str=None, memory_request: str=None):
+def run(image: str, environment: dict, cpu_request: str=None, memory_request: str=None):
     """Run an image."""
     params = locals()
     try:
@@ -51,7 +51,7 @@ def api_run(image: str, environment: dict, cpu_request: str=None, memory_request
         }, 400
 
 
-def api_solve(solver: str, packages: dict, debug: bool=False, cpu_request: str=None, memory_request: str=None):
+def solve(solver: str, packages: dict, debug: bool=False, cpu_request: str=None, memory_request: str=None):
     """Run a solver in a restricted namespace."""
     packages = packages.pop('requirements', '')
     params = locals()
@@ -68,7 +68,7 @@ def api_solve(solver: str, packages: dict, debug: bool=False, cpu_request: str=N
         }, 400
 
 
-def api_advise(packages: dict, debug: bool=False, packages_only: bool=False):
+def advise(packages: dict, debug: bool=False, packages_only: bool=False):
     """Compute results for the given package or package stack using adviser."""
     packages = packages.pop('requirements', '')
     params = locals()
@@ -85,7 +85,7 @@ def api_advise(packages: dict, debug: bool=False, packages_only: bool=False):
         }, 400
 
 
-def api_sync():
+def sync():
     """Sync results to graph database."""
     try:
         return {
@@ -98,7 +98,7 @@ def api_sync():
         }, 400
 
 
-def api_parse_log(log_info: dict):
+def parse_log(log_info: dict):
     """Parse image build log or install log endpoint handler."""
     if not log_info:
         return {'error': 'No log provided'}, 400
@@ -109,7 +109,7 @@ def api_parse_log(log_info: dict):
         return {'error': str(exc)}, 400
 
 
-def api_pod_log(pod_id: str):
+def get_pod_log(pod_id: str):
     """Get pod log based on analysis id."""
     if pod_id.rsplit(maxsplit=1)[0] == 'thoth-result-api':
         return {'error': "Cannot view pod logs, see OpenShift logs directly to browse thoth-result-api logs"}, 403
@@ -124,7 +124,7 @@ def api_pod_log(pod_id: str):
         return {'error': str(exc), 'pod_id': pod_id}, 400
 
 
-def api_pod_status(pod_id: str):
+def get_pod_status(pod_id: str):
     """Get status for a pod."""
     if pod_id.rsplit(maxsplit=1)[0] == 'thoth-result-api':
         return {'error': "Cannot view pod logs, see OpenShift logs directly to browse thoth-result-api logs"}, 403
@@ -139,7 +139,7 @@ def api_pod_status(pod_id: str):
         return {'error': str(exc), 'pod_id': pod_id}, 400
 
 
-def api_post_buildlog(log_info: dict):
+def post_buildlog(log_info: dict):
     """Store the given build log."""
     content = json.dumps(log_info, sort_keys=True, indent=2)
     log_id = hashlib.sha256(content.encode()).hexdigest()
@@ -152,7 +152,7 @@ def api_post_buildlog(log_info: dict):
     }, 202
 
 
-def api_get_buildlog(log_id: str):
+def get_buildlog(log_id: str):
     """Retrieve the given buildlog."""
     if not _BUILDLOG_ID_RE.fullmatch(log_id):
         return {

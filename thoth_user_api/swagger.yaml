@@ -10,8 +10,9 @@ produces:
 paths:
   /analyze:
     post:
-      tags: [Management]
-      operationId: thoth_user_api.api_v1.api_analyze
+      tags: [management]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: analyze
       summary: Analyze the given image asynchronously.
       parameters:
         - name: image
@@ -53,8 +54,9 @@ paths:
 
   /advise:
     post:
-      tags: [Management]
-      operationId: thoth_user_api.api_v1.api_advise
+      tags: [management]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: advise
       summary: Give recommendations and advises for the given application stack.
       parameters:
         - name: debug
@@ -83,8 +85,9 @@ paths:
 
   /solve:
     post:
-      tags: [Management]
-      operationId: thoth_user_api.api_v1.api_solve
+      tags: [management]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: solve
       summary: Solve the given application stack.
       parameters:
         - name: solver
@@ -128,8 +131,9 @@ paths:
 
   /run:
     post:
-      tags: [Management]
-      operationId: thoth_user_api.api_v1.api_run
+      tags: [management]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: run
       summary: Run the given image inside cluster.
       parameters:
         - name: image
@@ -161,8 +165,9 @@ paths:
 
   /sync:
     post:
-      tags: [Management]
-      operationId: thoth_user_api.api_v1.api_sync
+      tags: [management]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: sync
       summary: Force sync to graph database.
       responses:
         202:
@@ -172,8 +177,9 @@ paths:
 
   /parse-log:
     post:
-      tags: [Buildlogs]
-      operationId: thoth_user_api.api_v1.api_parse_log
+      tags: [buildlogs]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: parse_log
       summary: Parse Docker build log or installation log and show installed packages.
       parameters:
         - name: log_info
@@ -190,8 +196,9 @@ paths:
 
   /buildlog:
     post:
-      tags: [Buildlogs]
-      operationId: thoth_user_api.api_v1.api_post_buildlog
+      tags: [buildlogs]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: post_buildlog
       summary: Store the given build log.
       parameters:
         - name: log_info
@@ -208,8 +215,9 @@ paths:
 
   /buildlog/{log_id}:
     get:
-      tags: [Buildlogs]
-      operationId: thoth_user_api.api_v1.api_get_buildlog
+      tags: [buildlogs]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_buildlog
       summary: Retrieve the given build log.
       parameters:
         - name: log_id
@@ -227,8 +235,9 @@ paths:
 
   /log:
     get:
-      tags: [Management]
-      operationId: thoth_user_api.api_v1.api_pod_log
+      tags: [management]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_pod_log
       summary: Show logs of a pod.
       parameters:
         - name: pod_id
@@ -244,8 +253,9 @@ paths:
 
   /status:
     get:
-      tags: [Management]
-      operationId: thoth_user_api.api_v1.api_pod_status
+      tags: [management]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_pod_status
       summary: Show pod status.
       parameters:
         - name: pod_id
