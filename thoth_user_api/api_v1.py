@@ -24,7 +24,7 @@ def analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None,
     params = locals()
     try:
         return {
-            'analysis_id': run_analyzer(**params),
+            'pod_id': run_analyzer(**params),
             'parameters': params
         }, 202
     except Exception as exc:
@@ -57,7 +57,7 @@ def solve(solver: str, packages: dict, debug: bool=False, cpu_request: str=None,
     params = locals()
     try:
         return {
-            'analysis_id': run_solver(**params),
+            'pod_id': run_solver(**params),
             'parameters': params
         }, 202
     except Exception as exc:
@@ -74,7 +74,7 @@ def advise(packages: dict, debug: bool=False, packages_only: bool=False):
     params = locals()
     try:
         return {
-            'analysis_id': run_adviser(**params),
+            'pod_id': run_adviser(**params),
             'parameters': params
         }, 202
     except Exception as exc:
@@ -132,7 +132,7 @@ def get_pod_status(pod_id: str):
     try:
         return {
             'pod_id': pod_id,
-            'status': get_pod_status(pod_id)
+            'status': do_get_pod_status(pod_id)
         }
     except Exception as exc:
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
