@@ -6,8 +6,8 @@ import os
 import re
 
 from .configuration import Configuration
-from .parsing import parse_log
-from .utils import get_pod_log
+from .parsing import parse_log as do_parse_log
+from .utils import get_pod_log as do_get_pod_log
 from .utils import get_pod_status as do_get_pod_status
 from .utils import run_adviser
 from .utils import run_analyzer
@@ -103,7 +103,7 @@ def parse_log(log_info: dict):
     if not log_info:
         return {'error': 'No log provided'}, 400
     try:
-        return parse_log(log_info.get('log', '')), 200
+        return do_parse_log(log_info.get('log', '')), 200
     except Exception as exc:
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {'error': str(exc)}, 400
@@ -117,7 +117,7 @@ def get_pod_log(pod_id: str):
     try:
         return {
             'pod_id': pod_id,
-            'pod_log': get_pod_log(pod_id)
+            'pod_log': do_get_pod_log(pod_id)
         }
     except Exception as exc:
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
