@@ -51,6 +51,36 @@ paths:
           description: Successful response with analyzer (pod) id.
         400:
           description: On invalid request.
+    get:
+      tags: [results]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: list_analyzer_results
+      summary: Retrieve a list of document ids for analyzer results.
+      responses:
+        200:
+          description: A list of analyzer results available.
+        400:
+          description: On invalid request.
+
+  /analyze/{document_id}:
+    get:
+      tags: [results]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_analyzer_result
+      summary: Retrieve an analyzer result.
+      parameters:
+        - name: document_id
+          in: path
+          required: true
+          description: Document id to be retrieved.
+          type: string
+      responses:
+        200:
+          description: Analyzer result retrieved.
+        400:
+          description: On invalid request.
+        404:
+          description: The given document does not exist.
 
   /advise:
     post:
@@ -128,6 +158,37 @@ paths:
           description: Successful response with solver (pod) id.
         400:
           description: On invalid request.
+
+    get:
+      tags: [results]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: list_solver_results
+      summary: Retrieve a list of document ids for solver results.
+      responses:
+        200:
+          description: A list of analyzer results.
+        400:
+          description: On invalid request.
+
+  /solve/{document_id}:
+    get:
+      tags: [results]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_solver_result
+      summary: Retrieve a solver result.
+      parameters:
+        - name: document_id
+          in: path
+          required: true
+          description: Document id to be retrieved.
+          type: string
+      responses:
+        200:
+          description: Analyzer result retrieved.
+        400:
+          description: On invalid request.
+        404:
+          description: The given document does not exist.
 
   /run:
     post:
@@ -278,6 +339,19 @@ paths:
 
 definitions:
   Log:
+    type: object
+    required:
+      - 'log'
+    additionalProperties: false
+    properties:
+      log:
+        type: string
+        description: A full build or installation log that was output during image build.
+        example: >
+          Collecting tensorflow
+            Downloading tensorflow-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (41.2MB)
+          Successfully installed tensorflow-1.4.1
+  PodInfo:
     type: object
     required:
       - 'log'

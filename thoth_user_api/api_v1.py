@@ -5,6 +5,9 @@ import json
 import os
 import re
 
+from thoth.storages import AnalysisResultsStore
+from thoth.storages import SolverResultsStore
+
 from .configuration import Configuration
 from .parsing import parse_log as do_parse_log
 from .utils import get_pod_log as do_get_pod_log
@@ -32,6 +35,37 @@ def analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None,
         return {
             'error': str(exc),
             'parameters': params
+        }, 400
+
+
+def get_analyzer_result(document_id: str):
+    """Retrieve image analyzer result."""
+    try:
+        adapter = AnalysisResultsStore()
+        adapter.connect()
+        result = adapter.retrieve_document(document_id)
+        return result
+    except Exception as exc:
+        # TODO: handle 404 as a special case here
+        return {
+            'error': str(exc),
+            'parameters': {
+                'document_id': document_id
+            }
+        }, 400
+
+
+def list_analyzer_results():
+    """Retrieve image analyzer result."""
+    try:
+        adapter = AnalysisResultsStore()
+        adapter.connect()
+        result = adapter.get_document_listing()
+        return list(result)
+    except Exception as exc:
+        # TODO: some errors should be filtered out
+        return {
+            'error': str(exc),
         }, 400
 
 
@@ -65,6 +99,37 @@ def solve(solver: str, packages: dict, debug: bool=False, cpu_request: str=None,
         return {
             'error': str(exc),
             'parameters': params
+        }, 400
+
+
+def get_solver_result(document_id: str):
+    """Retrieve solver result."""
+    try:
+        adapter = SolverResultsStore()
+        adapter.connect()
+        result = adapter.retrieve_document(document_id)
+        return result
+    except Exception as exc:
+        # TODO: handle 404 as a special case here
+        return {
+            'error': str(exc),
+            'parameters': {
+                'document_id': document_id
+            }
+        }, 400
+
+
+def list_solver_results():
+    """Retrieve image analyzer result."""
+    try:
+        adapter = SolverResultsStore()
+        adapter.connect()
+        result = adapter.get_document_listing()
+        return list(result)
+    except Exception as exc:
+        # TODO: some errors should be filtered out
+        return {
+            'error': str(exc),
         }, 400
 
 

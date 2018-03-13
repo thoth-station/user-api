@@ -13,6 +13,7 @@ requests = "*"
 gunicorn = "*"
 attrs = "*"
 thoth-common = "*"
+thoth-storages = ">=0.0.5"
 
 
 [dev-packages]
