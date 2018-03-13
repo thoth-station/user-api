@@ -85,11 +85,11 @@ def advise(packages: dict, debug: bool=False, packages_only: bool=False):
         }, 400
 
 
-def sync():
+def sync(sync_observations: bool=False):
     """Sync results to graph database."""
     try:
         return {
-            'pod_id': run_sync(),
+            'pod_id': run_sync(sync_observations),
         }, 202
     except Exception as exc:
         # TODO: for production we will need to filter out some errors so they are not exposed to users.

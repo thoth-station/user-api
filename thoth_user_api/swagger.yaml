@@ -169,6 +169,13 @@ paths:
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: sync
       summary: Force sync to graph database.
+      parameters:
+        - name: sync_observations
+          in: query
+          required: false
+          description: Sync also observations from analyzers.
+          type: boolean
+          default: false
       responses:
         202:
           description: Successful response with pod id.
