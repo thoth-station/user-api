@@ -32,7 +32,7 @@ s3transfer==0.1.13
 six==1.10.0
 swagger-spec-validator==2.1.0
 thoth-common==0.0.0
-thoth-storages==0.0.7
+thoth-storages==0.0.8
 tornado==4.4.1
 typing==3.6.4;
 urllib3==1.22
