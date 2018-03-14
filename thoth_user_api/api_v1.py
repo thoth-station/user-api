@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import re
+from itertools import islice
 
 from thoth.storages import AnalysisResultsStore
 from thoth.storages import SolverResultsStore
@@ -19,6 +20,7 @@ from .utils import run_solver
 from .utils import run_sync
 
 _BUILDLOG_ID_RE = re.compile(r'[a-zA-Z0-9]+')
+PAGINATION_SIZE = 100
 
 
 def analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None,
@@ -55,13 +57,19 @@ def get_analyzer_result(document_id: str):
         }, 400
 
 
-def list_analyzer_results():
+def list_analyzer_results(page: int):
     """Retrieve image analyzer result."""
     try:
         adapter = AnalysisResultsStore()
         adapter.connect()
         result = adapter.get_document_listing()
-        return list(result)
+        # TODO: I'm not sure if Ceph returns objects in the same order each time.
+        # We will need to abandon this logic later anyway once we will be able to query results on data hub side.
+        return {
+            "results": list(islice(result, page, page + PAGINATION_SIZE)),
+            "page": page,
+            "page_size": PAGINATION_SIZE
+        }
     except Exception as exc:
         # TODO: some errors should be filtered out
         return {
@@ -119,13 +127,19 @@ def get_solver_result(document_id: str):
         }, 400
 
 
-def list_solver_results():
+def list_solver_results(page: int):
     """Retrieve image analyzer result."""
     try:
         adapter = SolverResultsStore()
         adapter.connect()
         result = adapter.get_document_listing()
-        return list(result)
+        # TODO: I'm not sure if Ceph returns objects in the same order each time.
+        # We will need to abandon this logic later anyway once we will be able to query results on data hub side.
+        return {
+            "results": list(islice(result, page, page + PAGINATION_SIZE)),
+            "page": page,
+            "page_size": PAGINATION_SIZE
+        }
     except Exception as exc:
         # TODO: some errors should be filtered out
         return {
