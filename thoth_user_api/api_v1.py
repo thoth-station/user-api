@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import hashlib
 import json
 import os
 import re
@@ -8,6 +7,7 @@ from itertools import islice
 
 from thoth.storages import AnalysisResultsStore
 from thoth.storages import SolverResultsStore
+from thoth.storages import BuildLogsStore
 
 from .configuration import Configuration
 from .parsing import parse_log as do_parse_log
@@ -220,19 +220,26 @@ def get_pod_status(pod_id: str):
 
 def post_buildlog(log_info: dict):
     """Store the given build log."""
-    content = json.dumps(log_info, sort_keys=True, indent=2)
-    log_id = hashlib.sha256(content.encode()).hexdigest()
+    adapter = BuildLogsStore()
+    adapter.connect()
+    document_id = adapter.store_document(log_info)
 
-    with open(os.path.join(Configuration.THOTH_BUILDLOGS_PERSISTENT_VOLUME_PATH, log_id + '.json'), 'w') as output_file:
+    # Duplicate storing also on PV for now.
+    content = json.dumps(log_info, sort_keys=True, indent=2)
+    document_path = os.path.join(Configuration.THOTH_BUILDLOGS_PERSISTENT_VOLUME_PATH, document_id + '.json')
+    with open(document_path, 'w') as output_file:
         output_file.write(content)
 
     return {
-        'log_id': log_id
+        'log_id': document_id
     }, 202
 
 
 def get_buildlog(log_id: str):
     """Retrieve the given buildlog."""
+    # adapter = BuildLogsStore()
+    # adapter.connect()
+    # document = adapter.retrieve_document(log_id)
     if not _BUILDLOG_ID_RE.fullmatch(log_id):
         return {
             'error': 'Invalid buildlog identifier {!r}'.format(log_id),
