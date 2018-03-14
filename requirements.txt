@@ -33,7 +33,7 @@ six==1.10.0
 swagger-spec-validator==2.1.0
 thoth-common==0.0.0
 thoth-storages==0.0.7
-tornado==4.4.1
+tornado==5.0
 typing==3.6.4;
 urllib3==1.22
 voluptuous==0.11.1
