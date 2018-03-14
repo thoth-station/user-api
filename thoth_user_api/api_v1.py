@@ -5,7 +5,6 @@ from itertools import islice
 from thoth.storages import AnalysisResultsStore
 from thoth.storages import SolverResultsStore
 from thoth.storages import BuildLogsStore
-from thoth.storages.base import StorageBase
 
 from .parsing import parse_log as do_parse_log
 from .utils import get_pod_log as do_get_pod_log
@@ -153,22 +152,23 @@ def post_buildlog(log_info: dict):
 
 def list_buildlogs(page: int=0):
     """List availabe build logs."""
-    return _do_listing(BuildLogsStore(), page)
+    return _do_listing(BuildLogsStore, page)
 
 
 def list_analyzer_results(page: int=0):
     """Retrieve image analyzer result."""
-    return _do_listing(AnalysisResultsStore(), page)
+    return _do_listing(AnalysisResultsStore, page)
 
 
 def list_solver_results(page: int=0):
     """Retrieve image analyzer result."""
-    return _do_listing(SolverResultsStore(), page)
+    return _do_listing(SolverResultsStore, page)
 
 
-def _do_listing(adapter: StorageBase, page: int) -> tuple:
+def _do_listing(adapter_class, page: int) -> tuple:
     """Perform actual listing."""
     try:
+        adapter = adapter_class()
         adapter.connect()
         result = adapter.get_document_listing()
         # TODO: I'm not sure if Ceph returns objects in the same order each time.
