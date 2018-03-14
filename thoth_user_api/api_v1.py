@@ -57,7 +57,7 @@ def get_analyzer_result(document_id: str):
         }, 400
 
 
-def list_analyzer_results(page: int):
+def list_analyzer_results(page: int=0):
     """Retrieve image analyzer result."""
     try:
         adapter = AnalysisResultsStore()
@@ -66,7 +66,7 @@ def list_analyzer_results(page: int):
         # TODO: I'm not sure if Ceph returns objects in the same order each time.
         # We will need to abandon this logic later anyway once we will be able to query results on data hub side.
         return {
-            "results": list(islice(result, page, page + PAGINATION_SIZE)),
+            "results": list(islice(result, page*PAGINATION_SIZE, page*PAGINATION_SIZE + PAGINATION_SIZE)),
             "page": page,
             "page_size": PAGINATION_SIZE
         }
@@ -127,7 +127,7 @@ def get_solver_result(document_id: str):
         }, 400
 
 
-def list_solver_results(page: int):
+def list_solver_results(page: int=0):
     """Retrieve image analyzer result."""
     try:
         adapter = SolverResultsStore()
@@ -136,7 +136,7 @@ def list_solver_results(page: int):
         # TODO: I'm not sure if Ceph returns objects in the same order each time.
         # We will need to abandon this logic later anyway once we will be able to query results on data hub side.
         return {
-            "results": list(islice(result, page, page + PAGINATION_SIZE)),
+            "results": list(islice(result, page*PAGINATION_SIZE, page*PAGINATION_SIZE + PAGINATION_SIZE)),
             "page": page,
             "page_size": PAGINATION_SIZE
         }
