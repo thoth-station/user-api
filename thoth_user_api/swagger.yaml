@@ -295,14 +295,32 @@ paths:
         400:
           description: On invalid request.
 
-  /buildlog/{log_id}:
+    get:
+      tags: [buildlogs]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: list_buildlogs
+      summary: Retrieve a list of document ids for stored build logs.
+      parameters:
+        - name: page
+          in: query
+          required: false
+          default: 0
+          description: Page offset in pagination.
+          type: integer
+      responses:
+        200:
+          description: A list of build log ids.
+        400:
+          description: On invalid request.
+
+  /buildlog/{document_id}:
     get:
       tags: [buildlogs]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: get_buildlog
       summary: Retrieve the given build log.
       parameters:
-        - name: log_id
+        - name: document_id
           in: path
           required: true
           type: string
