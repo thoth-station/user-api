@@ -183,8 +183,10 @@ def _do_listing(adapter_class, page: int) -> tuple:
         result = adapter.get_document_listing()
         # TODO: I'm not sure if Ceph returns objects in the same order each time.
         # We will need to abandon this logic later anyway once we will be able to query results on data hub side.
+        results = list(islice(result, page*PAGINATION_SIZE, page*PAGINATION_SIZE + PAGINATION_SIZE))
         return {
-            "results": list(islice(result, page*PAGINATION_SIZE, page*PAGINATION_SIZE + PAGINATION_SIZE)),
+            "results": results,
+            "results_count": len(results),
             "page": page,
             "page_size": PAGINATION_SIZE
         }, 200
