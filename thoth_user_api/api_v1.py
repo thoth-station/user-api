@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import logging
 from itertools import islice
 
 from thoth.storages import AnalysisResultsStore
@@ -16,6 +17,7 @@ from .utils import run_solver
 from .utils import run_sync
 
 PAGINATION_SIZE = 100
+_LOGGER = logging.getLogger(__name__)
 
 
 def analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None,
@@ -28,6 +30,7 @@ def analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None,
             'parameters': params
         }, 202
     except Exception as exc:
+        _LOGGER.exception(str(exc))
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {
             'error': str(exc),
@@ -44,6 +47,7 @@ def run(image: str, environment: dict, cpu_request: str=None, memory_request: st
             'parameters': params
         }, 202
     except Exception as exc:
+        _LOGGER.exception(str(exc))
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {
             'error': str(exc),
@@ -61,6 +65,7 @@ def solve(solver: str, packages: dict, debug: bool=False, cpu_request: str=None,
             'parameters': params
         }, 202
     except Exception as exc:
+        _LOGGER.exception(str(exc))
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {
             'error': str(exc),
@@ -78,6 +83,7 @@ def advise(packages: dict, debug: bool=False, packages_only: bool=False):
             'parameters': params
         }, 202
     except Exception as exc:
+        _LOGGER.exception(str(exc))
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {
             'error': str(exc),
@@ -92,6 +98,7 @@ def sync(sync_observations: bool=False):
             'pod_id': run_sync(sync_observations),
         }, 202
     except Exception as exc:
+        _LOGGER.exception(str(exc))
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {
             'error': str(exc),
@@ -105,6 +112,7 @@ def parse_log(log_info: dict):
     try:
         return do_parse_log(log_info.get('log', '')), 200
     except Exception as exc:
+        _LOGGER.exception(str(exc))
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {'error': str(exc)}, 400
 
@@ -120,6 +128,7 @@ def get_pod_log(pod_id: str):
             'pod_log': do_get_pod_log(pod_id)
         }
     except Exception as exc:
+        _LOGGER.exception(str(exc))
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {'error': str(exc), 'pod_id': pod_id}, 400
 
@@ -135,6 +144,7 @@ def get_pod_status(pod_id: str):
             'status': do_get_pod_status(pod_id)
         }
     except Exception as exc:
+        _LOGGER.exception(str(exc))
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {'error': str(exc), 'pod_id': pod_id}, 400
 
@@ -179,6 +189,7 @@ def _do_listing(adapter_class, page: int) -> tuple:
             "page_size": PAGINATION_SIZE
         }, 200
     except Exception as exc:
+        _LOGGER.exception(str(exc))
         # TODO: some errors should be filtered out
         return {
             'error': str(exc),
@@ -208,6 +219,7 @@ def _get_document(adapter_class, document_id: str) -> tuple:
         result = adapter.retrieve_document(document_id)
         return result, 200
     except Exception as exc:
+        _LOGGER.exception(str(exc))
         # TODO: handle 404 as a special case here
         return {
             'error': str(exc),
