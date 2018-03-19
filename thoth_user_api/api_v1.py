@@ -94,8 +94,13 @@ def advise(packages: dict, debug: bool=False, packages_only: bool=False):
         }, 400
 
 
-def sync(sync_observations: bool=False):
+def sync(secret: str, sync_observations: bool=False):
     """Sync results to graph database."""
+    if secret != Configuration.THOTH_SECRET:
+        return {
+            'error': 'Wrong secret provided'
+        }, 401
+
     try:
         return {
             'pod_id': run_sync(sync_observations),

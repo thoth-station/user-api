@@ -251,11 +251,19 @@ paths:
           description: Sync also observations from analyzers.
           type: boolean
           default: false
+        - name: secret
+          in: query
+          required: true
+          description: A secret to sync graph database.
+          type: string
+          default: false
       responses:
         202:
           description: Successful response with pod id.
         400:
           description: On invalid request.
+        401:
+          description: Invalid authorization secret.
 
   /erase-graph:
     post:
