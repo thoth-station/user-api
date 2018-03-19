@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 
+import asyncio
 import logging
 from itertools import islice
 
 from thoth.storages import AnalysisResultsStore
 from thoth.storages import SolverResultsStore
 from thoth.storages import BuildLogsStore
+from thoth.storages import GraphDatabase
 
+from .configuration import Configuration
 from .parsing import parse_log as do_parse_log
 from .utils import get_pod_log as do_get_pod_log
 from .utils import get_pod_status as do_get_pod_status
@@ -211,6 +214,19 @@ def get_analyzer_result(document_id: str):
 def get_buildlog(document_id: str):
     """Retrieve the given buildlog."""
     return _get_document(BuildLogsStore, document_id)
+
+
+def erase_graph(secret: str):
+    if secret != Configuration.THOTH_SECRET:
+        return {
+            'error': 'Wrong secret provided'
+        }, 401
+
+    adapter = GraphDatabase()
+    adapter.connect()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(adapter.g.V().drop().next())
+    return {}, 201
 
 
 def _get_document(adapter_class, document_id: str) -> tuple:

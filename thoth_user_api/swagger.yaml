@@ -257,6 +257,25 @@ paths:
         400:
           description: On invalid request.
 
+  /erase-graph:
+    post:
+      tags: [management]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: erase_graph
+      summary: Clean graph database.
+      parameters:
+        - name: secret
+          in: query
+          required: true
+          description: A secret to clean graph database.
+          type: string
+          default: false
+      responses:
+        201:
+          description: Graph database was cleaned.
+        400:
+          description: On invalid request.
+
   /parse-log:
     post:
       tags: [buildlogs]
@@ -275,6 +294,8 @@ paths:
           description: Successful response.
         400:
           description: On invalid request.
+        401:
+          description: Invalid authorization secret.
 
   /buildlog:
     post:
