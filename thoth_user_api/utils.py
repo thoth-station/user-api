@@ -117,7 +117,7 @@ def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=T
                 },
                 "env": [
                     {"name": "THOTH_SOLVER", "value": str(solver)},
-                    {"name": "THOTH_SOLVER_TRANSITIVE", "value": str(int(transitive))},
+                    {"name": "THOTH_SOLVER_NO_TRANSITIVE", "value": str(int(not transitive))},
                     {"name": "THOTH_SOLVER_PACKAGES", "value": str(packages.replace('\n', '\\n'))},
                     {"name": "THOTH_SOLVER_DEBUG", "value": str(int(debug))},
                     {"name": "THOTH_SOLVER_OUTPUT", "value": Configuration.THOTH_SOLVER_OUTPUT}
