@@ -1,6 +1,6 @@
 aenum==1.4.5
 aiogremlin==3.2.6rc1
-aiohttp==2.2.5
+aiohttp==3.1.0
 async-timeout==2.0.1
 attrs==17.4.0
 boto3==1.6.8
