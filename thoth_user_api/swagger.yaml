@@ -25,6 +25,10 @@ paths:
           required: true
           description: Name of analyzer (OpenShift build) to be triggered.
           type: string
+          items:
+            type: string
+          enum:
+            - fridex/thoth-package-extract
         - name: debug
           in: query
           required: false
@@ -132,6 +136,11 @@ paths:
           required: true
           description: Name of solver (OpenShift build) to be triggered.
           type: string
+          items:
+            type: string
+          enum:
+            - fridex/thoth-solver-fc27
+            - fridex/thoth-solver-fc26
         - name: debug
           in: query
           required: false
