@@ -31,7 +31,7 @@ requests==2.18.4
 s3transfer==0.1.13
 six==1.11.0
 swagger-spec-validator==2.1.0
-thoth-common==0.0.0
+thoth-common==0.0.1
 thoth-storages==0.0.11
 tornado==5.0.1
 typing==3.6.4;
