@@ -20,7 +20,7 @@ from .utils import run_solver
 from .utils import run_sync
 
 PAGINATION_SIZE = 100
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger('thoth.user_api.api_v1')
 
 
 def analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None,

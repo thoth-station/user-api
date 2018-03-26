@@ -9,27 +9,9 @@ import connexion
 from flask_script import Manager
 
 from thoth.common import SafeJSONEncoder
+from thoth.common import init_logging
 
 from .configuration import Configuration
-
-
-def init_logging():
-    """Initialize application logging."""
-    # Initialize flask logging
-    formatter = logging.Formatter('%(asctime)s - %(message)s')
-    handler = logging.StreamHandler()
-    handler.setLevel(logging.WARNING)
-    handler.setFormatter(formatter)
-
-    # Use flask App instead of Connexion's one
-    application.logger.addHandler(handler)
-    formatter = logging.Formatter('%(asctime)s - %(message)s')
-    handler = logging.StreamHandler()
-    handler.setFormatter(formatter)
-    liblog = logging.getLogger('thoth_pkgdeps')
-    liblog.setLevel(logging.DEBUG)
-    liblog.addHandler(handler)
-
 
 # Expose for uWSGI.
 app = connexion.App(__name__)

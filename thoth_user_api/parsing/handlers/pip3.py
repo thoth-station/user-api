@@ -18,7 +18,8 @@ _RE_DOWNLOADING_ARTIFACT = re.compile(r'  Downloading ([+a-zA-Z_\-.:/0-9>=<;,"]+
 _RE_ALREADY_SATISFIED = re.compile(r'Requirement already satisfied: ([+a-zA-Z_\-.():/0-9>=<;,"]+) in '
                                    r'([+a-zA-Z_\-.():/0-9>=<;,"]+) \(from ([a-zA-Z_\-.():/0-9>=<, ]+)\)')
 _RE_ESCAPE_SEQ = re.compile(r'(\x9B|\x1B\[)[0-?]*[ -/]*[@-~]')
-_LOG = logging.getLogger(__name__)
+
+_LOG = logging.getLogger('thoth.user_api.parsing.handlers.pip3')
 
 
 @attr.s

@@ -5,7 +5,7 @@ import requests
 
 from .configuration import Configuration
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger('thoth.user_api.utils')
 
 
 def _do_run_pod(template: dict, namespace: str) -> str:

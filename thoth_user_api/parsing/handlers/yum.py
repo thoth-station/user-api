@@ -12,7 +12,7 @@ _RE_EPOCH_VERSION = re.compile(r'([0-9]+):(.+)')
 _RE_DEPENDENCY = re.compile(r'--> Processing Dependency: '
                             r'([a-zA-Z_\-.():/0-9>=< ]+) for package: ([a-zA-Z_\-.():0-9]+)')
 
-_LOG = logging.getLogger(__name__)
+_LOG = logging.getLogger('thoth.user_api.parsing.handlers.yum')
 
 
 @attr.s
