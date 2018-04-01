@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: thoth-user-api-buildconfig
+  thoth: 0.1.0
+metadata:
+  name: thoth-user-api-buildconfig
+  annotations:
+    description: This is Thoth User API BuildConfig, this template is meant to be used by Jenkins, but could also be used by humans...
+    openshift.io/display-name: Thoth User API BuildConfig
+    version: 0.1.0
+    tags: poc,thoth,thoth-user-api,ai-stacks
+    template.openshift.io/documentation-url: https://github.com/AICoE/Thoth/
+    template.openshift.io/long-description: This is Thoth User API BuildConfig, this template is meant to be used by Jenkins, but could also be used by humans...
+    template.openshift.io/provider-display-name: Red Hat, Inc.
+
+objects:
+#
+# Image streams
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: python
+    annotations:
+      openshift.io/display-name: Python
+  spec:
+    tags:
+      - name: "latest"
+        annotations:
+          iconClass: icon-python
+          supports: python:3.6,python
+          version: "latest"
+        from:
+          kind: DockerImage
+          name: docker.io/centos/python-36-centos7:latest
+
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: thoth-core
+    name: user-api
+  spec:
+    name: stable
+
+#
+# Build configs
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    name: user-api
+    labels:
+      app: thoth-core
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: "user-api:${IMAGE_STREAM_TAG}"
+    source:
+      type: Git
+      git:
+        uri: ${THOTH_USER_API_GIT_URL}
+        ref: ${THOTH_USER_API_GIT_REF}
+    strategy:
+      type: Source
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: python:latest
+    triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChange: {}
+
+parameters:
+- description: Git repository for Thoth's User API
+  displayName: Thoth user-api git repository
+  required: true
+  name: THOTH_USER_API_GIT_URL
+  value: 'https://github.com/fridex/thoth-user-api'
+
+- description: Git repository for Thoth's User API
+  displayName: Thoth user-api git reference
+  required: true
+  name: THOTH_USER_API_GIT_REF
+  value: 'master'
+
+- description: Tag of the output ImageStream the resulting container image should go to
+  displayName: ImageStream Tag
+  required: true
+  name: IMAGE_STREAM_TAG
+  value: 'latest'
