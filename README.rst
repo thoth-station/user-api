@@ -1,4 +1,4 @@
-Thoth-core user-facing API
+Thoth Core user-facing API
 ==========================
 
 This API is as a user-facing service, and part of `Thoth Core project <https://github.com/fridex/thoth-core>`_.
