@@ -236,9 +236,9 @@ pipeline {
         }
         failure {
             script {
-//                mattermostSend channel: "#thoth-station", 
-//                    icon: 'https://avatars1.githubusercontent.com/u/33906690', 
-//                    message: "${JOB_NAME} #${BUILD_NUMBER}: ${currentBuild.currentResult}: ${BUILD_URL}"
+                mattermostSend channel: "#thoth-station", 
+                    icon: 'https://avatars1.githubusercontent.com/u/33906690', 
+                    message: "${JOB_NAME} #${BUILD_NUMBER}: ${currentBuild.currentResult}: ${BUILD_URL}"
 
                 error "BREAK BREAK BREAK - build failed!"
             }
