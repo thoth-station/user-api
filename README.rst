@@ -1,7 +1,7 @@
-Thoth-core user-facing API
+Thoth Core user-facing API
 ==========================
 
-This simple API service serves as a user-facing API service in the `Thoth-core project <https://github.com/fridex/thoth-core>`_.
+This API is as a user-facing service, and part of `Thoth Core project <https://github.com/fridex/thoth-core>`_.
 
 It's main aim is to provide a management service that can be used directly by users for the `thoth-middeend` part. See `Thoth-core <https://github.com/fridex/thoth-core>`_ for more details.
 
