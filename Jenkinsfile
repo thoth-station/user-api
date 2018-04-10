@@ -81,8 +81,6 @@ pipeline {
         stage("Setup BuildConfig") {
             steps {
                 script {                    
-                    def openShiftApplyArgs = ""
-                    updateBuildConfigRequired = false
                     env.TAG = "test"
                     env.REF = "master"
 
@@ -93,7 +91,7 @@ pipeline {
                         if (env.Tag.startsWith("PR")) {
                             env.REF = "refs/pull/${env.CHANGE_ID}/head"
                         } else {
-                            env.REF = "${branch}"
+                            env.REF = branch.replace("%2F", "/")
                         }
                     }
 
@@ -101,9 +99,7 @@ pipeline {
                         openshift.withProject(CI_TEST_NAMESPACE) {
                             if (!openshift.selector("template/thoth-user-api-buildconfig").exists()) {
                                 openshift.apply(readFile('openshift/buildConfig-template.yaml'))
-                                updateBuildConfigRequired = true
-                            } else {
-                                openShiftApplyArgs = "--dry-run"
+                                echo "BuildConfig Template created!"
                             }
 
                             /* Process the template and return the Map of the result */
@@ -113,12 +109,11 @@ pipeline {
                                     "THOTH_USER_API_GIT_REF=${env.REF}",
                                     "THOTH_USER_API_GIT_URL=https://github.com/${org}/${repo}")
 
-                            echo ">>>>> OpenShift Template Model <<<<<"
+                            echo "BuildConfig Model from Template"
                             echo "${model}"
 
-                            if (updateBuildConfigRequired == true) {
-                                createdObjects = openshift.apply(model, openShiftApplyArgs)
-                            }
+                            echo "Updating BuildConfig from model..."
+                            createdObjects = openshift.apply(model)
                         }
                     }
                 }
