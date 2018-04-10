@@ -88,7 +88,7 @@ pipeline {
 
                     // TODO check if this works with branches that are not included in a PR
                     if (env.BRANCH_NAME != 'master') {
-                        env.TAG = env.BRANCH_NAME.replace("%2F", "-")
+                        env.TAG = env.BRANCH_NAME.replace("/", "-")
 
                         if (env.Tag.startsWith("PR")) {
                             env.REF = "refs/pull/${env.CHANGE_ID}/head"
@@ -100,12 +100,10 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject(CI_TEST_NAMESPACE) {
                             if (!openshift.selector("template/thoth-user-api-buildconfig").exists()) {
-                                echo ">>>>> OpenShift Template created <<<<<"
                                 openshift.apply(readFile('openshift/buildConfig-template.yaml'))
                                 updateBuildConfigRequired = true
                             } else {
                                 openShiftApplyArgs = "--dry-run"
-                                echo ">>>>> OpenShift Template unchanged <<<<<"
                             }
 
                             /* Process the template and return the Map of the result */
@@ -119,9 +117,7 @@ pipeline {
                             echo "${model}"
 
                             if (updateBuildConfigRequired == true) {
-                                echo ">>>>> Enter OpenShift Apply Template Model <<<<<"
                                 createdObjects = openshift.apply(model, openShiftApplyArgs)
-                                echo ">>>>> Exit OpenShift Apply Template Model <<<<<"
                             }
                         }
                     }
