@@ -68,6 +68,7 @@ def solve(solver: str, packages: dict, debug: bool=False, cpu_request: str=None,
             'parameters': params
         }, 202
     except Exception as exc:
+        _LOGGER.error(f"Failed to run solver for {packages!r}")
         _LOGGER.exception(str(exc))
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {
@@ -86,6 +87,7 @@ def advise(packages: dict, debug: bool=False, packages_only: bool=False):
             'parameters': params
         }, 202
     except Exception as exc:
+        _LOGGER.error(f"Failed to run adviser for {packages!r}")
         _LOGGER.exception(str(exc))
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {
