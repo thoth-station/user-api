@@ -29,6 +29,16 @@ paths:
             type: string
           enum:
             - fridex/thoth-package-extract
+        - name: registry-user
+          in: query
+          required: false
+          description: Registry user to be used for pulling images from registry.
+          type: string
+        - name: registry-password
+          in: query
+          required: false
+          description: Registry password or token to be used for pulling images from registry.
+          type: string
         - name: debug
           in: query
           required: false
