@@ -33,7 +33,8 @@ def _do_run_pod(template: dict, namespace: str) -> str:
 
 
 def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None,
-                 cpu_request: str=None, memory_request: str=None) -> str:
+                 cpu_request: str=None, memory_request: str=None,
+                 registry_user: str=None, registry_password=None) -> str:
     """Run an analyzer for the given image."""
     name_prefix = "{}-{}".format(analyzer, image.rsplit('/', maxsplit=1)[-1]).replace(':', '-').replace('/', '-')
     template = {
@@ -81,6 +82,14 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
             }]
         }
     }
+
+    if bool(registry_user) + bool(registry_password) == 1:
+        raise ValueError('Please specify both registry user and password in order to use registry authentication.')
+
+    if registry_user and registry_password:
+        template['spec']['containers'][0]['env'].append({
+            "name": "THOTH_REGISTRY_CREDENTIALS", "value": f"{registry_user}:{registry_password}"
+        })
 
     _LOGGER.debug("Requesting to run analyzer %r with payload %s", analyzer, template)
     return _do_run_pod(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
