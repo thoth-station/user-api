@@ -29,12 +29,12 @@ paths:
             type: string
           enum:
             - fridex/thoth-package-extract
-        - name: registry-user
+        - name: registry_user
           in: query
           required: false
           description: Registry user to be used for pulling images from registry.
           type: string
-        - name: registry-password
+        - name: registry_password
           in: query
           required: false
           description: Registry password or token to be used for pulling images from registry.
@@ -50,12 +50,12 @@ paths:
           required: false
           description: Give a timeout to commands run inside the analyzer container.
           type: integer
-        - name: cpu-request
+        - name: cpu_request
           in: query
           required: false
           description: CPU request for the analyzer run.
           type: string
-        - name: memory-request
+        - name: memory_request
           in: query
           required: false
           description: Memory request for the analyzer run.
@@ -157,12 +157,12 @@ paths:
           description: Run the given analyzer in a verbose mode so developers can debug analyzer (requires access to the OpenShift console).
           type: boolean
           default: false
-        - name: cpu-request
+        - name: cpu_request
           in: query
           required: false
           description: CPU request for the analyzer run.
           type: string
-        - name: memory-request
+        - name: memory_request
           in: query
           required: false
           description: Memory request for the analyzer run.
@@ -235,12 +235,12 @@ paths:
           required: true
           description: Name of image - can also specify remote registry to pull image from.
           type: string
-        - name: cpu-request
+        - name: cpu_request
           in: query
           required: false
           description: CPU request for the analyzer run
           type: string
-        - name: memory-request
+        - name: memory_request
           in: query
           required: false
           description: Memory request for the analyzer run
