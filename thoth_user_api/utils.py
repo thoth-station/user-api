@@ -36,9 +36,6 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
                  cpu_request: str=None, memory_request: str=None,
                  registry_user: str=None, registry_password=None) -> str:
     """Run an analyzer for the given image."""
-    if bool(registry_user) + bool(registry_password) == 1:
-        raise ValueError('Please specify both registry user and password in order to use registry authentication.')
-
     name_prefix = "{}-{}".format(analyzer, image.rsplit('/', maxsplit=1)[-1]).replace(':', '-').replace('/', '-')
     template = {
         "apiVersion": "v1",
@@ -86,8 +83,11 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
         }
     }
 
+    if bool(registry_user) + bool(registry_password) == 1:
+        raise ValueError('Please specify both registry user and password in order to use registry authentication.')
+
     if registry_user and registry_password:
-        template['spec']['containers']['env'].append({
+        template['spec']['containers'][0]['env'].append({
             "name": "THOTH_REGISTRY_CREDENTIALS", "value": f"{registry_user}:{registry_password}"
         })
 
