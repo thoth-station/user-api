@@ -1,7 +1,7 @@
 // Openshift project
 OPENSHIFT_SERVICE_ACCOUNT = 'jenkins'
 DOCKER_REGISTRY = env.CI_DOCKER_REGISTRY ?: 'docker-registry.default.svc.cluster.local:5000'
-CI_NAMESPACE= env.CI_NAMESPACE ?: 'ai-coe'
+CI_NAMESPACE= env.CI_PIPELINE_NAMESPACE ?: 'ai-coe'
 CI_TEST_NAMESPACE = env.CI_THOTH_TEST_NAMESPACE ?: 'ai-coe'
 
 // Defaults for SCM operations
