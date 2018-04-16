@@ -49,7 +49,7 @@ objects:
       sourceStrategy:
         from:
           kind: ImageStreamTag
-          name: python:latest
+          name: python-36-rhel7:latest
     triggers:
     - type: ImageChange
       imageChange: {}
