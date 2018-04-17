@@ -2,13 +2,8 @@
 OPENSHIFT_SERVICE_ACCOUNT = 'jenkins'
 DOCKER_REGISTRY = env.CI_DOCKER_REGISTRY ?: 'docker-registry.default.svc.cluster.local:5000'
 CI_NAMESPACE= env.CI_PIPELINE_NAMESPACE ?: 'ai-coe'
-CI_TEST_NAMESPACE = env.CI_THOTH_TEST_NAMESPACE ?: 'ai-coe'
+CI_TEST_NAMESPACE = env.CI_THOTH_TEST_NAMESPACE ?: CI_NAMESPACE
 
-// Defaults for SCM operations
-env.ghprbGhRepository = env.ghprbGhRepository ?: 'thoth-station/thoth-user-api'
-env.ghprbActualCommit = env.ghprbActualCommit ?: 'master'
-
-// If this PR does not include an image change, then use this tag
 STABLE_LABEL = "stable"
 tagMap = [:]
 
@@ -19,18 +14,10 @@ tagMap['user-api'] = '0.1.0'
 IRC_NICK = "aicoe-bot"
 IRC_CHANNEL = "#thoth-station"
 
-
-// github-organization-plugin jobs are named as 'org/repo/branch'
-// we don't want to assume that the github-organization job is at the top-level
-// instead we get the total number of tokens (size) 
-// and work back from the branch level Pipeline job where this would actually be run
-// Note: that branch job is at -1 because Java uses zero-based indexing
 tokens = "${env.JOB_NAME}".tokenize('/')
 org = tokens[tokens.size()-3]
 repo = tokens[tokens.size()-2]
 branch = tokens[tokens.size()-1]
-
-echo "${org} ${repo} ${branch}"
 
 properties(
     [
@@ -106,8 +93,8 @@ pipeline {
                             def model = openshift.process('thoth-user-api-buildconfig',
                                     "-p", 
                                     "IMAGE_STREAM_TAG=${env.TAG}",
-                                    "THOTH_USER_API_GIT_REF=${env.REF}",
-                                    "THOTH_USER_API_GIT_URL=https://github.com/${org}/${repo}")
+                                    "GITHUB_URL=https://github.com/${org}/${repo}",
+                                    "GITHUB_REF=${env.REF}")
 
                             echo "BuildConfig Model from Template"
                             echo "${model}"
@@ -155,11 +142,6 @@ pipeline {
 
                             openshift.tag("${CI_TEST_NAMESPACE}/user-api:${env.TAG}", "${CI_TEST_NAMESPACE}/user-api:test")
 
-                            /* Select the OpenShift DeploymentConfig object
-                             * Initiate a `oc rollout latest` command
-                             * Watch the status until the rollout is complete using the `oc`
-                             * option `-w` to watch
-                             */
                             def result = null
 
                             deploymentConfig = openshift.selector("dc", "user-api")
@@ -209,10 +191,10 @@ pipeline {
                 } // script
             } // steps
         } // stage
-        stage("Trigger Promotion") {
+        stage("Promotion to Stage") {
             steps {
                 script {
-                    echo 'trigger promotion to Stage'
+                    echo 'promotion to Stage Environment'
                 } // script
             } // steps
         } // stage
@@ -222,13 +204,9 @@ pipeline {
             script {
                 // junit 'reports/*.xml'
 
-                String prMsg = ""
-                if (env.ghprbActualCommit != null && env.ghprbActualCommit != "master") {
-                    prMsg = "(PR #${env.ghprbPullId} ${env.ghprbPullAuthorLogin})"
-                }
-
-                def message = "${JOB_NAME} ${prMsg} build #${BUILD_NUMBER}: ${currentBuild.currentResult}: ${BUILD_URL}"
-                pipelineUtils.sendIRCNotification("${IRC_NICK}", IRC_CHANNEL, message)
+                pipelineUtils.sendIRCNotification("${IRC_NICK}", 
+                    IRC_CHANNEL,
+                    "${JOB_NAME} #${BUILD_NUMBER}: ${currentBuild.currentResult}: ${BUILD_URL}")
             }
         }
         success {
