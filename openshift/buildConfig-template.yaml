@@ -8,9 +8,9 @@ metadata:
   annotations:
     description: This is Thoth User API BuildConfig, this template is meant to be used by Jenkins, but could also be used by humans...
     openshift.io/display-name: Thoth User API BuildConfig
-    version: 0.1.0
+    version: 0.1.1
     tags: poc,thoth,thoth-user-api,ai-stacks
-    template.openshift.io/documentation-url: https://github.com/AICoE/Thoth/
+    template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: This is Thoth User API BuildConfig, this template is meant to be used by Jenkins, but could also be used by humans...
     template.openshift.io/provider-display-name: Red Hat, Inc.
 
@@ -42,33 +42,33 @@ objects:
     source:
       type: Git
       git:
-        uri: ${THOTH_USER_API_GIT_URL}
-        ref: ${THOTH_USER_API_GIT_REF}
+        uri: ${GITHUB_URL}
+        ref: ${GITHUB_REF}
     strategy:
       type: Source
       sourceStrategy:
         from:
           kind: ImageStreamTag
-          name: python-36-rhel7:latest
+          name: python-36-centos7:latest
     triggers:
     - type: ImageChange
       imageChange: {}
 
 parameters:
-- description: Git repository for Thoth's User API
-  displayName: Thoth user-api git repository
+- description: Name of the github repository for Thoth's User API
+  displayName: Git Repository
   required: true
-  name: THOTH_USER_API_GIT_URL
-  value: 'https://github.com/fridex/thoth-user-api'
+  name: GITHUB_URL
+  value: 'https://github.com/thoth-station/user-api'
 
-- description: Git repository for Thoth's User API
-  displayName: Thoth user-api git reference
+- description: Git reference to be used for Thoth's User API
+  displayName: Git Reference
   required: true
-  name: THOTH_USER_API_GIT_REF
+  name: GITHUB_REF
   value: 'master'
 
 - description: Tag of the output ImageStream the resulting container image should go to
   displayName: ImageStream Tag
   required: true
   name: IMAGE_STREAM_TAG
-  value: 'stable'
+  value: 'latest'
