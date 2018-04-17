@@ -74,7 +74,7 @@ objects:
             valueFrom:
               configMapKeyRef:
                 key: user-api-service-port
-         `       name: thoth
+                name: thoth
           - name: KUBERNETES_API_URL
             value: 'https://kubernetes.default.svc.cluster.local'
           - name: KUBERNETES_VERIFY_TLS
