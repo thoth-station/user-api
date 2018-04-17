@@ -24,7 +24,7 @@ objects:
       app: thoth-core
     name: user-api
   spec:
-    name: stable
+    name: ${IMAGE_STREAM_TAG}
 
 #
 # Build configs
