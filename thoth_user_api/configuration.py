@@ -27,11 +27,10 @@ class Configuration:
     THOTH_BACKEND_NAMESPACE = os.environ['THOTH_BACKEND_NAMESPACE']
     THOTH_ANALYZER_HARD_TIMEOUT = int(os.getenv('THOTH_ANALYZER_HARD_TIMEOUT',
                                                 datetime.timedelta(hours=24).total_seconds()))
-    THOTH_RESULT_API_HOSTNAME = os.environ['THOTH_RESULT_API_HOSTNAME']
     THOTH_RESULT_API_URL = os.environ['THOTH_RESULT_API_URL']
     THOTH_ADVISER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/adviser-result'
-    THOTH_ANALYZER_OUTPUT = 'http://' + THOTH_RESULT_API_HOSTNAME + '/api/v1/analysis-result'
-    THOTH_SOLVER_OUTPUT = 'http://' + THOTH_RESULT_API_HOSTNAME + '/api/v1/solver-result'
+    THOTH_ANALYZER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/analysis-result'
+    THOTH_SOLVER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/solver-result'
     THOTH_MIDDLEEND_POD_MEMORY_LIMIT = os.getenv('THOTH_MIDDLEEND_POD_MEMORY_LIMIT', '0.5Gi')
     THOTH_MIDDLEEND_POD_CPU_LIMIT = os.getenv('THOTH_MIDDLEEND_POD_CPU_LIMIT', '0.5')
     THOTH_MIDDLEEND_POD_MEMORY_REQUEST = os.getenv('THOTH_MIDDLEEND_POD_MEMORY_REQUEST', '32Mi')
