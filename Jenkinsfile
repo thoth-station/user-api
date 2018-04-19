@@ -152,6 +152,8 @@ pipeline {
                             }
 
                             if (result.status != 0) {
+                                openshift.tag("${CI_TEST_NAMESPACE}/user-api:stable", "${CI_TEST_NAMESPACE}/user-api:test")
+
                                 error(result.err)
                             }
                         }
@@ -211,15 +213,6 @@ pipeline {
         }
         success {
             echo "All Systems GO!"
-        }
-        failure {
-            script {
-                mattermostSend channel: "#thoth-station", 
-                    icon: 'https://avatars1.githubusercontent.com/u/33906690', 
-                    message: "${JOB_NAME} #${BUILD_NUMBER}: ${currentBuild.currentResult}: ${BUILD_URL}"
-
-                error "BREAK BREAK BREAK - build failed!"
-            }
         }
     }
 }
