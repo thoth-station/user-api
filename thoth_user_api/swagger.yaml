@@ -60,6 +60,12 @@ paths:
           required: false
           description: Memory request for the analyzer run.
           type: string
+        - name: verify-tls
+          in: query
+          required: false
+          description: Verify TLS certificates of registry from where images are pulled from.
+          type: boolean
+          default: true
       responses:
         202:
           description: Successful response with analyzer (pod) id.

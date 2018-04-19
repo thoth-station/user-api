@@ -24,8 +24,8 @@ PAGINATION_SIZE = 100
 _LOGGER = logging.getLogger('thoth.user_api.api_v1')
 
 
-def analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None,
-            cpu_request: str=None, memory_request: str=None, registry_user: str=None, registry_password=None):
+def analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None, cpu_request: str=None,
+            memory_request: str=None, registry_user: str=None, registry_password=None, tls_verify: bool=True):
     """Run an analyzer in a restricted namespace."""
     params = locals()
     try:
