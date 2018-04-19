@@ -8,6 +8,7 @@ from thoth.storages import AnalysisResultsStore
 from thoth.storages import SolverResultsStore
 from thoth.storages import BuildLogsStore
 from thoth.storages import GraphDatabase
+from thoth.storages.exceptions import NotFoundError
 
 from .configuration import Configuration
 from .parsing import parse_log as do_parse_log
@@ -248,9 +249,15 @@ def _get_document(adapter_class, document_id: str) -> tuple:
         adapter.connect()
         result = adapter.retrieve_document(document_id)
         return result, 200
+    except NotFoundError:
+        return {
+            'error': f'Requested document {document_id!r} was not found',
+            'parameters': {
+               'document_id': document_id
+            }
+        }, 404
     except Exception as exc:
         _LOGGER.exception(str(exc))
-        # TODO: handle 404 as a special case here
         return {
             'error': str(exc),
             'parameters': {
