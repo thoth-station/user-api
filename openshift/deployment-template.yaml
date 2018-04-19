@@ -70,6 +70,8 @@ objects:
         serviceAccountName: analyzer
         containers:
         - env:
+          - name: APP_MODULE
+            value: 'thoth_user_api.entrypoint:app'
           - name: APP_SERVICE_PORT
             valueFrom:
               configMapKeyRef:

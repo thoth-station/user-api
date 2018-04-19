@@ -44,8 +44,6 @@ objects:
             value: ''
           - name: WEB_CONCURRENCY
             value: '4'
-          - name: APP_MODULE
-            value: 'thoth_user_api.entrypoint:app'
     triggers:
     - type: ImageChange
       imageChange: {}
