@@ -10,6 +10,7 @@ from flask_script import Manager
 
 from thoth.common import SafeJSONEncoder
 from thoth.common import init_logging
+import thoth_user_api
 
 from .configuration import Configuration
 
@@ -17,6 +18,8 @@ from .configuration import Configuration
 app = connexion.App(__name__)
 application = app.app
 init_logging()
+_LOGGER = logging.getLogger('thoth.result_api')
+
 app.add_api(Configuration.SWAGGER_YAML_PATH)
 application.json_encoder = SafeJSONEncoder
 manager = Manager(application)
@@ -44,15 +47,18 @@ def api_v1():
 
 @app.route('/readiness')
 def api_readiness():
-    return jsonify(None)
+    return jsonify({'status': 'ready', 'version': thoth_user_api.__version__}), 200, {'ContentType': 'application/json'}
 
 
 @app.route('/liveness')
 def api_liveness():
-    response = requests.get(Configuration.KUBERNETES_API_URL, verify=Configuration.KUBERNETES_VERIFY_TLS)
+    response = requests.get(Configuration.KUBERNETES_API_URL,
+                            verify=Configuration.KUBERNETES_VERIFY_TLS)
     response.raise_for_status()
     return jsonify(None)
 
 
 if __name__ == '__main__':
+    _LOGGER.info(f'Thoth User API v{thoth_user_api.__version__}')
+
     manager.run()
