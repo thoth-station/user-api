@@ -47,7 +47,7 @@ def _do_run_pod(template: dict, namespace: str) -> str:
 
 def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None,
                  cpu_request: str=None, memory_request: str=None,
-                 registry_user: str=None, registry_password=None) -> str:
+                 registry_user: str=None, registry_password: str=None, tls_verify: bool=True) -> str:
     """Run an analyzer for the given image."""
     name_prefix = "{}-{}".format(analyzer, image.rsplit('/', maxsplit=1)[-1]).replace(':', '-').replace('/', '-')
     template = {
@@ -80,7 +80,8 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
                     {"name": "THOTH_ANALYZER", "value": str(analyzer)},
                     {"name": "THOTH_ANALYZER_DEBUG", "value": str(int(debug))},
                     {"name": "THOTH_ANALYZER_TIMEOUT", "value": str(timeout or 0)},
-                    {"name": "THOTH_ANALYZER_OUTPUT", "value": Configuration.THOTH_ANALYZER_OUTPUT}
+                    {"name": "THOTH_ANALYZER_OUTPUT", "value": Configuration.THOTH_ANALYZER_OUTPUT},
+                    {"name": "THOTH_ANALYZER_NO_TLS_VERIFY", "value": str(int(not tls_verify))}
                 ],
                 "resources": {
                     "limits": {
