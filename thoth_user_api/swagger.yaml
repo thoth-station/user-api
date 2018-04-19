@@ -259,7 +259,7 @@ paths:
 
   /sync:
     post:
-      tags: [management]
+      tags: [admin]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: sync
       summary: Force sync to graph database.
