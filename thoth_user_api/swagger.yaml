@@ -275,6 +275,17 @@ paths:
           required: true
           description: A secret to sync graph database.
           type: string
+        - name: force-analysis-results-sync
+          in: query
+          required: false
+          description: Force resync all analysis results.
+          type: boolean
+          default: false
+        - name: force-solver-results-sync
+          in: query
+          required: false
+          description: Force resync all solver results.
+          type: boolean
           default: false
       responses:
         202:
