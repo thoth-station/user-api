@@ -152,6 +152,8 @@ pipeline {
                             }
 
                             if (result.status != 0) {
+                                openshift.tag("${CI_TEST_NAMESPACE}/user-api:stable", "${CI_TEST_NAMESPACE}/user-api:test")
+
                                 error(result.err)
                             }
                         }
