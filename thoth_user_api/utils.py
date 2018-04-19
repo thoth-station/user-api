@@ -8,6 +8,19 @@ from .configuration import Configuration
 _LOGGER = logging.getLogger('thoth.user_api.utils')
 
 
+def _set_env_var(env_config: list, name: str, value: str) -> None:
+    """Overwrite env variable configuration if already exists in configuration, otherwise append it."""
+    for item in env_config:
+        if item['name'] == name:
+            item['value'] = str(value)
+            break
+    else:
+        env_config.append({
+            'name': name,
+            'value': str(value)
+        })
+
+
 def _do_run_pod(template: dict, namespace: str) -> str:
     """Run defined template in Kubernetes."""
     # We don't care about secret as we run inside the cluster. All builds should hard-code it to secret.
@@ -87,9 +100,11 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
         raise ValueError('Please specify both registry user and password in order to use registry authentication.')
 
     if registry_user and registry_password:
-        template['spec']['containers'][0]['env'].append({
-            "name": "THOTH_REGISTRY_CREDENTIALS", "value": f"{registry_user}:{registry_password}"
-        })
+        _set_env_var(
+            template['spec']['containers'][0]['env'],
+            "THOTH_REGISTRY_CREDENTIALS",
+            f"{registry_user}:{registry_password}"
+        )
 
     _LOGGER.debug("Requesting to run analyzer %r with payload %s", analyzer, template)
     return _do_run_pod(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
@@ -236,22 +251,25 @@ def run_pod(image: str, environment: dict, cpu_request: str=None, memory_request
     return _do_run_pod(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
 
 
-def run_sync(sync_observations: bool=False) -> str:
+def run_sync(sync_observations: bool=False, *,
+             force_analysis_results_sync: bool=False, force_solver_results_sync: bool=False):
     """Run a graph sync."""
     # Let's reuse pod definition from the cronjob definition so any changes in deployed application work out of the box.
     cronjob_def = get_cronjob('thoth-graph-sync-job')
     pod_spec = cronjob_def['spec']['jobTemplate']['spec']['template']['spec']
 
     # We silently assume that the first container is actually the syncing container.
-    for env_conf in pod_spec['containers'][0]['env']:
-        if env_conf['name'] == 'THOTH_SYNC_OBSERVATIONS':
-            env_conf['value'] = str(int(sync_observations))
-            break
-    else:
-        pod_spec['containers'][0]['env'].append({
-            'name': 'THOTH_SYNC_OBSERVATIONS',
-            'value': str(int(sync_observations))
-        })
+    _set_env_var(pod_spec['containers'][0]['env'], 'THOTH_SYNC_OBSERVATIONS', str(int(sync_observations)))
+    _set_env_var(
+        pod_spec['containers'][0]['env'],
+        'THOTH_GRAPH_SYNC_FORCE_ANALYSIS_RESULTS_SYNC',
+        str(int(force_analysis_results_sync))
+    )
+    _set_env_var(
+        pod_spec['containers'][0]['env'],
+        'THOTH_GRAPH_SYNC_FORCE_SOLVER_RESULTS_SYNC',
+        str(int(force_solver_results_sync))
+    )
 
     template = {
         "apiVersion": "v1",

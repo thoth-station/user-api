@@ -96,7 +96,8 @@ def advise(packages: dict, debug: bool=False, packages_only: bool=False):
         }, 400
 
 
-def sync(secret: str, sync_observations: bool=False):
+def sync(secret: str, sync_observations: bool=False,
+         force_analysis_results_sync: bool=False, force_solver_results_sync: bool=False):
     """Sync results to graph database."""
     if secret != Configuration.THOTH_SECRET:
         return {
@@ -105,7 +106,11 @@ def sync(secret: str, sync_observations: bool=False):
 
     try:
         return {
-            'pod_id': run_sync(sync_observations),
+            'pod_id': run_sync(
+                sync_observations,
+                force_analysis_results_sync=force_analysis_results_sync,
+                force_solver_results_sync=force_solver_results_sync
+            )
         }, 202
     except Exception as exc:
         _LOGGER.exception(str(exc))
