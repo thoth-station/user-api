@@ -11,7 +11,7 @@ tagMap = [:]
 tagMap['user-api'] = '0.1.0'
 
 // IRC properties
-IRC_NICK = "aicoe-bot"
+IRC_NICK = "sesheta"
 IRC_CHANNEL = "#thoth-station"
 
 tokens = "${env.JOB_NAME}".tokenize('/')
