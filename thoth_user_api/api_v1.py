@@ -59,7 +59,8 @@ def run(image: str, environment: dict, cpu_request: str=None, memory_request: st
         }, 400
 
 
-def solve(solver: str, packages: dict, debug: bool=False, cpu_request: str=None, memory_request: str=None):
+def solve(solver: str, packages: dict, debug: bool=False,
+          cpu_request: str=None, memory_request: str=None, transitive: bool=False):
     """Run a solver in a restricted namespace."""
     packages = packages.pop('requirements', '')
     params = locals()
