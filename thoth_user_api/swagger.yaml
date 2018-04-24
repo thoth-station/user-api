@@ -398,7 +398,7 @@ paths:
         404:
           description: The given build log does not exist.
 
-  /log:
+  /log/{pod_id}:
     get:
       tags: [management]
       x-swagger-router-controller: thoth_user_api.api_v1
@@ -406,7 +406,7 @@ paths:
       summary: Show logs of a pod.
       parameters:
         - name: pod_id
-          in: query
+          in: path
           required: true
           description: An ID of requested pod.
           type: string
@@ -416,7 +416,7 @@ paths:
         400:
           description: On invalid request.
 
-  /status:
+  /status/{pod_id}:
     get:
       tags: [management]
       x-swagger-router-controller: thoth_user_api.api_v1
@@ -424,7 +424,7 @@ paths:
       summary: Show pod status.
       parameters:
         - name: pod_id
-          in: query
+          in: path
           required: true
           description: An ID of requested pod.
           type: string
