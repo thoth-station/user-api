@@ -10,7 +10,7 @@ produces:
 paths:
   /analyze:
     post:
-      tags: [management]
+      tags: [Management]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: analyze
       summary: Analyze the given image asynchronously.
@@ -72,7 +72,7 @@ paths:
         400:
           description: On invalid request.
     get:
-      tags: [results]
+      tags: [Results]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: list_analyzer_results
       summary: Retrieve a list of document ids for analyzer results.
@@ -91,7 +91,7 @@ paths:
 
   /analyze/{document_id}:
     get:
-      tags: [results]
+      tags: [Results]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: get_analyzer_result
       summary: Retrieve an analyzer result.
@@ -111,7 +111,7 @@ paths:
 
   /advise:
     post:
-      tags: [management]
+      tags: [Management]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: advise
       summary: Give recommendations and advises for the given application stack.
@@ -142,7 +142,7 @@ paths:
 
   /solve:
     post:
-      tags: [management]
+      tags: [Management]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: solve
       summary: Solve the given application stack.
@@ -192,7 +192,7 @@ paths:
           description: On invalid request.
 
     get:
-      tags: [results]
+      tags: [Results]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: list_solver_results
       summary: Retrieve a list of document ids for solver results.
@@ -211,7 +211,7 @@ paths:
 
   /solve/{document_id}:
     get:
-      tags: [results]
+      tags: [Results]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: get_solver_result
       summary: Retrieve a solver result.
@@ -231,7 +231,7 @@ paths:
 
   /run:
     post:
-      tags: [management]
+      tags: [Management]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: run
       summary: Run the given image inside cluster.
@@ -265,7 +265,7 @@ paths:
 
   /sync:
     post:
-      tags: [admin]
+      tags: [Admin]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: sync
       summary: Force sync to graph database.
@@ -303,7 +303,7 @@ paths:
 
   /erase-graph:
     post:
-      tags: [management]
+      tags: [Admin]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: erase_graph
       summary: Clean graph database.
@@ -322,7 +322,7 @@ paths:
 
   /parse-log:
     post:
-      tags: [buildlogs]
+      tags: [Buildlogs]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: parse_log
       summary: Parse Docker build log or installation log and show installed packages.
@@ -343,7 +343,7 @@ paths:
 
   /buildlog:
     post:
-      tags: [buildlogs]
+      tags: [Buildlogs]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: post_buildlog
       summary: Store the given build log.
@@ -361,7 +361,7 @@ paths:
           description: On invalid request.
 
     get:
-      tags: [buildlogs]
+      tags: [Buildlogs]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: list_buildlogs
       summary: Retrieve a list of document ids for stored build logs.
@@ -380,7 +380,7 @@ paths:
 
   /buildlog/{document_id}:
     get:
-      tags: [buildlogs]
+      tags: [Buildlogs]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: get_buildlog
       summary: Retrieve the given build log.
@@ -400,7 +400,7 @@ paths:
 
   /log/{pod_id}:
     get:
-      tags: [management]
+      tags: [Management]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: get_pod_log
       summary: Show logs of a pod.
@@ -418,7 +418,7 @@ paths:
 
   /status/{pod_id}:
     get:
-      tags: [management]
+      tags: [Management]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: get_pod_status
       summary: Show pod status.
