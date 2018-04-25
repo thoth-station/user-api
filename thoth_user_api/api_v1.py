@@ -193,7 +193,7 @@ def post_buildlog(log_info: dict):
     }, 202
 
 
-def list_runtime_environemnts(page: int=0):
+def list_runtime_environments(page: int=0):
     """List available runtime environments"""
     graph = GraphDatabase()
     graph.connect()
@@ -205,6 +205,15 @@ def list_runtime_environemnts(page: int=0):
         "page": page,
         "page_size": PAGINATION_SIZE
     }, 200
+
+
+def get_runtime_environment(runtime_environment_name: str, analysis_id: str=None):
+    """Get packages inside the given runtime environment."""
+    graph = GraphDatabase()
+    graph.connect()
+
+    result = graph.get_runtime_environment(runtime_environment_name, analysis_id)
+    return list(map(lambda x: x.to_pretty_dict(), result)), 200
 
 
 def list_buildlogs(page: int=0):
