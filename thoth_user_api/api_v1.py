@@ -193,8 +193,22 @@ def post_buildlog(log_info: dict):
     }, 202
 
 
+def list_runtime_environemnts(page: int=0):
+    """List available runtime environments"""
+    graph = GraphDatabase()
+    graph.connect()
+
+    result = graph.runtime_environment_listing(page, page+PAGINATION_SIZE)
+    return {
+        "results": result,
+        "results_count": len(result),
+        "page": page,
+        "page_size": PAGINATION_SIZE
+    }, 200
+
+
 def list_buildlogs(page: int=0):
-    """List availabe build logs."""
+    """List available build logs."""
     return _do_listing(BuildLogsStore, page)
 
 
