@@ -212,8 +212,22 @@ def get_runtime_environment(runtime_environment_name: str, analysis_id: str=None
     graph = GraphDatabase()
     graph.connect()
 
-    result = graph.get_runtime_environment(runtime_environment_name, analysis_id)
-    return list(map(lambda x: x.to_pretty_dict(), result)), 200
+    try:
+        results = graph.get_runtime_environment(runtime_environment_name, analysis_id)
+    except NotFoundError as exc:
+        return {
+            'error': str(exc),
+            'parameters': {
+               'runtime_environment_name': runtime_environment_name,
+               'analysis_id': analysis_id
+            }
+        }, 404
+
+    results = list(map(lambda x: x.to_pretty_dict(), results))
+    return {
+        "results": results,
+        "results_count": len(results)
+    }, 200
 
 
 def list_buildlogs(page: int=0):
