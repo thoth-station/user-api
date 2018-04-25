@@ -18,6 +18,7 @@
 
 """Common library-wide utilities."""
 
+import os
 import logging
 import requests
 
@@ -31,6 +32,7 @@ def _set_env_var(env_config: list, name: str, value: str) -> None:
     for item in env_config:
         if item['name'] == name:
             item['value'] = str(value)
+            item.pop('valueFrom', None)
             break
     else:
         env_config.append({
@@ -274,27 +276,29 @@ def run_sync(sync_observations: bool=False, *,
              force_analysis_results_sync: bool=False, force_solver_results_sync: bool=False):
     """Run a graph sync."""
     # Let's reuse pod definition from the cronjob definition so any changes in deployed application work out of the box.
-    cronjob_def = get_cronjob('thoth-graph-sync-job')
+    cronjob_def = get_cronjob('graph-sync')
     pod_spec = cronjob_def['spec']['jobTemplate']['spec']['template']['spec']
 
     # We silently assume that the first container is actually the syncing container.
-    _set_env_var(pod_spec['containers'][0]['env'], 'THOTH_SYNC_OBSERVATIONS', str(int(sync_observations)))
-    _set_env_var(
-        pod_spec['containers'][0]['env'],
-        'THOTH_GRAPH_SYNC_FORCE_ANALYSIS_RESULTS_SYNC',
-        str(int(force_analysis_results_sync))
-    )
-    _set_env_var(
-        pod_spec['containers'][0]['env'],
-        'THOTH_GRAPH_SYNC_FORCE_SOLVER_RESULTS_SYNC',
-        str(int(force_solver_results_sync))
-    )
+    # We need to assign values that are passed from configmaps explicitly.
+    # TODO: get rid of this once we will use custom objects.
+    env = pod_spec['containers'][0]['env']
+    _set_env_var(env, 'THOTH_SYNC_OBSERVATIONS', str(int(sync_observations)))
+    _set_env_var(env, 'THOTH_GRAPH_SYNC_FORCE_ANALYSIS_RESULTS_SYNC', str(int(force_analysis_results_sync)))
+    _set_env_var(env, 'THOTH_GRAPH_SYNC_FORCE_SOLVER_RESULTS_SYNC', str(int(force_solver_results_sync)))
+    _set_env_var(env, 'THOTH_MIDDLEEND_NAMESPACE', Configuration.THOTH_MIDDLEEND_NAMESPACE)
+    _set_env_var(env, 'THOTH_DEPLOYMENT_NAME', os.environ['THOTH_DEPLOYMENT_NAME'])
+    _set_env_var(env, 'THOTH_CEPH_HOST', os.environ['THOTH_CEPH_HOST'])
+    _set_env_var(env, 'THOTH_CEPH_BUCKET', os.environ['THOTH_CEPH_BUCKET'])
+    _set_env_var(env, 'THOTH_CEPH_BUCKET_PREFIX', os.environ['THOTH_CEPH_BUCKET_PREFIX'])
+    _set_env_var(env, 'THOTH_CEPH_KEY_ID', os.environ['THOTH_CEPH_KEY_ID'])
+    _set_env_var(env, 'THOTH_CEPH_SECRET_KEY', os.environ['THOTH_CEPH_SECRET_KEY'])
 
     template = {
         "apiVersion": "v1",
         "kind": "Pod",
         "metadata": {
-            "generateName": 'thoth-graph-sync-',
+            "generateName": 'graph-sync-',
             "namespace": Configuration.THOTH_BACKEND_NAMESPACE,
             "labels": {
                 "thothtype": "userpod",
