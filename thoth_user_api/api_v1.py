@@ -213,7 +213,7 @@ def get_runtime_environment(runtime_environment_name: str, analysis_id: str=None
     graph.connect()
 
     try:
-        results = graph.get_runtime_environment(runtime_environment_name, analysis_id)
+        results, analysis_document_id = graph.get_runtime_environment(runtime_environment_name, analysis_id)
     except NotFoundError as exc:
         return {
             'error': str(exc),
@@ -226,6 +226,7 @@ def get_runtime_environment(runtime_environment_name: str, analysis_id: str=None
     results = list(map(lambda x: x.to_pretty_dict(), results))
     return {
         "results": results,
+        "analysis": graph.get_analysis_metadata(analysis_document_id),
         "results_count": len(results)
     }, 200
 
