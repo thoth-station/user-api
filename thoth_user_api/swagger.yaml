@@ -237,6 +237,7 @@ paths:
       parameters:
         - name: runtime_environment_name
           in: path
+          format: path
           required: true
           description: Runtime environment name to be retrieved.
           type: string
