@@ -12,8 +12,8 @@ flask-script = "*"
 requests = "*"
 gunicorn = "*"
 attrs = "*"
-thoth-common = ">=0.0.1"
-thoth-storages = ">=0.0.13"
+thoth-common = ">=0.0.5"
+thoth-storages = ">=0.0.24"
 
 
 [dev-packages]

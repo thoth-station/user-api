@@ -209,6 +209,49 @@ paths:
         400:
           description: On invalid request.
 
+  /runtime-environment:
+    get:
+      tags: [Results]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: list_runtime_environments
+      summary: Retrieve a list of runtime environments analyzed.
+      parameters:
+        - name: page
+          in: query
+          required: false
+          default: 0
+          description: Page offset in pagination.
+          type: integer
+      responses:
+        200:
+          description: A list of runtime environments.
+        400:
+          description: On invalid request.
+
+  /runtime-environment/{runtime_environment_name}:
+    get:
+      tags: [Results]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_runtime_environment
+      summary: Retrieve runtime environment information.
+      parameters:
+        - name: runtime_environment_name
+          in: path
+          format: path
+          required: true
+          description: Runtime environment name to be retrieved.
+          type: string
+        - name: analysis_id
+          in: query
+          required: false
+          description: Specify analysis id for which results should be retrieved. If omitted, the latest will be used.
+          type: string
+      responses:
+        200:
+          description: Listing of packages present in the given runtime environment.
+        404:
+          description: The given runtime environment with provided name was not found.
+
   /solve/{document_id}:
     get:
       tags: [Results]

@@ -193,8 +193,46 @@ def post_buildlog(log_info: dict):
     }, 202
 
 
+def list_runtime_environments(page: int=0):
+    """List available runtime environments"""
+    graph = GraphDatabase()
+    graph.connect()
+
+    result = graph.runtime_environment_listing(page, page+PAGINATION_SIZE)
+    return {
+        "results": result,
+        "results_count": len(result),
+        "page": page,
+        "page_size": PAGINATION_SIZE
+    }, 200
+
+
+def get_runtime_environment(runtime_environment_name: str, analysis_id: str=None):
+    """Get packages inside the given runtime environment."""
+    graph = GraphDatabase()
+    graph.connect()
+
+    try:
+        results, analysis_document_id = graph.get_runtime_environment(runtime_environment_name, analysis_id)
+    except NotFoundError as exc:
+        return {
+            'error': str(exc),
+            'parameters': {
+               'runtime_environment_name': runtime_environment_name,
+               'analysis_id': analysis_id
+            }
+        }, 404
+
+    results = list(map(lambda x: x.to_pretty_dict(), results))
+    return {
+        "results": results,
+        "analysis": graph.get_analysis_metadata(analysis_document_id),
+        "results_count": len(results)
+    }, 200
+
+
 def list_buildlogs(page: int=0):
-    """List availabe build logs."""
+    """List available build logs."""
     return _do_listing(BuildLogsStore, page)
 
 
