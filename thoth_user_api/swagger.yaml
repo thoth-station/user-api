@@ -228,6 +228,31 @@ paths:
         400:
           description: On invalid request.
 
+  /runtime-environment/{runtime_environment_name}/analyses:
+    get:
+      tags: [Results]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: list_runtime_environment_analyses
+      summary: List analyses for the given runtime environment.
+      parameters:
+        - name: runtime_environment_name
+          in: path
+          format: path
+          required: true
+          description: Runtime environment name for which analyses should be retrieved.
+          type: string
+        - name: page
+          in: query
+          required: false
+          default: 0
+          description: Page offset in pagination.
+          type: integer
+      responses:
+        200:
+          description: Listing of analyses for the given runtime environment.
+        404:
+          description: The given runtime environment with the provided name was not found.
+
   /runtime-environment/{runtime_environment_name}:
     get:
       tags: [Results]

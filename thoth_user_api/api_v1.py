@@ -231,6 +231,28 @@ def get_runtime_environment(runtime_environment_name: str, analysis_id: str=None
     }, 200
 
 
+def list_runtime_environment_analyses(runtime_environment_name: str, page: int=0):
+    """List analyses for the given runtime environment."""
+    graph = GraphDatabase()
+    graph.connect()
+    try:
+        results = graph.runtime_environment_analyses_listing(runtime_environment_name, page, PAGINATION_SIZE)
+    except NotFoundError as exc:
+        return {
+            'error': str(exc),
+            'parameters': {
+               'runtime_environment_name': runtime_environment_name,
+               'page': page
+            }
+        }, 404
+
+    return {
+        'results': results,
+        'results_count': len(results),
+        'page': page
+    }, 200
+
+
 def list_buildlogs(page: int=0):
     """List available build logs."""
     return _do_listing(BuildLogsStore, page)
