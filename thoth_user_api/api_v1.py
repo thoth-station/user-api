@@ -198,7 +198,7 @@ def list_runtime_environments(page: int=0):
     graph = GraphDatabase()
     graph.connect()
 
-    result = graph.runtime_environment_listing(page, page+PAGINATION_SIZE)
+    result = graph.runtime_environment_listing(page, PAGINATION_SIZE)
     return {
         "results": result,
         "results_count": len(result),
