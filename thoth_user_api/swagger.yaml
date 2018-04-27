@@ -297,40 +297,6 @@ paths:
         404:
           description: The given document does not exist.
 
-  /run:
-    post:
-      tags: [Management]
-      x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: run
-      summary: Run the given image inside cluster.
-      parameters:
-        - name: image
-          in: query
-          required: true
-          description: Name of image - can also specify remote registry to pull image from.
-          type: string
-        - name: cpu_request
-          in: query
-          required: false
-          description: CPU request for the analyzer run
-          type: string
-        - name: memory_request
-          in: query
-          required: false
-          description: Memory request for the analyzer run
-          type: string
-        - name: environment
-          in: body
-          required: false
-          description: Environment variables supplied to the pod.
-          schema:
-            $ref: "#/definitions/Environment"
-      responses:
-        202:
-          description: Successful response with pod id.
-        400:
-          description: On invalid request.
-
   /sync:
     post:
       tags: [Admin]
