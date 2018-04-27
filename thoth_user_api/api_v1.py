@@ -32,7 +32,6 @@ from .utils import get_pod_log as do_get_pod_log
 from .utils import get_pod_status as do_get_pod_status
 from .utils import run_adviser
 from .utils import run_analyzer
-from .utils import run_pod
 from .utils import run_solver
 from .utils import run_sync
 
@@ -47,23 +46,6 @@ def analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None, cpu
     try:
         return {
             'pod_id': run_analyzer(**params),
-            'parameters': params
-        }, 202
-    except Exception as exc:
-        _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
-        return {
-            'error': str(exc),
-            'parameters': params
-        }, 400
-
-
-def run(image: str, environment: dict, cpu_request: str=None, memory_request: str=None):
-    """Run an image."""
-    params = locals()
-    try:
-        return {
-            'pod_id': run_pod(**params),
             'parameters': params
         }, 202
     except Exception as exc:

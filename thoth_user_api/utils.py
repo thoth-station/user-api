@@ -223,53 +223,6 @@ def run_adviser(packages: str, debug: bool=False, packages_only: bool=False) -> 
     return _do_run_pod(template, Configuration.THOTH_BACKEND_NAMESPACE)
 
 
-def run_pod(image: str, environment: dict, cpu_request: str=None, memory_request: str=None) -> str:
-    """Run a container inside a pod."""
-    # We don't care about secret as we run inside the cluster. All builds should hard-code it to secret.
-    name_prefix = "run-{}".format(image.rsplit('/', maxsplit=1)[-1]).replace(':', '-').replace('/', '-')
-    template = {
-        "apiVersion": "v1",
-        "kind": "Pod",
-        "metadata": {
-            "generateName": name_prefix + '-',
-            "namespace": Configuration.THOTH_MIDDLEEND_NAMESPACE,
-            "labels": {
-                "thothtype": "userpod",
-                "thothpod": "pod"
-            }
-        },
-        "spec": {
-            "restartPolicy": "Never",
-            "automountServiceAccountToken": False,
-            "containers": [{
-                "name": image.rsplit('/', maxsplit=1)[-1],
-                "image": image,
-                "livenessProbe": {
-                    "tcpSocket": {
-                        "port": 80
-                    },
-                    "initialDelaySeconds": Configuration.THOTH_ANALYZER_HARD_TIMEOUT,
-                    "failureThreshold": 1,
-                    "periodSeconds": 10
-                },
-                "env": environment,
-                "resources": {
-                    "limits": {
-                        "memory": Configuration.THOTH_MIDDLEEND_POD_MEMORY_LIMIT,
-                        "cpu": Configuration.THOTH_MIDDLEEND_POD_CPU_LIMIT
-                    },
-                    "requests": {
-                        "memory": memory_request or Configuration.THOTH_MIDDLEEND_POD_MEMORY_REQUEST,
-                        "cpu": cpu_request or Configuration.THOTH_MIDDLEEND_POD_CPU_REQUEST
-                    }
-                }
-            }]
-        }
-    }
-    _LOGGER.debug("Requesting to run pod with image %r with payload %s", image, template)
-    return _do_run_pod(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
-
-
 def run_sync(sync_observations: bool=False, *,
              force_analysis_results_sync: bool=False, force_solver_results_sync: bool=False):
     """Run a graph sync."""
