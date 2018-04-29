@@ -25,10 +25,6 @@ paths:
           required: true
           description: Name of analyzer (OpenShift build) to be triggered.
           type: string
-          items:
-            type: string
-          enum:
-            - fridex/thoth-package-extract
         - name: registry_user
           in: query
           required: false
