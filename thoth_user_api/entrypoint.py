@@ -47,7 +47,8 @@ manager = Manager(application)
 application.secret_key = Configuration.APP_SECRET_KEY
 
 metrics = PrometheusMetrics(app)
-metrics.info('app_info', 'Thoth User API', version=thoth_user_api.__version__)
+metrics.info('app_info', 'Thoth User API',
+             version=thoth_user_api.__version__, path='/metrics')
 
 
 @app.route('/')
@@ -78,7 +79,7 @@ def api_liveness():
     response = requests.get(Configuration.KUBERNETES_API_URL,
                             verify=Configuration.KUBERNETES_VERIFY_TLS)
     response.raise_for_status()
-    return jsonify(None)
+    return jsonify({'status': 'alive', 'version': thoth_user_api.__version__}), 200, {'ContentType': 'application/json'}
 
 
 if __name__ == '__main__':
