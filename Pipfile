@@ -14,6 +14,8 @@ gunicorn = "*"
 attrs = "*"
 thoth-common = ">=0.0.5"
 thoth-storages = ">=0.0.25"
+prometheus-flask-exporter = "*"
+prometheus-client = "*"
 
 
 [dev-packages]

@@ -24,6 +24,9 @@ from flask import redirect, jsonify
 import connexion
 from flask_script import Manager
 
+import prometheus_client
+from prometheus_flask_exporter import PrometheusMetrics
+
 from thoth.common import SafeJSONEncoder
 from thoth.common import init_logging
 import thoth_user_api
@@ -39,8 +42,12 @@ _LOGGER = logging.getLogger('thoth.result_api')
 app.add_api(Configuration.SWAGGER_YAML_PATH)
 application.json_encoder = SafeJSONEncoder
 manager = Manager(application)
+
 # Needed for session.
 application.secret_key = Configuration.APP_SECRET_KEY
+
+metrics = PrometheusMetrics(app)
+metrics.info('app_info', 'Thoth User API', version=thoth_user_api.__version__)
 
 
 @app.route('/')
