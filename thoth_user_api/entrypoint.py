@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
+"""Core Thoth user API."""
 
 import logging
 
@@ -45,12 +46,13 @@ application.secret_key = Configuration.APP_SECRET_KEY
 
 @app.route('/')
 def base_url():
-    # Be nice with user access
+    """Redirect to UI by default."""
     return redirect('api/v1/ui')
 
 
 @app.route('/api/v1')
 def api_v1():
+    """Provide a listing of all available endpoints."""
     paths = []
 
     for rule in application.url_map.iter_rules():
@@ -63,11 +65,13 @@ def api_v1():
 
 @app.route('/readiness')
 def api_readiness():
+    """Report readiness for OpenShift readiness probe."""
     return jsonify({'status': 'ready', 'version': thoth_user_api.__version__}), 200, {'ContentType': 'application/json'}
 
 
 @app.route('/liveness')
 def api_liveness():
+    """Report liveness for OpenShift readiness probe."""
     response = requests.get(Configuration.KUBERNETES_API_URL,
                             verify=Configuration.KUBERNETES_VERIFY_TLS)
     response.raise_for_status()

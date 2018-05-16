@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
+"""Implementation of API v1."""
 
 import asyncio
 import logging
@@ -176,7 +177,7 @@ def post_buildlog(log_info: dict):
 
 
 def list_runtime_environments(page: int=0):
-    """List available runtime environments"""
+    """List available runtime environments."""
     graph = GraphDatabase()
     graph.connect()
 
@@ -289,6 +290,7 @@ def get_buildlog(document_id: str):
 
 
 def erase_graph(secret: str):
+    """Clean content of the graph database."""
     if secret != Configuration.THOTH_SECRET:
         return {
             'error': 'Wrong secret provided'
