@@ -4,4 +4,4 @@ python:
 script:
 - pip3 install pipenv
 - pipenv install --dev
-- pipenv run coala
+- pipenv run coala --non-interactive
