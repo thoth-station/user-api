@@ -1,20 +1,15 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
 connexion = ">=1.0.31"
 flask-script = "*"
 requests = "*"
 gunicorn = "*"
 attrs = "*"
 thoth-common = ">=0.0.5"
-thoth-storages = ">=0.0.25"
-
+thoth-storages = ">=0.0.26"
 
 [dev-packages]
-
