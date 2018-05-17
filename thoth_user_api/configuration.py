@@ -34,6 +34,7 @@ def _get_api_token():
 
 class Configuration:
     """Configuration of user-facing API service."""
+
     APP_SECRET_KEY = os.environ['THOTH_USER_API_APP_SECRET_KEY']
     SWAGGER_YAML_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'swagger.yaml')
 

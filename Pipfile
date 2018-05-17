@@ -13,3 +13,7 @@ thoth-common = ">=0.0.5"
 thoth-storages = ">=0.0.26"
 
 [dev-packages]
+coala = "*"
+pycodestylebear = "*"
+yamllintbear = "*"
+pydocstylebear = "*"

@@ -30,7 +30,7 @@ _HandlerBaseType = typing.TypeVar('T', bound='Repository')  # pylint: disable=in
 class HandlerBase(object):
     """Handle extracting packages from build logs."""
 
-    handlers: typing.ClassVar[typing.List[_HandlerBaseType]] = []
+    handlers: typing.ClassVar[typing.List[_HandlerBaseType]] = []  # Ignore PycodestyleBear (E701)
 
     @classmethod
     def register(cls, handler_instance: _HandlerBaseType) -> None:

@@ -307,6 +307,7 @@ def get_pod_status(pod_id: str) -> dict:
 
 
 def get_cronjob(cronjob_name: str) -> dict:
+    """Retrieve a cron job based on its name."""
     endpoint = '{}/apis/batch/v2alpha1/namespaces/{}/cronjobs/{}'.format(Configuration.KUBERNETES_API_URL,
                                                                          Configuration.THOTH_BACKEND_NAMESPACE,
                                                                          cronjob_name)
