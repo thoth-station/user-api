@@ -27,6 +27,7 @@ from flask_script import Manager
 
 from thoth.common import SafeJSONEncoder
 from thoth.common import init_logging
+from thoth.storages import SolverResultsStore
 import thoth_user_api
 
 from .configuration import Configuration
@@ -63,19 +64,34 @@ def api_v1():
     return jsonify({'paths': paths})
 
 
+def _healthiness():
+    """Check service healthiness."""
+    # Check response from Kubernetes API.
+    response = requests.get(Configuration.KUBERNETES_API_URL,
+                            verify=Configuration.KUBERNETES_VERIFY_TLS)
+    response.raise_for_status()
+
+    # Check that Ceph is reachable.
+    adapter = SolverResultsStore()
+    adapter.connect()
+    adapter.ceph.check_connection()
+
+    return jsonify({
+        'status': 'ready',
+        'version': thoth_user_api.__version__}
+    ), 200, {'ContentType': 'application/json'}
+
+
 @app.route('/readiness')
 def api_readiness():
     """Report readiness for OpenShift readiness probe."""
-    return jsonify({'status': 'ready', 'version': thoth_user_api.__version__}), 200, {'ContentType': 'application/json'}
+    return _healthiness()
 
 
 @app.route('/liveness')
 def api_liveness():
     """Report liveness for OpenShift readiness probe."""
-    response = requests.get(Configuration.KUBERNETES_API_URL,
-                            verify=Configuration.KUBERNETES_VERIFY_TLS)
-    response.raise_for_status()
-    return jsonify(None)
+    return _healthiness()
 
 
 if __name__ == '__main__':
