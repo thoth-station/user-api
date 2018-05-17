@@ -10,7 +10,7 @@ requests = "*"
 gunicorn = "*"
 attrs = "*"
 thoth-common = ">=0.0.5"
-thoth-storages = ">=0.0.26"
+thoth-storages = ">=0.0.27"
 
 [dev-packages]
 coala = "*"
