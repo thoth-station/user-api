@@ -25,6 +25,8 @@ import requests
 from .configuration import Configuration
 
 _LOGGER = logging.getLogger('thoth.user_api.utils')
+_RSYSLOG_HOST = os.getenv('RSYSLOG_HOST')
+_RSYSLOG_PORT = os.getenv('RSYSLOG_PORT')
 
 
 def _set_env_var(env_config: list, name: str, value: str) -> None:
@@ -61,6 +63,11 @@ def _do_run_pod(template: dict, namespace: str) -> str:
     if response.status_code / 100 != 2:
         _LOGGER.error(response.text)
     response.raise_for_status()
+
+    if _RSYSLOG_HOST:
+        # We use only one container per pod.
+        _set_env_var(template['spec']['containers'][0]['env'], 'RSYSLOG_HOST', _RSYSLOG_HOST)
+        _set_env_var(template['spec']['containers'][0]['env'], 'RSYSLOG_PORT', _RSYSLOG_PORT)
 
     return response.json()['metadata']['name']
 
