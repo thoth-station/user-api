@@ -9,8 +9,8 @@ flask-script = "*"
 requests = "*"
 gunicorn = "*"
 attrs = "*"
-thoth-common = ">=0.0.6"
-thoth-storages = ">=0.0.27"
+thoth-common = "*"
+thoth-storages = "*"
 
 [dev-packages]
 coala = "*"
