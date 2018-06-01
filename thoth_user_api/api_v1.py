@@ -22,6 +22,7 @@ import asyncio
 import logging
 from itertools import islice
 
+from thoth.storages import AdvisersResultsStore
 from thoth.storages import AnalysisResultsStore
 from thoth.storages import SolverResultsStore
 from thoth.storages import BuildLogsStore
@@ -309,6 +310,16 @@ def get_analyzer_result(document_id: str):
 def get_buildlog(document_id: str):
     """Retrieve the given buildlog."""
     return _get_document(BuildLogsStore, document_id)
+
+
+def get_recommendation_python(python_recommendation: dict, type: str, runtime_environment: str):
+    """Get recommendations for Python ecosystem."""
+    return {'Error': 'Not implemented yet'}, 500
+
+
+def get_recommendation_python_id(recommendation_id):
+    """Retrieve the given recommendation based on its id."""
+    return _get_document(AdvisersResultsStore, recommendation_id)
 
 
 def erase_graph(secret: str):
