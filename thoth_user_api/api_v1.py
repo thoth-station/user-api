@@ -40,6 +40,15 @@ PAGINATION_SIZE = 100
 _LOGGER = logging.getLogger('thoth.user_api.api_v1')
 
 
+def check_empty(dict1):
+    """Check if the dictionary is empty."""
+    for k, v in dict1.items():
+        if k=="" or v=="" :
+            return True
+        else:
+            return False
+
+
 def analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None, cpu_request: str=None,
             memory_request: str=None, registry_user: str=None, registry_password=None, tls_verify: bool=True):
     """Run an analyzer in a restricted namespace."""
@@ -61,20 +70,22 @@ def analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None, cpu
 def solve(solver: str, packages: dict, debug: bool=False,
           cpu_request: str=None, memory_request: str=None, transitive: bool=False):
     """Run a solver in a restricted namespace."""
+    if check_empty(packages) == True:
+        return 0
     packages = packages.pop('requirements', '')
     params = locals()
     try:
         return {
-            'pod_id': run_solver(**params),
-            'parameters': params
+        'pod_id': run_solver(**params),
+        'parameters': params
         }, 202
     except Exception as exc:
         _LOGGER.error(f"Failed to run solver for {packages!r}")
         _LOGGER.exception(str(exc))
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {
-            'error': str(exc),
-            'parameters': params
+        'error': str(exc),
+        'parameters': params
         }, 400
 
 
