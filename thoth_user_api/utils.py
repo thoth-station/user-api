@@ -82,7 +82,7 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
         "kind": "Pod",
         "metadata": {
             "generateName": name_prefix + '-',
-            "namespace": Configuration.THOTH_MIDDLEEND_NAMESPACE,
+            "namespace": Configuration.THOTH_MIDDLETIER_NAMESPACE,
             "labels": {
                 "thothtype": "userpod",
                 "thothpod": "analyzer"
@@ -112,12 +112,12 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
                 ],
                 "resources": {
                     "limits": {
-                        "memory": Configuration.THOTH_MIDDLEEND_POD_MEMORY_LIMIT,
-                        "cpu": Configuration.THOTH_MIDDLEEND_POD_CPU_LIMIT
+                        "memory": Configuration.THOTH_MIDDLETIER_POD_MEMORY_LIMIT,
+                        "cpu": Configuration.THOTH_MIDDLETIER_POD_CPU_LIMIT
                     },
                     "requests": {
-                        "memory": memory_request or Configuration.THOTH_MIDDLEEND_POD_MEMORY_REQUEST,
-                        "cpu": cpu_request or Configuration.THOTH_MIDDLEEND_POD_CPU_REQUEST
+                        "memory": memory_request or Configuration.THOTH_MIDDLETIER_POD_MEMORY_REQUEST,
+                        "cpu": cpu_request or Configuration.THOTH_MIDDLETIER_POD_CPU_REQUEST
                     }
                 }
             }]
@@ -135,7 +135,7 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
         )
 
     _LOGGER.debug("Requesting to run analyzer %r with payload %s", analyzer, template)
-    return _do_run_pod(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
+    return _do_run_pod(template, Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=True,
@@ -147,7 +147,7 @@ def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=T
         "kind": "Pod",
         "metadata": {
             "generateName": name_prefix + '-',
-            "namespace": Configuration.THOTH_MIDDLEEND_NAMESPACE,
+            "namespace": Configuration.THOTH_MIDDLETIER_NAMESPACE,
             "labels": {
                 "thothtype": "userpod",
                 "thothpod": "analyzer"
@@ -176,12 +176,12 @@ def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=T
                 ],
                 "resources": {
                     "limits": {
-                        "memory": Configuration.THOTH_MIDDLEEND_POD_MEMORY_LIMIT,
-                        "cpu": Configuration.THOTH_MIDDLEEND_POD_CPU_LIMIT
+                        "memory": Configuration.THOTH_MIDDLETIER_POD_MEMORY_LIMIT,
+                        "cpu": Configuration.THOTH_MIDDLETIER_POD_CPU_LIMIT
                     },
                     "requests": {
-                        "memory": memory_request or Configuration.THOTH_MIDDLEEND_POD_MEMORY_REQUEST,
-                        "cpu": cpu_request or Configuration.THOTH_MIDDLEEND_POD_CPU_REQUEST
+                        "memory": memory_request or Configuration.THOTH_MIDDLETIER_POD_MEMORY_REQUEST,
+                        "cpu": cpu_request or Configuration.THOTH_MIDDLETIER_POD_CPU_REQUEST
                     }
                 }
             }]
@@ -189,7 +189,7 @@ def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=T
     }
 
     _LOGGER.debug("Requesting to run solver %r with payload %s", solver, template)
-    return _do_run_pod(template, Configuration.THOTH_MIDDLEEND_NAMESPACE)
+    return _do_run_pod(template, Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def run_adviser(packages: str, debug: bool=False, packages_only: bool=False) -> str:
@@ -246,7 +246,7 @@ def run_sync(sync_observations: bool=False, *,
     _set_env_var(env, 'THOTH_SYNC_OBSERVATIONS', str(int(sync_observations)))
     _set_env_var(env, 'THOTH_GRAPH_SYNC_FORCE_ANALYSIS_RESULTS_SYNC', str(int(force_analysis_results_sync)))
     _set_env_var(env, 'THOTH_GRAPH_SYNC_FORCE_SOLVER_RESULTS_SYNC', str(int(force_solver_results_sync)))
-    _set_env_var(env, 'THOTH_MIDDLEEND_NAMESPACE', Configuration.THOTH_MIDDLEEND_NAMESPACE)
+    _set_env_var(env, 'THOTH_MIDDLETIER_NAMESPACE', Configuration.THOTH_MIDDLETIER_NAMESPACE)
     _set_env_var(env, 'THOTH_DEPLOYMENT_NAME', os.environ['THOTH_DEPLOYMENT_NAME'])
     _set_env_var(env, 'THOTH_CEPH_HOST', os.environ['THOTH_CEPH_HOST'])
     _set_env_var(env, 'THOTH_CEPH_BUCKET', os.environ['THOTH_CEPH_BUCKET'])
@@ -275,7 +275,7 @@ def run_sync(sync_observations: bool=False, *,
 def get_pod_log(pod_id: str) -> str:
     """Get log of a pod based on assigned pod ID."""
     endpoint = "{}/api/v1/namespaces/{}/pods/{}/log".format(Configuration.KUBERNETES_API_URL,
-                                                            Configuration.THOTH_MIDDLEEND_NAMESPACE,
+                                                            Configuration.THOTH_MIDDLETIER_NAMESPACE,
                                                             pod_id)
     response = requests.get(
         endpoint,
@@ -296,7 +296,7 @@ def get_pod_log(pod_id: str) -> str:
 def get_pod_status(pod_id: str) -> dict:
     """Get status entry for a pod."""
     endpoint = "{}/api/v1/namespaces/{}/pods/{}".format(Configuration.KUBERNETES_API_URL,
-                                                        Configuration.THOTH_MIDDLEEND_NAMESPACE,
+                                                        Configuration.THOTH_MIDDLETIER_NAMESPACE,
                                                         pod_id)
     response = requests.get(
         endpoint,
