@@ -36,7 +36,7 @@ from .configuration import Configuration
 app = connexion.App(__name__)
 application = app.app
 init_logging()
-_LOGGER = logging.getLogger('thoth.result_api')
+_LOGGER = logging.getLogger('thoth.user_api')
 
 app.add_api(Configuration.SWAGGER_YAML_PATH)
 application.json_encoder = SafeJSONEncoder
