@@ -8,7 +8,7 @@ metadata:
   annotations:
     description: This is Thoth Core - User API
     openshift.io/display-name: 'Thoth Core: User API'
-    version: 0.2.0
+    version: 0.3.0
     tags: poc,thoth,user-api,ai-stacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: This template defines resources needed to deploy Thoth Core Services as a Proof-of-Concept to OpenShift.
@@ -163,11 +163,11 @@ objects:
               protocol: TCP
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "125m"
+              memory: "256Mi"
+              cpu: "250m"
             limits:
               memory: "256Mi"
-              cpu: "500m"
+              cpu: "250m"
           readinessProbe:
             httpGet:
               path: '/readiness'
