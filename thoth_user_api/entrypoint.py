@@ -18,6 +18,7 @@
 """Core Thoth user API."""
 
 import logging
+from functools import wraps
 
 import requests
 
@@ -31,6 +32,7 @@ from thoth.storages import SolverResultsStore
 import thoth_user_api
 
 from .configuration import Configuration
+
 
 # Expose for uWSGI.
 app = connexion.App(__name__)
@@ -46,12 +48,14 @@ application.secret_key = Configuration.APP_SECRET_KEY
 
 
 @app.route('/')
+@logger_info
 def base_url():
     """Redirect to UI by default."""
     return redirect('api/v1/ui')
 
 
 @app.route('/api/v1')
+@logger_info
 def api_v1():
     """Provide a listing of all available endpoints."""
     paths = []
@@ -64,6 +68,7 @@ def api_v1():
     return jsonify({'paths': paths})
 
 
+@logger_warning
 def _healthiness():
     """Check service healthiness."""
     # Check response from Kubernetes API.
@@ -83,12 +88,14 @@ def _healthiness():
 
 
 @app.route('/readiness')
+@logger_warning
 def api_readiness():
     """Report readiness for OpenShift readiness probe."""
     return _healthiness()
 
 
 @app.route('/liveness')
+@logger_warning
 def api_liveness():
     """Report liveness for OpenShift readiness probe."""
     return _healthiness()

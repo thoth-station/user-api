@@ -21,6 +21,7 @@
 import os
 import logging
 import requests
+from functools import wraps
 
 from .configuration import Configuration
 
@@ -331,3 +332,23 @@ def get_cronjob(cronjob_name: str) -> dict:
         _LOGGER.error(response.text)
     response.raise_for_status()
     return response.json()
+
+
+def logger_warning(function):
+    """Decorator function which sets the logger to warning only mode."""
+    @wraps(function)
+    def wrapper_func():
+        logging.getLogger('werkzeug').setLevel(logging.WARNING)
+        return function()
+
+    return wrapper_func
+
+
+def logger_info(function):
+    """Decorator function which sets the logger to info mode to print all the contents."""
+    @wraps(function)
+    def wrapper_func(*args, **kwargs):
+        logging.getLogger('werkzeug').setLevel(logging.INFO)
+        return function(*args, **kwargs)
+
+    return wrapper_func
