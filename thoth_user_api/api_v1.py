@@ -183,11 +183,12 @@ def list_runtime_environments(page: int=0):
 
     result = graph.runtime_environment_listing(page, PAGINATION_SIZE)
     return {
-        "results": result,
-        "results_count": len(result),
+        "results": result
+    }, 200, {
         "page": page,
-        "page_size": PAGINATION_SIZE
-    }, 200
+        "page_size": PAGINATION_SIZE,
+        "results_count": len(result)
+    }
 
 
 def get_runtime_environment(runtime_environment_name: str, analysis_id: str=None):
@@ -261,11 +262,12 @@ def _do_listing(adapter_class, page: int) -> tuple:
         # We will need to abandon this logic later anyway once we will be able to query results on data hub side.
         results = list(islice(result, page*PAGINATION_SIZE, page*PAGINATION_SIZE + PAGINATION_SIZE))
         return {
-            "results": results,
-            "results_count": len(results),
+            "results": results
+        }, 200, {
             "page": page,
-            "page_size": PAGINATION_SIZE
-        }, 200
+            "page_size": PAGINATION_SIZE,
+            "results_count": len(results)
+        }
     except Exception as exc:
         _LOGGER.exception(str(exc))
         # TODO: some errors should be filtered out
