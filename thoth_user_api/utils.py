@@ -248,7 +248,7 @@ def run_sync(sync_observations: bool=False, *,
     _set_env_var(env, 'THOTH_GRAPH_SYNC_FORCE_SOLVER_RESULTS_SYNC', str(int(force_solver_results_sync)))
     _set_env_var(env, 'THOTH_MIDDLETIER_NAMESPACE', Configuration.THOTH_MIDDLETIER_NAMESPACE)
     _set_env_var(env, 'THOTH_DEPLOYMENT_NAME', os.environ['THOTH_DEPLOYMENT_NAME'])
-    _set_env_var(env, 'THOTH_CEPH_HOST', os.environ['THOTH_CEPH_HOST'])
+    _set_env_var(env, 'THOTH_S3_ENDPOINT_URL ', os.environ['THOTH_S3_ENDPOINT_URL '])
     _set_env_var(env, 'THOTH_CEPH_BUCKET', os.environ['THOTH_CEPH_BUCKET'])
     _set_env_var(env, 'THOTH_CEPH_BUCKET_PREFIX', os.environ['THOTH_CEPH_BUCKET_PREFIX'])
     _set_env_var(env, 'THOTH_CEPH_KEY_ID', os.environ['THOTH_CEPH_KEY_ID'])
