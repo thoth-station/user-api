@@ -143,7 +143,7 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
         _set_env_var(template['spec']['containers'][0]['env'],
                      'PROMETHEUS_PUSHGATEWAY_PORT',
                      _PROMETHEUS_PUSHGATEWAY_PORT)
-        
+
     _LOGGER.debug("Requesting to run analyzer %r with payload %s", analyzer, template)
     return _do_run_pod(template, Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
