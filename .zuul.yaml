@@ -1,0 +1,15 @@
+- project:
+    check:
+      jobs:
+        - linters:
+            vars:
+              linters:
+                - coala
+                - ansible-lint
+                - yamllint
+    gate:
+      jobs:
+        - linters:
+            vars:
+              linters:
+                - coala
