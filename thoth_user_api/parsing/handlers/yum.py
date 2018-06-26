@@ -28,7 +28,7 @@ from .base import HandlerBase
 
 _RE_EPOCH_VERSION = re.compile(r'([0-9]+):(.+)')
 _RE_DEPENDENCY = re.compile(r'--> Processing Dependency: '
-                            r'([a-zA-Z_\-.():/0-9>=< ]+) for package: ([a-zA-Z_\-.():0-9]+)')
+                            r'([a-zA-Z_\-.():/0-9>=< ]+) for package: ([a-zA-Z_\-.():0-9]+)')  # Ignore PycodestyleBear (E501)
 
 _LOG = logging.getLogger('thoth.user_api.parsing.handlers.yum')
 
@@ -38,14 +38,16 @@ class YUM(HandlerBase):
     """Handle extracting packages from build logs - yum installer."""
 
     @staticmethod
-    def _parse_yum_table_heading(lines: typing.List[str], start_index: int) -> int:
+    def _parse_yum_table_heading(lines: typing.List[str], start_index: int) -> int:  # Ignore PycodestyleBear (E501)
         """Parse yum table heading, return increment for which there should be done proceeding."""
         header_items = ['Package', 'Arch', 'Version', 'Repository', 'Size']
         heading = [item for item in lines[start_index].split(' ') if item]
         if heading != header_items:
-            # yum can break table into multiple lines for some reason - this can be inconsistent
+            # yum can break table into multiple lines for some
+            # reason - this can be inconsistent
             # regardless of terminal size in a single run
-            second_line = [item for item in lines[start_index + 1].split(' ') if item]
+            second_line = [
+                item for item in lines[start_index + 1].split(' ') if item]
             heading.extend(second_line)
             if heading != header_items:
                 return 0
@@ -55,17 +57,19 @@ class YUM(HandlerBase):
         return 1
 
     @classmethod
-    def _parse_yum_table(cls, lines: typing.List[str], start_index: int) -> typing.Tuple[list, int]:
+    def _parse_yum_table(cls, lines: typing.List[str], start_index: int) -> typing.Tuple[list, int]:  # Ignore PycodestyleBear (E501)
         """Parse installed packages from a table reported by yum installer."""
         table_offset = cls._parse_yum_table_heading(lines, start_index + 1)
         if not table_offset:
-            _LOG.debug("Unable to parse heading for yum table, skipping (line was: %r)", lines[start_index + 1])
+            _LOG.debug(
+                "Unable to parse heading for yum table, skipping (line was: %r)", lines[start_index + 1])  # Ignore PycodestyleBear (E501)
             return [], 0
 
         start_index += table_offset
 
         if lines[start_index + 1] != '='*80:
-            _LOG.debug("Unable to find table start, giving up (line was: %r)", lines[start_index + 1])
+            _LOG.debug(
+                "Unable to find table start, giving up (line was: %r)", lines[start_index + 1])  # Ignore PycodestyleBear (E501)
             return [], 0
 
         if lines[start_index + 2].startswith('Installing:'):
@@ -73,14 +77,16 @@ class YUM(HandlerBase):
         elif lines[start_index + 2].startswith('Upgrading:'):
             upgrading = True
         else:
-            _LOG.debug("Unable to find table start with 'Installing', giving up (line was: %r)", lines[start_index + 2])
+            _LOG.debug(
+                "Unable to find table start with 'Installing', giving up (line was: %r)", lines[start_index + 2])  # Ignore PycodestyleBear (E501)
             return [], 0
 
         reported_packages = []
         index_increment = start_index + 3
         is_dependency = False
         while index_increment < len(lines):
-            items = [item for item in lines[index_increment].split(' ') if item]
+            items = [
+                item for item in lines[index_increment].split(' ') if item]
             if lines[index_increment].startswith(' ') and len(items) == 6:
                 epoch = None
                 version = items[2]
@@ -89,7 +95,8 @@ class YUM(HandlerBase):
                     epoch = int(match.group(1))
                     version = match.group(2)
 
-                # Number of items is 5 but yum reports size with a space between size and unit (e.g. '1.5 M')
+                # Number of items is 5 but yum reports size with a space
+                # between size and unit (e.g. '1.5 M')
                 reported_packages.append({
                     'name': items[0],
                     'arch': items[1],
@@ -100,13 +107,17 @@ class YUM(HandlerBase):
                     'dependency': is_dependency,
                     'upgrading': upgrading
                 })
-                _LOG.debug("Found installed package report: %s", reported_packages[-1])
-            elif lines[index_increment].startswith(('Installing dependencies:', 'Installing for dependencies:')):
+                _LOG.debug("Found installed package report: %s",
+                           reported_packages[-1])
+            elif lines[index_increment].startswith(('Installing dependencies:',
+                                                    'Installing for dependencies:')):  # Ignore PycodestyleBear (E501)
                 if is_dependency:
-                    _LOG.warning("Dependency listing heading was already present in the output, seen again")
+                    _LOG.warning(
+                        "Dependency listing heading was already present in the output, seen again")  # Ignore PycodestyleBear (E501)
                 is_dependency = True
             elif lines[index_increment] == '='*80:
-                _LOG.debug("Found table ending, finished installed packages parsing")
+                _LOG.debug(
+                    "Found table ending, finished installed packages parsing")
                 index_increment += 1
                 break
 
@@ -115,7 +126,7 @@ class YUM(HandlerBase):
         return reported_packages, index_increment
 
     def run(self, input_text: str) -> list:
-        """Find and parse installed packages and their versions from a build log."""
+        """Find and parse installed packages and their versions from a build log."""  # Ignore PycodestyleBear (E501)
         result = []
 
         lines = input_text.split('\n')
@@ -124,12 +135,14 @@ class YUM(HandlerBase):
             line = lines[index]
             line.strip()
 
-            # TODO: parsing lines like '--> Processing Dependency' can result in a malformed package name
+            # TODO: parsing lines like '--> Processing Dependency' can result
+            # in a malformed package name
             # For example line:
-            # --> Processing Dependency: perl(Pod::Escapes) >= 1.04 for package: 1:perl-Pod-Simple-3.28-4.el7.noarch
-            # results in installing perl-Pod-Escapes. Do we want to parse such lines to keep pkgs with direct deps?
+            # --> Processing Dependency: perl(Pod::Escapes) >= 1.04 for package: 1:perl-Pod-Simple-3.28-4.el7.noarch  # Ignore PycodestyleBear (E501)
+            # results in installing perl-Pod-Escapes. Do we want to parse such lines to keep pkgs with direct deps?  # Ignore PycodestyleBear (E501)
             if line.startswith('='*80):
-                installed_packages, table_end_idx = self._parse_yum_table(lines, index)
+                installed_packages, table_end_idx = self._parse_yum_table(
+                    lines, index)
                 result.extend(installed_packages)
                 index += table_end_idx or 1  # on errors move to the next line
             else:
