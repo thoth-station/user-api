@@ -8,7 +8,7 @@ STABLE_LABEL = "stable"
 tagMap = [:]
 
 // Initialize
-tagMap['user-api'] = '0.1.0'
+tagMap['user-api'] = '0.4.0'
 
 // IRC properties
 IRC_NICK = "sesheta"
@@ -84,13 +84,13 @@ pipeline {
 
                     openshift.withCluster() {
                         openshift.withProject(CI_TEST_NAMESPACE) {
-                            if (!openshift.selector("template/thoth-user-api-buildconfig").exists()) {
+                            if (!openshift.selector("template/user-api-buildconfig").exists()) {
                                 openshift.apply(readFile('openshift/buildConfig-template.yaml'))
                                 echo "BuildConfig Template created!"
                             }
 
                             /* Process the template and return the Map of the result */
-                            def model = openshift.process('thoth-user-api-buildconfig',
+                            def model = openshift.process('user-api-buildconfig',
                                     "-p", 
                                     "IMAGE_STREAM_TAG=${env.TAG}",
                                     "GITHUB_URL=https://github.com/${org}/${repo}",

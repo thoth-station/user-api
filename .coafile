@@ -9,10 +9,9 @@ bears = PycodestyleBear, PyDocStyleBear
 files = **.py
 language = Python
 editor = vim
-max_line_length = 120
 ignore = setup.py
 
 [all.yaml]
 bears = YAMLLintBear
-ignore = .travis.yml
-files = **.yml
+files = **.yml, **.yaml
+max_line_length = 120

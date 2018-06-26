@@ -6,22 +6,25 @@ labels:
 metadata:
   name: user-api-buildconfig
   annotations:
-    description: This is Thoth User API BuildConfig, this template is meant to be used by Jenkins, but could also be used by humans...
+    description: >
+      This is Thoth User API BuildConfig, this template is meant to be used by
+      Jenkins, but could also be used by humans...
     openshift.io/display-name: 'Thoth Core: User API BuildConfig'
-    version: 0.3.0
+    version: 0.4.0
     tags: poc,thoth,thoth-user-api,ai-stacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
-    template.openshift.io/long-description: This is Thoth User API BuildConfig, this template is meant to be used by Jenkins, but could also be used by humans...
+    template.openshift.io/long-description: >
+      This is Thoth User API BuildConfig, this template is meant to be used
+      by Jenkins, but could also be used by humans...
     template.openshift.io/provider-display-name: Red Hat, Inc.
 
 objects:
-- apiVersion: v1
-  kind: BuildConfig
-  metadata:
-    name: user-api
-    labels:
-      app: thoth-core
-  spec:
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      name: user-api
+      labels:
+        app: thoth-core
     resources:
       limits:
         cpu: 500m
@@ -29,47 +32,49 @@ objects:
       requests:
         cpu: 500m
         memory: 512Mi
-    output:
-      to:
-        kind: ImageStreamTag
-        name: "user-api:${IMAGE_STREAM_TAG}"
-    source:
-      type: Git
-      git:
-        uri: ${GITHUB_URL}
-        ref: ${GITHUB_REF}
-    strategy:
-      type: Source
-      sourceStrategy:
-        from:
+    spec:
+      output:
+        to:
           kind: ImageStreamTag
-          name: python-36-centos7:latest
-        env:
-          - name: ENABLE_PIPENV
-            value: '1'
-          - name: UPGRADE_PIP_TO_LATEST
-            value: ''
-          - name: WEB_CONCURRENCY
-            value: '4'
-    triggers:
-    - type: ImageChange
-      imageChange: {}
+          name: "user-api:${IMAGE_STREAM_TAG}"
+      source:
+        type: Git
+        git:
+          uri: ${GITHUB_URL}
+          ref: ${GITHUB_REF}
+      strategy:
+        type: Source
+        sourceStrategy:
+          from:
+            kind: ImageStreamTag
+            name: python-36-centos7:latest
+          env:
+            - name: ENABLE_PIPENV
+              value: '1'
+            - name: UPGRADE_PIP_TO_LATEST
+              value: ''
+            - name: WEB_CONCURRENCY
+              value: '4'
+      triggers:
+        - type: ImageChange
+          imageChange: {}
 
 parameters:
-- description: Name of the github repository for Thoth's User API
-  displayName: Git Repository
-  required: true
-  name: GITHUB_URL
-  value: 'https://github.com/thoth-station/user-api'
+  - description: Name of the github repository for Thoth's User API
+    displayName: Git Repository
+    required: true
+    name: GITHUB_URL
+    value: 'https://github.com/thoth-station/user-api'
 
-- description: Git reference to be used for Thoth's User API
-  displayName: Git Reference
-  required: true
-  name: GITHUB_REF
-  value: 'master'
+  - description: Git reference to be used for Thoth's User API
+    displayName: Git Reference
+    required: true
+    name: GITHUB_REF
+    value: 'master'
 
-- description: Tag of the output ImageStream the resulting container image should go to
-  displayName: ImageStream Tag
-  required: true
-  name: IMAGE_STREAM_TAG
-  value: 'latest'
+  - description: >
+      Tag of the output ImageStream the resulting container image should go to
+    displayName: ImageStream Tag
+    required: true
+    name: IMAGE_STREAM_TAG
+    value: 'latest'
