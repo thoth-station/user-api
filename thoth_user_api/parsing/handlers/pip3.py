@@ -68,7 +68,8 @@ class PIP3(HandlerBase):
 
             return package_name, version
 
-        # See https://www.python.org/dev/peps/pep-0440/#version-specifiers for all possible values.  # Ignore PycodestyleBear (E501)
+        # See https://www.python.org/dev/peps/pep-0440/#version-specifiers for
+        # all possible values.  # Ignore PycodestyleBear (E501)
         version_start_idx = None
         for ver_spec in ('~=', '!=', '===', '==', '<=', '>=', '>', '<'):
             try:
@@ -79,12 +80,14 @@ class PIP3(HandlerBase):
                 pass
 
         if version_start_idx:
-            return package_specifier[:version_start_idx], package_specifier[version_start_idx:]  # Ignore PycodestyleBear (E501)
+            # Ignore PycodestyleBear (E501)
+            return package_specifier[:version_start_idx], package_specifier[version_start_idx:]
 
         return package_specifier, None
 
     @classmethod
-    def _parse_package(cls, package_specifier: str, is_from: bool = False) -> dict:  # Ignore PycodestyleBear (E501)
+    # Ignore PycodestyleBear (E501)
+    def _parse_package(cls, package_specifier: str, is_from: bool = False) -> dict:
         """Parse packages and return them in a dictionary."""
         result = []
         if not is_from:
@@ -111,7 +114,8 @@ class PIP3(HandlerBase):
 
         Check the parsed entries after pip installed them successful.
         """
-        matched = [entry for entry in result if entry['package'] == package_name]  # Ignore PycodestyleBear (E501)
+        matched = [entry for entry in result if entry['package']
+                   == package_name]  # Ignore PycodestyleBear (E501)
 
         if len(matched) > 1:
             _LOG.warning('Package %r was installed multiple times in versions %s', package_name,  # Ignore PycodestyleBear (E501)
@@ -121,7 +125,8 @@ class PIP3(HandlerBase):
             _LOG.error('Package %r was not parsed in the output - detected installed version %r, error is not fatal',  # Ignore PycodestyleBear (E501)
                        package_name, package_version)
 
-        if package_version not in (entry['version_specified'] for entry in matched):  # Ignore PycodestyleBear (E501)
+        # Ignore PycodestyleBear (E501)
+        if package_version not in (entry['version_specified'] for entry in matched):
             _LOG.debug('Installation of Python package %r using pip with version specifiers %s installed version %s',  # Ignore PycodestyleBear (E501)
                        package_name, [entry['version_specified'] for entry in matched], package_version)  # Ignore PycodestyleBear (E501)
 

@@ -30,7 +30,9 @@ _HandlerBaseType = typing.TypeVar('T', bound='Repository')
 class HandlerBase(object):
     """Handle extracting packages from build logs."""
 
-    handlers: typing.ClassVar[typing.List[_HandlerBaseType]] = []  # Ignore PycodestyleBear (E701)
+    handlers:
+        # Ignore PycodestyleBear (E701)
+        typing.ClassVar[typing.List[_HandlerBaseType]] = []
 
     @classmethod
     def register(cls, handler_instance: _HandlerBaseType) -> None:
@@ -43,7 +45,8 @@ class HandlerBase(object):
         return [handler.__name__ for handler in cls.handlers]
 
     @classmethod
-    def instantiate_handlers(cls) -> typing.Generator[_HandlerBaseType, None, None]:  # Ignore PycodestyleBear (E501)
+    # Ignore PycodestyleBear (E501)
+    def instantiate_handlers(cls) -> typing.Generator[_HandlerBaseType, None, None]:
         """Instantiate handlers with corresponding arguments."""
         for handler in cls.handlers:
             yield handler()

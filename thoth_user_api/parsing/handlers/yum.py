@@ -38,8 +38,9 @@ class YUM(HandlerBase):
     """Handle extracting packages from build logs - yum installer."""
 
     @staticmethod
-    def _parse_yum_table_heading(lines: typing.List[str], start_index: int) -> int:  # Ignore PycodestyleBear (E501)
-        """Parse yum table heading, return increment for which there should be done proceeding."""
+    # Ignore PycodestyleBear (E501)
+    def _parse_yum_table_heading(lines: typing.List[str], start_index: int) -> int:
+        """Parse yum table heading, return increment for which there should be done proceeding."""  # Ignore PycodestyleBear (E501)
         header_items = ['Package', 'Arch', 'Version', 'Repository', 'Size']
         heading = [item for item in lines[start_index].split(' ') if item]
         if heading != header_items:
@@ -57,7 +58,8 @@ class YUM(HandlerBase):
         return 1
 
     @classmethod
-    def _parse_yum_table(cls, lines: typing.List[str], start_index: int) -> typing.Tuple[list, int]:  # Ignore PycodestyleBear (E501)
+    # Ignore PycodestyleBear (E501)
+    def _parse_yum_table(cls, lines: typing.List[str], start_index: int) -> typing.Tuple[list, int]:
         """Parse installed packages from a table reported by yum installer."""
         table_offset = cls._parse_yum_table_heading(lines, start_index + 1)
         if not table_offset:
@@ -67,7 +69,7 @@ class YUM(HandlerBase):
 
         start_index += table_offset
 
-        if lines[start_index + 1] != '='*80:
+        if lines[start_index + 1] != '=' * 80:
             _LOG.debug(
                 "Unable to find table start, giving up (line was: %r)", lines[start_index + 1])  # Ignore PycodestyleBear (E501)
             return [], 0
@@ -115,7 +117,7 @@ class YUM(HandlerBase):
                     _LOG.warning(
                         "Dependency listing heading was already present in the output, seen again")  # Ignore PycodestyleBear (E501)
                 is_dependency = True
-            elif lines[index_increment] == '='*80:
+            elif lines[index_increment] == '=' * 80:
                 _LOG.debug(
                     "Found table ending, finished installed packages parsing")
                 index_increment += 1
@@ -139,8 +141,10 @@ class YUM(HandlerBase):
             # in a malformed package name
             # For example line:
             # --> Processing Dependency: perl(Pod::Escapes) >= 1.04 for package: 1:perl-Pod-Simple-3.28-4.el7.noarch  # Ignore PycodestyleBear (E501)
-            # results in installing perl-Pod-Escapes. Do we want to parse such lines to keep pkgs with direct deps?  # Ignore PycodestyleBear (E501)
-            if line.startswith('='*80):
+            # results in installing perl-Pod-Escapes. Do we want to parse such
+            # lines to keep pkgs with direct deps?  # Ignore PycodestyleBear
+            # (E501)
+            if line.startswith('=' * 80):
                 installed_packages, table_end_idx = self._parse_yum_table(
                     lines, index)
                 result.extend(installed_packages)

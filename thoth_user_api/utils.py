@@ -81,9 +81,11 @@ def _do_run_pod(template: dict, namespace: str) -> str:
     return response.json()['metadata']['name']
 
 
-def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None,  # Ignore PycodestyleBear (E501)
-                 cpu_request: str=None, memory_request: str=None,
-                 registry_user: str=None, registry_password: str=None, tls_verify: bool=True) -> str:  # Ignore PycodestyleBear (E501)
+def run_analyzer(image: str, analyzer: str, debug: bool = False,
+                 timeout: int = None, cpu_request: str = None,
+                 memory_request: str = None, registry_user: str = None,
+                 registry_password: str = None,
+                 tls_verify: bool = True) -> str:
     """Run an analyzer for the given image."""
     name_prefix = "{}-{}".format(analyzer, image.rsplit('/',
                                                         maxsplit=1)[-1]).replace(':', '-').replace('/', '-')  # Ignore PycodestyleBear (E501)
@@ -157,8 +159,9 @@ def run_analyzer(image: str, analyzer: str, debug: bool=False, timeout: int=None
     return _do_run_pod(template, Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
-def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=True,  # Ignore PycodestyleBear (E501)
-               cpu_request: str=None, memory_request: str=None) -> str:
+def run_solver(solver: str, packages: str, debug: bool = False,
+               transitive: bool = True, cpu_request: str = None,
+               memory_request: str = None) -> str:
     """Run a solver for the given packages."""
     name_prefix = "{}-{}".format(solver, solver.rsplit('/',
                                                        maxsplit=1)[-1]).replace(':', '-').replace('/', '-')  # Ignore PycodestyleBear (E501)
@@ -220,8 +223,8 @@ def run_solver(solver: str, packages: str, debug: bool=False, transitive: bool=T
     return _do_run_pod(template, Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
-# Ignore PycodestyleBear (E501)
-def run_adviser(packages: str, debug: bool=False, packages_only: bool=False) -> str:
+def run_adviser(packages: str, debug: bool = False,
+                packages_only: bool = False) -> str:
     """Request to run adviser in the backend part."""
     template = {
         "apiVersion": "v1",
@@ -265,10 +268,12 @@ def run_adviser(packages: str, debug: bool=False, packages_only: bool=False) -> 
     return _do_run_pod(template, Configuration.THOTH_BACKEND_NAMESPACE)
 
 
-def run_sync(sync_observations: bool=False, *,
-             force_analysis_results_sync: bool=False, force_solver_results_sync: bool=False):  # Ignore PycodestyleBear (E501)
+def run_sync(sync_observations: bool = False, *,
+             force_analysis_results_sync: bool = False,
+             force_solver_results_sync: bool = False):
     """Run a graph sync."""
-    # Let's reuse pod definition from the cronjob definition so any changes in deployed application work out of the box.  # Ignore PycodestyleBear (E501)
+    # Let's reuse pod definition from the cronjob definition so any changes in
+    # deployed application work out of the box.
     cronjob_def = get_cronjob('graph-sync')
     pod_spec = cronjob_def['spec']['jobTemplate']['spec']['template']['spec']
 
@@ -315,12 +320,13 @@ def run_sync(sync_observations: bool=False, *,
 def get_pod_log(pod_id: str) -> str:
     """Get log of a pod based on assigned pod ID."""
     endpoint = "{}/api/v1/namespaces/{}/pods/{}/log".format(Configuration.KUBERNETES_API_URL,  # Ignore PycodestyleBear (E501)
-                                                            Configuration.THOTH_MIDDLETIER_NAMESPACE,  # Ignore PycodestyleBear (E501)
+                                                            Configuration.THOTH_MIDDLETIER_NAMESPACE,
                                                             pod_id)
     response = requests.get(
         endpoint,
         headers={
-            'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),  # Ignore PycodestyleBear (E501)
+            # Ignore PycodestyleBear (E501)
+            'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
             'Content-Type': 'application/json'
         },
         verify=Configuration.KUBERNETES_VERIFY_TLS
@@ -337,12 +343,13 @@ def get_pod_log(pod_id: str) -> str:
 def get_pod_status(pod_id: str) -> dict:
     """Get status entry for a pod."""
     endpoint = "{}/api/v1/namespaces/{}/pods/{}".format(Configuration.KUBERNETES_API_URL,  # Ignore PycodestyleBear (E501)
-                                                        Configuration.THOTH_MIDDLETIER_NAMESPACE,  # Ignore PycodestyleBear (E501)
+                                                        Configuration.THOTH_MIDDLETIER_NAMESPACE,
                                                         pod_id)
     response = requests.get(
         endpoint,
         headers={
-            'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),  # Ignore PycodestyleBear (E501)
+            # Ignore PycodestyleBear (E501)
+            'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
             'Content-Type': 'application/json'
         },
         verify=Configuration.KUBERNETES_VERIFY_TLS
@@ -358,12 +365,13 @@ def get_pod_status(pod_id: str) -> dict:
 def get_cronjob(cronjob_name: str) -> dict:
     """Retrieve a cron job based on its name."""
     endpoint = '{}/apis/batch/v2alpha1/namespaces/{}/cronjobs/{}'.format(Configuration.KUBERNETES_API_URL,  # Ignore PycodestyleBear (E501)
-                                                                         Configuration.THOTH_BACKEND_NAMESPACE,  # Ignore PycodestyleBear (E501)
+                                                                         Configuration.THOTH_BACKEND_NAMESPACE,
                                                                          cronjob_name)  # Ignore PycodestyleBear (E501)
     response = requests.get(
         endpoint,
         headers={
-            'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),  # Ignore PycodestyleBear (E501)
+            # Ignore PycodestyleBear (E501)
+            'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
             'Content-Type': 'application/json'
         },
         verify=Configuration.KUBERNETES_VERIFY_TLS

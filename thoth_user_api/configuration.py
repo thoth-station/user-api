@@ -30,7 +30,8 @@ def _get_api_token():
             return token_file.read()
     except FileNotFoundError as exc:
         raise FileNotFoundError(
-            "Unable to get service account token, please check that service has"  # Ignore PycodestyleBear (E501)
+            # Ignore PycodestyleBear (E501)
+            "Unable to get service account token, please check that service has"
             " service account assigned with exposed token") from exc
 
 
