@@ -13,6 +13,11 @@ thoth-common = "*"
 thoth-storages = "*"
 
 [dev-packages]
+pytest = "*"
+pytest-timeout = "*"
+pytest-cov = "*"
+pydocstyle = "*"
+pylint = "*"
 coala = "*"
 pycodestylebear = "*"
 yamllintbear = "*"
