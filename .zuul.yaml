@@ -8,6 +8,7 @@
                 - ansible-lint
                 - yamllint
     gate:
+      queue: core
       jobs:
         - linters:
             vars:
