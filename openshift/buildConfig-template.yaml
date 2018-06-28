@@ -25,14 +25,14 @@ objects:
       name: user-api
       labels:
         app: thoth-core
-    resources:
-      limits:
-        cpu: 500m
-        memory: 512Mi
-      requests:
-        cpu: 500m
-        memory: 512Mi
     spec:
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 500m
+          memory: 512Mi
       output:
         to:
           kind: ImageStreamTag
