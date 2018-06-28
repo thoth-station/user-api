@@ -18,7 +18,8 @@ paths:
         - name: image
           in: query
           required: true
-          description: Name of image - can also specify remote registry to pull image from.
+          description: >
+            Name of image - can also specify remote registry to pull image from.
           type: string
         - name: analyzer
           in: query
@@ -28,23 +29,29 @@ paths:
         - name: registry_user
           in: query
           required: false
-          description: Registry user to be used for pulling images from registry.
+          description: >
+            Registry user to be used for pulling images from registry.
           type: string
         - name: registry_password
           in: query
           required: false
-          description: Registry password or token to be used for pulling images from registry.
+          description: >
+            Registry password or token to be used for pulling images from
+            registry.
           type: string
         - name: debug
           in: query
           required: false
-          description: Run the given analyzer in a verbose mode so developers can debug analyzer (requires access to the OpenShift console).
+          description: >
+            Run the given analyzer in a verbose mode so developers can debug
+            analyzer (requires access to the OpenShift console).
           type: boolean
           default: false
         - name: timeout
           in: query
           required: false
-          description: Give a timeout to commands run inside the analyzer container.
+          description: >
+            Give a timeout to commands run inside the analyzer container.
           type: integer
         - name: cpu_request
           in: query
@@ -59,7 +66,9 @@ paths:
         - name: verify-tls
           in: query
           required: false
-          description: Verify TLS certificates of registry from where images are pulled from.
+          description: >
+            Verify TLS certificates of registry from where images are
+            pulled from.
           type: boolean
           default: true
       responses:
@@ -156,7 +165,9 @@ paths:
         - name: debug
           in: query
           required: false
-          description: Run the given analyzer in a verbose mode so developers can debug analyzer (requires access to the OpenShift console).
+          description: >
+            Run the given analyzer in a verbose mode so developers
+            can debug analyzer (requires access to the OpenShift console).
           type: boolean
           default: false
         - name: cpu_request
@@ -235,7 +246,8 @@ paths:
           in: path
           format: path
           required: true
-          description: Runtime environment name for which analyses should be retrieved.
+          description: >
+            Runtime environment name for which analyses should be retrieved.
           type: string
         - name: page
           in: query
@@ -247,7 +259,8 @@ paths:
         200:
           description: Listing of analyses for the given runtime environment.
         404:
-          description: The given runtime environment with the provided name was not found.
+          description: >
+            The given runtime environment with the provided name was not found.
 
   /runtime-environment/{runtime_environment_name}:
     get:
@@ -265,13 +278,17 @@ paths:
         - name: analysis_id
           in: query
           required: false
-          description: Specify analysis id for which results should be retrieved. If omitted, the latest will be used.
+          description: >
+            Specify analysis id for which results should be retrieved.
+            If omitted, the latest will be used.
           type: string
       responses:
         200:
-          description: Listing of packages present in the given runtime environment.
+          description: >
+            Listing of packages present in the given runtime environment.
         404:
-          description: The given runtime environment with provided name was not found.
+          description: >
+            The given runtime environment with provided name was not found.
 
   /solve/{document_id}:
     get:
@@ -355,7 +372,8 @@ paths:
       tags: [Buildlogs]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: parse_log
-      summary: Parse Docker build log or installation log and show installed packages.
+      summary: >
+        Parse Docker build log or installation log and show installed packages.
       parameters:
         - name: log_info
           in: body
@@ -473,10 +491,11 @@ definitions:
     properties:
       log:
         type: string
-        description: A full build or installation log that was output during image build.
+        description: >
+          A full build or installation log that was output during image build.
         example: >
           Collecting tensorflow
-            Downloading tensorflow-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (41.2MB)
+          Downloading tensorflow-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (41.2MB)
           Successfully installed tensorflow-1.4.1
   PodInfo:
     type: object
@@ -486,10 +505,11 @@ definitions:
     properties:
       log:
         type: string
-        description: A full build or installation log that was output during image build.
+        description: >
+          A full build or installation log that was output during image build.
         example: >
           Collecting tensorflow
-            Downloading tensorflow-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (41.2MB)
+          Downloading tensorflow-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (41.2MB)
           Successfully installed tensorflow-1.4.1
   Packages:
     type: object
@@ -499,6 +519,7 @@ definitions:
     properties:
       requirements:
         type: string
+        minLength: 1
         description: Requirements as stated in the requirements.txt file.
         example: >
           selinon==1.0.0rc3
@@ -517,4 +538,3 @@ definitions:
           type: string
           description: Value of the supplied environment variable.
           example: '1'
-

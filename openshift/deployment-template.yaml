@@ -8,46 +8,45 @@ metadata:
   annotations:
     description: This is Thoth Core - User API
     openshift.io/display-name: 'Thoth Core: User API'
-    version: 0.3.0
+    version: 0.4.0
     tags: poc,thoth,user-api,ai-stacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
-    template.openshift.io/long-description: This template defines resources needed to deploy Thoth Core Services as a Proof-of-Concept to OpenShift.
+    template.openshift.io/long-description: >
+      This template defines resources needed to deploy Thoth Core Services as
+      a Proof-of-Concept to OpenShift.
     template.openshift.io/provider-display-name: Red Hat, Inc.
 
 objects:
-
-- kind: Route
-  apiVersion: v1
-  metadata:
-    name: user-api
-    namespace: ${THOTH_FRONTEND_NAMESPACE}
-    labels:
-      app: thoth-core
-      component: user-api
-  spec:
-    to:
-      kind: Service
+  - kind: Route
+    apiVersion: v1
+    metadata:
       name: user-api
+      namespace: ${THOTH_FRONTEND_NAMESPACE}
+      labels:
+        app: thoth-core
+        component: user-api
+    spec:
+      to:
+        kind: Service
+        name: user-api
 
-- kind: Service
-  apiVersion: v1
-  metadata:
-    labels:
-      service: user-api
-      app: thoth-core
-      component: user-api
-    name: user-api
-    namespace: ${THOTH_FRONTEND_NAMESPACE}
-  spec:
-    ports:
-    - port: 80
-      protocol: TCP
-      targetPort: 8080
-    selector:
-      service: user-api
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      labels:
+        service: user-api
+        app: thoth-core
+        component: user-api
+      name: user-api
+      namespace: ${THOTH_FRONTEND_NAMESPACE}
+    spec:
+      ports:
+        - port: 80
+          protocol: TCP
+          targetPort: 8080
+      selector:
+        service: user-api
 
-
-#
 # Deployment configs
 - apiVersion: v1
   kind: DeploymentConfig
@@ -206,18 +205,18 @@ objects:
           kind: ImageStreamTag
           name: 'user-api:latest'
 
-- kind: ImageStream
-  apiVersion: v1
-  metadata:
-    labels:
-      app: thoth-core
-    name: user-api
-    namespace: ${THOTH_FRONTEND_NAMESPACE}
-  spec:
-    name: latest
+  - kind: ImageStream
+    apiVersion: v1
+    metadata:
+      labels:
+        app: thoth-core
+      name: user-api
+      namespace: ${THOTH_FRONTEND_NAMESPACE}
+    spec:
+      name: latest
 
 parameters:
-- displayName: Thoth Frontend Namespace
-  description: Name of the Thoth Frontend Namespace
-  required: true
-  name: THOTH_FRONTEND_NAMESPACE
+  - displayName: Thoth Frontend Namespace
+    description: Name of the Thoth Frontend Namespace
+    required: true
+    name: THOTH_FRONTEND_NAMESPACE

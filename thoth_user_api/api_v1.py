@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
+
 """Implementation of API v1."""
 
 import asyncio
@@ -40,8 +41,10 @@ PAGINATION_SIZE = 100
 _LOGGER = logging.getLogger('thoth.user_api.api_v1')
 
 
-def analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None, cpu_request: str=None,
-            memory_request: str=None, registry_user: str=None, registry_password=None, tls_verify: bool=True):
+def analyze(image: str, analyzer: str, debug: bool = False,
+            timeout: int = None, cpu_request: str = None,
+            memory_request: str = None, registry_user: str = None,
+            registry_password=None, tls_verify: bool = True):
     """Run an analyzer in a restricted namespace."""
     params = locals()
     try:
@@ -51,15 +54,17 @@ def analyze(image: str, analyzer: str, debug: bool=False, timeout: int=None, cpu
         }, 202
     except Exception as exc:
         _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        # TODO: for production we will need to filter out some errors so
+        # they are not exposed to users.
         return {
             'error': str(exc),
             'parameters': params
         }, 400
 
 
-def solve(solver: str, packages: dict, debug: bool=False,
-          cpu_request: str=None, memory_request: str=None, transitive: bool=False):
+def solve(solver: str, packages: dict, debug: bool = False,
+          cpu_request: str = None, memory_request: str = None,
+          transitive: bool = False):
     """Run a solver in a restricted namespace."""
     packages = packages.pop('requirements', '')
     params = locals()
@@ -71,14 +76,15 @@ def solve(solver: str, packages: dict, debug: bool=False,
     except Exception as exc:
         _LOGGER.error(f"Failed to run solver for {packages!r}")
         _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        # TODO: for production we will need to filter out some errors so
+        # they are not exposed to users.
         return {
             'error': str(exc),
             'parameters': params
         }, 400
 
 
-def advise(packages: dict, debug: bool=False, packages_only: bool=False):
+def advise(packages: dict, debug: bool = False, packages_only: bool = False):
     """Compute results for the given package or package stack using adviser."""
     packages = packages.pop('requirements', '')
     params = locals()
@@ -90,15 +96,17 @@ def advise(packages: dict, debug: bool=False, packages_only: bool=False):
     except Exception as exc:
         _LOGGER.error(f"Failed to run adviser for {packages!r}")
         _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        # TODO: for production we will need to filter out some errors so
+        # they are not exposed to users.
         return {
             'error': str(exc),
             'parameters': params
         }, 400
 
 
-def sync(secret: str, sync_observations: bool=False,
-         force_analysis_results_sync: bool=False, force_solver_results_sync: bool=False):
+def sync(secret: str, sync_observations: bool = False,
+         force_analysis_results_sync: bool = False,
+         force_solver_results_sync: bool = False):
     """Sync results to graph database."""
     if secret != Configuration.THOTH_SECRET:
         return {
@@ -115,7 +123,8 @@ def sync(secret: str, sync_observations: bool=False,
         }, 202
     except Exception as exc:
         _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        # TODO: for production we will need to filter out some errors so
+        # they are not exposed to users.
         return {
             'error': str(exc),
         }, 400
@@ -129,13 +138,15 @@ def parse_log(log_info: dict):
         return do_parse_log(log_info.get('log', '')), 200
     except Exception as exc:
         _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        # TODO: for production we will need to filter out some errors so
+        # they are not exposed to users.
         return {'error': str(exc)}, 400
 
 
 def get_pod_log(pod_id: str):
     """Get pod log based on analysis id."""
     if pod_id.rsplit(maxsplit=1)[0] == 'result-api':
+        # Ignore PycodestyleBear (E501)
         return {'error': "Cannot view pod logs, see OpenShift logs directly to browse result-api logs"}, 403
 
     try:
@@ -145,13 +156,15 @@ def get_pod_log(pod_id: str):
         }
     except Exception as exc:
         _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        # TODO: for production we will need to filter out some errors so
+        # they are not exposed to users.
         return {'error': str(exc), 'pod_id': pod_id}, 400
 
 
 def get_pod_status(pod_id: str):
     """Get status for a pod."""
     if pod_id.rsplit(maxsplit=1)[0] == 'result-api':
+        # Ignore PycodestyleBear (E501)
         return {'error': "Cannot view pod logs, see OpenShift logs directly to browse result-api logs"}, 403
 
     try:
@@ -161,7 +174,8 @@ def get_pod_status(pod_id: str):
         }
     except Exception as exc:
         _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        # TODO: for production we will need to filter out some errors so
+        # they are not exposed to users.
         return {'error': str(exc), 'pod_id': pod_id}, 400
 
 
@@ -176,7 +190,7 @@ def post_buildlog(log_info: dict):
     }, 202
 
 
-def list_runtime_environments(page: int=0):
+def list_runtime_environments(page: int = 0):
     """List available runtime environments."""
     graph = GraphDatabase()
     graph.connect()
@@ -191,19 +205,21 @@ def list_runtime_environments(page: int=0):
     }
 
 
-def get_runtime_environment(runtime_environment_name: str, analysis_id: str=None):
+def get_runtime_environment(runtime_environment_name: str,
+                            analysis_id: str = None):
     """Get packages inside the given runtime environment."""
     graph = GraphDatabase()
     graph.connect()
 
     try:
-        results, analysis_document_id = graph.get_runtime_environment(runtime_environment_name, analysis_id)
+        results, analysis_document_id = graph.get_runtime_environment(
+            runtime_environment_name, analysis_id)
     except NotFoundError as exc:
         return {
             'error': str(exc),
             'parameters': {
-               'runtime_environment_name': runtime_environment_name,
-               'analysis_id': analysis_id
+                'runtime_environment_name': runtime_environment_name,
+                'analysis_id': analysis_id
             }
         }, 404
 
@@ -215,18 +231,20 @@ def get_runtime_environment(runtime_environment_name: str, analysis_id: str=None
     }, 200
 
 
-def list_runtime_environment_analyses(runtime_environment_name: str, page: int=0):
+def list_runtime_environment_analyses(runtime_environment_name: str,
+                                      page: int = 0):
     """List analyses for the given runtime environment."""
     graph = GraphDatabase()
     graph.connect()
     try:
-        results = graph.runtime_environment_analyses_listing(runtime_environment_name, page, PAGINATION_SIZE)
+        results = graph.runtime_environment_analyses_listing(
+            runtime_environment_name, page, PAGINATION_SIZE)
     except NotFoundError as exc:
         return {
             'error': str(exc),
             'parameters': {
-               'runtime_environment_name': runtime_environment_name,
-               'page': page
+                'runtime_environment_name': runtime_environment_name,
+                'page': page
             }
         }, 404
 
@@ -237,17 +255,17 @@ def list_runtime_environment_analyses(runtime_environment_name: str, page: int=0
     }, 200
 
 
-def list_buildlogs(page: int=0):
+def list_buildlogs(page: int = 0):
     """List available build logs."""
     return _do_listing(BuildLogsStore, page)
 
 
-def list_analyzer_results(page: int=0):
+def list_analyzer_results(page: int = 0):
     """Retrieve image analyzer result."""
     return _do_listing(AnalysisResultsStore, page)
 
 
-def list_solver_results(page: int=0):
+def list_solver_results(page: int = 0):
     """Retrieve image analyzer result."""
     return _do_listing(SolverResultsStore, page)
 
@@ -258,9 +276,11 @@ def _do_listing(adapter_class, page: int) -> tuple:
         adapter = adapter_class()
         adapter.connect()
         result = adapter.get_document_listing()
-        # TODO: I'm not sure if Ceph returns objects in the same order each time.
-        # We will need to abandon this logic later anyway once we will be able to query results on data hub side.
-        results = list(islice(result, page*PAGINATION_SIZE, page*PAGINATION_SIZE + PAGINATION_SIZE))
+        # TODO: not sure if Ceph returns objects in the same order each time.
+        # We will need to abandon this logic later anyway once we will be
+        # able to query results on data hub side.
+        results = list(islice(result, page * PAGINATION_SIZE,
+                              page * PAGINATION_SIZE + PAGINATION_SIZE))
         return {
             "results": results
         }, 200, {
@@ -316,7 +336,7 @@ def _get_document(adapter_class, document_id: str) -> tuple:
         return {
             'error': f'Requested document {document_id!r} was not found',
             'parameters': {
-               'document_id': document_id
+                'document_id': document_id
             }
         }, 404
     except Exception as exc:

@@ -23,14 +23,15 @@ import typing
 
 import attr
 
-_HandlerBaseType = typing.TypeVar('T', bound='Repository')  # pylint: disable=invalid-name
+_HandlerBaseType = typing.TypeVar('T', bound='Repository')
 
 
 @attr.s
 class HandlerBase(object):
     """Handle extracting packages from build logs."""
 
-    handlers: typing.ClassVar[typing.List[_HandlerBaseType]] = []  # Ignore PycodestyleBear (E701)
+    # Ignore PycodestyleBear (E701)
+    handlers: typing.ClassVar[typing.List[_HandlerBaseType]] = []
 
     @classmethod
     def register(cls, handler_instance: _HandlerBaseType) -> None:
@@ -43,6 +44,7 @@ class HandlerBase(object):
         return [handler.__name__ for handler in cls.handlers]
 
     @classmethod
+    # Ignore PycodestyleBear (E501)
     def instantiate_handlers(cls) -> typing.Generator[_HandlerBaseType, None, None]:
         """Instantiate handlers with corresponding arguments."""
         for handler in cls.handlers:
@@ -50,5 +52,5 @@ class HandlerBase(object):
 
     @abc.abstractmethod
     def run(self, input_text: str) -> dict:
-        """Find and parse installed packages and their versions from a build log."""
+        """Extract installed packages and their versions from a build log."""
         raise NotImplementedError
