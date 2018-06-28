@@ -499,7 +499,7 @@ definitions:
     properties:
       requirements:
         type: string
-        minlength: 2
+        minLength: 2
         description: Requirements as stated in the requirements.txt file.
         example: >
           selinon==1.0.0rc3
