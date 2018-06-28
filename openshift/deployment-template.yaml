@@ -109,7 +109,7 @@ objects:
                     configMapKeyRef:
                       key: storage-bucket-name
                       name: thoth
-                - name: THOTH_CEPH_HOST
+                - name: THOTH_CEPH_S3_ENDPOINT_URL
                   valueFrom:
                     configMapKeyRef:
                       key: ceph-host
