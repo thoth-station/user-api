@@ -8,6 +8,13 @@
                 - ansible-lint
                 - yamllint
     gate:
+      queue: core
+      jobs:
+        - linters:
+            vars:
+              linters:
+                - coala
+    sesheta-auto-gate:
       jobs:
         - linters:
             vars:
