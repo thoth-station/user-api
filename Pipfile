@@ -10,7 +10,7 @@ requests = "*"
 gunicorn = "*"
 attrs = "*"
 thoth-common = "*"
-thoth-storages = "*"
+thoth-storages = ">=0.0.33"
 
 [dev-packages]
 pytest = "*"
