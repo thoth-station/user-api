@@ -66,11 +66,6 @@ def api_v1():
 
 def _healthiness():
     """Check service healthiness."""
-    # Check response from Kubernetes API.
-    response = requests.get(Configuration.KUBERNETES_API_URL,
-                            verify=Configuration.KUBERNETES_VERIFY_TLS)
-    response.raise_for_status()
-
     # Check that Ceph is reachable.
     adapter = SolverResultsStore()
     adapter.connect()
