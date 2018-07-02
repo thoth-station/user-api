@@ -10,13 +10,8 @@
     gate:
       queue: core
       jobs:
-        - linters:
-            vars:
-              linters:
-                - coala
+        - linters
     sesheta-auto-gate:
+      queue: core
       jobs:
-        - linters:
-            vars:
-              linters:
-                - coala
+        - linters
