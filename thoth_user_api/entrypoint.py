@@ -19,15 +19,15 @@
 
 import logging
 
-import requests
-
 from flask import redirect, jsonify
 import connexion
 from flask_script import Manager
 
 from thoth.common import SafeJSONEncoder
 from thoth.common import init_logging
+from thoth.common import logger_setup
 from thoth.storages import SolverResultsStore
+
 import thoth_user_api
 
 from .configuration import Configuration
@@ -45,12 +45,14 @@ manager = Manager(application)
 application.secret_key = Configuration.APP_SECRET_KEY
 
 
+@logger_setup('werkzeug', logging.INFO)
 @app.route('/')
 def base_url():
     """Redirect to UI by default."""
     return redirect('api/v1/ui')
 
 
+@logger_setup('werkzeug', logging.INFO)
 @app.route('/api/v1')
 def api_v1():
     """Provide a listing of all available endpoints."""
@@ -64,6 +66,7 @@ def api_v1():
     return jsonify({'paths': paths})
 
 
+@logger_setup('werkzeug', logging.WARNING)
 def _healthiness():
     """Check service healthiness."""
     # Check that Ceph is reachable.
@@ -77,12 +80,14 @@ def _healthiness():
     ), 200, {'ContentType': 'application/json'}
 
 
+@logger_setup('werkzeug', logging.WARNING)
 @app.route('/readiness')
 def api_readiness():
     """Report readiness for OpenShift readiness probe."""
     return _healthiness()
 
 
+@logger_setup('werkzeug', logging.WARNING)
 @app.route('/liveness')
 def api_liveness():
     """Report liveness for OpenShift readiness probe."""
