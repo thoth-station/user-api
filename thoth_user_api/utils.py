@@ -30,7 +30,6 @@ _RSYSLOG_PORT = os.getenv('RSYSLOG_PORT')
 _PROMETHEUS_PUSHGATEWAY_HOST = os.getenv('PROMETHEUS_PUSHGATEWAY_HOST')
 _PROMETHEUS_PUSHGATEWAY_PORT = os.getenv('PROMETHEUS_PUSHGATEWAY_PORT')
 
-
 def _set_env_var(env_config: list, name: str, value: str) -> None:
     """Overwrite env variable configuration.
 
@@ -155,7 +154,6 @@ def run_analyzer(image: str, analyzer: str, debug: bool = False,
             "THOTH_REGISTRY_CREDENTIALS",
             f"{registry_user}:{registry_password}"
         )
-
 
     if _PROMETHEUS_PUSHGATEWAY_HOST and _PROMETHEUS_PUSHGATEWAY_PORT:
         _set_env_var(template['spec']['containers'][0]['env'],
