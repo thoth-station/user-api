@@ -21,18 +21,7 @@
 import os
 import datetime
 
-
-def _get_api_token():
-    """Get token from service account token file."""
-    try:
-        with open('/var/run/secrets/kubernetes.io/serviceaccount/token',
-                  'r') as token_file:
-            return token_file.read()
-    except FileNotFoundError as exc:
-        raise FileNotFoundError(
-            # Ignore PycodestyleBear (E501)
-            "Unable to get service account token, please check that service has"
-            " service account assigned with exposed token") from exc
+from thoth.common import get_service_account_token
 
 
 class Configuration:
@@ -45,8 +34,7 @@ class Configuration:
     KUBERNETES_API_URL = os.getenv(
         'KUBERNETES_API_URL', 'https://kubernetes.default.svc.cluster.local')
     KUBERNETES_VERIFY_TLS = bool(int(os.getenv('KUBERNETES_VERIFY_TLS', True)))
-    KUBERNETES_API_TOKEN = os.getenv(
-        'KUBERNETES_API_TOKEN') or _get_api_token()
+    KUBERNETES_API_TOKEN = os.getenv('KUBERNETES_API_TOKEN') or get_service_account_token()
 
     THOTH_MIDDLETIER_NAMESPACE = os.environ['THOTH_MIDDLETIER_NAMESPACE']
     THOTH_BACKEND_NAMESPACE = os.environ['THOTH_BACKEND_NAMESPACE']
