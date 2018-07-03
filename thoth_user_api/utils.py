@@ -30,6 +30,7 @@ _RSYSLOG_PORT = os.getenv('RSYSLOG_PORT')
 _PROMETHEUS_PUSHGATEWAY_HOST = os.getenv('PROMETHEUS_PUSHGATEWAY_HOST')
 _PROMETHEUS_PUSHGATEWAY_PORT = os.getenv('PROMETHEUS_PUSHGATEWAY_PORT')
 
+
 def _set_env_var(env_config: list, name: str, value: str) -> None:
     """Overwrite env variable configuration.
 
