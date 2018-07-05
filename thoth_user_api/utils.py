@@ -53,14 +53,13 @@ def _do_run_pod(template: dict, namespace: str) -> str:
     """Run defined template in Kubernetes."""
     # We don't care about secret as we run inside the cluster.
     # All builds should hard-code it to secret.
-    endpoint = "{}/api/v1/namespaces/{}/pods".format(Configuration.KUBERNETES_API_URL,  # Ignore PycodestyleBear (E501)
+    endpoint = "{}/api/v1/namespaces/{}/pods".format(Configuration.KUBERNETES_API_URL,
                                                      namespace)
     _LOGGER.debug("Sending POST request to Kubernetes master %r",
                   Configuration.KUBERNETES_API_URL)
     response = requests.post(
         endpoint,
         headers={
-            # Ignore PycodestyleBear (E501)
             'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
             'Content-Type': 'application/json'
         },
@@ -68,7 +67,7 @@ def _do_run_pod(template: dict, namespace: str) -> str:
         verify=Configuration.KUBERNETES_VERIFY_TLS
     )
     _LOGGER.debug("Kubernetes master response (%d) from %r: %r",
-                  response.status_code, Configuration.KUBERNETES_API_URL, response.text)  # Ignore PycodestyleBear (E501)
+                  response.status_code, Configuration.KUBERNETES_API_URL, response.text)
     if response.status_code / 100 != 2:
         _LOGGER.error(response.text)
     response.raise_for_status()
@@ -90,7 +89,7 @@ def run_analyzer(image: str, analyzer: str, debug: bool = False,
                  tls_verify: bool = True) -> str:
     """Run an analyzer for the given image."""
     name_prefix = "{}-{}".format(analyzer, image.rsplit('/',
-                                                        maxsplit=1)[-1]).replace(':', '-').replace('/', '-')  # Ignore PycodestyleBear (E501)
+                                                        maxsplit=1)[-1]).replace(':', '-').replace('/', '-')
     template = {
         "apiVersion": "v1",
         "kind": "Pod",
@@ -112,7 +111,6 @@ def run_analyzer(image: str, analyzer: str, debug: bool = False,
                     "tcpSocket": {
                         "port": 8080
                     },
-                    # Ignore PycodestyleBear (E501)
                     "initialDelaySeconds": Configuration.THOTH_ANALYZER_HARD_TIMEOUT,
                     "failureThreshold": 1,
                     "periodSeconds": 10
@@ -130,14 +128,11 @@ def run_analyzer(image: str, analyzer: str, debug: bool = False,
                 ],
                 "resources": {
                     "limits": {
-                        # Ignore PycodestyleBear (E501)
                         "memory": Configuration.THOTH_MIDDLETIER_POD_MEMORY_LIMIT,
                         "cpu": Configuration.THOTH_MIDDLETIER_POD_CPU_LIMIT
                     },
                     "requests": {
-                        # Ignore PycodestyleBear (E501)
                         "memory": memory_request or Configuration.THOTH_MIDDLETIER_POD_MEMORY_REQUEST,
-                        # Ignore PycodestyleBear (E501)
                         "cpu": cpu_request or Configuration.THOTH_MIDDLETIER_POD_CPU_REQUEST
                     }
                 }
@@ -147,8 +142,7 @@ def run_analyzer(image: str, analyzer: str, debug: bool = False,
 
     if bool(registry_user) + bool(registry_password) == 1:
         raise ValueError(
-            'Please specify both registry user and password in order to use registry authentication.')  # Ignore PycodestyleBear (E501)
-
+            'Please specify both registry user and password in order to use registry authentication.')
     if registry_user and registry_password:
         _set_env_var(
             template['spec']['containers'][0]['env'],
@@ -173,7 +167,7 @@ def run_solver(solver: str, packages: str, debug: bool = False,
                memory_request: str = None) -> str:
     """Run a solver for the given packages."""
     name_prefix = "{}-{}".format(solver, solver.rsplit('/',
-                                                       maxsplit=1)[-1]).replace(':', '-').replace('/', '-')  # Ignore PycodestyleBear (E501)
+                                                       maxsplit=1)[-1]).replace(':', '-').replace('/', '-')
     template = {
         "apiVersion": "v1",
         "kind": "Pod",
@@ -195,7 +189,6 @@ def run_solver(solver: str, packages: str, debug: bool = False,
                     "tcpSocket": {
                         "port": 80
                     },
-                    # Ignore PycodestyleBear (E501)
                     "initialDelaySeconds": Configuration.THOTH_ANALYZER_HARD_TIMEOUT,
                     "failureThreshold": 1,
                     "periodSeconds": 10
@@ -212,14 +205,11 @@ def run_solver(solver: str, packages: str, debug: bool = False,
                 ],
                 "resources": {
                     "limits": {
-                        # Ignore PycodestyleBear (E501)
                         "memory": Configuration.THOTH_MIDDLETIER_POD_MEMORY_LIMIT,
                         "cpu": Configuration.THOTH_MIDDLETIER_POD_CPU_LIMIT
                     },
                     "requests": {
-                        # Ignore PycodestyleBear (E501)
                         "memory": memory_request or Configuration.THOTH_MIDDLETIER_POD_MEMORY_REQUEST,
-                        # Ignore PycodestyleBear (E501)
                         "cpu": cpu_request or Configuration.THOTH_MIDDLETIER_POD_CPU_REQUEST
                     }
                 }
@@ -255,7 +245,6 @@ def run_adviser(packages: str, debug: bool = False,
                     "tcpSocket": {
                         "port": 80
                     },
-                    # Ignore PycodestyleBear (E501)
                     "initialDelaySeconds": Configuration.THOTH_ANALYZER_HARD_TIMEOUT,
                     "failureThreshold": 1,
                     "periodSeconds": 10
@@ -300,7 +289,8 @@ def run_sync(sync_observations: bool = False, *,
                  Configuration.THOTH_MIDDLETIER_NAMESPACE)
     _set_env_var(env, 'THOTH_DEPLOYMENT_NAME',
                  os.environ['THOTH_DEPLOYMENT_NAME'])
-    _set_env_var(env, 'THOTH_S3_ENDPOINT_URL', os.environ['THOTH_S3_ENDPOINT_URL'])
+    _set_env_var(env, 'THOTH_S3_ENDPOINT_URL',
+                 os.environ['THOTH_S3_ENDPOINT_URL'])
     _set_env_var(env, 'THOTH_CEPH_BUCKET', os.environ['THOTH_CEPH_BUCKET'])
     _set_env_var(env, 'THOTH_CEPH_BUCKET_PREFIX',
                  os.environ['THOTH_CEPH_BUCKET_PREFIX'])
@@ -328,13 +318,12 @@ def run_sync(sync_observations: bool = False, *,
 
 def get_pod_log(pod_id: str) -> str:
     """Get log of a pod based on assigned pod ID."""
-    endpoint = "{}/api/v1/namespaces/{}/pods/{}/log".format(Configuration.KUBERNETES_API_URL,  # Ignore PycodestyleBear (E501)
+    endpoint = "{}/api/v1/namespaces/{}/pods/{}/log".format(Configuration.KUBERNETES_API_URL,
                                                             Configuration.THOTH_MIDDLETIER_NAMESPACE,
                                                             pod_id)
     response = requests.get(
         endpoint,
         headers={
-            # Ignore PycodestyleBear (E501)
             'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
             'Content-Type': 'application/json'
         },
@@ -351,13 +340,12 @@ def get_pod_log(pod_id: str) -> str:
 
 def get_pod_status(pod_id: str) -> dict:
     """Get status entry for a pod."""
-    endpoint = "{}/api/v1/namespaces/{}/pods/{}".format(Configuration.KUBERNETES_API_URL,  # Ignore PycodestyleBear (E501)
+    endpoint = "{}/api/v1/namespaces/{}/pods/{}".format(Configuration.KUBERNETES_API_URL,
                                                         Configuration.THOTH_MIDDLETIER_NAMESPACE,
                                                         pod_id)
     response = requests.get(
         endpoint,
         headers={
-            # Ignore PycodestyleBear (E501)
             'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
             'Content-Type': 'application/json'
         },
@@ -373,20 +361,19 @@ def get_pod_status(pod_id: str) -> dict:
 
 def get_cronjob(cronjob_name: str) -> dict:
     """Retrieve a cron job based on its name."""
-    endpoint = '{}/apis/batch/v2alpha1/namespaces/{}/cronjobs/{}'.format(Configuration.KUBERNETES_API_URL,  # Ignore PycodestyleBear (E501)
+    endpoint = '{}/apis/batch/v2alpha1/namespaces/{}/cronjobs/{}'.format(Configuration.KUBERNETES_API_URL,
                                                                          Configuration.THOTH_BACKEND_NAMESPACE,
-                                                                         cronjob_name)  # Ignore PycodestyleBear (E501)
+                                                                         cronjob_name)
     response = requests.get(
         endpoint,
         headers={
-            # Ignore PycodestyleBear (E501)
             'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
             'Content-Type': 'application/json'
         },
         verify=Configuration.KUBERNETES_VERIFY_TLS
     )
     _LOGGER.debug(
-        "Kubernetes master response for cronjob query with HTTP status code %d", response.status_code)  # Ignore PycodestyleBear (E501)
+        "Kubernetes master response for cronjob query with HTTP status code %d", response.status_code)
     if 200 <= response.status_code <= 399:
         _LOGGER.error(response.text)
     response.raise_for_status()
