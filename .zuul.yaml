@@ -11,7 +11,7 @@
       queue: core
       jobs:
         - linters
-    sesheta-auto-gate:
+    kebechet-auto-gate:
       queue: core
       jobs:
         - linters
