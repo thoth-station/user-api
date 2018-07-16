@@ -553,6 +553,42 @@ definitions:
           Collecting tensorflow
           Downloading tensorflow-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (41.2MB)
           Successfully installed tensorflow-1.4.1
+      apiVersion:
+        type: string
+        description: >
+          BuildLog api version.
+        example: >
+          "apis/build.openshift.io/v1/namespaces/$NAMESPACE/builds HTTP/1.1"
+      kind:
+        type: string
+        description: >
+          Type of log.
+        example: >
+          "BuildLog"
+      name:
+        type: string
+        description: >
+          Name of the build log.
+        example:
+          "cleanup-job"
+      namespace:
+        type: string
+        description: >
+          Namespace in which the build log is present.
+        example: >
+          "Thoth-test-core"
+      uuid:
+        type: string
+        description: >
+          Unique ID present in every log as owner reference.
+        example: >
+          "456gfry87776bhhy7789kjhyt67"
+      pod-name:
+        type: string
+        description: >
+          Name of the pod which executes the build.
+        example: >
+          "cleanup-job-1-build"
   PodInfo:
     type: object
     required:
