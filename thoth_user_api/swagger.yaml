@@ -290,6 +290,62 @@ paths:
           description: >
             The given runtime environment with provided name was not found.
 
+  /recommend/python:
+    get:
+      tags: [Recommendation]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_recommendation_python
+      summary: Get recommendation for Python ecosystem.
+      parameters:
+        - name: python_recommendation
+          in: body
+          required: true
+          description: Specification of Python recommendation request.
+          schema:
+            $ref: "#/definitions/PythonRecommendation"
+        - name: type
+          in: query
+          description: Recommendation type.
+          type: string
+          required: true
+          enum:
+            - stable
+            - testing
+            - latest
+          default: stable
+        - name: runtime_environment
+          in: query
+          description: Runtime environment in which the given stack will be run.
+          type: string
+          required: false
+      responses:
+        202:
+          description: The recommendation is scheduled to be computed.
+        200:
+          description: A recommendation response with all dependencies provided.
+
+  /recommend/python/{recommendation_id}:
+    get:
+      tags: [Recommendation]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_recommendation_python_id
+      summary: Get computeted recommendation based on its id.
+      parameters:
+        - name: recommendation_id
+          in: path
+          required: true
+          description: Recommendation ID returned on recommendation request.
+          type: string
+      responses:
+        200:
+          description: Computed pinned down stack with information based on requested requiremnets recommendation.
+        400:
+          description: On invalid request.
+        404:
+          description: The given recommendation does not exist.
+        201:
+          description: Computing recommendation is still in progress.
+
   /solve/{document_id}:
     get:
       tags: [Results]
@@ -517,12 +573,24 @@ definitions:
       - 'requirements'
     additionalProperties: false
     properties:
-      requirements:
+      requirements: &defRequirements
         type: string
         minLength: 1
         description: Requirements as stated in the requirements.txt file.
         example: >
           selinon==1.0.0rc3
+  PythonRecommendation:
+    type: object
+    required:
+      - 'requirements'
+      - 'environment'
+    additionalProperties: false
+    properties:
+      requirements:
+        <<: *defRequirements
+      environment:
+        type: string
+        description: Environment information.
   Environment:
     type: array
     description: Environment variables supplied on deployment.
