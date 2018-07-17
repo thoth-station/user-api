@@ -565,30 +565,26 @@ definitions:
           Type of log.
         example: >
           "BuildLog"
-      name:
+      metadata:
         type: string
         description: >
-          Name of the build log.
+          meta data artifacts of the build config.
         example:
-          "cleanup-job"
-      namespace:
-        type: string
-        description: >
-          Namespace in which the build log is present.
-        example: >
-          "Thoth-test-core"
-      uuid:
-        type: string
-        description: >
-          Unique ID present in every log as owner reference.
-        example: >
-          "456gfry87776bhhy7789kjhyt67"
-      pod-name:
-        type: string
-        description: >
-          Name of the pod which executes the build.
-        example: >
-          "cleanup-job-1-build"
+          "annotations"
+        properties:
+          annotations:
+            type: string
+            description: >
+             All the BuildConfiguration of the build.
+            example: >
+              "buildlog.thoth-core/build-config"
+            properties:
+              buildlog.thoth-station.ninja/corresponding-build-configuration:
+                type: string
+                description: >
+                 Contains all particulars about the build log.
+                example: >
+                  "apiVersion": "build.openshift.io/v1","kind": "Build","annotations": "openshift.io/build-config.name": "user-api"  
   PodInfo:
     type: object
     required:
