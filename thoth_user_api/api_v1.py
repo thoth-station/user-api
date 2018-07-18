@@ -22,13 +22,12 @@ import asyncio
 import logging
 from itertools import islice
 
+from thoth.storages import AdvisersResultsStore
 from thoth.storages import AnalysisResultsStore
 from thoth.storages import SolverResultsStore
 from thoth.storages import BuildLogsStore
 from thoth.storages import GraphDatabase
 from thoth.storages.exceptions import NotFoundError
-
-from thoth.common import logger_setup
 
 from .configuration import Configuration
 from .parsing import parse_log as do_parse_log
@@ -43,7 +42,6 @@ PAGINATION_SIZE = 100
 _LOGGER = logging.getLogger('thoth.user_api.api_v1')
 
 
-@logger_setup('werkzeug', logging.INFO)
 def analyze(image: str, analyzer: str, debug: bool = False,
             timeout: int = None, cpu_request: str = None,
             memory_request: str = None, registry_user: str = None,
@@ -65,7 +63,6 @@ def analyze(image: str, analyzer: str, debug: bool = False,
         }, 400
 
 
-@logger_setup('werkzeug', logging.INFO)
 def solve(solver: str, packages: dict, debug: bool = False,
           cpu_request: str = None, memory_request: str = None,
           transitive: bool = False):
@@ -88,7 +85,6 @@ def solve(solver: str, packages: dict, debug: bool = False,
         }, 400
 
 
-@logger_setup('werkzeug', logging.INFO)
 def advise(packages: dict, debug: bool = False, packages_only: bool = False):
     """Compute results for the given package or package stack using adviser."""
     packages = packages.pop('requirements', '')
@@ -109,7 +105,6 @@ def advise(packages: dict, debug: bool = False, packages_only: bool = False):
         }, 400
 
 
-@logger_setup('werkzeug', logging.INFO)
 def sync(secret: str, sync_observations: bool = False,
          force_analysis_results_sync: bool = False,
          force_solver_results_sync: bool = False):
@@ -136,7 +131,6 @@ def sync(secret: str, sync_observations: bool = False,
         }, 400
 
 
-@logger_setup('werkzeug', logging.INFO)
 def parse_log(log_info: dict):
     """Parse image build log or install log endpoint handler."""
     if not log_info:
@@ -150,7 +144,6 @@ def parse_log(log_info: dict):
         return {'error': str(exc)}, 400
 
 
-@logger_setup('werkzeug', logging.INFO)
 def get_pod_log(pod_id: str):
     """Get pod log based on analysis id."""
     if pod_id.rsplit(maxsplit=1)[0] == 'result-api':
@@ -169,7 +162,6 @@ def get_pod_log(pod_id: str):
         return {'error': str(exc), 'pod_id': pod_id}, 400
 
 
-@logger_setup('werkzeug', logging.INFO)
 def get_pod_status(pod_id: str):
     """Get status for a pod."""
     if pod_id.rsplit(maxsplit=1)[0] == 'result-api':
@@ -188,7 +180,6 @@ def get_pod_status(pod_id: str):
         return {'error': str(exc), 'pod_id': pod_id}, 400
 
 
-@logger_setup('werkzeug', logging.INFO)
 def post_buildlog(log_info: dict):
     """Store the given build log."""
     adapter = BuildLogsStore()
@@ -200,7 +191,6 @@ def post_buildlog(log_info: dict):
     }, 202
 
 
-@logger_setup('werkzeug', logging.INFO)
 def list_runtime_environments(page: int = 0):
     """List available runtime environments."""
     graph = GraphDatabase()
@@ -216,7 +206,6 @@ def list_runtime_environments(page: int = 0):
     }
 
 
-@logger_setup('werkzeug', logging.INFO)
 def get_runtime_environment(runtime_environment_name: str,
                             analysis_id: str = None):
     """Get packages inside the given runtime environment."""
@@ -243,7 +232,6 @@ def get_runtime_environment(runtime_environment_name: str,
     }, 200
 
 
-@logger_setup('werkzeug', logging.INFO)
 def list_runtime_environment_analyses(runtime_environment_name: str,
                                       page: int = 0):
     """List analyses for the given runtime environment."""
@@ -268,25 +256,21 @@ def list_runtime_environment_analyses(runtime_environment_name: str,
     }, 200
 
 
-@logger_setup('werkzeug', logging.INFO)
 def list_buildlogs(page: int = 0):
     """List available build logs."""
     return _do_listing(BuildLogsStore, page)
 
 
-@logger_setup('werkzeug', logging.INFO)
 def list_analyzer_results(page: int = 0):
     """Retrieve image analyzer result."""
     return _do_listing(AnalysisResultsStore, page)
 
 
-@logger_setup('werkzeug', logging.INFO)
 def list_solver_results(page: int = 0):
     """Retrieve image analyzer result."""
     return _do_listing(SolverResultsStore, page)
 
 
-@logger_setup('werkzeug', logging.INFO)
 def _do_listing(adapter_class, page: int) -> tuple:
     """Perform actual listing."""
     try:
@@ -313,25 +297,31 @@ def _do_listing(adapter_class, page: int) -> tuple:
         }, 400
 
 
-@logger_setup('werkzeug', logging.INFO)
 def get_solver_result(document_id: str):
     """Retrieve solver result."""
     return _get_document(SolverResultsStore, document_id)
 
 
-@logger_setup('werkzeug', logging.INFO)
 def get_analyzer_result(document_id: str):
     """Retrieve image analyzer result."""
     return _get_document(AnalysisResultsStore, document_id)
 
 
-@logger_setup('werkzeug', logging.INFO)
 def get_buildlog(document_id: str):
     """Retrieve the given buildlog."""
     return _get_document(BuildLogsStore, document_id)
 
 
-@logger_setup('werkzeug', logging.INFO)
+def get_recommendation_python(application_stack: dict, type: str, runtime_environment: str):
+    """Get recommendations for Python ecosystem."""
+    return {'Error': 'Not implemented yet'}, 500
+
+
+def get_recommendation_python_id(recommendation_id):
+    """Retrieve the given recommendation based on its id."""
+    return _get_document(AdvisersResultsStore, recommendation_id)
+
+
 def erase_graph(secret: str):
     """Clean content of the graph database."""
     if secret != Configuration.THOTH_SECRET:
@@ -346,7 +336,6 @@ def erase_graph(secret: str):
     return {}, 201
 
 
-@logger_setup('werkzeug', logging.INFO)
 def _get_document(adapter_class, document_id: str) -> tuple:
     """Perform actual document retrieval."""
     try:

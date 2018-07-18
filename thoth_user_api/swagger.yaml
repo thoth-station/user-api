@@ -290,6 +290,62 @@ paths:
           description: >
             The given runtime environment with provided name was not found.
 
+  /recommend/python:
+    get:
+      tags: [Recommendation]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_recommendation_python
+      summary: Get recommendation for Python ecosystem.
+      parameters:
+        - name: application_stack
+          in: body
+          required: true
+          description: Specification of Python application stack.
+          schema:
+            $ref: "#/definitions/PythonRecommendation"
+        - name: type
+          in: query
+          description: Recommendation type.
+          type: string
+          required: true
+          enum:
+            - stable
+            - testing
+            - latest
+          default: stable
+        - name: runtime_environment
+          in: query
+          description: Runtime environment in which the given stack will be run.
+          type: string
+          required: false
+      responses:
+        202:
+          description: The recommendation is scheduled to be computed.
+        200:
+          description: A recommendation response with all dependencies provided.
+
+  /recommend/python/{recommendation_id}:
+    get:
+      tags: [Recommendation]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_recommendation_python_id
+      summary: Get computeted recommendation based on its id.
+      parameters:
+        - name: recommendation_id
+          in: path
+          required: true
+          description: Recommendation ID returned on recommendation request.
+          type: string
+      responses:
+        200:
+          description: Computed pinned down stack with information based on requested requiremnets recommendation.
+        400:
+          description: On invalid request.
+        404:
+          description: The given recommendation does not exist.
+        201:
+          description: Computing recommendation is still in progress.
+
   /solve/{document_id}:
     get:
       tags: [Results]
@@ -517,12 +573,74 @@ definitions:
       - 'requirements'
     additionalProperties: false
     properties:
-      requirements:
+      requirements: &defRequirements
         type: string
         minLength: 1
         description: Requirements as stated in the requirements.txt file.
         example: >
           selinon==1.0.0rc3
+  PythonRecommendation:
+    type: object
+    required:
+      - 'requirements'
+      - 'requirements_lock'
+    additionalProperties: false
+    properties:
+      requirements:
+        type: string
+        minLength: 1
+        description: Direct dependencies for the application stack.
+        example: >
+          [[source]]
+          url = "https://pypi.python.org/simple"
+          verify_ssl = true
+          name = "pypi"
+
+          [packages]
+          daiquiri = "*"
+
+          [dev-packages]
+      requirements_lock:
+        type: string
+        minLength: 1
+        description: Fully pinned down dependency stack.
+        example: >
+          {
+            "_meta": {
+                "hash": {
+                    "sha256": "fecd8a66514e1129f796d7a45a1f5b2f7733e3ae0ead487ca63752da680ab8e4"
+                },
+                "pipfile-spec": 6,
+                "requires": {},
+                "sources": [
+                    {
+                        "name": "pypi",
+                        "url": "https://pypi.python.org/simple",
+                        "verify_ssl": true
+                    }
+                ]
+            },
+            "default": {
+                "daiquiri": {
+                    "hashes": [
+                        "sha256:1c4942ef0d40920100162ede6024edd43734e40b8dca9b13ebaf4b52ea198457",
+                        "sha256:eb300dfddae43dfdb157938a854b1387298b8fb340d6ecb7b5ae867283af763e"
+                    ],
+                    "index": "pypi",
+                    "version": "==1.4.0"
+                }
+            },
+            "develop": {}
+          }
+      requirements_format:
+        type: string
+        description: Lockfile format - defaults to pipenv if not explicitly specified.
+        items:
+          type: string
+        enum:
+          - pipenv
+          - requirements
+        example: pipenv
   Environment:
     type: array
     description: Environment variables supplied on deployment.
