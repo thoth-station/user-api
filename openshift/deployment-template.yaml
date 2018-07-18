@@ -73,11 +73,6 @@ objects:
               env:
                 - name: APP_MODULE
                   value: 'thoth_user_api.entrypoint:app'
-                - name: APP_SERVICE_PORT
-                  valueFrom:
-                    configMapKeyRef:
-                      key: user-api-service-port
-                      name: thoth
                 - name: KUBERNETES_API_URL
                   value: 'https://kubernetes.default.svc.cluster.local'
                 - name: KUBERNETES_VERIFY_TLS
