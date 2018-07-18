@@ -576,7 +576,7 @@ definitions:
                 description: >
                  Contains all particulars about the build log.
                 example: >
-                "apiVersion": "build.openshift.io/v1"
+                   "apiVersion:build.openshift.io/v1"
   PodInfo:
     type: object
     required:
