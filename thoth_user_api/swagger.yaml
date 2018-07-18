@@ -553,7 +553,7 @@ definitions:
           Collecting tensorflow
           Downloading tensorflow-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (41.2MB)
           Successfully installed tensorflow-1.4.1
-      apiVersion:
+      apiversion:
         type: string
         description: >
           BuildLog api version.
@@ -567,17 +567,9 @@ definitions:
           "BuildLog"
       metadata:
         type: string
-        description: >
-          meta data artifacts of the build config.
-        example:
-          "annotations"
         properties:
           annotations:
             type: string
-            description: >
-             All the BuildConfiguration of the build.
-            example: >
-              "buildlog.thoth-core/build-config"
             properties:
               buildlog.thoth-station.ninja/corresponding-build-configuration:
                 type: string
