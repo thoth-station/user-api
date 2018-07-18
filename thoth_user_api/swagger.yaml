@@ -297,10 +297,10 @@ paths:
       operationId: get_recommendation_python
       summary: Get recommendation for Python ecosystem.
       parameters:
-        - name: python_recommendation
+        - name: application_stack
           in: body
           required: true
-          description: Specification of Python recommendation request.
+          description: Specification of Python application stack.
           schema:
             $ref: "#/definitions/PythonRecommendation"
         - name: type
@@ -607,14 +607,64 @@ definitions:
     type: object
     required:
       - 'requirements'
-      - 'environment'
+      - 'requirements_lock'
     additionalProperties: false
     properties:
       requirements:
-        <<: *defRequirements
-      environment:
         type: string
-        description: Environment information.
+        minLength: 1
+        description: Direct dependencies for the application stack.
+        example: >
+          [[source]]
+          url = "https://pypi.python.org/simple"
+          verify_ssl = true
+          name = "pypi"
+
+          [packages]
+          daiquiri = "*"
+
+          [dev-packages]
+      requirements_lock:
+        type: string
+        minLength: 1
+        description: Fully pinned down dependency stack.
+        example: >
+          {
+            "_meta": {
+                "hash": {
+                    "sha256": "fecd8a66514e1129f796d7a45a1f5b2f7733e3ae0ead487ca63752da680ab8e4"
+                },
+                "pipfile-spec": 6,
+                "requires": {},
+                "sources": [
+                    {
+                        "name": "pypi",
+                        "url": "https://pypi.python.org/simple",
+                        "verify_ssl": true
+                    }
+                ]
+            },
+            "default": {
+                "daiquiri": {
+                    "hashes": [
+                        "sha256:1c4942ef0d40920100162ede6024edd43734e40b8dca9b13ebaf4b52ea198457",
+                        "sha256:eb300dfddae43dfdb157938a854b1387298b8fb340d6ecb7b5ae867283af763e"
+                    ],
+                    "index": "pypi",
+                    "version": "==1.4.0"
+                }
+            },
+            "develop": {}
+          }
+      requirements_format:
+        type: string
+        description: Lockfile format - defaults to pipenv if not explicitly specified.
+        items:
+          type: string
+        enum:
+          - pipenv
+          - requirements
+        example: pipenv
   Environment:
     type: array
     description: Environment variables supplied on deployment.

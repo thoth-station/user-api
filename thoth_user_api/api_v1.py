@@ -312,7 +312,7 @@ def get_buildlog(document_id: str):
     return _get_document(BuildLogsStore, document_id)
 
 
-def get_recommendation_python(python_recommendation: dict, type: str, runtime_environment: str):
+def get_recommendation_python(application_stack: dict, type: str, runtime_environment: str):
     """Get recommendations for Python ecosystem."""
     return {'Error': 'Not implemented yet'}, 500
 
