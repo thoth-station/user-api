@@ -11,11 +11,11 @@ gunicorn = "*"
 attrs = "*"
 thoth-common = "*"
 thoth-storages = "*"
+openshift = "*"
+kubernetes = "*"
 
 [dev-packages]
 pytest = "*"
-pytest-timeout = "*"
-pytest-cov = "*"
 pylint = "*"
 coala = "*"
 pycodestylebear = "*"
