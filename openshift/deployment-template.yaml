@@ -35,7 +35,7 @@ objects:
     apiVersion: v1
     metadata:
       labels:
-        app: thoth`
+        app: thoth
         component: user-api
       name: user-api
       namespace: ${THOTH_FRONTEND_NAMESPACE}
