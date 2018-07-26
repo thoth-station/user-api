@@ -7,7 +7,7 @@ metadata:
       This is Thoth User API BuildConfig, this template is meant to be used by
       Jenkins, but could also be used by humans...
     openshift.io/display-name: 'Thoth Core: User API BuildConfig'
-    version: 0.4.0
+    version: 0.4.1
     tags: poc,thoth,thoth-user-api,ai-stacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
@@ -29,12 +29,12 @@ objects:
         component: user-api
     spec:
       resources:
-        limits:
-          cpu: 500m
-          memory: 512Mi
         requests:
           cpu: 500m
           memory: 512Mi
+        limits:
+          cpu: 1000m
+          memory: 768Mi
       output:
         to:
           kind: ImageStreamTag
