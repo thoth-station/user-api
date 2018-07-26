@@ -1,8 +1,5 @@
 apiVersion: v1
 kind: Template
-labels:
-  template: user-api-deployment
-  thoth: 0.1.0
 metadata:
   name: user-api-deployment
   annotations:
@@ -15,6 +12,10 @@ metadata:
       This template defines resources needed to deploy Thoth Core Services as
       a Proof-of-Concept to OpenShift.
     template.openshift.io/provider-display-name: Red Hat, Inc.
+  labels:
+    template: user-api-deployment
+    app: thoth
+    component: user-api
 
 objects:
   - kind: Route
@@ -23,7 +24,7 @@ objects:
       name: user-api
       namespace: ${THOTH_FRONTEND_NAMESPACE}
       labels:
-        app: thoth-core
+        app: thoth
         component: user-api
     spec:
       to:
@@ -34,8 +35,7 @@ objects:
     apiVersion: v1
     metadata:
       labels:
-        service: user-api
-        app: thoth-core
+        app: thoth
         component: user-api
       name: user-api
       namespace: ${THOTH_FRONTEND_NAMESPACE}
@@ -53,8 +53,7 @@ objects:
     kind: DeploymentConfig
     metadata:
       labels:
-        service: user-api
-        app: thoth-core
+        app: thoth
         component: user-api
       name: user-api
       namespace: ${THOTH_FRONTEND_NAMESPACE}
@@ -93,6 +92,11 @@ objects:
                   valueFrom:
                     configMapKeyRef:
                       key: middletier-namespace
+                      name: thoth
+                - name: THOTH_INFRA_NAMESPACE
+                  valueFrom:
+                    configMapKeyRef:
+                      key: infra-namespace
                       name: thoth
                 - name: THOTH_BACKEND_NAMESPACE
                   valueFrom:
@@ -205,7 +209,8 @@ objects:
     apiVersion: v1
     metadata:
       labels:
-        app: thoth-core
+        app: thoth
+        component: user-api
       name: user-api
       namespace: ${THOTH_FRONTEND_NAMESPACE}
     spec:
