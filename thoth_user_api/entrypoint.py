@@ -45,14 +45,12 @@ manager = Manager(application)
 application.secret_key = Configuration.APP_SECRET_KEY
 
 
-@logger_setup('werkzeug', logging.INFO)
 @app.route('/')
 def base_url():
     """Redirect to UI by default."""
     return redirect('api/v1/ui')
 
 
-@logger_setup('werkzeug', logging.INFO)
 @app.route('/api/v1')
 def api_v1():
     """Provide a listing of all available endpoints."""
@@ -66,7 +64,6 @@ def api_v1():
     return jsonify({'paths': paths})
 
 
-@logger_setup('werkzeug', logging.WARNING)
 def _healthiness():
     """Check service healthiness."""
     # Check that Ceph is reachable.
@@ -81,6 +78,7 @@ def _healthiness():
 
 
 @logger_setup('werkzeug', logging.WARNING)
+@logger_setup('botocore.vendored.requests.packages.urllib3.connectionpool', logging.WARNING)
 @app.route('/readiness')
 def api_readiness():
     """Report readiness for OpenShift readiness probe."""
@@ -88,6 +86,7 @@ def api_readiness():
 
 
 @logger_setup('werkzeug', logging.WARNING)
+@logger_setup('botocore.vendored.requests.packages.urllib3.connectionpool', logging.WARNING)
 @app.route('/liveness')
 def api_liveness():
     """Report liveness for OpenShift readiness probe."""
