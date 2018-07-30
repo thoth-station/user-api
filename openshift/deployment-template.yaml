@@ -172,7 +172,7 @@ objects:
                   protocol: TCP
               resources:
                 requests:
-                  memory: "128Mi"
+                  memory: "256Mi"
                   cpu: "125m"
                 limits:
                   memory: "256Mi"
