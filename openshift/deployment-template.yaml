@@ -172,10 +172,10 @@ objects:
                   protocol: TCP
               resources:
                 requests:
-                  memory: "256Mi"
+                  memory: "384Mi"
                   cpu: "125m"
                 limits:
-                  memory: "256Mi"
+                  memory: "384Mi"
                   cpu: "500m"
               readinessProbe:
                 httpGet:
