@@ -89,8 +89,8 @@ def solve(packages: dict, debug: bool = False, transitive: bool = False, solver:
         }, 400
 
 
-def get_recommendation_python(application_stack: dict, type: str,
-                              runtime_environment: str = None, debug: bool = False):
+def post_recommendation_python(application_stack: dict, type: str,
+                               runtime_environment: str = None, debug: bool = False):
     """Compute results for the given package or package stack using adviser."""
     params = locals()
     try:
@@ -266,6 +266,11 @@ def list_buildlogs(page: int = 0):
 def list_analyzer_results(page: int = 0):
     """Retrieve image analyzer result."""
     return _do_listing(AnalysisResultsStore, page)
+
+
+def list_adviser_results(page: int = 0):
+    """List available runtime environments."""
+    return _do_listing(AdvisersResultsStore, page)
 
 
 def list_solver_results(page: int = 0):

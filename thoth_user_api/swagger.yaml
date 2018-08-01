@@ -238,7 +238,7 @@ paths:
     post:
       tags: [Recommendation]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: get_recommendation_python
+      operationId: post_recommendation_python
       summary: Get recommendation for Python ecosystem.
       parameters:
         - name: application_stack
@@ -275,6 +275,23 @@ paths:
           description: The recommendation is scheduled to be computed.
         200:
           description: A recommendation response with all dependencies provided.
+
+  /recommend:
+    get:
+      tags: [Recommendation]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: list_adviser_results
+      summary: Get recommendation results available.
+      parameters:
+        - name: page
+          in: query
+          required: false
+          default: 0
+          description: Page offset in pagination.
+          type: integer
+      responses:
+        200:
+          description: Document listing for recommendations available.
 
   /recommend/python/{recommendation_id}:
     get:
