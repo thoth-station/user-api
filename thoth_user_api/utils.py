@@ -77,26 +77,29 @@ def run_sync(force_analysis_results_sync: bool = False, force_solver_results_syn
         namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE,
         name='graph-sync'
     )
-    template = response.to_dict()['spec']['jobTemplate']['spec']['template']
+    template = response.to_dict()
+    labels = template['metadata']['labels']
+    labels.pop('template', None)  # remove template label
+    job_template = template['spec']['jobTemplate']['spec']['template']
     _set_env_var(
-        template,
+        job_template,
         THOTH_GRAPH_SYNC_FORCE_ANALYSIS_RESULTS_SYNC=int(force_analysis_results_sync),
         THOTH_GRAPH_SYNC_FORCE_SOLVER_RESULTS_SYNC=int(force_solver_results_sync)
     )
 
     # Construct a Pod spec.
-    template = {
+    pod_template = {
         "apiVersion": "v1",
         "kind": "Pod",
         "metadata": {
             "generateName": 'graph-sync-',
-            "labels": template['metadata'].get('labels', {})
+            "labels": labels
         },
-        "spec": template['spec']
+        "spec": job_template['spec']
     }
 
     response = _OPENSHIFT_CLIENT.resources.get(api_version='v1', kind='Pod').create(
-        body=template,
+        body=pod_template,
         namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE
     )
 
