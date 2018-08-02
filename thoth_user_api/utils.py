@@ -18,309 +18,104 @@
 
 """Common library-wide utilities."""
 
-import os
 import logging
 import requests
 
+from kubernetes import client, config
+from openshift.dynamic import DynamicClient
+import openshift
+
 from .configuration import Configuration
+from .exceptions import NotFoundException
 
+# Load in-cluster configuration that is exposed by OpenShift/k8s configuration.
+config.load_incluster_config()
+
+_OPENSHIFT_CLIENT = DynamicClient(client.ApiClient(configuration=client.Configuration()))
 _LOGGER = logging.getLogger('thoth.user_api.utils')
-_RSYSLOG_HOST = os.getenv('RSYSLOG_HOST')
-_RSYSLOG_PORT = os.getenv('RSYSLOG_PORT')
-_PROMETHEUS_PUSHGATEWAY_HOST = os.getenv('PROMETHEUS_PUSHGATEWAY_HOST')
-_PROMETHEUS_PUSHGATEWAY_PORT = os.getenv('PROMETHEUS_PUSHGATEWAY_PORT')
 
 
-def _set_env_var(env_config: list, name: str, value: str) -> None:
-    """Overwrite env variable configuration.
+def _set_env_var(template: dict, **env_var):
+    """Set environment in the given template."""
+    for env_var_name, env_var_value in env_var.items():
+        for entry in template['spec']['containers'][0]['env']:
+            if entry['name'] == env_var_name:
+                entry['value'] = env_var_value
+                break
+        else:
+            template['spec']['containers'][0]['env'].append(
+                {'name': env_var_name, 'value': str(env_var_value)}
+            )
 
-    If an ENV already exists in configuration overwrite it,
-    otherwise append.
+
+def _set_template_parameters(template: dict, **parameters: object) -> None:
+    """Set parameters in the template - replace existing ones or append to parameter list if not exist.
+
+    >>> _set_template_parameters(template, THOTH_LOG_ADVISER='DEBUG')
     """
-    for item in env_config:
-        if item['name'] == name:
-            item['value'] = str(value)
-            item.pop('valueFrom', None)
-            break
-    else:
-        env_config.append({
-            'name': name,
-            'value': str(value)
-        })
+    if 'parameters' not in template:
+        template['parameters'] = []
+
+    for parameter_name, parameter_value in parameters.items():
+        for entry in template['parameters']:
+            if entry['name'] == parameter_name:
+                entry['value'] = str(parameter_value)
+                break
+        else:
+            template['parameters'].append({
+                'name': parameter_name,
+                'value': str(parameter_value)
+            })
 
 
-def _do_run_pod(template: dict, namespace: str) -> str:
-    """Run defined template in Kubernetes."""
-    # We don't care about secret as we run inside the cluster.
-    # All builds should hard-code it to secret.
-    endpoint = "{}/api/v1/namespaces/{}/pods".format(Configuration.KUBERNETES_API_URL,
-                                                     namespace)
-    _LOGGER.debug("Sending POST request to Kubernetes master %r",
-                  Configuration.KUBERNETES_API_URL)
-    response = requests.post(
-        endpoint,
-        headers={
-            'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
-            'Content-Type': 'application/json'
-        },
-        json=template,
-        verify=Configuration.KUBERNETES_VERIFY_TLS
-    )
-    _LOGGER.debug("Kubernetes master response (%d) from %r: %r",
-                  response.status_code, Configuration.KUBERNETES_API_URL, response.text)
-    if response.status_code / 100 != 2:
-        _LOGGER.error(response.text)
-    response.raise_for_status()
-
-    if _RSYSLOG_HOST:
-        # We use only one container per pod.
-        _set_env_var(template['spec']['containers'][0]
-                     ['env'], 'RSYSLOG_HOST', _RSYSLOG_HOST)
-        _set_env_var(template['spec']['containers'][0]
-                     ['env'], 'RSYSLOG_PORT', _RSYSLOG_PORT)
-
-    return response.json()['metadata']['name']
-
-
-def run_analyzer(image: str, analyzer: str, debug: bool = False,
-                 timeout: int = None, cpu_request: str = None,
-                 memory_request: str = None, registry_user: str = None,
-                 registry_password: str = None,
-                 tls_verify: bool = True) -> str:
-    """Run an analyzer for the given image."""
-    name_prefix = "{}-{}".format(analyzer, image.rsplit('/',
-                                                        maxsplit=1)[-1]).replace(':', '-').replace('/', '-')
-    template = {
-        "apiVersion": "v1",
-        "kind": "Pod",
-        "metadata": {
-            "generateName": name_prefix + '-',
-            "namespace": Configuration.THOTH_MIDDLETIER_NAMESPACE,
-            "labels": {
-                "thothtype": "userpod",
-                "thothpod": "analyzer"
-            }
-        },
-        "spec": {
-            "restartPolicy": "Never",
-            "automountServiceAccountToken": False,
-            "containers": [{
-                "name": analyzer.rsplit('/', maxsplit=1)[-1],
-                "image": analyzer,
-                "livenessProbe": {
-                    "tcpSocket": {
-                        "port": 8080
-                    },
-                    "initialDelaySeconds": Configuration.THOTH_ANALYZER_HARD_TIMEOUT,
-                    "failureThreshold": 1,
-                    "periodSeconds": 10
-                },
-                "env": [
-                    {"name": "THOTH_ANALYZED_IMAGE", "value": str(image)},
-                    {"name": "THOTH_ANALYZER", "value": str(analyzer)},
-                    {"name": "THOTH_ANALYZER_DEBUG", "value": str(int(debug))},
-                    {"name": "THOTH_ANALYZER_TIMEOUT",
-                        "value": str(timeout or 0)},
-                    {"name": "THOTH_ANALYZER_OUTPUT",
-                        "value": Configuration.THOTH_ANALYZER_OUTPUT},
-                    {"name": "THOTH_ANALYZER_NO_TLS_VERIFY",
-                        "value": str(int(not tls_verify))}
-                ],
-                "resources": {
-                    "limits": {
-                        "memory": Configuration.THOTH_MIDDLETIER_POD_MEMORY_LIMIT,
-                        "cpu": Configuration.THOTH_MIDDLETIER_POD_CPU_LIMIT
-                    },
-                    "requests": {
-                        "memory": memory_request or Configuration.THOTH_MIDDLETIER_POD_MEMORY_REQUEST,
-                        "cpu": cpu_request or Configuration.THOTH_MIDDLETIER_POD_CPU_REQUEST
-                    }
-                }
-            }]
-        }
-    }
-
-    if bool(registry_user) + bool(registry_password) == 1:
-        raise ValueError(
-            'Please specify both registry user and password in order to use registry authentication.')
-    if registry_user and registry_password:
-        _set_env_var(
-            template['spec']['containers'][0]['env'],
-            "THOTH_REGISTRY_CREDENTIALS",
-            f"{registry_user}:{registry_password}"
-        )
-
-    if _PROMETHEUS_PUSHGATEWAY_HOST and _PROMETHEUS_PUSHGATEWAY_PORT:
-        _set_env_var(template['spec']['containers'][0]['env'],
-                     'PROMETHEUS_PUSHGATEWAY_HOST',
-                     _PROMETHEUS_PUSHGATEWAY_HOST)
-        _set_env_var(template['spec']['containers'][0]['env'],
-                     'PROMETHEUS_PUSHGATEWAY_PORT',
-                     _PROMETHEUS_PUSHGATEWAY_PORT)
-    _LOGGER.debug("Requesting to run analyzer %r with payload %s",
-                  analyzer, template)
-    return _do_run_pod(template, Configuration.THOTH_MIDDLETIER_NAMESPACE)
-
-
-def run_solver(solver: str, packages: str, debug: bool = False,
-               transitive: bool = True, cpu_request: str = None,
-               memory_request: str = None) -> str:
-    """Run a solver for the given packages."""
-    name_prefix = "{}-{}".format(solver, solver.rsplit('/',
-                                                       maxsplit=1)[-1]).replace(':', '-').replace('/', '-')
-    template = {
-        "apiVersion": "v1",
-        "kind": "Pod",
-        "metadata": {
-            "generateName": name_prefix + '-',
-            "namespace": Configuration.THOTH_MIDDLETIER_NAMESPACE,
-            "labels": {
-                "thothtype": "userpod",
-                "thothpod": "analyzer"
-            }
-        },
-        "spec": {
-            "restartPolicy": "Never",
-            "automountServiceAccountToken": False,
-            "containers": [{
-                "name": solver.rsplit('/', maxsplit=1)[-1],
-                "image": solver,
-                "livenessProbe": {
-                    "tcpSocket": {
-                        "port": 80
-                    },
-                    "initialDelaySeconds": Configuration.THOTH_ANALYZER_HARD_TIMEOUT,
-                    "failureThreshold": 1,
-                    "periodSeconds": 10
-                },
-                "env": [
-                    {"name": "THOTH_SOLVER", "value": str(solver)},
-                    {"name": "THOTH_SOLVER_NO_TRANSITIVE",
-                        "value": str(int(not transitive))},
-                    {"name": "THOTH_SOLVER_PACKAGES", "value": str(
-                        packages.replace('\n', '\\n'))},
-                    {"name": "THOTH_SOLVER_DEBUG", "value": str(int(debug))},
-                    {"name": "THOTH_SOLVER_OUTPUT",
-                        "value": Configuration.THOTH_SOLVER_OUTPUT}
-                ],
-                "resources": {
-                    "limits": {
-                        "memory": Configuration.THOTH_MIDDLETIER_POD_MEMORY_LIMIT,
-                        "cpu": Configuration.THOTH_MIDDLETIER_POD_CPU_LIMIT
-                    },
-                    "requests": {
-                        "memory": memory_request or Configuration.THOTH_MIDDLETIER_POD_MEMORY_REQUEST,
-                        "cpu": cpu_request or Configuration.THOTH_MIDDLETIER_POD_CPU_REQUEST
-                    }
-                }
-            }]
-        }
-    }
-
-    _LOGGER.debug("Requesting to run solver %r with payload %s",
-                  solver, template)
-    return _do_run_pod(template, Configuration.THOTH_MIDDLETIER_NAMESPACE)
-
-
-def run_adviser(packages: str, debug: bool = False,
-                packages_only: bool = False) -> str:
-    """Request to run adviser in the backend part."""
-    template = {
-        "apiVersion": "v1",
-        "kind": "Pod",
-        "metadata": {
-            "generateName": 'fridex-thoth-adviser-',
-            "namespace": Configuration.THOTH_BACKEND_NAMESPACE,
-            "labels": {
-                "thothpod": "analyzer"
-            }
-        },
-        "spec": {
-            "restartPolicy": "Never",
-            "automountServiceAccountToken": False,
-            "containers": [{
-                "name": "thoth-adviser",
-                "image": "fridex/thoth-adviser",
-                "livenessProbe": {
-                    "tcpSocket": {
-                        "port": 80
-                    },
-                    "initialDelaySeconds": Configuration.THOTH_ANALYZER_HARD_TIMEOUT,
-                    "failureThreshold": 1,
-                    "periodSeconds": 10
-                },
-                "env": [
-                    {"name": "THOTH_ADVISER_PACKAGES", "value": str(
-                        packages.replace('\n', '\\n'))},
-                    {"name": "THOTH_ADVISER_DEBUG", "value": str(int(debug))},
-                    {"name": "THOTH_ADVISER_PACKAGES_ONLY",
-                        "value": str(int(packages_only))},
-                    {"name": "THOTH_ADVISER_OUTPUT",
-                        "value": Configuration.THOTH_ADVISER_OUTPUT}
-                ],
-            }]
-        }
-    }
-
-    _LOGGER.debug("Requesting to run adviser with payload %s", template)
-    return _do_run_pod(template, Configuration.THOTH_BACKEND_NAMESPACE)
-
-
-def run_sync(sync_observations: bool = False, *,
-             force_analysis_results_sync: bool = False,
-             force_solver_results_sync: bool = False):
-    """Run a graph sync."""
+def run_sync(force_analysis_results_sync: bool = False, force_solver_results_sync: bool = False) -> str:
+    """Run graph sync, base pod definition based on job definition."""
     # Let's reuse pod definition from the cronjob definition so any changes in
     # deployed application work out of the box.
-    cronjob_def = get_cronjob('graph-sync')
-    pod_spec = cronjob_def['spec']['jobTemplate']['spec']['template']['spec']
+    _LOGGER.debug("Retrieving graph-sync CronJob definition")
+    response = _OPENSHIFT_CLIENT.resources.get(api_version='v2alpha1', kind='CronJob').get(
+        namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE,
+        name='graph-sync'
+    )
+    template = response.to_dict()
+    labels = template['metadata']['labels']
+    labels.pop('template', None)  # remove template label
+    job_template = template['spec']['jobTemplate']['spec']['template']
+    _set_env_var(
+        job_template,
+        THOTH_GRAPH_SYNC_FORCE_ANALYSIS_RESULTS_SYNC=int(force_analysis_results_sync),
+        THOTH_GRAPH_SYNC_FORCE_SOLVER_RESULTS_SYNC=int(force_solver_results_sync)
+    )
 
-    # We silently assume that the first container is actually the
-    # syncing container. We need to assign values that are passed
-    # from configmaps explicitly.
-    # TODO: get rid of this once we will use custom objects.
-    env = pod_spec['containers'][0]['env']
-    _set_env_var(env, 'THOTH_SYNC_OBSERVATIONS', str(int(sync_observations)))
-    _set_env_var(env, 'THOTH_GRAPH_SYNC_FORCE_ANALYSIS_RESULTS_SYNC',
-                 str(int(force_analysis_results_sync)))
-    _set_env_var(env, 'THOTH_GRAPH_SYNC_FORCE_SOLVER_RESULTS_SYNC',
-                 str(int(force_solver_results_sync)))
-    _set_env_var(env, 'THOTH_MIDDLETIER_NAMESPACE',
-                 Configuration.THOTH_MIDDLETIER_NAMESPACE)
-    _set_env_var(env, 'THOTH_DEPLOYMENT_NAME',
-                 os.environ['THOTH_DEPLOYMENT_NAME'])
-    _set_env_var(env, 'THOTH_S3_ENDPOINT_URL',
-                 os.environ['THOTH_S3_ENDPOINT_URL'])
-    _set_env_var(env, 'THOTH_CEPH_BUCKET', os.environ['THOTH_CEPH_BUCKET'])
-    _set_env_var(env, 'THOTH_CEPH_BUCKET_PREFIX',
-                 os.environ['THOTH_CEPH_BUCKET_PREFIX'])
-    _set_env_var(env, 'THOTH_CEPH_KEY_ID', os.environ['THOTH_CEPH_KEY_ID'])
-    _set_env_var(env, 'THOTH_CEPH_SECRET_KEY',
-                 os.environ['THOTH_CEPH_SECRET_KEY'])
-
-    template = {
+    # Construct a Pod spec.
+    pod_template = {
         "apiVersion": "v1",
         "kind": "Pod",
         "metadata": {
             "generateName": 'graph-sync-',
-            "namespace": Configuration.THOTH_BACKEND_NAMESPACE,
-            "labels": {
-                "thothtype": "userpod",
-                "thothpod": "pod",
-                "name": "thoth-graph-sync"
-            }
+            "labels": labels
         },
-        "spec": pod_spec
+        "spec": job_template['spec']
     }
-    _LOGGER.debug("Requesting to run graph sync")
-    return _do_run_pod(template, Configuration.THOTH_BACKEND_NAMESPACE)
+
+    response = _OPENSHIFT_CLIENT.resources.get(api_version='v1', kind='Pod').create(
+        body=pod_template,
+        namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE
+    )
+
+    _LOGGER.debug(f"Started graph-sync pod with name {response.metadata.name}")
+    return response.metadata.name
 
 
 def get_pod_log(pod_id: str) -> str:
     """Get log of a pod based on assigned pod ID."""
-    endpoint = "{}/api/v1/namespaces/{}/pods/{}/log".format(Configuration.KUBERNETES_API_URL,
-                                                            Configuration.THOTH_MIDDLETIER_NAMESPACE,
-                                                            pod_id)
+    # TODO: rewrite to OpenShift rest client once it will support it.
+    endpoint = "{}/api/v1/namespaces/{}/pods/{}/log".format(
+        Configuration.KUBERNETES_API_URL,
+        Configuration.THOTH_MIDDLETIER_NAMESPACE,
+        pod_id
+    )
+
     response = requests.get(
         endpoint,
         headers={
@@ -329,52 +124,180 @@ def get_pod_log(pod_id: str) -> str:
         },
         verify=Configuration.KUBERNETES_VERIFY_TLS
     )
-    _LOGGER.debug("Kubernetes master response for pod log (%d): %r",
-                  response.status_code, response.text)
-    if response.status_code / 100 != 2:
-        _LOGGER.error(response.text)
+    _LOGGER.debug("Kubernetes master response for pod log (%d): %r", response.status_code, response.text)
     response.raise_for_status()
 
     return response.text
 
 
 def get_pod_status(pod_id: str) -> dict:
-    """Get status entry for a pod."""
-    endpoint = "{}/api/v1/namespaces/{}/pods/{}".format(Configuration.KUBERNETES_API_URL,
-                                                        Configuration.THOTH_MIDDLETIER_NAMESPACE,
-                                                        pod_id)
-    response = requests.get(
+    """Get status entry for a pod - this applies only for solver and package-extract pods."""
+    try:
+        response = _OPENSHIFT_CLIENT.resources.get(api_version='v1', kind='Pod').get(
+            namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE,
+            name=pod_id
+        )
+    except openshift.dynamic.exceptions.NotFoundError as exc:
+        raise NotFoundException(f"The given pod with id {pod_id} could not be found") from exc
+
+    _LOGGER.debug("OpenShift master response for pod status (%d): %r", response.to_dict())
+    return response.to_dict()['status']['containerStatuses'][0]['state']
+
+
+def get_solver_names() -> list:
+    """Retrieve name of solvers available in installation."""
+    response = _OPENSHIFT_CLIENT.resources.get(api_version='v1', kind='Template').get(
+        namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE,
+        label_selector='template=solver'
+    )
+    _LOGGER.debug("OpenShift response for getting solver template: %r", response.to_dict())
+    _raise_on_invalid_response_size(response)
+    return [obj['metadata']['labels']['component'] for obj in response.to_dict()['items'][0]['objects']]
+
+
+def run_solver(packages: str, debug: bool = False, transitive: bool = True, solver: str = None) -> dict:
+    """Run solver or all solver to solve the given requirements."""
+    response = _OPENSHIFT_CLIENT.resources.get(api_version='v1', kind='Template').get(
+        namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE,
+        label_selector='template=solver'
+    )
+    _LOGGER.debug("OpenShift response for getting solver template: %r", response.to_dict())
+
+    _raise_on_invalid_response_size(response)
+    template = response.to_dict()['items'][0]
+
+    _set_template_parameters(
+        template,
+        THOTH_SOLVER_NO_TRANSITIVE=int(not transitive),
+        THOTH_SOLVER_PACKAGES=packages.replace('\n', '\\n'),
+        THOTH_LOG_SOLVER='DEBUG' if debug else 'INFO',
+        THOTH_SOLVER_OUTPUT=Configuration.THOTH_SOLVER_OUTPUT
+    )
+
+    template = _oc_process(Configuration.THOTH_MIDDLETIER_NAMESPACE, template)
+
+    solvers = {}
+    for obj in template['objects']:
+        solver_name = obj['metadata']['labels']['component']
+        if solver and solver != solver_name:
+            _LOGGER.debug(f"Skipping solver %r as the requested solver is %r", solver_name, solver)
+            continue
+
+        response = _OPENSHIFT_CLIENT.resources.get(api_version='v1', kind=obj['kind']).create(
+            body=obj,
+            namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE
+        )
+
+        _LOGGER.debug("Starting solver %r", solver_name)
+        _LOGGER.debug("OpenShift response for creating a pod: %r", response.to_dict())
+        solvers[solver_name] = response.metadata.name
+
+    return solvers
+
+
+def run_package_extract(image: str, debug: bool = False,
+                        registry_user: str = None, registry_password: str = None, verify_tls: bool = True) -> str:
+    """Run package-extract analyzer to extract information from the provided image."""
+    response = _OPENSHIFT_CLIENT.resources.get(api_version='v1', kind='Template').get(
+        namespace=Configuration.THOTH_INFRA_NAMESPACE,
+        label_selector='template=package-extract'
+    )
+    _LOGGER.debug("OpenShift response for getting package-extract template: %r", response.to_dict())
+    _raise_on_invalid_response_size(response)
+    template = response.to_dict()['items'][0]
+
+    _set_template_parameters(
+        template,
+        THOTH_LOG_PACKAGE__EXTRACT='DEBUG' if debug else 'INFO',
+        THOTH_ANALYZED_IMAGE=image,
+        THOTH_ANALYZER_NO_TLS_VERIFY=int(not verify_tls),
+        THOTH_ANALYZER_OUTPUT=Configuration.THOTH_ANALYZER_OUTPUT
+    )
+
+    if registry_user and registry_password:
+        _set_template_parameters(
+            template,
+            THOTH_REGISTRY_CREDENTIALS=f"{registry_user}:{registry_password}"
+        )
+
+    template = _oc_process(Configuration.THOTH_MIDDLETIER_NAMESPACE, template)
+    analyzer = template['objects'][0]
+
+    response = _OPENSHIFT_CLIENT.resources.get(api_version='v1', kind=analyzer['kind']).create(
+        body=analyzer,
+        namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE
+    )
+
+    _LOGGER.debug("OpenShift response for creating a pod: %r", response.to_dict())
+    return response.metadata.name
+
+
+def run_adviser(application_stack: dict, type: str, runtime_environment: str = None, debug: bool = False) -> str:
+    """Run adviser on the provided user input."""
+    response = _OPENSHIFT_CLIENT.resources.get(api_version='v1', kind='Template').get(
+        namespace=Configuration.THOTH_INFRA_NAMESPACE,
+        label_selector='template=adviser'
+    )
+    _LOGGER.debug("OpenShift response for getting adviser template: %r", response.to_dict())
+    _raise_on_invalid_response_size(response)
+
+    template = response.to_dict()['items'][0]
+    _set_template_parameters(
+        template,
+        THOTH_ADVISER_REQUIREMENTS=application_stack.pop('requirements'),
+        THOTH_ADVISER_REQUIREMENTS_LOCKED=application_stack.get('requirements_lock', ''),
+        THOTH_ADVISER_REQUIREMENTS_FORMAT=application_stack.get('requirements_formant', 'pipenv'),
+        THOTH_ADVISER_RECOMMENDATION_TYPE=type,
+        THOTH_ADVISER_RUNTIME_ENVIRONMENT=runtime_environment,
+        THOTH_ADVISER_OUTPUT=Configuration.THOTH_ADVISER_OUTPUT,
+        THOTH_LOG_ADVISER='DEBUG' if debug else 'INFO'
+    )
+
+    template = _oc_process(Configuration.THOTH_MIDDLETIER_NAMESPACE, template)
+    adviser = template['objects'][0]
+
+    response = _OPENSHIFT_CLIENT.resources.get(api_version='v1', kind=adviser['kind']).create(
+        body=adviser,
+        namespace=Configuration.THOTH_BACKEND_NAMESPACE
+    )
+
+    _LOGGER.debug("OpenShift response for creating a pod: %r", response.to_dict())
+    return response.metadata.name
+
+
+def _raise_on_invalid_response_size(response):
+    """It is expected that there is only one object type for the given item."""
+    if len(response.items) != 1:
+        raise RuntimeError(
+            f"Application misconfiguration - number of templates available in the infra namespace "
+            f"{Configuration.THOTH_INFRA_NAMESPACE!r} is {len(response.items)}, should be 1."
+        )
+
+
+def _oc_process(namespace: str, template: dict) -> dict:
+    """Process the given template in OpenShift."""
+    # This does not work - see issue reported upstream:
+    #   https://github.com/openshift/openshift-restclient-python/issues/190
+    # return TemplateOpenshiftIoApi().create_namespaced_processed_template_v1(namespace, template)
+    endpoint = "{}/apis/template.openshift.io/v1/namespaces/{}/processedtemplates".format(
+        Configuration.OPENSHIFT_API_URL,
+        namespace
+    )
+    response = requests.post(
         endpoint,
+        json=template,
         headers={
             'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
             'Content-Type': 'application/json'
         },
         verify=Configuration.KUBERNETES_VERIFY_TLS
     )
-    _LOGGER.debug("Kubernetes master response for pod status (%d): %r",
-                  response.status_code, response.text)
-    if response.status_code / 100 != 2:
-        _LOGGER.error(response.text)
-    response.raise_for_status()
-    return response.json()['status']['containerStatuses'][0]['state']
+    _LOGGER.debug("OpenShift master response template (%d): %r", response.status_code, response.text)
 
+    try:
+        response.raise_for_status()
+    except Exception:
+        _LOGGER.error("Failed to process template: %s", response.text)
+        raise
 
-def get_cronjob(cronjob_name: str) -> dict:
-    """Retrieve a cron job based on its name."""
-    endpoint = '{}/apis/batch/v2alpha1/namespaces/{}/cronjobs/{}'.format(Configuration.KUBERNETES_API_URL,
-                                                                         Configuration.THOTH_BACKEND_NAMESPACE,
-                                                                         cronjob_name)
-    response = requests.get(
-        endpoint,
-        headers={
-            'Authorization': 'Bearer {}'.format(Configuration.KUBERNETES_API_TOKEN),
-            'Content-Type': 'application/json'
-        },
-        verify=Configuration.KUBERNETES_VERIFY_TLS
-    )
-    _LOGGER.debug(
-        "Kubernetes master response for cronjob query with HTTP status code %d", response.status_code)
-    if 200 <= response.status_code <= 399:
-        _LOGGER.error(response.text)
-    response.raise_for_status()
     return response.json()

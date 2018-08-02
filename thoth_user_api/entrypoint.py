@@ -95,5 +95,4 @@ def api_liveness():
 
 if __name__ == '__main__':
     _LOGGER.info(f'Thoth User API v{thoth_user_api.__version__}')
-
     manager.run()

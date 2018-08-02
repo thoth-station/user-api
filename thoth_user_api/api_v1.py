@@ -34,7 +34,8 @@ from .parsing import parse_log as do_parse_log
 from .utils import get_pod_log as do_get_pod_log
 from .utils import get_pod_status as do_get_pod_status
 from .utils import run_adviser
-from .utils import run_analyzer
+from .utils import get_solver_names
+from .utils import run_package_extract
 from .utils import run_solver
 from .utils import run_sync
 
@@ -42,15 +43,13 @@ PAGINATION_SIZE = 100
 _LOGGER = logging.getLogger('thoth.user_api.api_v1')
 
 
-def analyze(image: str, analyzer: str, debug: bool = False,
-            timeout: int = None, cpu_request: str = None,
-            memory_request: str = None, registry_user: str = None,
-            registry_password=None, tls_verify: bool = True):
+def analyze(image: str, debug: bool = False, registry_user: str = None, registry_password=None,
+            verify_tls: bool = True):
     """Run an analyzer in a restricted namespace."""
     params = locals()
     try:
         return {
-            'pod_id': run_analyzer(**params),
+            'pod_id': run_package_extract(**params),
             'parameters': params
         }, 202
     except Exception as exc:
@@ -63,9 +62,14 @@ def analyze(image: str, analyzer: str, debug: bool = False,
         }, 400
 
 
-def solve(solver: str, packages: dict, debug: bool = False,
-          cpu_request: str = None, memory_request: str = None,
-          transitive: bool = False):
+def list_solvers():
+    """List available registered solvers."""
+    return {
+        'solvers': get_solver_names()
+    }
+
+
+def solve(packages: dict, debug: bool = False, transitive: bool = False, solver: str = None):
     """Run a solver in a restricted namespace."""
     packages = packages.pop('requirements', '')
     params = locals()
@@ -85,9 +89,9 @@ def solve(solver: str, packages: dict, debug: bool = False,
         }, 400
 
 
-def advise(packages: dict, debug: bool = False, packages_only: bool = False):
+def post_recommendation_python(application_stack: dict, type: str,
+                               runtime_environment: str = None, debug: bool = False):
     """Compute results for the given package or package stack using adviser."""
-    packages = packages.pop('requirements', '')
     params = locals()
     try:
         return {
@@ -95,7 +99,7 @@ def advise(packages: dict, debug: bool = False, packages_only: bool = False):
             'parameters': params
         }, 202
     except Exception as exc:
-        _LOGGER.error(f"Failed to run adviser for {packages!r}")
+        _LOGGER.error(f"Failed to run adviser for {application_stack!r}")
         _LOGGER.exception(str(exc))
         # TODO: for production we will need to filter out some errors so
         # they are not exposed to users.
@@ -105,9 +109,7 @@ def advise(packages: dict, debug: bool = False, packages_only: bool = False):
         }, 400
 
 
-def sync(secret: str, sync_observations: bool = False,
-         force_analysis_results_sync: bool = False,
-         force_solver_results_sync: bool = False):
+def sync(secret: str, force_analysis_results_sync: bool = False, force_solver_results_sync: bool = False):
     """Sync results to graph database."""
     if secret != Configuration.THOTH_SECRET:
         return {
@@ -117,7 +119,6 @@ def sync(secret: str, sync_observations: bool = False,
     try:
         return {
             'pod_id': run_sync(
-                sync_observations,
                 force_analysis_results_sync=force_analysis_results_sync,
                 force_solver_results_sync=force_solver_results_sync
             )
@@ -155,6 +156,7 @@ def get_pod_log(pod_id: str):
             'pod_id': pod_id,
             'pod_log': do_get_pod_log(pod_id)
         }
+
     except Exception as exc:
         _LOGGER.exception(str(exc))
         # TODO: for production we will need to filter out some errors so
@@ -266,6 +268,11 @@ def list_analyzer_results(page: int = 0):
     return _do_listing(AnalysisResultsStore, page)
 
 
+def list_adviser_results(page: int = 0):
+    """List available runtime environments."""
+    return _do_listing(AdvisersResultsStore, page)
+
+
 def list_solver_results(page: int = 0):
     """Retrieve image analyzer result."""
     return _do_listing(SolverResultsStore, page)
@@ -310,11 +317,6 @@ def get_analyzer_result(document_id: str):
 def get_buildlog(document_id: str):
     """Retrieve the given buildlog."""
     return _get_document(BuildLogsStore, document_id)
-
-
-def get_recommendation_python(application_stack: dict, type: str, runtime_environment: str):
-    """Get recommendations for Python ecosystem."""
-    return {'Error': 'Not implemented yet'}, 500
 
 
 def get_recommendation_python_id(recommendation_id):
