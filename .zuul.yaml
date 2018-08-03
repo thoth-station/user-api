@@ -17,6 +17,7 @@
             vars:
               webhook_url: >
                 "https://paas.upshift.redhat.com/oapi/v1/namespaces/thoth-test-core/buildconfigs/user-api/webhooks"
+              ref: master
     kebechet-auto-gate:
       queue: core
       jobs:
