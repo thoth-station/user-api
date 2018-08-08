@@ -36,16 +36,7 @@ from .parsing import parse_log as do_parse_log
 
 PAGINATION_SIZE = 100
 _LOGGER = logging.getLogger('thoth.user_api.api_v1')
-
-_OPENSHIFT = OpenShift(
-    frontend_namespace=Configuration.THOTH_FRONTEND_NAMESPACE,
-    middletier_namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE,
-    backend_namespace=Configuration.THOTH_BACKEND_NAMESPACE,
-    infra_namespace=Configuration.THOTH_INFRA_NAMESPACE,
-    kubernetes_api_url=Configuration.KUBERNETES_API_URL,
-    kubernetes_verify_tls=Configuration.KUBERNETES_VERIFY_TLS,
-    openshift_api_url=Configuration.OPENSHIFT_API_URL
-)
+_OPENSHIFT = OpenShift()
 
 
 def analyze(image: str, debug: bool = False, registry_user: str = None, registry_password=None,
