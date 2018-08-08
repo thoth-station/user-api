@@ -28,19 +28,24 @@ from thoth.storages import SolverResultsStore
 from thoth.storages import BuildLogsStore
 from thoth.storages import GraphDatabase
 from thoth.storages.exceptions import NotFoundError
+from thoth.common import OpenShift
 
 from .configuration import Configuration
 from .parsing import parse_log as do_parse_log
-from .utils import get_pod_log as do_get_pod_log
-from .utils import get_pod_status as do_get_pod_status
-from .utils import run_adviser
-from .utils import get_solver_names
-from .utils import run_package_extract
-from .utils import run_solver
-from .utils import run_sync
+
 
 PAGINATION_SIZE = 100
 _LOGGER = logging.getLogger('thoth.user_api.api_v1')
+
+_OPENSHIFT = OpenShift(
+    frontend_namespace=Configuration.THOTH_FRONTEND_NAMESPACE,
+    middletier_namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE,
+    backend_namespace=Configuration.THOTH_BACKEND_NAMESPACE,
+    infra_namespace=Configuration.THOTH_INFRA_NAMESPACE,
+    kubernetes_api_url=Configuration.KUBERNETES_API_URL,
+    kubernetes_verify_tls=Configuration.KUBERNETES_VERIFY_TLS,
+    openshift_api_url=Configuration.OPENSHIFT_API_URL
+)
 
 
 def analyze(image: str, debug: bool = False, registry_user: str = None, registry_password=None,
@@ -49,7 +54,7 @@ def analyze(image: str, debug: bool = False, registry_user: str = None, registry
     params = locals()
     try:
         return {
-            'pod_id': run_package_extract(**params),
+            'pod_id': _OPENSHIFT.run_package_extract(**params, output=Configuration.THOTH_ANALYZER_OUTPUT),
             'parameters': params
         }, 202
     except Exception as exc:
@@ -65,7 +70,7 @@ def analyze(image: str, debug: bool = False, registry_user: str = None, registry
 def list_solvers():
     """List available registered solvers."""
     return {
-        'solvers': get_solver_names()
+        'solvers': _OPENSHIFT.get_solver_names()
     }
 
 
@@ -75,7 +80,7 @@ def solve(packages: dict, debug: bool = False, transitive: bool = False, solver:
     params = locals()
     try:
         return {
-            'pod_id': run_solver(**params),
+            'pod_id': _OPENSHIFT.run_solver(**params, output=Configuration.THOTH_SOLVER_OUTPUT),
             'parameters': params
         }, 202
     except Exception as exc:
@@ -95,7 +100,7 @@ def post_recommendation_python(application_stack: dict, type: str,
     params = locals()
     try:
         return {
-            'pod_id': run_adviser(**params),
+            'pod_id': _OPENSHIFT.run_adviser(**params, output=Configuration.THOTH_ADVISER_OUTPUT),
             'parameters': params
         }, 202
     except Exception as exc:
@@ -118,7 +123,7 @@ def sync(secret: str, force_analysis_results_sync: bool = False, force_solver_re
 
     try:
         return {
-            'pod_id': run_sync(
+            'pod_id': _OPENSHIFT.run_sync(
                 force_analysis_results_sync=force_analysis_results_sync,
                 force_solver_results_sync=force_solver_results_sync
             )
@@ -148,13 +153,12 @@ def parse_log(log_info: dict):
 def get_pod_log(pod_id: str):
     """Get pod log based on analysis id."""
     if pod_id.rsplit(maxsplit=1)[0] == 'result-api':
-        # Ignore PycodestyleBear (E501)
         return {'error': "Cannot view pod logs, see OpenShift logs directly to browse result-api logs"}, 403
 
     try:
         return {
             'pod_id': pod_id,
-            'pod_log': do_get_pod_log(pod_id)
+            'pod_log': _OPENSHIFT.get_pod_log(pod_id)
         }
 
     except Exception as exc:
@@ -167,13 +171,12 @@ def get_pod_log(pod_id: str):
 def get_pod_status(pod_id: str):
     """Get status for a pod."""
     if pod_id.rsplit(maxsplit=1)[0] == 'result-api':
-        # Ignore PycodestyleBear (E501)
         return {'error': "Cannot view pod logs, see OpenShift logs directly to browse result-api logs"}, 403
 
     try:
         return {
             'pod_id': pod_id,
-            'status': do_get_pod_status(pod_id)
+            'status': _OPENSHIFT.get_pod_status(pod_id)
         }
     except Exception as exc:
         _LOGGER.exception(str(exc))
