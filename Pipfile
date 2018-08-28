@@ -9,7 +9,7 @@ flask-script = "*"
 requests = "*"
 gunicorn = "*"
 attrs = "*"
-thoth-common = "*"
+thoth-common = {version = "*", extras = ["openshift"]}
 thoth-storages = "*"
 openshift = "*"
 kubernetes = "*"
