@@ -40,9 +40,16 @@ _OPENSHIFT = OpenShift()
 
 
 def analyze(image: str, debug: bool = False, registry_user: str = None, registry_password=None,
-            verify_tls: bool = True):
+            verify_tls: bool = True, force: bool = False):
     """Run an analyzer in a restricted namespace."""
     params = locals()
+    force = params.pop('force', False)
+
+    # TODO: check image SHA
+    if not force:
+        # TODO: check in the AnalysisResultsStore if there is given SHA present and return results if so
+        pass
+
     try:
         return {
             'pod_id': _OPENSHIFT.run_package_extract(**params, output=Configuration.THOTH_ANALYZER_OUTPUT),

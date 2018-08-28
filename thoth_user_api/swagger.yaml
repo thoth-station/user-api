@@ -50,6 +50,13 @@ paths:
             pulled from.
           type: boolean
           default: true
+        - name: force
+          in: query
+          required: false
+          description: >
+            Force analysis even if there are already results of analysis for the given image.
+          type: boolean
+          default: false
       responses:
         202:
           description: Successful response with analyzer (pod) id.
