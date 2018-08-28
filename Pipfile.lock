@@ -520,11 +520,11 @@
         },
         "thoth-common": {
             "hashes": [
-                "sha256:40a59b979d325dda87eb8a31e9f9bb5a3385d49548ecce107fea6aa7ff66fa4f",
-                "sha256:60f8b9e83d0e658b41264bdb7377cfc03f8fdf27710684f29a131b95860b217b"
+                "sha256:53cdf1216b685b97d16bbae4f84b99724b56f88576b0b309cf0e315da8241a73",
+                "sha256:60ff8ff93b58a3f2619182c3555f5aa9e5537510f808d480addbba49fb7b3091"
             ],
             "index": "pypi",
-            "version": "==0.2.2"
+            "version": "==0.2.3"
         },
         "thoth-storages": {
             "hashes": [
