@@ -105,6 +105,24 @@ def post_recommendation_python(application_stack: dict, type: str,
         }, 400
 
 
+def post_provenance_python(application_stack: dict, debug: bool = False):
+    """Check provenance for the given application stack."""
+    params = locals()
+    try:
+        return {
+            'pod_id:': _OPENSHIFT.run_provenance_check(**params, output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT),
+            'parameters': params
+        }, 202
+    except Exception as exc:
+        _LOGGER.error("Failed to run provenance checker for %r", application_stack)
+        _LOGGER.exception(str(exc))
+        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        return {
+            'error': str(exc),
+            'parameters': params
+        }, 400
+
+
 def sync(secret: str, force_analysis_results_sync: bool = False, force_solver_results_sync: bool = False):
     """Sync results to graph database."""
     if secret != Configuration.THOTH_SECRET:
