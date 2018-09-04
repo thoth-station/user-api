@@ -30,4 +30,5 @@ class Configuration:
     THOTH_ADVISER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/adviser-result'
     THOTH_ANALYZER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/analysis-result'
     THOTH_SOLVER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/solver-result'
+    THOTH_PROVENANCE_CHECKER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/provenance-checker-result'
     THOTH_SECRET = os.environ['THOTH_SECRET']
