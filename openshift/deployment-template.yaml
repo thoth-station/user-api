@@ -88,6 +88,11 @@ objects:
                     configMapKeyRef:
                       key: middletier-pod-memory-limit
                       name: thoth
+                - name: THOTH_FRONTEND_NAMESPACE
+                  valueFrom:
+                    configMapKeyRef:
+                      key: frontend-namespace
+                      name: thoth
                 - name: THOTH_MIDDLETIER_NAMESPACE
                   valueFrom:
                     configMapKeyRef:
