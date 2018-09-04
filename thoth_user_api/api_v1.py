@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 # thoth-user-api
 # Copyright(C) 2018 Fridolin Pokorny
 #
@@ -42,57 +41,56 @@ _OPENSHIFT = OpenShift()
 def analyze(image: str, debug: bool = False, registry_user: str = None, registry_password=None,
             verify_tls: bool = True):
     """Run an analyzer in a restricted namespace."""
-    params = locals()
+    parameters = locals()
     try:
         return {
-            'pod_id': _OPENSHIFT.run_package_extract(**params, output=Configuration.THOTH_ANALYZER_OUTPUT),
-            'parameters': params
+            'analysis_id': _OPENSHIFT.run_package_extract(**parameters, output=Configuration.THOTH_ANALYZER_OUTPUT),
+            'parameters': parameters
         }, 202
     except Exception as exc:
         _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so
-        # they are not exposed to users.
+        # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {
             'error': str(exc),
-            'parameters': params
+            'parameters': parameters
         }, 400
 
 
 def list_solvers():
     """List available registered solvers."""
+    # We are fine with 500 here in case of some OpenShift/configuration failures.
     return {
-        'solvers': _OPENSHIFT.get_solver_names()
+        'solvers': _OPENSHIFT.get_solver_names(),
+        'parameters': {}
     }
 
 
 def solve(packages: dict, debug: bool = False, transitive: bool = False, solver: str = None):
     """Run a solver in a restricted namespace."""
+    parameters = locals()
     packages = packages.pop('requirements', '')
-    params = locals()
     try:
         return {
-            'pod_id': _OPENSHIFT.run_solver(**params, output=Configuration.THOTH_SOLVER_OUTPUT),
-            'parameters': params
+            'analysis_id': _OPENSHIFT.run_solver(**parameters, output=Configuration.THOTH_SOLVER_OUTPUT),
+            'parameters': parameters
         }, 202
     except Exception as exc:
-        _LOGGER.error(f"Failed to run solver for {packages!r}")
-        _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so
-        # they are not exposed to users.
+        _LOGGER.exception("Failed to run solver for packages: %s", str(exc))
+        # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {
             'error': str(exc),
-            'parameters': params
+            'parameters': parameters
         }, 400
 
 
 def post_recommendation_python(application_stack: dict, type: str,
                                runtime_environment: str = None, debug: bool = False):
     """Compute results for the given package or package stack using adviser."""
-    params = locals()
+    parameters = locals()
     try:
         return {
-            'pod_id': _OPENSHIFT.run_adviser(**params, output=Configuration.THOTH_ADVISER_OUTPUT),
-            'parameters': params
+            'analysis_id': _OPENSHIFT.run_adviser(**parameters, output=Configuration.THOTH_ADVISER_OUTPUT),
+            'parameters': parameters
         }, 202
     except Exception as exc:
         _LOGGER.error(f"Failed to run adviser for {application_stack!r}")
@@ -101,7 +99,27 @@ def post_recommendation_python(application_stack: dict, type: str,
         # they are not exposed to users.
         return {
             'error': str(exc),
-            'parameters': params
+            'parameters': parameters
+        }, 400
+
+
+def post_provenance_python(application_stack: dict, debug: bool = False):
+    """Check provenance for the given application stack."""
+    parameters = locals()
+    try:
+        return {
+            'analysis_id:': _OPENSHIFT.run_provenance_check(
+                **parameters,
+                output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT
+            ),
+            'parameters': parameters
+        }, 202
+    except Exception as exc:
+        _LOGGER.error("Failed to run provenance checker: %s", str(exc))
+        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        return {
+            'error': str(exc),
+            'parameters': parameters
         }, 400
 
 
@@ -125,6 +143,7 @@ def post_provenance_python(application_stack: dict, debug: bool = False):
 
 def sync(secret: str, force_analysis_results_sync: bool = False, force_solver_results_sync: bool = False):
     """Sync results to graph database."""
+    parameters = locals()
     if secret != Configuration.THOTH_SECRET:
         return {
             'error': 'Wrong secret provided'
@@ -132,10 +151,11 @@ def sync(secret: str, force_analysis_results_sync: bool = False, force_solver_re
 
     try:
         return {
-            'pod_id': _OPENSHIFT.run_sync(
+            'sync_id': _OPENSHIFT.run_sync(
                 force_analysis_results_sync=force_analysis_results_sync,
                 force_solver_results_sync=force_solver_results_sync
-            )
+            ),
+            'parameters': parameters
         }, 202
     except Exception as exc:
         _LOGGER.exception(str(exc))
@@ -143,6 +163,7 @@ def sync(secret: str, force_analysis_results_sync: bool = False, force_solver_re
         # they are not exposed to users.
         return {
             'error': str(exc),
+            'parameters': parameters
         }, 400
 
 
@@ -159,39 +180,48 @@ def parse_log(log_info: dict):
         return {'error': str(exc)}, 400
 
 
-def get_pod_log(pod_id: str):
+def get_analysis_log(analysis_id: str):
     """Get pod log based on analysis id."""
-    if pod_id.rsplit(maxsplit=1)[0] == 'result-api':
+    parameters = locals()
+
+    if analysis_id.rsplit(maxsplit=1)[0] == 'result-api':
         return {'error': "Cannot view pod logs, see OpenShift logs directly to browse result-api logs"}, 403
 
     try:
         return {
-            'pod_id': pod_id,
-            'pod_log': _OPENSHIFT.get_pod_log(pod_id)
+            'parameters': parameters,
+            'log': _OPENSHIFT.get_pod_log(analysis_id)
         }
 
     except Exception as exc:
         _LOGGER.exception(str(exc))
         # TODO: for production we will need to filter out some errors so
         # they are not exposed to users.
-        return {'error': str(exc), 'pod_id': pod_id}, 400
+        return {
+            'error': str(exc),
+            'parameters': parameters
+        }, 400
 
 
-def get_pod_status(pod_id: str):
+def get_analysis_status(analysis_id: str):
     """Get status for a pod."""
-    if pod_id.rsplit(maxsplit=1)[0] == 'result-api':
+    parameters = locals()
+
+    if analysis_id.rsplit(maxsplit=1)[0] == 'result-api':
         return {'error': "Cannot view pod logs, see OpenShift logs directly to browse result-api logs"}, 403
 
     try:
         return {
-            'pod_id': pod_id,
-            'status': _OPENSHIFT.get_pod_status(pod_id)
+            'parameters': parameters,
+            'status': _OPENSHIFT.get_pod_status(analysis_id)
         }
     except Exception as exc:
-        _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so
-        # they are not exposed to users.
-        return {'error': str(exc), 'pod_id': pod_id}, 400
+        _LOGGER.exception("Failed to retrieve analysis status: %s", str(exc))
+        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        return {
+            'error': str(exc),
+            'parameters': parameters
+        }, 400
 
 
 def post_buildlog(log_info: dict):
@@ -207,48 +237,52 @@ def post_buildlog(log_info: dict):
 
 def list_runtime_environments(page: int = 0):
     """List available runtime environments."""
+    parameters = locals()
+
     graph = GraphDatabase()
     graph.connect()
 
     result = graph.runtime_environment_listing(page, PAGINATION_SIZE)
     return {
-        "results": result
+        'parameters': parameters,
+        'results': result
     }, 200, {
-        "page": page,
-        "page_size": PAGINATION_SIZE,
-        "results_count": len(result)
+        'page': page,
+        'page_size': PAGINATION_SIZE,
+        'results_count': len(result)
     }
 
 
 def get_runtime_environment(runtime_environment_name: str,
                             analysis_id: str = None):
     """Get packages inside the given runtime environment."""
+    parameters = locals()
+
     graph = GraphDatabase()
     graph.connect()
 
     try:
-        results, analysis_document_id = graph.get_runtime_environment(
-            runtime_environment_name, analysis_id)
+        results, analysis_document_id = graph.get_runtime_environment(runtime_environment_name, analysis_id)
     except NotFoundError as exc:
         return {
             'error': str(exc),
-            'parameters': {
-                'runtime_environment_name': runtime_environment_name,
-                'analysis_id': analysis_id
-            }
+            'parameters': parameters,
         }, 404
 
     results = list(map(lambda x: x.to_pretty_dict(), results))
     return {
-        "results": results,
-        "analysis": graph.get_analysis_metadata(analysis_document_id),
-        "results_count": len(results)
+        'results': results,
+        'analysis': graph.get_analysis_metadata(analysis_document_id),
+        'results_count': len(results),
+        'parameters': parameters,
     }, 200
 
 
 def list_runtime_environment_analyses(runtime_environment_name: str,
                                       page: int = 0):
     """List analyses for the given runtime environment."""
+    parameters = locals()
+
     graph = GraphDatabase()
     graph.connect()
     try:
@@ -257,17 +291,17 @@ def list_runtime_environment_analyses(runtime_environment_name: str,
     except NotFoundError as exc:
         return {
             'error': str(exc),
-            'parameters': {
-                'runtime_environment_name': runtime_environment_name,
-                'page': page
-            }
+            'parameters': parameters
         }, 404
 
     return {
         'results': results,
-        'results_count': len(results),
-        'page': page
-    }, 200
+        'parameters': parameters
+    }, 200, {
+        'page': page,
+        'page_size': PAGINATION_SIZE,
+        'results_count': len(results)
+    }
 
 
 def list_buildlogs(page: int = 0):
@@ -302,17 +336,19 @@ def _do_listing(adapter_class, page: int) -> tuple:
         results = list(islice(result, page * PAGINATION_SIZE,
                               page * PAGINATION_SIZE + PAGINATION_SIZE))
         return {
-            "results": results
+            'results': results,
+            'parameters': {'page': page}
         }, 200, {
-            "page": page,
-            "page_size": PAGINATION_SIZE,
-            "results_count": len(results)
+            'page': page,
+            'page_size': PAGINATION_SIZE,
+            'results_count': len(results)
         }
     except Exception as exc:
         _LOGGER.exception(str(exc))
         # TODO: some errors should be filtered out
         return {
             'error': str(exc),
+            'parameters': {'page': page}
         }, 400
 
 

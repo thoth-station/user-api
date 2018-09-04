@@ -52,7 +52,7 @@ paths:
           default: true
       responses:
         202:
-          description: Successful response with analyzer (pod) id.
+          description: Successful response with analyzer id.
         400:
           description: On invalid request.
     get:
@@ -126,7 +126,7 @@ paths:
           default: true
       responses:
         202:
-          description: Successful response with solver (pod) id.
+          description: Successful response with solver id.
         400:
           description: On invalid request.
 
@@ -381,7 +381,7 @@ paths:
           default: false
       responses:
         202:
-          description: Successful response with pod id.
+          description: Successful response with solver id.
         400:
           description: On invalid request.
         401:
@@ -485,17 +485,17 @@ paths:
         404:
           description: The given build log does not exist.
 
-  /log/{pod_id}:
+  /log/{analysis_id}:
     get:
       tags: [Management]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: get_pod_log
-      summary: Show logs of a pod.
+      operationId: get_analysis_log
+      summary: Show logs of an analysis.
       parameters:
-        - name: pod_id
+        - name: analysis_id
           in: path
           required: true
-          description: An ID of requested pod.
+          description: An ID of requested analysis.
           type: string
       responses:
         200:
@@ -503,17 +503,17 @@ paths:
         400:
           description: On invalid request.
 
-  /status/{pod_id}:
+  /status/{analysis_id}:
     get:
       tags: [Management]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: get_pod_status
-      summary: Show pod status.
+      operationId: get_analysis_status
+      summary: Show analysis status.
       parameters:
-        - name: pod_id
+        - name: analysis_id
           in: path
           required: true
-          description: An ID of requested pod.
+          description: An ID of requested analysis.
           type: string
       responses:
         200:
