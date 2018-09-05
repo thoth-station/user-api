@@ -31,6 +31,7 @@ from thoth.storages import ProvenanceResultsStore
 from thoth.storages import SolverResultsStore
 from thoth.storages.exceptions import NotFoundError
 from thoth.common import OpenShift
+from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 
 from .configuration import Configuration
 from .parsing import parse_log as do_parse_log
@@ -42,7 +43,7 @@ _OPENSHIFT = OpenShift()
 
 
 def post_analyze(image: str, debug: bool = False, registry_user: str = None, registry_password=None,
-                 verify_tls: bool = True) -> dict:
+                 verify_tls: bool = True):
     """Run an analyzer in a restricted namespace."""
     return _do_run(locals(), _OPENSHIFT.run_package_extract, output=Configuration.THOTH_ANALYZER_OUTPUT)
 
@@ -54,7 +55,7 @@ def list_analyze(page: int = 0):
 
 def get_analyze(analysis_id: str):
     """Retrieve image analyzer result."""
-    return _get_document(AnalysisResultsStore, analysis_id)
+    return _get_document(AnalysisResultsStore, analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def get_analyze_log(analysis_id: str):
@@ -74,7 +75,7 @@ def post_provenance_python(application_stack: dict, debug: bool = False):
 
 def get_provenance_python(analysis_id: str):
     """Retrieve a provenance check result."""
-    return _get_document(ProvenanceResultsStore, analysis_id)
+    return _get_document(ProvenanceResultsStore, analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
 
 
 def get_provenance_python_log(analysis_id: str):
@@ -96,7 +97,7 @@ def post_solve_python(packages: dict, debug: bool = False, transitive: bool = Fa
 
 def get_solve_python(analysis_id: str):
     """Retrieve the given solver result."""
-    return _get_document(SolverResultsStore, analysis_id)
+    return _get_document(SolverResultsStore, analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def get_solve_python_log(analysis_id: str):
@@ -135,7 +136,7 @@ def list_recommend_python(page: int = 0):
 
 def get_recommend_python(analysis_id):
     """Retrieve the given recommendation based on its id."""
-    return _get_document(AdvisersResultsStore, analysis_id)
+    return _get_document(AdvisersResultsStore, analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
 
 
 def get_recommend_python_log(analysis_id: str):
@@ -269,8 +270,7 @@ def sync(secret: str, force_analysis_results_sync: bool = False, force_solver_re
         }, 202
     except Exception as exc:
         _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so
-        # they are not exposed to users.
+        # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {
             'error': str(exc),
             'parameters': parameters
@@ -318,27 +318,44 @@ def _do_listing(adapter_class, page: int) -> tuple:
         }, 400
 
 
-def _get_document(adapter_class, document_id: str) -> tuple:
+def _get_document(adapter_class, analysis_id: str, namespace: str = None) -> tuple:
     """Perform actual document retrieval."""
+    # Parameters to be reported back to a user of API.
+    parameters = {'analysis_id': analysis_id}
     try:
         adapter = adapter_class()
         adapter.connect()
-        result = adapter.retrieve_document(document_id)
+        result = adapter.retrieve_document(analysis_id)
         return result, 200
     except NotFoundError:
+        if namespace:
+            try:
+                status = _OPENSHIFT.get_pod_status(analysis_id, namespace=namespace)
+                if 'terminated' in status:
+                    return {
+                        'error': 'No results were computed as pod was terminated',
+                        'status': _status_report(status),
+                        'parameters': parameters
+                    }, 404
+                elif 'running' in status:
+                    return {
+                        'error': 'Analysis is still in progress',
+                        'status': _status_report(status),
+                        'parameters': parameters
+                    }, 202
+                else:
+                    raise ValueError("Unreachable - unknown pod state")
+            except OpenShiftNotFound:
+                pass
         return {
-            'error': f'Requested document {document_id!r} was not found',
-            'parameters': {
-                'document_id': document_id
-            }
+            'error': f'Requested result for analysis {analsysis_id!r} was not found',
+            'parameters': parameters
         }, 404
     except Exception as exc:
         _LOGGER.exception(str(exc))
         return {
             'error': str(exc),
-            'parameters': {
-                'document_id': document_id
-            }
+            'parameters': parameters
         }, 400
 
 
@@ -377,14 +394,9 @@ def _get_pod_status(parameters: dict, name_prefix: str, namespace: str):
             # treat this as timeout.
             status['terminated']['reason'] = "TimeoutKilled"
 
-        # Convert OpenShift's camel case to snake case to be consistent on API.
-        reported_status = {}
-        for key, value in status.items():
-            reported_status[_convert_snake_case(key)] = value
-
         return {
             'parameters': parameters,
-            'status': reported_status
+            'status': _status_report(status)
         }
     except Exception as exc:
         _LOGGER.exception("Failed to retrieve analysis status: %s", str(exc))
@@ -417,3 +429,12 @@ def _convert_snake_case(name):
     #   https://stackoverflow.com/questions/1175208
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+
+
+def _status_report(status):
+    """Convert OpenShift's camel case to snake case to be consistent on API."""
+    reported_status = {}
+    for key, value in status.items():
+        reported_status[_convert_snake_case(key)] = value
+
+    return reported_status
