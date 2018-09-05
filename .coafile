@@ -14,4 +14,11 @@ ignore = setup.py
 
 [all.yaml]
 bears = YAMLLintBear
-files = **.yml, **.yaml
+files = **.yaml
+ignore = .zuul.yaml
+max_line_length = 120
+
+[zuul.yaml]
+bears = YAMLLintBear
+files = .zuul.yaml
+max_line_length = 180
