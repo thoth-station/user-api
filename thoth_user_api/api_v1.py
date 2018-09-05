@@ -17,10 +17,11 @@
 
 """Implementation of API v1."""
 
+from itertools import islice
 import asyncio
 import logging
+import re
 import typing
-from itertools import islice
 
 from thoth.storages import AdvisersResultsStore
 from thoth.storages import AnalysisResultsStore
@@ -368,9 +369,22 @@ def _get_pod_status(parameters: dict, name_prefix: str, namespace: str):
         if not pod_id.startswith(name_prefix):
             raise ValueError("Wrong analysis id provided")
 
+        status = _OPENSHIFT.get_pod_status(pod_id, namespace=namespace)
+
+        # Translate kills of liveness probes to our messages reported to user.
+        if status.get('terminated', {}).get('exitCode') == 137 and status['terminated']['reason'] == 'Error':
+            # Reason can be set by OpenShift to be OOMKilled for example - we expect only "Error" to be set to
+            # treat this as timeout.
+            status['terminated']['reason'] = "TimeoutKilled"
+
+        # Convert OpenShift's camel case to snake case to be consistent on API.
+        reported_status = {}
+        for key, value in status.items():
+            reported_status[_convert_snake_case(key)] = value
+
         return {
             'parameters': parameters,
-            'status': _OPENSHIFT.get_pod_status(pod_id, namespace=namespace)
+            'status': reported_status
         }
     except Exception as exc:
         _LOGGER.exception("Failed to retrieve analysis status: %s", str(exc))
@@ -395,3 +409,11 @@ def _do_run(parameters: dict, runner: typing.Callable, **runner_kwargs):
             'error': str(exc),
             'parameters': parameters
         }, 400
+
+
+def _convert_snake_case(name):
+    """Convert the given string from camel case to snake case."""
+    # Thanks to:
+    #   https://stackoverflow.com/questions/1175208
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
