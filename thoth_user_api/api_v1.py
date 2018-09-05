@@ -108,7 +108,7 @@ def post_provenance_python(application_stack: dict, debug: bool = False):
     parameters = locals()
     try:
         return {
-            'analysis_id:': _OPENSHIFT.run_provenance_check(
+            'analysis_id:': _OPENSHIFT.run_provenance_checker(
                 **parameters,
                 output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT
             ),
