@@ -1,6 +1,10 @@
 Thoth Core user-facing API
 ==========================
 
+.. image:: https://api.codacy.com/project/badge/Grade/403ffa9e256c4a2bb62e9683099bd45b
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/app/thoth-station/user-api?utm_source=github.com&utm_medium=referral&utm_content=thoth-station/user-api&utm_campaign=Badge_Grade_Settings
+
 This API is as a user-facing service, and part of `Thoth Core project <https://github.com/thoth-station/core>`_.
 
 It's main aim is to provide a management service that can be used directly by users for the `thoth-middeend` part. See `Thoth-core <https://github.com/thoth-station/core>`_ for more details.
