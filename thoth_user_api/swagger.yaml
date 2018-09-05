@@ -10,9 +10,9 @@ produces:
 paths:
   /analyze:
     post:
-      tags: [Management]
+      tags: ["Image Analysis"]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: analyze
+      operationId: post_analyze
       summary: Analyze the given image asynchronously.
       parameters:
         - name: image
@@ -56,9 +56,9 @@ paths:
         400:
           description: On invalid request.
     get:
-      tags: [Results]
+      tags: ["Image Analysis"]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: list_analyzer_results
+      operationId: list_analyze
       summary: Retrieve a list of document ids for analyzer results.
       parameters:
         - name: page
@@ -73,17 +73,17 @@ paths:
         400:
           description: On invalid request.
 
-  /analyze/{document_id}:
+  /analyze/{analysis_id}:
     get:
-      tags: [Results]
+      tags: ["Image Analysis"]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: get_analyzer_result
+      operationId: get_analyze
       summary: Retrieve an analyzer result.
       parameters:
-        - name: document_id
+        - name: analysis_id
           in: path
           required: true
-          description: Document id to be retrieved.
+          description: Id of analysis that results should be retrieved.
           type: string
       responses:
         200:
@@ -93,11 +93,120 @@ paths:
         404:
           description: The given document does not exist.
 
-  /solve:
-    post:
-      tags: [Management]
+  /analyze/{analysis_id}/log:
+    get:
+      tags: ["Image Analysis"]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: solve
+      operationId: get_analyze_log
+      summary: Show logs of an analysis.
+      parameters:
+        - name: analysis_id
+          in: path
+          required: true
+          description: An id of requested analysis.
+          type: string
+      responses:
+        200:
+          description: Successful response.
+        400:
+          description: On invalid request.
+
+  /analyze/{analysis_id}/status:
+    get:
+      tags: ["Image Analysis"]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_analyze_status
+      summary: Show analysis status.
+      parameters:
+        - name: analysis_id
+          in: path
+          required: true
+          description: An id of requested analysis.
+          type: string
+      responses:
+        200:
+          description: Successful response.
+        400:
+          description: On invalid request.
+
+  /provenance/python:
+    post:
+      tags: [Provenance]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: post_provenance_python
+      summary: Check provenance of packages stated in an application stack.
+      parameters:
+        - name: python_stack
+          in: body
+          required: true
+          description: Pipfile and Pipfile.lock as used by pipenv.
+          schema:
+            $ref: "#/definitions/PythonStack"
+      responses:
+        201:
+          description: The provided files will be checked for provenance.
+
+  /provenance/python/{analysis_id}:
+    get:
+      tags: [Provenance]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_provenance_python
+      summary: Retrieve a provenance check result.
+      parameters:
+        - name: analysis_id
+          in: path
+          required: true
+          description: Id of analysis to be retrieved.
+          type: string
+      responses:
+        200:
+          description: Analyzer result retrieved.
+        400:
+          description: On invalid request.
+        404:
+          description: The given document does not exist.
+
+  /provenance/python/{analysis_id}/log:
+    get:
+      tags: [Provenance]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_provenance_python_log
+      summary: Show logs of a provenance checks.
+      parameters:
+        - name: analysis_id
+          in: path
+          required: true
+          description: An id of requested analysis.
+          type: string
+      responses:
+        200:
+          description: Successful response.
+        400:
+          description: On invalid request.
+
+  /provenance/python/{analysis_id}/status:
+    get:
+      tags: [Provenance]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_provenance_python_status
+      summary: Show status of a provenance check.
+      parameters:
+        - name: analysis_id
+          in: path
+          required: true
+          description: An id of requested provenance check.
+          type: string
+      responses:
+        200:
+          description: Successful response.
+        400:
+          description: On invalid request.
+
+  /solve/python:
+    post:
+      tags: ["Ecosystem Solver"]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: post_solve_python
       summary: Solve the given application stack.
       parameters:
         - name: solver
@@ -131,9 +240,9 @@ paths:
           description: On invalid request.
 
     get:
-      tags: [Results]
+      tags: ["Ecosystem Solver"]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: list_solver_results
+      operationId: list_solve_python_results
       summary: Retrieve a list of document ids for solver results.
       parameters:
         - name: page
@@ -148,9 +257,67 @@ paths:
         400:
           description: On invalid request.
 
+  /solve/python/{analysis_id}:
+    get:
+      tags: ["Ecosystem Solver"]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_solve_python
+      summary: Retrieve a solver result.
+      parameters:
+        - name: analysis_id
+          in: path
+          required: true
+          description: Document id to be retrieved.
+          type: string
+      responses:
+        200:
+          description: Analyzer result retrieved.
+        400:
+          description: On invalid request.
+        404:
+          description: The given document does not exist.
+
+  /solve/python/{analysis_id}/log:
+    get:
+      tags: ["Ecosystem Solver"]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_solve_python_log
+      summary: Retrieve a solver log.
+      parameters:
+        - name: analysis_id
+          in: path
+          required: true
+          description: An id of analysis for a solver run.
+          type: string
+      responses:
+        200:
+          description: Retrieved ecosystem solver log.
+        400:
+          description: On invalid request.
+        404:
+          description: The given solver log does not exist.
+
+  /solve/python/{analysis_id}/status:
+    get:
+      tags: ["Ecosystem Solver"]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_solve_python_status
+      summary: Show status of an ecosystem solver.
+      parameters:
+        - name: analysis_id
+          in: path
+          required: true
+          description: An id of requested ecosystem solver run.
+          type: string
+      responses:
+        200:
+          description: Successful response.
+        400:
+          description: On invalid request.
+
   /solvers:
     get:
-      tags: [Management]
+      tags: ["Ecosystem Solver"]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: list_solvers
       summary: Retrieve a list of solvers installed and available.
@@ -162,7 +329,7 @@ paths:
 
   /runtime-environment:
     get:
-      tags: [Results]
+      tags: [Environments]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: list_runtime_environments
       summary: Retrieve a list of runtime environments analyzed.
@@ -181,7 +348,7 @@ paths:
 
   /runtime-environment/{runtime_environment_name}/analyses:
     get:
-      tags: [Results]
+      tags: [Environments]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: list_runtime_environment_analyses
       summary: List analyses for the given runtime environment.
@@ -208,7 +375,7 @@ paths:
 
   /runtime-environment/{runtime_environment_name}:
     get:
-      tags: [Results]
+      tags: [Environments]
       x-swagger-router-controller: thoth_user_api.api_v1
       operationId: get_runtime_environment
       summary: Retrieve runtime environment information.
@@ -234,29 +401,11 @@ paths:
           description: >
             The given runtime environment with provided name was not found.
 
-  /provenance/python:
-    post:
-      tags: [Provenance]
-      x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: post_provenance_python
-      summary: Check provenance of packages
-      parameters:
-        - name: python_stack
-          in: body
-          required: true
-          description: Pipfile and Pipfile.lock as used by pipenv
-          schema:
-            $ref: "#/definitions/PythonStack"
-      responses:
-        201:
-          description: >
-            The provided files will be checked for provenance.
-
   /recommend/python:
     post:
       tags: [Recommendation]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: post_recommendation_python
+      operationId: post_recommend_python
       summary: Get recommendation for Python ecosystem.
       parameters:
         - name: application_stack
@@ -294,11 +443,10 @@ paths:
         200:
           description: A recommendation response with all dependencies provided.
 
-  /recommend:
     get:
       tags: [Recommendation]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: list_adviser_results
+      operationId: list_recommend_python
       summary: Get recommendation results available.
       parameters:
         - name: page
@@ -311,14 +459,52 @@ paths:
         200:
           description: Document listing for recommendations available.
 
-  /recommend/python/{recommendation_id}:
+  /recommend/python/{analysis_id}/log:
     get:
       tags: [Recommendation]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: get_recommendation_python_id
+      operationId: get_recommend_python_log
+      summary: Retrieve a recommendation log.
+      parameters:
+        - name: analysis_id
+          in: path
+          required: true
+          description: An id of analysis for which log should be retrieved.
+          type: string
+      responses:
+        200:
+          description: Retrieved recommendation log.
+        400:
+          description: On invalid request.
+        404:
+          description: The given recommendation log does not exist.
+
+  /recommend/python/{analysis_id}/status:
+    get:
+      tags: [Recommendation]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_recommend_python_status
+      summary: Show status of an adviser computing recommendations.
+      parameters:
+        - name: analysis_id
+          in: path
+          required: true
+          description: An id of requested recommendation.
+          type: string
+      responses:
+        200:
+          description: Successful response.
+        400:
+          description: On invalid request.
+
+  /recommend/python/{analysis_id}:
+    get:
+      tags: [Recommendation]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_recommend_python
       summary: Get computeted recommendation based on its id.
       parameters:
-        - name: recommendation_id
+        - name: analysis_id
           in: path
           required: true
           description: Recommendation ID returned on recommendation request.
@@ -334,77 +520,6 @@ paths:
           description: The given recommendation does not exist.
         201:
           description: Computing recommendation is still in progress.
-
-  /solve/{document_id}:
-    get:
-      tags: [Results]
-      x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: get_solver_result
-      summary: Retrieve a solver result.
-      parameters:
-        - name: document_id
-          in: path
-          required: true
-          description: Document id to be retrieved.
-          type: string
-      responses:
-        200:
-          description: Analyzer result retrieved.
-        400:
-          description: On invalid request.
-        404:
-          description: The given document does not exist.
-
-  /sync:
-    post:
-      tags: [Admin]
-      x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: sync
-      summary: Force run sync to graph database.
-      parameters:
-        - name: secret
-          in: query
-          required: true
-          description: A secret to sync graph database.
-          type: string
-        - name: force_analysis_results_sync
-          in: query
-          required: false
-          description: Force resync all analysis results.
-          type: boolean
-          default: false
-        - name: force_solver_results_sync
-          in: query
-          required: false
-          description: Force resync all solver results.
-          type: boolean
-          default: false
-      responses:
-        202:
-          description: Successful response with solver id.
-        400:
-          description: On invalid request.
-        401:
-          description: Invalid authorization secret.
-
-  /erase-graph:
-    post:
-      tags: [Admin]
-      x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: erase_graph
-      summary: Clean graph database.
-      parameters:
-        - name: secret
-          in: query
-          required: true
-          description: A secret to clean graph database.
-          type: string
-          default: false
-      responses:
-        201:
-          description: Graph database was cleaned.
-        400:
-          description: On invalid request.
 
   /parse-log:
     post:
@@ -485,41 +600,57 @@ paths:
         404:
           description: The given build log does not exist.
 
-  /log/{analysis_id}:
-    get:
-      tags: [Management]
+  /erase-graph:
+    post:
+      tags: [Admin]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: get_analysis_log
-      summary: Show logs of an analysis.
+      operationId: erase_graph
+      summary: Clean graph database.
       parameters:
-        - name: analysis_id
-          in: path
+        - name: secret
+          in: query
           required: true
-          description: An ID of requested analysis.
+          description: A secret to clean graph database.
           type: string
+          default: false
       responses:
-        200:
-          description: Successful response.
+        201:
+          description: Graph database was cleaned.
         400:
           description: On invalid request.
 
-  /status/{analysis_id}:
-    get:
-      tags: [Management]
+  /sync:
+    post:
+      tags: [Admin]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: get_analysis_status
-      summary: Show analysis status.
+      operationId: sync
+      summary: Force run sync to graph database.
       parameters:
-        - name: analysis_id
-          in: path
+        - name: secret
+          in: query
           required: true
-          description: An ID of requested analysis.
+          description: A secret to sync graph database.
           type: string
+        - name: force_analysis_results_sync
+          in: query
+          required: false
+          description: Force resync all analysis results.
+          type: boolean
+          default: false
+        - name: force_solver_results_sync
+          in: query
+          required: false
+          description: Force resync all solver results.
+          type: boolean
+          default: false
       responses:
-        200:
-          description: Successful response.
+        202:
+          description: Successful response with solver id.
         400:
           description: On invalid request.
+        401:
+          description: Invalid authorization secret.
+
 
 definitions:
   Log:
