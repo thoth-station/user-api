@@ -138,7 +138,7 @@ paths:
       operationId: post_provenance_python
       summary: Check provenance of packages stated in an application stack.
       parameters:
-        - name: python_stack
+        - name: application_stack
           in: body
           required: true
           description: Pipfile and Pipfile.lock as used by pipenv.
