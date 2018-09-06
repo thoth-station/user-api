@@ -407,12 +407,12 @@ paths:
           description: >
             The given runtime environment with provided name was not found.
 
-  /recommend/python:
+  /advise/python:
     post:
-      tags: [Recommendation]
+      tags: [Advise]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: post_recommend_python
-      summary: Get recommendation for Python ecosystem.
+      operationId: post_advise_python
+      summary: Get advise for Python ecosystem.
       parameters:
         - name: application_stack
           in: body
@@ -438,22 +438,20 @@ paths:
         - name: debug
           in: query
           required: false
-          description: >
-            Run the given recommendation engine in a verbose mode so developers
-            can debug it.
+          description: Run the given adviser in a verbose mode so developers can debug it.
           type: boolean
           default: false
       responses:
         202:
-          description: The recommendation is scheduled to be computed.
+          description: The adviser is scheduled.
         200:
-          description: A recommendation response with all dependencies provided.
+          description: A adviser response with all dependencies provided.
 
     get:
-      tags: [Recommendation]
+      tags: [Advise]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: list_recommend_python
-      summary: Get recommendation results available.
+      operationId: list_advise_python
+      summary: Get adviser results available.
       parameters:
         - name: page
           in: query
@@ -463,14 +461,14 @@ paths:
           type: integer
       responses:
         200:
-          description: Document listing for recommendations available.
+          description: Document listing for adviser results available.
 
-  /recommend/python/{analysis_id}/log:
+  /advise/python/{analysis_id}/log:
     get:
-      tags: [Recommendation]
+      tags: [Advise]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: get_recommend_python_log
-      summary: Retrieve a recommendation log.
+      operationId: get_advise_python_log
+      summary: Retrieve a adviser run log.
       parameters:
         - name: analysis_id
           in: path
@@ -479,23 +477,23 @@ paths:
           type: string
       responses:
         200:
-          description: Retrieved recommendation log.
+          description: Retrieved adviser log.
         400:
           description: On invalid request.
         404:
-          description: The given recommendation log does not exist.
+          description: The given adviser log does not exist.
 
-  /recommend/python/{analysis_id}/status:
+  /advise/python/{analysis_id}/status:
     get:
-      tags: [Recommendation]
+      tags: [Advise]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: get_recommend_python_status
-      summary: Show status of an adviser computing recommendations.
+      operationId: get_advise_python_status
+      summary: Show status of an adviser computing recomemendations.
       parameters:
         - name: analysis_id
           in: path
           required: true
-          description: An id of requested recommendation.
+          description: An id of requested adviser run.
           type: string
       responses:
         200:
@@ -503,31 +501,29 @@ paths:
         400:
           description: On invalid request.
 
-  /recommend/python/{analysis_id}:
+  /advise/python/{analysis_id}:
     get:
-      tags: [Recommendation]
+      tags: [Advise]
       x-swagger-router-controller: thoth_user_api.api_v1
-      operationId: get_recommend_python
-      summary: Get computeted recommendation based on its id.
+      operationId: get_advise_python
+      summary: Get computeted adviser result based on its id.
       parameters:
         - name: analysis_id
           in: path
           required: true
-          description: Recommendation ID returned on recommendation request.
+          description: Advise id returned on advise request.
           type: string
       responses:
         200:
-          description: >
-            Computed pinned down stack with information based
-            on requested requiremnets recommendation.
+          description: Computed pinned down stack with information based on requested requirements advise.
         202:
           description: Results are not ready yet.
         400:
           description: On invalid request.
         404:
-          description: The given recommendation does not exist.
+          description: The given advise does not exist.
         201:
-          description: Computing recommendation is still in progress.
+          description: Computing advise is still in progress.
 
   /parse-log:
     post:

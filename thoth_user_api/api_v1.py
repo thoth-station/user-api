@@ -124,27 +124,27 @@ def list_solvers():
     }
 
 
-def post_recommend_python(application_stack: dict, type: str, runtime_environment: str = None, debug: bool = False):
+def post_advise_python(application_stack: dict, type: str, runtime_environment: str = None, debug: bool = False):
     """Compute results for the given package or package stack using adviser."""
     return _do_run(locals(), _OPENSHIFT.run_adviser, output=Configuration.THOTH_ADVISER_OUTPUT)
 
 
-def list_recommend_python(page: int = 0):
+def list_advise_python(page: int = 0):
     """List available runtime environments."""
     return _do_listing(AdvisersResultsStore, page)
 
 
-def get_recommend_python(analysis_id):
+def get_advise_python(analysis_id):
     """Retrieve the given recommendation based on its id."""
     return _get_document(AdvisersResultsStore, analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
 
 
-def get_recommend_python_log(analysis_id: str):
+def get_advise_python_log(analysis_id: str):
     """Get adviser log."""
     return _get_pod_log(locals(), 'adviser-', Configuration.THOTH_BACKEND_NAMESPACE)
 
 
-def get_recommend_python_status(analysis_id: str):
+def get_advise_python_status(analysis_id: str):
     """Get status of an adviser run."""
     return _get_pod_status(locals(), 'adviser-', Configuration.THOTH_BACKEND_NAMESPACE)
 
