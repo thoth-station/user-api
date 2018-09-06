@@ -414,7 +414,7 @@ paths:
           description: Specification of Python application stack.
           schema:
             $ref: "#/definitions/PythonStack"
-        - name: type
+        - name: recommendation_type
           in: query
           description: Recommendation type.
           type: string

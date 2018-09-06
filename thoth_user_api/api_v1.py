@@ -122,7 +122,8 @@ def list_solvers():
     }
 
 
-def post_recommend_python(application_stack: dict, type: str, runtime_environment: str = None, debug: bool = False):
+def post_recommend_python(application_stack: dict, recommendation_type: str, runtime_environment: str = None,
+                          debug: bool = False):
     """Compute results for the given package or package stack using adviser."""
     return _do_run(locals(), _OPENSHIFT.run_adviser, output=Configuration.THOTH_ADVISER_OUTPUT)
 
