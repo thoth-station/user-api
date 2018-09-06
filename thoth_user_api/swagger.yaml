@@ -144,6 +144,12 @@ paths:
           description: Pipfile and Pipfile.lock as used by pipenv.
           schema:
             $ref: "#/definitions/PythonStack"
+        - name: debug
+          in: query
+          required: false
+          description: Run the provenance checker in a verbose mode so developers can debug it.
+          type: boolean
+          default: false
       responses:
         201:
           description: The provided files will be checked for provenance.
