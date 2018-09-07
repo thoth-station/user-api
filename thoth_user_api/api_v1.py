@@ -332,20 +332,33 @@ def _get_document(adapter_class, analysis_id: str, namespace: str = None) -> tup
         if namespace:
             try:
                 status = _OPENSHIFT.get_pod_status(analysis_id, namespace=namespace)
-                if 'terminated' in status:
-                    return {
-                        'error': 'No results were computed as pod was terminated',
-                        'status': _status_report(status),
-                        'parameters': parameters
-                    }, 404
-                elif 'running' in status:
+                if 'running' in status or ('terminated' in status and status['terminated']['exitCode'] == 0):
+                    # In case we hit terminated and exit code equal to 0, the analysis has just finished and
+                    # before this call (document retrieval was unsuccessful, pod finished and we asked later
+                    # for status). To fix this time-dependent issue, let's user ask again. Do not do pod status
+                    # check before document retrieval - this solution is more optimal as we do not ask master
+                    # status each time.
                     return {
                         'error': 'Analysis is still in progress',
                         'status': _status_report(status),
                         'parameters': parameters
                     }, 202
+                elif 'terminated' in status:
+                    return {
+                        'error': 'Analysis was not successful',
+                        'status': _status_report(status),
+                        'parameters': parameters
+                    }, 404
+                elif 'pending' in status or 'waiting' in status:
+                    return {
+                        'error': 'Analysis is being scheduled',
+                        'status': _status_report(status),
+                        'parameters': parameters
+                    }, 202
                 else:
-                    raise ValueError("Unreachable - unknown pod state")
+                    # Can be:
+                    #   - return 500 to user as this is our issue
+                    raise ValueError(f"Unreachable - unknown pod state: {status}")
             except OpenShiftNotFound:
                 pass
         return {
@@ -424,18 +437,29 @@ def _do_run(parameters: dict, runner: typing.Callable, **runner_kwargs):
         }, 400
 
 
-def _convert_snake_case(name):
-    """Convert the given string from camel case to snake case."""
-    # Thanks to:
-    #   https://stackoverflow.com/questions/1175208
-    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
-    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
-
-
 def _status_report(status):
-    """Convert OpenShift's camel case to snake case to be consistent on API."""
-    reported_status = {}
-    for key, value in status.items():
-        reported_status[_convert_snake_case(key)] = value
+    """Construct status response for API response from master API response."""
+    _TRANSLATION_TABLE = {
+        'exitCode': 'exit_code',
+        'finishedAt': 'finished_at',
+        'reason': 'reason',
+        'startedAt': 'started_at',
+        'containerID': '_container'
+    }
+
+    if len(status.keys()) != 1:
+        # This is unexpected behavior as we rely on master to always return this. Report this to logs...
+        _LOGGER.error("Status reported from master does not contain one key representing state %r", status)
+
+    state = list(status.keys())[0]
+
+    reported_status = dict.fromkeys(tuple(_TRANSLATION_TABLE.values()))
+    reported_status['state'] = state
+    for key, value in status[state].items():
+        if key == 'containerID':
+            value = value[len('docker://'):] if value.startswith('docker://') else value
+            reported_status['_container'] = value
+        else:
+            reported_status[_TRANSLATION_TABLE[key]] = value
 
     return reported_status
