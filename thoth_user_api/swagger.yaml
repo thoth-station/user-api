@@ -88,6 +88,8 @@ paths:
       responses:
         200:
           description: Analyzer result retrieved.
+        202:
+          description: Results are not ready yet.
         400:
           description: On invalid request.
         404:
@@ -160,7 +162,9 @@ paths:
           type: string
       responses:
         200:
-          description: Analyzer result retrieved.
+          description: Provenance report retrieved.
+        202:
+          description: Results are not ready yet.
         400:
           description: On invalid request.
         404:
@@ -272,6 +276,8 @@ paths:
       responses:
         200:
           description: Analyzer result retrieved.
+        202:
+          description: Results are not ready yet.
         400:
           description: On invalid request.
         404:
@@ -514,6 +520,8 @@ paths:
           description: >
             Computed pinned down stack with information based
             on requested requiremnets recommendation.
+        202:
+          description: Results are not ready yet.
         400:
           description: On invalid request.
         404:
