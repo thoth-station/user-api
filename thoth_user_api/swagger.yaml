@@ -1121,6 +1121,7 @@ definitions:
           container:
             type: string
             description: SHA of container image in which the analysis is done.
+            x-nullable: true
           exit_code:
             type: integer
             description: Return code of the process perfoming analysis.
