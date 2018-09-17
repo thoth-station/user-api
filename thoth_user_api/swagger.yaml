@@ -1103,14 +1103,14 @@ definitions:
     description: Information about the current analysis status.
     additionalProperties: false
     required:
-      - _container
+      - container
       - exit_code
       - finished_at
       - reason
       - started_at
       - state
     properties:
-      _container:
+      container:
         type: string
         description: SHA of container image in which the analysis is done.
       exit_code:

@@ -443,7 +443,7 @@ def _status_report(status):
         'finishedAt': 'finished_at',
         'reason': 'reason',
         'startedAt': 'started_at',
-        'containerID': '_container'
+        'containerID': 'container'
     }
 
     if len(status.keys()) != 1:
@@ -457,7 +457,7 @@ def _status_report(status):
     for key, value in status[state].items():
         if key == 'containerID':
             value = value[len('docker://'):] if value.startswith('docker://') else value
-            reported_status['_container'] = value
+            reported_status['container'] = value
         else:
             reported_status[_TRANSLATION_TABLE[key]] = value
 
