@@ -899,7 +899,6 @@ definitions:
           [dev-packages]
       requirements_lock: &pythonRequirementsLock
         type: string
-        minLength: 1
         description: Fully pinned down dependency stack.
         example:
           '{
