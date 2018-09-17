@@ -139,7 +139,8 @@ def list_solvers():
     }
 
 
-def post_advise_python(application_stack: dict, advise_type: str, runtime_environment: str = None, debug: bool = False):
+def post_advise_python(application_stack: dict, recommendation_type: str, runtime_environment: str = None,
+                       debug: bool = False):
     """Compute results for the given package or package stack using adviser."""
     return _do_run(locals(), _OPENSHIFT.run_adviser, output=Configuration.THOTH_ADVISER_OUTPUT)
 
@@ -458,7 +459,7 @@ def _status_report(status):
         'finishedAt': 'finished_at',
         'reason': 'reason',
         'startedAt': 'started_at',
-        'containerID': '_container'
+        'containerID': 'container'
     }
 
     if len(status.keys()) != 1:
@@ -472,7 +473,7 @@ def _status_report(status):
     for key, value in status[state].items():
         if key == 'containerID':
             value = value[len('docker://'):] if value.startswith('docker://') else value
-            reported_status['_container'] = value
+            reported_status['container'] = value
         else:
             reported_status[_TRANSLATION_TABLE[key]] = value
 

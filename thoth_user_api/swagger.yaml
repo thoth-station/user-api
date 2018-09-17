@@ -19,7 +19,8 @@ paths:
           in: query
           required: true
           description: >
-            Name of image - can also specify remote registry to pull image from.
+            Name of image - can also specify remote registry to pull
+            image from.
           type: string
         - name: registry_user
           in: query
@@ -53,8 +54,13 @@ paths:
       responses:
         202:
           description: Successful response with analyzer id.
+          schema:
+            $ref: "#/definitions/AnalysisResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
+
     get:
       tags: ["Image Analysis"]
       x-swagger-router-controller: thoth_user_api.api_v1
@@ -70,8 +76,12 @@ paths:
       responses:
         200:
           description: A list of analyzer results available.
+          schema:
+            $ref: "#/definitions/AnalysisListingResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /analyze/{analysis_id}:
     get:
@@ -88,12 +98,20 @@ paths:
       responses:
         200:
           description: Analyzer result retrieved.
+          schema:
+            $ref: "#/definitions/AnalysisResultResponse"
         202:
           description: Results are not ready yet.
+          schema:
+            $ref: "#/definitions/AnalysisUnfinishedResultResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
         404:
           description: The given document does not exist.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /analyze/{analysis_id}/log:
     get:
@@ -110,8 +128,16 @@ paths:
       responses:
         200:
           description: Successful response.
+          schema:
+            $ref: "#/definitions/AnalysisLogResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
+        404:
+          description: The given image analysis log does not exist.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /analyze/{analysis_id}/status:
     get:
@@ -128,8 +154,12 @@ paths:
       responses:
         200:
           description: Successful response.
+          schema:
+            $ref: "#/definitions/AnalysisStatusResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /provenance/python:
     post:
@@ -147,12 +177,20 @@ paths:
         - name: debug
           in: query
           required: false
-          description: Run the provenance checker in a verbose mode so developers can debug it.
+          description: >
+            Run the provenance checker in a verbose mode so developers
+            can debug it.
           type: boolean
           default: false
       responses:
-        201:
+        202:
           description: The provided files will be checked for provenance.
+          schema:
+            $ref: "#/definitions/AnalysisResponse"
+        400:
+          description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /provenance/python/{analysis_id}:
     get:
@@ -169,12 +207,20 @@ paths:
       responses:
         200:
           description: Provenance report retrieved.
+          schema:
+            $ref: "#/definitions/AnalysisResultResponse"
         202:
           description: Results are not ready yet.
+          schema:
+            $ref: "#/definitions/AnalysisUnfinishedResultResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
         404:
           description: The given document does not exist.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /provenance/python/{analysis_id}/log:
     get:
@@ -191,8 +237,16 @@ paths:
       responses:
         200:
           description: Successful response.
+          schema:
+            $ref: "#/definitions/AnalysisLogResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
+        404:
+          description: The given image analysis log does not exist.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /provenance/python/{analysis_id}/status:
     get:
@@ -209,8 +263,12 @@ paths:
       responses:
         200:
           description: Successful response.
+          schema:
+            $ref: "#/definitions/AnalysisStatusResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /solve/python:
     post:
@@ -246,8 +304,12 @@ paths:
       responses:
         202:
           description: Successful response with solver id.
+          schema:
+            $ref: "#/definitions/AnalysisResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
     get:
       tags: ["Ecosystem Solver"]
@@ -264,8 +326,12 @@ paths:
       responses:
         200:
           description: A list of analyzer results.
+          schema:
+            $ref: "#/definitions/AnalysisListingResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /solve/python/{analysis_id}:
     get:
@@ -282,12 +348,20 @@ paths:
       responses:
         200:
           description: Analyzer result retrieved.
+          schema:
+            $ref: "#/definitions/AnalysisResultResponse"
         202:
           description: Results are not ready yet.
+          schema:
+            $ref: "#/definitions/AnalysisUnfinishedResultResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
         404:
           description: The given document does not exist.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /solve/python/{analysis_id}/log:
     get:
@@ -304,10 +378,16 @@ paths:
       responses:
         200:
           description: Retrieved ecosystem solver log.
+          schema:
+            $ref: "#/definitions/AnalysisLogResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
         404:
           description: The given solver log does not exist.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /solve/python/{analysis_id}/status:
     get:
@@ -324,8 +404,12 @@ paths:
       responses:
         200:
           description: Successful response.
+          schema:
+            $ref: "#/definitions/AnalysisStatusResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /solvers:
     get:
@@ -336,8 +420,25 @@ paths:
       responses:
         200:
           description: A list of available solvers.
+          schema:
+            type: object
+            required:
+              - parameters
+              - solvers
+            additionalProperties: false
+            properties:
+              parameters:
+                type: object
+                description: Parameters echoed back to user.
+                additionalProperties: true
+              solvers:
+                type: object
+                description: Available solvers per ecosystem.
+                additionalProperties: true
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /runtime-environment:
     get:
@@ -355,8 +456,14 @@ paths:
       responses:
         200:
           description: A list of runtime environments.
+          schema:
+            # TODO: extend once we will need this.
+            type: object
+            additionalProperties: true
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /runtime-environment/{runtime_environment_name}/analyses:
     get:
@@ -381,9 +488,15 @@ paths:
       responses:
         200:
           description: Listing of analyses for the given runtime environment.
+          schema:
+            # TODO: extend once we will need this.
+            type: object
+            additionalProperties: true
         404:
           description: >
             The given runtime environment with the provided name was not found.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /runtime-environment/{runtime_environment_name}:
     get:
@@ -409,9 +522,15 @@ paths:
         200:
           description: >
             Listing of packages present in the given runtime environment.
+          schema:
+            # TODO: extend once we will need this.
+            type: object
+            additionalProperties: true
         404:
           description: >
             The given runtime environment with provided name was not found.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /advise/python:
     post:
@@ -438,20 +557,26 @@ paths:
           default: stable
         - name: runtime_environment
           in: query
-          description: Runtime environment in which the given stack will be run.
+          description: >
+            Runtime environment in which the given stack will be run.
           type: string
           required: false
         - name: debug
           in: query
           required: false
-          description: Run the given adviser in a verbose mode so developers can debug it.
+          description: >
+            Run the given adviser in a verbose mode so developers can debug it.
           type: boolean
           default: false
       responses:
         202:
           description: The adviser is scheduled.
-        200:
-          description: A adviser response with all dependencies provided.
+          schema:
+            $ref: "#/definitions/AnalysisResponse"
+        400:
+          description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
     get:
       tags: [Advise]
@@ -467,7 +592,13 @@ paths:
           type: integer
       responses:
         200:
-          description: Document listing for adviser results available.
+          description: A list of analyzer results available.
+          schema:
+            $ref: "#/definitions/AnalysisListingResponse"
+        400:
+          description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /advise/python/{analysis_id}/log:
     get:
@@ -484,10 +615,16 @@ paths:
       responses:
         200:
           description: Retrieved adviser log.
+          schema:
+            $ref: "#/definitions/AnalysisLogResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
         404:
           description: The given adviser log does not exist.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /advise/python/{analysis_id}/status:
     get:
@@ -504,8 +641,12 @@ paths:
       responses:
         200:
           description: Successful response.
+          schema:
+            $ref: "#/definitions/AnalysisStatusResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /advise/python/{analysis_id}:
     get:
@@ -521,15 +662,23 @@ paths:
           type: string
       responses:
         200:
-          description: Computed pinned down stack with information based on requested requirements advise.
+          description: >
+            Computed pinned down stack with information based on
+            requested requirements advise.
+          schema:
+            $ref: "#/definitions/AnalysisResultResponse"
         202:
           description: Results are not ready yet.
+          schema:
+            $ref: "#/definitions/AnalysisUnfinishedResultResponse"
         400:
           description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
         404:
           description: The given advise does not exist.
-        201:
-          description: Computing advise is still in progress.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /parse-log:
     post:
@@ -782,7 +931,8 @@ definitions:
           }'
       requirements_format:
         type: string
-        description: Lockfile format - defaults to pipenv if not explicitly specified.
+        description: >
+          Lockfile format - defaults to pipenv if not explicitly specified.
         items:
           type: string
         enum:
@@ -803,4 +953,228 @@ definitions:
         value:
           type: string
           description: Value of the supplied environment variable.
-          example: '1'
+          example: '1'''
+  AnalysisResponse:
+    type: object
+    description: Response for a submitted analysis.
+    additionalProperties: false
+    properties:
+      analysis_id:
+        type: string
+        description: >
+          An id of submitted analysis for checking its status and its results.
+      parameters:
+        type: object
+        description: >
+          Parameters echoed back to user (with default parameters if omitted).
+    required:
+      - analysis_id
+      - parameters
+  AnalysisResponseError:
+    type: object
+    required:
+      - error
+      - parameters
+    properties:
+      error:
+        type: string
+        description: Error information for user.
+      parameters:
+        type: object
+        description: Parameters echoed back to user for debugging.
+  AnalysisResultResponse: &analysisResult
+    type: object
+    additionalProperties: false
+    description: Result of an analysis
+    required:
+      - metadata
+      - result
+    properties:
+      metadata:
+        type: object
+        description: Metadata for analysis run.
+        additionalProperties: false
+        required:
+          - analyzer
+          - analyzer_version
+          - arguments
+          - datetime
+          - distribution
+          - hostname
+          - python
+        properties:
+          analyzer:
+            type: string
+            description: Analyzer name which handled analysis.
+          analyzer_version:
+            type: string
+            description: Version of analyzer handling analysis.
+          arguments:
+            type: object
+            additionalProperties: true
+            description: Arguments passed to analyzer.
+          datetime:
+            type: string
+            description: Date and time of analysis end in ISO format.
+          distribution:
+            type: object
+            description: >
+              Information about environment in which the analysis
+              was performed.
+            required:
+              - codename
+              - id
+              - like
+              - version
+              - version_parts
+            properties:
+              codename:
+                type: string
+                description: >
+                  Codename of environment in which the analysis was perfomed.
+              id:
+                type: string
+                description: >
+                  Identifier of environment in which the analysis
+                  was perfomed.
+              like:
+                type: string
+                description: >
+                  Similar environments in comparision to environment in
+                  which the analysis was perfomed.
+              version:
+                type: string
+                description: A string representation of environment version.
+              version_parts:
+                type: object
+                description: >
+                  Parts of version identifier of the analysing environment.
+                properties:
+                  build_number:
+                    type: string
+                  major:
+                    type: string
+                  minor:
+                    type: string
+                additionalProperties: false
+                required:
+                  - build_number
+                  - major
+                  - minor
+          hostname:
+            type: string
+            description: Pod name where the analysis was done.
+          python:
+            required:
+              - api_version
+              - implementation_name
+              - major
+              - minor
+              - micro
+              - releaselevel
+              - serial
+            properties:
+              api_version:
+                type: integer
+              implementation_name:
+                type: string
+                example: cpython
+              major:
+                type: integer
+              micro:
+                type: integer
+              minor:
+                type: integer
+              releaselevel:
+                type: string
+                example: final
+              serial:
+                type: integer
+      result:
+        type: object
+        additionalProperties: true
+        description: Actual result of an analysis run.
+  AnalysisListingResponse:
+    type: array
+    description: Listing of available results.
+    items: *analysisResult
+  AnalysisStatusResponse: &analysisStatus
+    type: object
+    description: Information about the current analysis status.
+    additionalProperties: false
+    required:
+      - parameters
+      - status
+    properties:
+      status:
+        type: object
+        description: Status information about the analysis run.
+        additionalProperties: false
+        # TODO: uncomment this once swagger-codegen will support nullable fields
+        # swagger-codegen requires nullable to be marked as "nullable", but
+        # connexion requires them to be marked with "x-nullable". We will need
+        # to wait for compatibility to fully support this.
+        #required:
+        #  - container
+        #  - exit_code
+        #  - finished_at
+        #  - reason
+        #  - started_at
+        #  - state
+        #properties:
+        #  container:
+        #    type: string
+        #    description: SHA of container image in which the analysis is done.
+        #    nullable: true
+        #  exit_code:
+        #    type: integer
+        #    description: Return code of the process perfoming analysis.
+        #    nullable: true
+        #  finished_at:
+        #    type: string
+        #    description: >
+        #      Datetime in ISO format informing about when the analysis
+        #      has finished.
+        #    nullable: true
+        #  reason:
+        #    type: string
+        #    description: Reasoning on finished run.
+        #    nullable: true
+        #  started_at:
+        #    type: string
+        #    description: >
+        #      Datetime in ISO format informing about when the analysis
+        #      has started.
+        #  state:
+        #    type: string
+        #    example: terminated
+      parameters:
+        type: object
+        description: Parameters echoed back to user for debugging.
+        additionalProperties: true
+  AnalysisUnfinishedResultResponse:
+    type: object
+    required:
+      - error
+      - parameters
+      - status
+    properties:
+      error:
+        type: string
+        description: Error information for user.
+      parameters:
+        type: object
+        description: Parameters echoed back to user for debugging.
+      status: *analysisStatus
+  AnalysisLogResponse:
+    type: object
+    required:
+      - log
+      - parameters
+    properties:
+      log:
+        type: string
+        description: Analyzer logs printed to stdout/stderr as a plain text.
+      parameters:
+        type: object
+        description: Parameters echoed back to user for debugging.
