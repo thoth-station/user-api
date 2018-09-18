@@ -198,13 +198,7 @@ def list_runtime_environment_analyses(runtime_environment_name: str, page: int =
 
     graph = GraphDatabase()
     graph.connect()
-    try:
-        results = graph.runtime_environment_analyses_listing(runtime_environment_name, page, PAGINATION_SIZE)
-    except NotFoundError as exc:
-        return {
-            'error': str(exc),
-            'parameters': parameters
-        }, 404
+    results = graph.runtime_environment_analyses_listing(runtime_environment_name, page, PAGINATION_SIZE)
 
     return {
         'results': results,
@@ -261,21 +255,13 @@ def sync(secret: str, force_analysis_results_sync: bool = False, force_solver_re
             'error': 'Wrong secret provided'
         }, 401
 
-    try:
-        return {
-            'sync_id': _OPENSHIFT.run_sync(
-                force_analysis_results_sync=force_analysis_results_sync,
-                force_solver_results_sync=force_solver_results_sync
-            ),
-            'parameters': parameters
-        }, 202
-    except Exception as exc:
-        _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
-        return {
-            'error': str(exc),
-            'parameters': parameters
-        }, 400
+    return {
+        'sync_id': _OPENSHIFT.run_sync(
+            force_analysis_results_sync=force_analysis_results_sync,
+            force_solver_results_sync=force_solver_results_sync
+        ),
+        'parameters': parameters
+    }, 202
 
 
 def erase_graph(secret: str):
@@ -294,29 +280,21 @@ def erase_graph(secret: str):
 
 def _do_listing(adapter_class, page: int) -> tuple:
     """Perform actual listing of documents available."""
-    try:
-        adapter = adapter_class()
-        adapter.connect()
-        result = adapter.get_document_listing()
-        # TODO: make sure if Ceph returns objects in the same order each time.
-        # We will need to abandon this logic later anyway once we will be
-        # able to query results on data hub side.
-        results = list(islice(result, page * PAGINATION_SIZE, page * PAGINATION_SIZE + PAGINATION_SIZE))
-        return {
-            'results': results,
-            'parameters': {'page': page}
-        }, 200, {
-            'page': page,
-            'page_size': PAGINATION_SIZE,
-            'results_count': len(results)
-        }
-    except Exception as exc:
-        _LOGGER.exception(str(exc))
-        # TODO: some errors should be filtered out
-        return {
-            'error': str(exc),
-            'parameters': {'page': page}
-        }, 400
+    adapter = adapter_class()
+    adapter.connect()
+    result = adapter.get_document_listing()
+    # TODO: make sure if Ceph returns objects in the same order each time.
+    # We will need to abandon this logic later anyway once we will be
+    # able to query results on data hub side.
+    results = list(islice(result, page * PAGINATION_SIZE, page * PAGINATION_SIZE + PAGINATION_SIZE))
+    return {
+        'results': results,
+        'parameters': {'page': page}
+    }, 200, {
+        'page': page,
+        'page_size': PAGINATION_SIZE,
+        'results_count': len(results)
+    }
 
 
 def _get_document(adapter_class, analysis_id: str, namespace: str = None) -> tuple:
@@ -365,76 +343,46 @@ def _get_document(adapter_class, analysis_id: str, namespace: str = None) -> tup
             'error': f'Requested result for analysis {analsysis_id!r} was not found',
             'parameters': parameters
         }, 404
-    except Exception as exc:
-        _LOGGER.exception(str(exc))
-        return {
-            'error': str(exc),
-            'parameters': parameters
-        }, 400
 
 
 def _get_pod_log(parameters: dict, name_prefix: str, namespace: str):
     """Get pod log based on analysis id."""
     pod_id = parameters.get('analysis_id')
-    try:
-        if not pod_id.startswith(name_prefix):
-            raise ValueError("Wrong analysis id provided")
+    if not pod_id.startswith(name_prefix):
+        raise ValueError("Wrong analysis id provided")
 
-        return {
-            'parameters': parameters,
-            'log': _OPENSHIFT.get_pod_log(pod_id, namespace=namespace)
-        }
-    except Exception as exc:
-        _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
-        return {
-            'error': str(exc),
-            'parameters': parameters
-        }, 400
+    return {
+        'parameters': parameters,
+        'log': _OPENSHIFT.get_pod_log(pod_id, namespace=namespace)
+    }
 
 
 def _get_pod_status(parameters: dict, name_prefix: str, namespace: str):
     """Get status for a pod."""
     pod_id = parameters.get('analysis_id')
-    try:
-        if not pod_id.startswith(name_prefix):
-            raise ValueError("Wrong analysis id provided")
+    if not pod_id.startswith(name_prefix):
+        raise ValueError("Wrong analysis id provided")
 
-        status = _OPENSHIFT.get_pod_status(pod_id, namespace=namespace)
+    status = _OPENSHIFT.get_pod_status(pod_id, namespace=namespace)
 
-        # Translate kills of liveness probes to our messages reported to user.
-        if status.get('terminated', {}).get('exitCode') == 137 and status['terminated']['reason'] == 'Error':
-            # Reason can be set by OpenShift to be OOMKilled for example - we expect only "Error" to be set to
-            # treat this as timeout.
-            status['terminated']['reason'] = "TimeoutKilled"
+    # Translate kills of liveness probes to our messages reported to user.
+    if status.get('terminated', {}).get('exitCode') == 137 and status['terminated']['reason'] == 'Error':
+        # Reason can be set by OpenShift to be OOMKilled for example - we expect only "Error" to be set to
+        # treat this as timeout.
+        status['terminated']['reason'] = "TimeoutKilled"
 
-        return {
-            'parameters': parameters,
-            'status': _status_report(status)
-        }
-    except Exception as exc:
-        _LOGGER.exception("Failed to retrieve analysis status: %s", str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
-        return {
-            'error': str(exc),
-            'parameters': parameters
-        }, 400
+    return {
+        'parameters': parameters,
+        'status': _status_report(status)
+    }
 
 
 def _do_run(parameters: dict, runner: typing.Callable, **runner_kwargs):
     """Run the given pod - a generic method for running any analyzer, solver, ..."""
-    try:
-        return {
-            'analysis_id': runner(**parameters, **runner_kwargs),
-            'parameters': parameters
-        }, 202
-    except Exception as exc:
-        _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
-        return {
-            'error': str(exc),
-            'parameters': parameters
-        }, 400
+    return {
+        'analysis_id': runner(**parameters, **runner_kwargs),
+        'parameters': parameters
+    }, 202
 
 
 def _status_report(status):
