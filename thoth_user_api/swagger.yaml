@@ -899,7 +899,6 @@ definitions:
           [dev-packages]
       requirements_lock: &pythonRequirementsLock
         type: string
-        minLength: 1
         description: Fully pinned down dependency stack.
         example:
           '{
@@ -1114,40 +1113,40 @@ definitions:
         # swagger-codegen requires nullable to be marked as "nullable", but
         # connexion requires them to be marked with "x-nullable". We will need
         # to wait for compatibility to fully support this.
-        #required:
-        #  - container
-        #  - exit_code
-        #  - finished_at
-        #  - reason
-        #  - started_at
-        #  - state
-        #properties:
-        #  container:
-        #    type: string
-        #    description: SHA of container image in which the analysis is done.
-        #    nullable: true
-        #  exit_code:
-        #    type: integer
-        #    description: Return code of the process perfoming analysis.
-        #    nullable: true
-        #  finished_at:
-        #    type: string
-        #    description: >
-        #      Datetime in ISO format informing about when the analysis
-        #      has finished.
-        #    nullable: true
-        #  reason:
-        #    type: string
-        #    description: Reasoning on finished run.
-        #    nullable: true
-        #  started_at:
-        #    type: string
-        #    description: >
-        #      Datetime in ISO format informing about when the analysis
-        #      has started.
-        #  state:
-        #    type: string
-        #    example: terminated
+        # required:
+        #   - container
+        #   - exit_code
+        #   - finished_at
+        #   - reason
+        #   - started_at
+        #   - state
+        # properties:
+        #   container:
+        #     type: string
+        #     description: SHA of container image in which the analysis is done.
+        #     nullable: true
+        #   exit_code:
+        #     type: integer
+        #     description: Return code of the process perfoming analysis.
+        #     nullable: true
+        #   finished_at:
+        #     type: string
+        #     description: >
+        #       Datetime in ISO format informing about when the analysis
+        #       has finished.
+        #     nullable: true
+        #   reason:
+        #     type: string
+        #     description: Reasoning on finished run.
+        #     nullable: true
+        #   started_at:
+        #     type: string
+        #     description: >
+        #       Datetime in ISO format informing about when the analysis
+        #       has started.
+        #   state:
+        #     type: string
+        #     example: terminated
       parameters:
         type: object
         description: Parameters echoed back to user for debugging.
