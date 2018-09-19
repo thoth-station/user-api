@@ -55,7 +55,10 @@ def list_analyze(page: int = 0):
 
 def get_analyze(analysis_id: str):
     """Retrieve image analyzer result."""
-    return _get_document(AnalysisResultsStore, analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_document(
+        AnalysisResultsStore, analysis_id,
+        name_prefix='package-extract-', namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE
+    )
 
 
 def get_analyze_log(analysis_id: str):
@@ -75,7 +78,10 @@ def post_provenance_python(application_stack: dict, debug: bool = False):
 
 def get_provenance_python(analysis_id: str):
     """Retrieve a provenance check result."""
-    return _get_document(ProvenanceResultsStore, analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
+    return _get_document(
+        ProvenanceResultsStore, analysis_id,
+        name_prefix='provenance-checker-', namespace=Configuration.THOTH_BACKEND_NAMESPACE
+    )
 
 
 def get_provenance_python_log(analysis_id: str):
@@ -97,7 +103,10 @@ def post_solve_python(packages: dict, debug: bool = False, transitive: bool = Fa
 
 def get_solve_python(analysis_id: str):
     """Retrieve the given solver result."""
-    return _get_document(SolverResultsStore, analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_document(
+        SolverResultsStore, analysis_id,
+        name_prefix='solver-', namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE
+    )
 
 
 def get_solve_python_log(analysis_id: str):
@@ -137,7 +146,10 @@ def list_advise_python(page: int = 0):
 
 def get_advise_python(analysis_id):
     """Retrieve the given recommendation based on its id."""
-    return _get_document(AdvisersResultsStore, analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
+    return _get_document(
+        AdvisersResultsStore, analysis_id,
+        name_prefix='adviser-', namespace=Configuration.THOTH_BACKEND_NAMESPACE
+    )
 
 
 def get_advise_python_log(analysis_id: str):
@@ -297,10 +309,16 @@ def _do_listing(adapter_class, page: int) -> tuple:
     }
 
 
-def _get_document(adapter_class, analysis_id: str, namespace: str = None) -> tuple:
+def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, namespace: str = None) -> tuple:
     """Perform actual document retrieval."""
     # Parameters to be reported back to a user of API.
     parameters = {'analysis_id': analysis_id}
+    if not analysis_id.startswith(name_prefix):
+        return {
+            'error': 'Wrong analysis id provided',
+            'parameters': parameters
+        }, 400
+
     try:
         adapter = adapter_class()
         adapter.connect()
@@ -349,19 +367,25 @@ def _get_pod_log(parameters: dict, name_prefix: str, namespace: str):
     """Get pod log based on analysis id."""
     pod_id = parameters.get('analysis_id')
     if not pod_id.startswith(name_prefix):
-        raise ValueError("Wrong analysis id provided")
+        return {
+            'error': 'Wrong analysis id provided',
+            'parameters': parameters
+        }, 400
 
     return {
         'parameters': parameters,
         'log': _OPENSHIFT.get_pod_log(pod_id, namespace=namespace)
-    }
+    }, 200
 
 
 def _get_pod_status(parameters: dict, name_prefix: str, namespace: str):
     """Get status for a pod."""
     pod_id = parameters.get('analysis_id')
     if not pod_id.startswith(name_prefix):
-        raise ValueError("Wrong analysis id provided")
+        return {
+            'error': 'Wrong analysis id provided',
+            'parameters': parameters
+        }, 400
 
     status = _OPENSHIFT.get_pod_status(pod_id, namespace=namespace)
 
