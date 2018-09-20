@@ -363,14 +363,7 @@ def _get_pod_status(parameters: dict, name_prefix: str, namespace: str):
     if not pod_id.startswith(name_prefix):
         raise ValueError("Wrong analysis id provided")
 
-    status = _OPENSHIFT.get_pod_status(pod_id, namespace=namespace)
-
-    # Translate kills of liveness probes to our messages reported to user.
-    if status.get('terminated', {}).get('exitCode') == 137 and status['terminated']['reason'] == 'Error':
-        # Reason can be set by OpenShift to be OOMKilled for example - we expect only "Error" to be set to
-        # treat this as timeout.
-        status['terminated']['reason'] = "TimeoutKilled"
-
+    status = _OPENSHIFT.get_pod_status_report(pod_id, namespace=namespace)
     return {
         'parameters': parameters,
         'status': _status_report(status)
@@ -383,31 +376,3 @@ def _do_run(parameters: dict, runner: typing.Callable, **runner_kwargs):
         'analysis_id': runner(**parameters, **runner_kwargs),
         'parameters': parameters
     }, 202
-
-
-def _status_report(status):
-    """Construct status response for API response from master API response."""
-    _TRANSLATION_TABLE = {
-        'exitCode': 'exit_code',
-        'finishedAt': 'finished_at',
-        'reason': 'reason',
-        'startedAt': 'started_at',
-        'containerID': 'container'
-    }
-
-    if len(status.keys()) != 1:
-        # This is unexpected behavior as we rely on master to always return this. Report this to logs...
-        _LOGGER.error("Status reported from master does not contain one key representing state %r", status)
-
-    state = list(status.keys())[0]
-
-    reported_status = dict.fromkeys(tuple(_TRANSLATION_TABLE.values()))
-    reported_status['state'] = state
-    for key, value in status[state].items():
-        if key == 'containerID':
-            value = value[len('docker://'):] if value.startswith('docker://') else value
-            reported_status['container'] = value
-        else:
-            reported_status[_TRANSLATION_TABLE[key]] = value
-
-    return reported_status
