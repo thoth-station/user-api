@@ -97,7 +97,22 @@ def post_solve_python(packages: dict, debug: bool = False, transitive: bool = Fa
     """Run a solver to solve the given ecosystem dependencies."""
     packages = packages.pop('requirements', '')
     parameters = locals()
-    return _do_run(parameters, _OPENSHIFT.run_solver, output=Configuration.THOTH_SOLVER_OUTPUT)
+    response, status_code = _do_run(parameters, _OPENSHIFT.run_solver, output=Configuration.THOTH_SOLVER_OUTPUT)
+
+    # Handle a special case where no solvers for the given name were found.
+    if status_code == 202 and not response['analysis_id']:
+        if solver:
+            return {
+                'error': "No solver was run",
+                'parameters': parameters
+            }, 400
+        else:
+            return {
+                'error': "Please contact administrator - no solvers were installed",
+                'parameters': parameters
+            }, 500
+
+    return response, status_code
 
 
 def get_solve_python(analysis_id: str):
