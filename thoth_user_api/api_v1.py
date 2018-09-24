@@ -20,7 +20,6 @@
 from itertools import islice
 import asyncio
 import logging
-import re
 import typing
 
 from thoth.storages import AdvisersResultsStore
