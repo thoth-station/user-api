@@ -20,7 +20,6 @@
 from itertools import islice
 import asyncio
 import logging
-import re
 import typing
 
 from thoth.storages import AdvisersResultsStore
@@ -55,7 +54,10 @@ def list_analyze(page: int = 0):
 
 def get_analyze(analysis_id: str):
     """Retrieve image analyzer result."""
-    return _get_document(AnalysisResultsStore, analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_document(
+        AnalysisResultsStore, analysis_id,
+        name_prefix='package-extract-', namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE
+    )
 
 
 def get_analyze_log(analysis_id: str):
@@ -75,7 +77,10 @@ def post_provenance_python(application_stack: dict, debug: bool = False):
 
 def get_provenance_python(analysis_id: str):
     """Retrieve a provenance check result."""
-    return _get_document(ProvenanceResultsStore, analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
+    return _get_document(
+        ProvenanceResultsStore, analysis_id,
+        name_prefix='provenance-checker-', namespace=Configuration.THOTH_BACKEND_NAMESPACE
+    )
 
 
 def get_provenance_python_log(analysis_id: str):
@@ -97,7 +102,10 @@ def post_solve_python(packages: dict, debug: bool = False, transitive: bool = Fa
 
 def get_solve_python(analysis_id: str):
     """Retrieve the given solver result."""
-    return _get_document(SolverResultsStore, analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_document(
+        SolverResultsStore, analysis_id,
+        name_prefix='solver-', namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE
+    )
 
 
 def get_solve_python_log(analysis_id: str):
@@ -137,7 +145,10 @@ def list_advise_python(page: int = 0):
 
 def get_advise_python(analysis_id):
     """Retrieve the given recommendation based on its id."""
-    return _get_document(AdvisersResultsStore, analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
+    return _get_document(
+        AdvisersResultsStore, analysis_id,
+        name_prefix='adviser-', namespace=Configuration.THOTH_BACKEND_NAMESPACE
+    )
 
 
 def get_advise_python_log(analysis_id: str):
@@ -198,13 +209,7 @@ def list_runtime_environment_analyses(runtime_environment_name: str, page: int =
 
     graph = GraphDatabase()
     graph.connect()
-    try:
-        results = graph.runtime_environment_analyses_listing(runtime_environment_name, page, PAGINATION_SIZE)
-    except NotFoundError as exc:
-        return {
-            'error': str(exc),
-            'parameters': parameters
-        }, 404
+    results = graph.runtime_environment_analyses_listing(runtime_environment_name, page, PAGINATION_SIZE)
 
     return {
         'results': results,
@@ -261,21 +266,13 @@ def sync(secret: str, force_analysis_results_sync: bool = False, force_solver_re
             'error': 'Wrong secret provided'
         }, 401
 
-    try:
-        return {
-            'sync_id': _OPENSHIFT.run_sync(
-                force_analysis_results_sync=force_analysis_results_sync,
-                force_solver_results_sync=force_solver_results_sync
-            ),
-            'parameters': parameters
-        }, 202
-    except Exception as exc:
-        _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
-        return {
-            'error': str(exc),
-            'parameters': parameters
-        }, 400
+    return {
+        'sync_id': _OPENSHIFT.run_sync(
+            force_analysis_results_sync=force_analysis_results_sync,
+            force_solver_results_sync=force_solver_results_sync
+        ),
+        'parameters': parameters
+    }, 202
 
 
 def erase_graph(secret: str):
@@ -294,35 +291,33 @@ def erase_graph(secret: str):
 
 def _do_listing(adapter_class, page: int) -> tuple:
     """Perform actual listing of documents available."""
-    try:
-        adapter = adapter_class()
-        adapter.connect()
-        result = adapter.get_document_listing()
-        # TODO: make sure if Ceph returns objects in the same order each time.
-        # We will need to abandon this logic later anyway once we will be
-        # able to query results on data hub side.
-        results = list(islice(result, page * PAGINATION_SIZE, page * PAGINATION_SIZE + PAGINATION_SIZE))
-        return {
-            'results': results,
-            'parameters': {'page': page}
-        }, 200, {
-            'page': page,
-            'page_size': PAGINATION_SIZE,
-            'results_count': len(results)
-        }
-    except Exception as exc:
-        _LOGGER.exception(str(exc))
-        # TODO: some errors should be filtered out
-        return {
-            'error': str(exc),
-            'parameters': {'page': page}
-        }, 400
+    adapter = adapter_class()
+    adapter.connect()
+    result = adapter.get_document_listing()
+    # TODO: make sure if Ceph returns objects in the same order each time.
+    # We will need to abandon this logic later anyway once we will be
+    # able to query results on data hub side.
+    results = list(islice(result, page * PAGINATION_SIZE, page * PAGINATION_SIZE + PAGINATION_SIZE))
+    return {
+        'results': results,
+        'parameters': {'page': page}
+    }, 200, {
+        'page': page,
+        'page_size': PAGINATION_SIZE,
+        'results_count': len(results)
+    }
 
 
-def _get_document(adapter_class, analysis_id: str, namespace: str = None) -> tuple:
+def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, namespace: str = None) -> tuple:
     """Perform actual document retrieval."""
     # Parameters to be reported back to a user of API.
     parameters = {'analysis_id': analysis_id}
+    if not analysis_id.startswith(name_prefix):
+        return {
+            'error': 'Wrong analysis id provided',
+            'parameters': parameters
+        }, 400
+
     try:
         adapter = adapter_class()
         adapter.connect()
@@ -365,101 +360,42 @@ def _get_document(adapter_class, analysis_id: str, namespace: str = None) -> tup
             'error': f'Requested result for analysis {analsysis_id!r} was not found',
             'parameters': parameters
         }, 404
-    except Exception as exc:
-        _LOGGER.exception(str(exc))
-        return {
-            'error': str(exc),
-            'parameters': parameters
-        }, 400
 
 
 def _get_pod_log(parameters: dict, name_prefix: str, namespace: str):
     """Get pod log based on analysis id."""
     pod_id = parameters.get('analysis_id')
-    try:
-        if not pod_id.startswith(name_prefix):
-            raise ValueError("Wrong analysis id provided")
-
+    if not pod_id.startswith(name_prefix):
         return {
-            'parameters': parameters,
-            'log': _OPENSHIFT.get_pod_log(pod_id, namespace=namespace)
-        }
-    except Exception as exc:
-        _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
-        return {
-            'error': str(exc),
+            'error': 'Wrong analysis id provided',
             'parameters': parameters
         }, 400
+
+    return {
+        'parameters': parameters,
+        'log': _OPENSHIFT.get_pod_log(pod_id, namespace=namespace)
+    }, 200
 
 
 def _get_pod_status(parameters: dict, name_prefix: str, namespace: str):
     """Get status for a pod."""
     pod_id = parameters.get('analysis_id')
-    try:
-        if not pod_id.startswith(name_prefix):
-            raise ValueError("Wrong analysis id provided")
-
-        status = _OPENSHIFT.get_pod_status(pod_id, namespace=namespace)
-
-        # Translate kills of liveness probes to our messages reported to user.
-        if status.get('terminated', {}).get('exitCode') == 137 and status['terminated']['reason'] == 'Error':
-            # Reason can be set by OpenShift to be OOMKilled for example - we expect only "Error" to be set to
-            # treat this as timeout.
-            status['terminated']['reason'] = "TimeoutKilled"
-
+    if not pod_id.startswith(name_prefix):
         return {
-            'parameters': parameters,
-            'status': _status_report(status)
-        }
-    except Exception as exc:
-        _LOGGER.exception("Failed to retrieve analysis status: %s", str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
-        return {
-            'error': str(exc),
+            'error': 'Wrong analysis id provided',
             'parameters': parameters
         }, 400
+
+    status = _OPENSHIFT.get_pod_status_report(pod_id, namespace=namespace)
+    return {
+        'parameters': parameters,
+        'status': _status_report(status)
+    }
 
 
 def _do_run(parameters: dict, runner: typing.Callable, **runner_kwargs):
     """Run the given pod - a generic method for running any analyzer, solver, ..."""
-    try:
-        return {
-            'analysis_id': runner(**parameters, **runner_kwargs),
-            'parameters': parameters
-        }, 202
-    except Exception as exc:
-        _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
-        return {
-            'error': str(exc),
-            'parameters': parameters
-        }, 400
-
-
-def _status_report(status):
-    """Construct status response for API response from master API response."""
-    _TRANSLATION_TABLE = {
-        'exitCode': 'exit_code',
-        'finishedAt': 'finished_at',
-        'reason': 'reason',
-        'startedAt': 'started_at',
-        'containerID': 'container'
-    }
-
-    if len(status.keys()) != 1:
-        # This is unexpected behavior as we rely on master to always return this. Report this to logs...
-        _LOGGER.error("Status reported from master does not contain one key representing state %r", status)
-
-    state = list(status.keys())[0]
-
-    reported_status = dict.fromkeys(tuple(_TRANSLATION_TABLE.values()))
-    reported_status['state'] = state
-    for key, value in status[state].items():
-        if key == 'containerID':
-            value = value[len('docker://'):] if value.startswith('docker://') else value
-            reported_status['container'] = value
-        else:
-            reported_status[_TRANSLATION_TABLE[key]] = value
-
-    return reported_status
+    return {
+        'analysis_id': runner(**parameters, **runner_kwargs),
+        'parameters': parameters
+    }, 202
