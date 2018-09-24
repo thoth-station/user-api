@@ -981,7 +981,7 @@ definitions:
       parameters:
         type: object
         description: Parameters echoed back to user for debugging.
-  AnalysisResultResponse: &analysisResult
+  AnalysisResultResponse:
     type: object
     additionalProperties: false
     description: Result of an analysis
@@ -1094,9 +1094,23 @@ definitions:
         additionalProperties: true
         description: Actual result of an analysis run.
   AnalysisListingResponse:
-    type: array
+    type: object
     description: Listing of available results.
-    items: *analysisResult
+    additionalProperties: false
+    required:
+      - result
+      - parameters
+    properties:
+      result:
+        type: array
+        description: List of available analysis ids.
+        items:
+          type: string
+          description: Analysis id that is used as a document id.
+      parameters:
+        type: object
+        description: Parameters echoed back to user.
+        additionalProperties: true
   AnalysisStatusResponse: &analysisStatus
     type: object
     description: Information about the current analysis status.
