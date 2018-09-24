@@ -341,8 +341,9 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
     except NotFoundError:
         if namespace:
             try:
-                status = _OPENSHIFT.get_pod_status(analysis_id, namespace=namespace)
-                if 'running' in status or ('terminated' in status and status['terminated']['exitCode'] == 0):
+                status = _OPENSHIFT.get_pod_status_report(analysis_id, namespace=namespace)
+                if not status 'running' in status or \
+                    ('terminated' in status and status['terminated']['exitCode'] == 0):
                     # In case we hit terminated and exit code equal to 0, the analysis has just finished and
                     # before this call (document retrieval was unsuccessful, pod finished and we asked later
                     # for status). To fix this time-dependent issue, let's user ask again. Do not do pod status
@@ -350,19 +351,19 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
                     # status each time.
                     return {
                         'error': 'Analysis is still in progress',
-                        'status': _status_report(status),
+                        'status': status,
                         'parameters': parameters
                     }, 202
                 elif 'terminated' in status:
                     return {
                         'error': 'Analysis was not successful',
-                        'status': _status_report(status),
+                        'status': status,
                         'parameters': parameters
                     }, 404
                 elif 'pending' in status or 'waiting' in status:
                     return {
                         'error': 'Analysis is being scheduled',
-                        'status': _status_report(status),
+                        'status': status,
                         'parameters': parameters
                     }, 202
                 else:
@@ -404,7 +405,7 @@ def _get_pod_status(parameters: dict, name_prefix: str, namespace: str):
     status = _OPENSHIFT.get_pod_status_report(pod_id, namespace=namespace)
     return {
         'parameters': parameters,
-        'status': _status_report(status)
+        'status': status
     }
 
 
