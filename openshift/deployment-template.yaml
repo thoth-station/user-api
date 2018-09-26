@@ -5,7 +5,7 @@ metadata:
   annotations:
     description: This is Thoth Core - User API
     openshift.io/display-name: 'Thoth Core: User API'
-    version: 0.4.0
+    version: 0.5.0
     tags: poc,thoth,user-api,ai-stacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >

@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 connexion = ">=1.0.31"
 flask-script = "*"
+prometheus_client= "*"
+prometheus_flask_exporter= "*"
 requests = "*"
 gunicorn = "*"
 attrs = "*"
@@ -14,8 +16,7 @@ thoth-storages = "*"
 
 [dev-packages]
 pytest = "*"
-pylint = "*"
-coala = "*"
-pycodestylebear = "*"
-yamllintbear = "*"
-pydocstylebear = "*"
+coala-bears = "*"
+
+[requires]
+python_version = "3.6"

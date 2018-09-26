@@ -15,15 +15,22 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
+
 """Core Thoth user API."""
 
 import logging
-from datetime import datetime
+import os
+import sys
+import datetime
 
 from flask import redirect
 from flask import jsonify
 import connexion
 from flask_script import Manager
+
+from prometheus_client import multiprocess
+from prometheus_client.core import CollectorRegistry
+from prometheus_flask_exporter import PrometheusMetrics
 
 from thoth.common import SafeJSONEncoder
 from thoth.common import init_logging
@@ -33,6 +40,11 @@ from thoth.storages import SolverResultsStore
 import thoth_user_api
 
 from .configuration import Configuration
+
+sys.path.insert(0, os.path.dirname(__file__))
+
+os.environ["prometheus_multiproc_dir"] = "/tmp"
+
 
 # Expose for uWSGI.
 app = connexion.App(__name__)
@@ -45,6 +57,11 @@ application.json_encoder = SafeJSONEncoder
 manager = Manager(application)
 # Needed for session.
 application.secret_key = Configuration.APP_SECRET_KEY
+
+registry = CollectorRegistry()
+multiprocess.MultiProcessCollector(registry, path='/tmp')
+
+metrics = PrometheusMetrics(app, registry=registry)
 
 
 @app.route('/')
@@ -114,6 +131,14 @@ def internal_server_error(exc):
             'datetime': datetime.utcnow().isoformat()
         }
     }), 500
+
+
+@app.route('/metrics')
+def api_metrics():
+    """Report metrics of the API."""
+    return jsonify({
+        'version': thoth_user_api.__version__}
+    ), 200, {'ContentType': 'application/json'}
 
 
 if __name__ == '__main__':
