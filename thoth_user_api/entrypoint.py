@@ -18,8 +18,10 @@
 """Core Thoth user API."""
 
 import logging
+from datetime import datetime
 
-from flask import redirect, jsonify
+from flask import redirect
+from flask import jsonify
 import connexion
 from flask_script import Manager
 
@@ -91,6 +93,27 @@ def api_readiness():
 def api_liveness():
     """Report liveness for OpenShift readiness probe."""
     return _healthiness()
+
+
+@application.errorhandler(404)
+def page_not_found(exc):
+    """Adjust 404 page to be consistent with errors reported back from API."""
+    # Flask has a nice error message - reuse it.
+    return jsonify({'error': str(exc)}), 404
+
+
+@application.errorhandler(500)
+def internal_server_error(exc):
+    """Adjust 500 page to be consistent with errors reported back from API."""
+    # Provide some additional information so we can easily find exceptions in logs (time and exception type).
+    # Later we should remove exception type (for security reasons).
+    return jsonify({
+        'error': 'Internal server error occurred, please contact administrator with provided details.',
+        'details': {
+            'type': exc.__class__.__name__,
+            'datetime': datetime.utcnow().isoformat()
+        }
+    }), 500
 
 
 if __name__ == '__main__':
