@@ -227,7 +227,7 @@ parameters:
     required: true
     name: THOTH_FRONTEND_NAMESPACE
 
-  - description: Tag of the ImageStream to use 
+  - description: Tag of the ImageStream to use
     displayName: ImageStream Tag
     required: true
     name: IMAGE_STREAM_TAG
