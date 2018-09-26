@@ -5,6 +5,9 @@ Thoth Core user-facing API
    :alt: Codacy Badge
    :target: https://app.codacy.com/app/thoth-station/user-api?utm_source=github.com&utm_medium=referral&utm_content=thoth-station/user-api&utm_campaign=Badge_Grade_Dashboard
 
+.. image:: https://zuul-ci.org/gated.svg
+   :alt: Zuul gated
+
 This is the main interaction point for a user or bot with Thoth. The API
 itself exposes endpoints that are well documented using Swagger. There are
 exposed only endpoints that can be useful for a user in some way. Some
