@@ -208,7 +208,7 @@ objects:
               - user-api
             from:
               kind: ImageStreamTag
-              name: 'user-api:latest'
+              name: 'user-api:${IMAGE_STREAM_TAG}'
 
   - kind: ImageStream
     apiVersion: v1
@@ -226,3 +226,9 @@ parameters:
     description: Name of the Thoth Frontend Namespace
     required: true
     name: THOTH_FRONTEND_NAMESPACE
+
+  - description: Tag of the ImageStream to use
+    displayName: ImageStream Tag
+    required: true
+    name: IMAGE_STREAM_TAG
+    value: 'latest'
