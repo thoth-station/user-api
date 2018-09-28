@@ -1123,44 +1123,40 @@ definitions:
         type: object
         description: Status information about the analysis run.
         additionalProperties: false
-        # TODO: uncomment this once swagger-codegen will support nullable fields
-        # swagger-codegen requires nullable to be marked as "nullable", but
-        # connexion requires them to be marked with "x-nullable". We will need
-        # to wait for compatibility to fully support this.
-        # required:
-        #   - container
-        #   - exit_code
-        #   - finished_at
-        #   - reason
-        #   - started_at
-        #   - state
-        # properties:
-        #   container:
-        #     type: string
-        #     description: SHA of container image in which the analysis is done.
-        #     nullable: true
-        #   exit_code:
-        #     type: integer
-        #     description: Return code of the process perfoming analysis.
-        #     nullable: true
-        #   finished_at:
-        #     type: string
-        #     description: >
-        #       Datetime in ISO format informing about when the analysis
-        #       has finished.
-        #     nullable: true
-        #   reason:
-        #     type: string
-        #     description: Reasoning on finished run.
-        #     nullable: true
-        #   started_at:
-        #     type: string
-        #     description: >
-        #       Datetime in ISO format informing about when the analysis
-        #       has started.
-        #   state:
-        #     type: string
-        #     example: terminated
+        required:
+          - container
+          - exit_code
+          - finished_at
+          - reason
+          - started_at
+          - state
+        properties:
+          container:
+            type: string
+            description: SHA of container image in which the analysis is done.
+            x-nullable: true
+          exit_code:
+            type: integer
+            description: Return code of the process perfoming analysis.
+            x-nullable: true
+          finished_at:
+            type: string
+            description: >
+              Datetime in ISO format informing about when the analysis
+              has finished.
+            x-nullable: true
+          reason:
+            type: string
+            description: Reasoning on finished run.
+            x-nullable: true
+          started_at:
+            type: string
+            description: >
+              Datetime in ISO format informing about when the analysis
+              has started.
+          state:
+            type: string
+            example: terminated
       parameters:
         type: object
         description: Parameters echoed back to user for debugging.
