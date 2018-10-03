@@ -26,6 +26,7 @@ class Configuration:
 
     APP_SECRET_KEY = os.environ['THOTH_USER_API_APP_SECRET_KEY']
     SWAGGER_YAML_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'swagger.yaml')
+    SKOPEO_BIN_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'bin', 'skopeo')
     THOTH_RESULT_API_URL = os.environ['THOTH_RESULT_API_URL']
     THOTH_ADVISER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/adviser-result'
     THOTH_ANALYZER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/analysis-result'
