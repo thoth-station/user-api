@@ -680,6 +680,90 @@ paths:
           schema:
             $ref: "#/definitions/AnalysisResponseError"
 
+  /dependency-monkey/python:
+    post:
+      tags: [Dependency Monkey]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: post_dependency_monkey_python
+      summary: Run Dependency Monkey on the given application stack.
+      parameters:
+        - name: application_stack
+          in: body
+          required: true
+          description: Specification of Python application stack.
+          schema:
+            $ref: "#/definitions/PythonStack"
+        - name: runtime_environment
+          in: query
+          description: >
+            Runtime environment in which the given stack will be run.
+          type: string
+          required: false
+        - name: debug
+          in: query
+          required: false
+          description: >
+            Run the given analysis in a verbose mode so developers can debug it.
+          type: boolean
+          default: false
+      responses:
+        202:
+          description: The Dependency Monkey analysis is scheduled.
+          schema:
+            $ref: "#/definitions/AnalysisResponse"
+        400:
+          description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
+
+  /dependency-monkey/python/{analysis_id}/log:
+    get:
+      tags: [Dependency Monkey]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_dependency_monkey_python_log
+      summary: Retrieve a Dependency Monkey run log.
+      parameters:
+        - name: analysis_id
+          in: path
+          required: true
+          description: An id of analysis for which log should be retrieved.
+          type: string
+      responses:
+        200:
+          description: Retrieved Dependency Monkey log.
+          schema:
+            $ref: "#/definitions/AnalysisLogResponse"
+        400:
+          description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
+        404:
+          description: The given Dependency Monkey log does not exist.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
+
+  /dependency-monkey/python/{analysis_id}/status:
+    get:
+      tags: [Dependency Monkey]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: get_dependency_monkey_python_status
+      summary: Show status of a Dependency Monkey run.
+      parameters:
+        - name: analysis_id
+          in: path
+          required: true
+          description: An id of requested Dependency Monkey run.
+          type: string
+      responses:
+        200:
+          description: Successful response.
+          schema:
+            $ref: "#/definitions/AnalysisStatusResponse"
+        400:
+          description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
+
   /parse-log:
     post:
       tags: [Buildlogs]
