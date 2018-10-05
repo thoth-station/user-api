@@ -62,12 +62,12 @@ def get_analyze(analysis_id: str):
 
 def get_analyze_log(analysis_id: str):
     """Get image analysis log."""
-    return _get_pod_log(locals(), 'package-extract-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_job_log(locals(), 'package-extract-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def get_analyze_status(analysis_id: str):
     """Get status of an image analysis."""
-    return _get_pod_status(locals(), 'package-extract-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_job_status(locals(), 'package-extract-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def post_provenance_python(application_stack: dict, debug: bool = False):
@@ -85,12 +85,12 @@ def get_provenance_python(analysis_id: str):
 
 def get_provenance_python_log(analysis_id: str):
     """Get provenance-checker logs."""
-    return _get_pod_log(locals(), 'provenance-checker-', Configuration.THOTH_BACKEND_NAMESPACE)
+    return _get_job_log(locals(), 'provenance-checker-', Configuration.THOTH_BACKEND_NAMESPACE)
 
 
 def get_provenance_python_status(analysis_id: str):
     """Get status of a provenance check."""
-    return _get_pod_status(locals(), 'provenance-checker-', Configuration.THOTH_BACKEND_NAMESPACE)
+    return _get_job_status(locals(), 'provenance-checker-', Configuration.THOTH_BACKEND_NAMESPACE)
 
 
 def post_solve_python(packages: dict, debug: bool = False, transitive: bool = False, solver: str = None):
@@ -125,12 +125,12 @@ def get_solve_python(analysis_id: str):
 
 def get_solve_python_log(analysis_id: str):
     """Get solver log."""
-    return _get_pod_log(locals(), 'solver', Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_job_log(locals(), 'solver', Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def get_solve_python_status(analysis_id: str):
     """Get status of an ecosystem solver."""
-    return _get_pod_status(locals(), 'solver', Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_job_status(locals(), 'solver', Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def list_solve_python_results(page: int = 0):
@@ -168,12 +168,12 @@ def get_advise_python(analysis_id):
 
 def get_advise_python_log(analysis_id: str):
     """Get adviser log."""
-    return _get_pod_log(locals(), 'adviser-', Configuration.THOTH_BACKEND_NAMESPACE)
+    return _get_job_log(locals(), 'adviser-', Configuration.THOTH_BACKEND_NAMESPACE)
 
 
 def get_advise_python_status(analysis_id: str):
     """Get status of an adviser run."""
-    return _get_pod_status(locals(), 'adviser-', Configuration.THOTH_BACKEND_NAMESPACE)
+    return _get_job_status(locals(), 'adviser-', Configuration.THOTH_BACKEND_NAMESPACE)
 
 
 def list_runtime_environments(page: int = 0):
@@ -341,7 +341,7 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
     except NotFoundError:
         if namespace:
             try:
-                status = _OPENSHIFT.get_pod_status_report(analysis_id, namespace=namespace)
+                status = _OPENSHIFT.get_job_status_report(analysis_id, namespace=namespace)
                 if 'running' in status or ('terminated' in status and status['terminated']['exitCode'] == 0):
                     # In case we hit terminated and exit code equal to 0, the analysis has just finished and
                     # before this call (document retrieval was unsuccessful, pod finished and we asked later
@@ -368,7 +368,7 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
                 else:
                     # Can be:
                     #   - return 500 to user as this is our issue
-                    raise ValueError(f"Unreachable - unknown pod state: {status}")
+                    raise ValueError(f"Unreachable - unknown job state: {status}")
             except OpenShiftNotFound:
                 pass
         return {
@@ -377,10 +377,10 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
         }, 404
 
 
-def _get_pod_log(parameters: dict, name_prefix: str, namespace: str):
-    """Get pod log based on analysis id."""
-    pod_id = parameters.get('analysis_id')
-    if not pod_id.startswith(name_prefix):
+def _get_job_log(parameters: dict, name_prefix: str, namespace: str):
+    """Get job log based on analysis id."""
+    job_id = parameters.get('analysis_id')
+    if not job_id.startswith(name_prefix):
         return {
             'error': 'Wrong analysis id provided',
             'parameters': parameters
@@ -388,20 +388,20 @@ def _get_pod_log(parameters: dict, name_prefix: str, namespace: str):
 
     return {
         'parameters': parameters,
-        'log': _OPENSHIFT.get_pod_log(pod_id, namespace=namespace)
+        'log': _OPENSHIFT.get_job_log(job_id, namespace=namespace)
     }, 200
 
 
-def _get_pod_status(parameters: dict, name_prefix: str, namespace: str):
-    """Get status for a pod."""
-    pod_id = parameters.get('analysis_id')
-    if not pod_id.startswith(name_prefix):
+def _get_job_status(parameters: dict, name_prefix: str, namespace: str):
+    """Get status for a job."""
+    job_id = parameters.get('analysis_id')
+    if not job_id.startswith(name_prefix):
         return {
             'error': 'Wrong analysis id provided',
             'parameters': parameters
         }, 400
 
-    status = _OPENSHIFT.get_pod_status_report(pod_id, namespace=namespace)
+    status = _OPENSHIFT.get_job_status_report(job_id, namespace=namespace)
     return {
         'parameters': parameters,
         'status': status
@@ -409,7 +409,7 @@ def _get_pod_status(parameters: dict, name_prefix: str, namespace: str):
 
 
 def _do_run(parameters: dict, runner: typing.Callable, **runner_kwargs):
-    """Run the given pod - a generic method for running any analyzer, solver, ..."""
+    """Run the given job - a generic method for running any analyzer, solver, ..."""
     return {
         'analysis_id': runner(**parameters, **runner_kwargs),
         'parameters': parameters
