@@ -176,6 +176,22 @@ def get_advise_python_status(analysis_id: str):
     return _get_pod_status(locals(), 'adviser-', Configuration.THOTH_BACKEND_NAMESPACE)
 
 
+def post_dependency_monkey_python(application_stack: str, runtime_environemnt: str = None, debug: bool = False):
+    """Run dependency monkey on the given application stack to produce all the possible software stacks."""
+    # TODO: Change output to Amun once we will have it hosted.
+    return _do_run(locals(), _OPENSHIFT.run_dependency_monkey, output='-')
+
+
+def get_dependency_monkey_python_log(analysis_id: str):
+    """Get dependency monkey container log."""
+    return _get_pod_log(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
+
+
+def get_dependency_monkey_python_status(analysis_id: str):
+    """Get dependency monkey container status."""
+    return _get_pod_status(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
+
+
 def list_runtime_environments(page: int = 0):
     """List available runtime environments."""
     parameters = locals()
