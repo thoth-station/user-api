@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Template
 metadata:
-  name: user-api-deployment
+  name: user-api-imagestream
   annotations:
     description: >
       This is User API ImageStream, this template is meant to be used by Bots, but could also be used by humans...
