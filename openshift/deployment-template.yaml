@@ -5,8 +5,8 @@ metadata:
   annotations:
     description: This is Thoth Core - User API
     openshift.io/display-name: 'Thoth Core: User API'
-    version: 0.4.0
-    tags: poc,thoth,user-api,ai-stacks
+    version: 0.5.0
+    tags: poc,thoth,user-api,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
       This template defines resources needed to deploy Thoth Core Services as
@@ -209,17 +209,6 @@ objects:
             from:
               kind: ImageStreamTag
               name: 'user-api:${IMAGE_STREAM_TAG}'
-
-  - kind: ImageStream
-    apiVersion: v1
-    metadata:
-      labels:
-        app: thoth
-        component: user-api
-      name: user-api
-      namespace: ${THOTH_FRONTEND_NAMESPACE}
-    spec:
-      name: latest
 
 parameters:
   - displayName: Thoth Frontend Namespace
