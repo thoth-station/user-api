@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: user-api-deployment
+  annotations:
+    description: >
+      This is User API ImageStream, this template is meant to be used by Bots, but could also be used by humans...
+    openshift.io/display-name: 'Thoth Core: User API'
+    version: 0.5.0
+    tags: poc,thoth,user-api,ai-stacks,aistacks
+    template.openshift.io/documentation-url: https://github.com/Thoth-Station/
+    template.openshift.io/long-description: >
+      This is User API ImageStream, this template is meant to be used by Bots, but could also be used by humans...
+    template.openshift.io/provider-display-name: Red Hat, Inc.
+  labels:
+    template: user-api-imagestream
+    app: thoth
+    component: user-api
+
+objects:
+  - kind: ImageStream
+    apiVersion: v1
+    metadata:
+      labels:
+        app: thoth
+        component: user-api
+      name: user-api
+    spec:
+      name: ${IMAGE_STREAM_TAG}
+
+parameters:
+  - description: Tag of the ImageStream to use
+    displayName: ImageStream Tag
+    required: true
+    name: IMAGE_STREAM_TAG
+    value: 'latest'
