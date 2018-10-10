@@ -3,14 +3,13 @@ kind: Template
 metadata:
   name: user-api-deployment
   annotations:
-    description: This is Thoth Core - User API
+    description: This is Thoth - User API
     openshift.io/display-name: 'Thoth Core: User API'
-    version: 0.5.0
+    version: 0.6.0
     tags: poc,thoth,user-api,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
-      This template defines resources needed to deploy Thoth Core Services as
-      a Proof-of-Concept to OpenShift.
+      This template defines resources needed to deploy Thoth User API on OpenShift.
     template.openshift.io/provider-display-name: Red Hat, Inc.
   labels:
     template: user-api-deployment
@@ -22,7 +21,6 @@ objects:
     apiVersion: v1
     metadata:
       name: user-api
-      namespace: ${THOTH_FRONTEND_NAMESPACE}
       labels:
         app: thoth
         component: user-api
@@ -40,7 +38,6 @@ objects:
         app: thoth
         component: user-api
       name: user-api
-      namespace: ${THOTH_FRONTEND_NAMESPACE}
     spec:
       ports:
         - port: 80
@@ -49,16 +46,13 @@ objects:
       selector:
         service: user-api
 
-  #
-  # Deployment configs
-  - apiVersion: v1
-    kind: DeploymentConfig
+  - kind: DeploymentConfig
+    apiVersion: v1
     metadata:
       labels:
         app: thoth
         component: user-api
       name: user-api
-      namespace: ${THOTH_FRONTEND_NAMESPACE}
     spec:
       replicas: 1
       selector:
@@ -136,9 +130,9 @@ objects:
                       name: thoth
                       key: thoth-secret
                 - name: THOTH_JANUSGRAPH_HOST
-                  value: janusgraph
+                  value: ${THOTH_JANUSGRAPH_HOST}
                 - name: THOTH_JANUSGRAPH_PORT
-                  value: '80'
+                  value: ${THOTH_JANUSGRAPH_PORT}
                 - name: THOTH_USER_API_APP_SECRET_KEY
                   valueFrom:
                     secretKeyRef:
@@ -156,24 +150,29 @@ objects:
                       key: ceph-secret-key
                 - name: RSYSLOG_HOST
                   valueFrom:
-                  configMapKeyRef:
-                    key: rsyslog-host
-                    name: thoth
+                    configMapKeyRef:
+                      key: rsyslog-host
+                      name: thoth
                 - name: RSYSLOG_PORT
                   valueFrom:
-                  configMapKeyRef:
-                    key: rsyslog-port
-                    name: thoth
+                    configMapKeyRef:
+                      key: rsyslog-port
+                      name: thoth
                 - name: PROMETHEUS_PUSHGATEWAY_HOST
                   valueFrom:
-                  configMapKeyRef:
-                    key: prometheus-pushgateway-host
-                    name: thoth
+                    configMapKeyRef:
+                      key: prometheus-pushgateway-host
+                      name: thoth
                 - name: PROMETHEUS_PUSHGATEWAY_PORT
                   valueFrom:
-                  configMapKeyRef:
-                    key: prometheus-pushgateway-port
-                    name: thoth
+                    configMapKeyRef:
+                      name: thoth
+                      key: prometheus-pushgateway-port
+                - name: SENTRY_DSN
+                  valueFrom:
+                    secretKeyRef:
+                      name: thoth
+                      key: sentry-dsn
               ports:
                 - containerPort: 8080
                   protocol: TCP
@@ -223,3 +222,13 @@ parameters:
     required: true
     name: IMAGE_STREAM_TAG
     value: 'latest'
+
+  - description: Hostname of the JanusGraph Server
+    displayName: JanusGraph Server Hostname
+    name: THOTH_JANUSGRAPH_HOST
+    value: 'janusgraph'
+
+  - description: Port of the JanusGraph Server
+    displayName: JanusGraph Server Post
+    name: THOTH_JANUSGRAPH_PORT
+    value: '80'
