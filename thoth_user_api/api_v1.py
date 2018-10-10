@@ -358,7 +358,8 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
         if namespace:
             try:
                 status = _OPENSHIFT.get_job_status_report(analysis_id, namespace=namespace)
-                if 'running' in status or ('terminated' in status and status['terminated']['exitCode'] == 0):
+                if status['state'] == 'running' or \
+                        (status['state'] == 'terminated' and status['terminated']['exitCode'] == 0):
                     # In case we hit terminated and exit code equal to 0, the analysis has just finished and
                     # before this call (document retrieval was unsuccessful, pod finished and we asked later
                     # for status). To fix this time-dependent issue, let's user ask again. Do not do pod status
@@ -369,13 +370,13 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
                         'status': status,
                         'parameters': parameters
                     }, 202
-                elif 'terminated' in status:
+                elif status['state'] == 'terminated':
                     return {
                         'error': 'Analysis was not successful',
                         'status': status,
                         'parameters': parameters
                     }, 404
-                elif 'scheduling' in status or 'waiting' in status:
+                elif status['state'] in ('scheduling', 'waiting'):
                     return {
                         'error': 'Analysis is being scheduled',
                         'status': status,
