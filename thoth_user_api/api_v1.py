@@ -176,7 +176,7 @@ def get_advise_python_status(analysis_id: str):
     return _get_job_status(locals(), 'adviser-', Configuration.THOTH_BACKEND_NAMESPACE)
 
 
-def post_dependency_monkey_python(application_stack: str, runtime_environemnt: str = None, debug: bool = False):
+def post_dependency_monkey_python(application_stack: str, runtime_environment: str = None, debug: bool = False):
     """Run dependency monkey on the given application stack to produce all the possible software stacks."""
     # TODO: Change output to Amun once we will have it hosted.
     return _do_run(locals(), _OPENSHIFT.run_dependency_monkey, output='-')
