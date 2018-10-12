@@ -97,7 +97,8 @@ def post_solve_python(packages: dict, debug: bool = False, transitive: bool = Fa
     """Run a solver to solve the given ecosystem dependencies."""
     packages = packages.pop('requirements', '')
     parameters = locals()
-    response, status_code = _do_run(parameters, _OPENSHIFT.run_solver, output=Configuration.THOTH_SOLVER_OUTPUT)
+    response, status_code = _do_run(
+        parameters, _OPENSHIFT.run_solver, output=Configuration.THOTH_SOLVER_OUTPUT)
 
     # Handle a special case where no solvers for the given name were found.
     if status_code == 202 and not response['analysis_id']:
@@ -184,12 +185,12 @@ def post_dependency_monkey_python(application_stack: str, runtime_environemnt: s
 
 def get_dependency_monkey_python_log(analysis_id: str):
     """Get dependency monkey container log."""
-    return _get_pod_log(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_job_log(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def get_dependency_monkey_python_status(analysis_id: str):
     """Get dependency monkey container status."""
-    return _get_pod_status(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_job_status(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def list_runtime_environments(page: int = 0):
@@ -218,7 +219,8 @@ def get_runtime_environment(runtime_environment_name: str, analysis_id: str = No
     graph.connect()
 
     try:
-        results, analysis_document_id = graph.get_runtime_environment(runtime_environment_name, analysis_id)
+        results, analysis_document_id = graph.get_runtime_environment(
+            runtime_environment_name, analysis_id)
     except NotFoundError as exc:
         return {
             'error': str(exc),
@@ -240,7 +242,8 @@ def list_runtime_environment_analyses(runtime_environment_name: str, page: int =
 
     graph = GraphDatabase()
     graph.connect()
-    results = graph.runtime_environment_analyses_listing(runtime_environment_name, page, PAGINATION_SIZE)
+    results = graph.runtime_environment_analyses_listing(
+        runtime_environment_name, page, PAGINATION_SIZE)
 
     return {
         'results': results,
@@ -328,7 +331,8 @@ def _do_listing(adapter_class, page: int) -> tuple:
     # TODO: make sure if Ceph returns objects in the same order each time.
     # We will need to abandon this logic later anyway once we will be
     # able to query results on data hub side.
-    results = list(islice(result, page * PAGINATION_SIZE, page * PAGINATION_SIZE + PAGINATION_SIZE))
+    results = list(islice(result, page * PAGINATION_SIZE,
+                          page * PAGINATION_SIZE + PAGINATION_SIZE))
     return {
         'results': results,
         'parameters': {'page': page}
@@ -357,7 +361,8 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
     except NotFoundError:
         if namespace:
             try:
-                status = _OPENSHIFT.get_job_status_report(analysis_id, namespace=namespace)
+                status = _OPENSHIFT.get_job_status_report(
+                    analysis_id, namespace=namespace)
                 if status['state'] == 'running' or \
                         (status['state'] == 'terminated' and status['terminated']['exitCode'] == 0):
                     # In case we hit terminated and exit code equal to 0, the analysis has just finished and
@@ -385,11 +390,12 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
                 else:
                     # Can be:
                     #   - return 500 to user as this is our issue
-                    raise ValueError(f"Unreachable - unknown job state: {status}")
+                    raise ValueError(
+                        f"Unreachable - unknown job state: {status}")
             except OpenShiftNotFound:
                 pass
         return {
-            'error': f'Requested result for analysis {analsysis_id!r} was not found',
+            'error': f'Requested result for analysis {analysis_id!r} was not found',
             'parameters': parameters
         }, 404
 
