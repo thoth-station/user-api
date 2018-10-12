@@ -184,12 +184,12 @@ def post_dependency_monkey_python(application_stack: str, runtime_environment: s
 
 def get_dependency_monkey_python_log(analysis_id: str):
     """Get dependency monkey container log."""
-    return _get_pod_log(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_job_log(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def get_dependency_monkey_python_status(analysis_id: str):
     """Get dependency monkey container status."""
-    return _get_pod_status(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_job_status(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def list_runtime_environments(page: int = 0):
@@ -270,7 +270,6 @@ def get_buildlog(document_id: str):
 
 def parse_log(log_info: dict):
     """Parse image build log or install log."""
-    parameters = locals()
     if not log_info:
         return {
             'error': 'No log provided',
@@ -389,7 +388,7 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
             except OpenShiftNotFound:
                 pass
         return {
-            'error': f'Requested result for analysis {analsysis_id!r} was not found',
+            'error': f'Requested result for analysis {analysis_id!r} was not found',
             'parameters': parameters
         }, 404
 
