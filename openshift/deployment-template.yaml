@@ -5,7 +5,7 @@ metadata:
   annotations:
     description: This is Thoth - User API
     openshift.io/display-name: 'Thoth Core: User API'
-    version: 0.6.0
+    version: 0.7.0
     tags: poc,thoth,user-api,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
@@ -129,10 +129,6 @@ objects:
                     secretKeyRef:
                       name: thoth
                       key: thoth-secret
-                - name: THOTH_JANUSGRAPH_HOST
-                  value: ${THOTH_JANUSGRAPH_HOST}
-                - name: THOTH_JANUSGRAPH_PORT
-                  value: ${THOTH_JANUSGRAPH_PORT}
                 - name: THOTH_USER_API_APP_SECRET_KEY
                   valueFrom:
                     secretKeyRef:
@@ -222,13 +218,3 @@ parameters:
     required: true
     name: IMAGE_STREAM_TAG
     value: 'latest'
-
-  - description: Hostname of the JanusGraph Server
-    displayName: JanusGraph Server Hostname
-    name: THOTH_JANUSGRAPH_HOST
-    value: 'janusgraph'
-
-  - description: Port of the JanusGraph Server
-    displayName: JanusGraph Server Post
-    name: THOTH_JANUSGRAPH_PORT
-    value: '80'
