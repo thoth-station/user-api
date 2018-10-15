@@ -176,7 +176,7 @@ def get_advise_python_status(analysis_id: str):
     return _get_job_status(locals(), 'adviser-', Configuration.THOTH_BACKEND_NAMESPACE)
 
 
-def post_dependency_monkey_python(application_stack: str, runtime_environemnt: str = None, debug: bool = False):
+def post_dependency_monkey_python(application_stack: str, runtime_environment: str = None, debug: bool = False):
     """Run dependency monkey on the given application stack to produce all the possible software stacks."""
     # TODO: Change output to Amun once we will have it hosted.
     return _do_run(locals(), _OPENSHIFT.run_dependency_monkey, output='-')
@@ -184,12 +184,12 @@ def post_dependency_monkey_python(application_stack: str, runtime_environemnt: s
 
 def get_dependency_monkey_python_log(analysis_id: str):
     """Get dependency monkey container log."""
-    return _get_pod_log(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_job_log(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def get_dependency_monkey_python_status(analysis_id: str):
     """Get dependency monkey container status."""
-    return _get_pod_status(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_job_status(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def list_runtime_environments(page: int = 0):
@@ -270,7 +270,6 @@ def get_buildlog(document_id: str):
 
 def parse_log(log_info: dict):
     """Parse image build log or install log."""
-    parameters = locals()
     if not log_info:
         return {
             'error': 'No log provided',
@@ -358,8 +357,8 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
         if namespace:
             try:
                 status = _OPENSHIFT.get_job_status_report(analysis_id, namespace=namespace)
-                if status['state'] == 'running' or (status['state'] == 'terminated' \
-                    and status['terminated']['exitCode'] == 0):
+                if status['state'] == 'running' or \
+                        (status['state'] == 'terminated' and status['terminated']['exitCode'] == 0):
                     # In case we hit terminated and exit code equal to 0, the analysis has just finished and
                     # before this call (document retrieval was unsuccessful, pod finished and we asked later
                     # for status). To fix this time-dependent issue, let's user ask again. Do not do pod status
@@ -370,7 +369,7 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
                         'status': status,
                         'parameters': parameters
                     }, 202
-                elif status['state'] == 'terminated'::
+                elif status['state'] == 'terminated':
                     return {
                         'error': 'Analysis was not successful',
                         'status': status,
@@ -389,7 +388,7 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
             except OpenShiftNotFound:
                 pass
         return {
-            'error': f'Requested result for analysis {analsysis_id!r} was not found',
+            'error': f'Requested result for analysis {analysis_id!r} was not found',
             'parameters': parameters
         }, 404
 
