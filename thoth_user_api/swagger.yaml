@@ -51,6 +51,13 @@ paths:
             pulled from.
           type: boolean
           default: true
+        - name: force
+          type: boolean
+          in: query
+          required: false
+          default: false
+          description: >
+            Do not use cached results, always run analysis.
       responses:
         202:
           description: Successful response with analyzer id.
@@ -182,6 +189,13 @@ paths:
             can debug it.
           type: boolean
           default: false
+        - name: force
+          type: boolean
+          in: query
+          required: false
+          default: false
+          description: >
+            Do not use cached results, always run provenance checks.
       responses:
         202:
           description: The provided files will be checked for provenance.
@@ -568,6 +582,13 @@ paths:
             Run the given adviser in a verbose mode so developers can debug it.
           type: boolean
           default: false
+        - name: force
+          type: boolean
+          in: query
+          required: false
+          default: false
+          description: >
+            Do not use cached results, always run adviser.
       responses:
         202:
           description: The adviser is scheduled.
@@ -1050,9 +1071,14 @@ definitions:
         type: object
         description: >
           Parameters echoed back to user (with default parameters if omitted).
+      cached:
+        type: boolean
+        description: >
+          If set to true the given analysis was picked from cache.
     required:
       - analysis_id
       - parameters
+      - cached
   AnalysisResponseError:
     type: object
     required:

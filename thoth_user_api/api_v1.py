@@ -42,8 +42,9 @@ _OPENSHIFT = OpenShift()
 
 
 def post_analyze(image: str, debug: bool = False, registry_user: str = None, registry_password=None,
-                 verify_tls: bool = True):
+                 verify_tls: bool = True, force: bool = False):
     """Run an analyzer in a restricted namespace."""
+    # TODO: check cache here
     return _do_run(locals(), _OPENSHIFT.run_package_extract, output=Configuration.THOTH_ANALYZER_OUTPUT)
 
 
@@ -70,8 +71,9 @@ def get_analyze_status(analysis_id: str):
     return _get_job_status(locals(), 'package-extract-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
-def post_provenance_python(application_stack: dict, debug: bool = False):
+def post_provenance_python(application_stack: dict, debug: bool = False, force: bool = False):
     """Check provenance for the given application stack."""
+    # TODO: check cache here
     return _do_run(locals(), _OPENSHIFT.run_provenance_checker, output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT)
 
 
@@ -148,8 +150,9 @@ def list_solvers():
 
 
 def post_advise_python(application_stack: dict, recommendation_type: str, runtime_environment: str = None,
-                       debug: bool = False):
+                       debug: bool = False, force: bool = False):
     """Compute results for the given package or package stack using adviser."""
+    # TODO: check cache here
     return _do_run(locals(), _OPENSHIFT.run_adviser, output=Configuration.THOTH_ADVISER_OUTPUT)
 
 
@@ -428,5 +431,6 @@ def _do_run(parameters: dict, runner: typing.Callable, **runner_kwargs):
     """Run the given job - a generic method for running any analyzer, solver, ..."""
     return {
         'analysis_id': runner(**parameters, **runner_kwargs),
-        'parameters': parameters
+        'parameters': parameters,
+        'cached': False
     }, 202
