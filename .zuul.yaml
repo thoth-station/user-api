@@ -20,3 +20,9 @@
       queue: thoth-station/core
       jobs:
         - thoth-coala
+
+- job:
+    name: push-image
+    parent: base-openshift-pod
+    run: devops_push_image.yaml
+    nodeset: thoth-ops-pod
