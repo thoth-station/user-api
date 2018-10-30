@@ -180,8 +180,10 @@ def list_solvers():
 def post_advise_python(application_stack: dict, recommendation_type: str, runtime_environment: str = None,
                        debug: bool = False, force: bool = False):
     """Compute results for the given package or package stack using adviser."""
+    parameters = locals()
     # TODO: check cache here
-    return _do_run(locals(), _OPENSHIFT.run_adviser, output=Configuration.THOTH_ADVISER_OUTPUT)
+    parameters.pop('force', None)
+    return _do_run(parameters, _OPENSHIFT.run_adviser, output=Configuration.THOTH_ADVISER_OUTPUT)
 
 
 def list_advise_python(page: int = 0):
