@@ -9,8 +9,9 @@ flask-script = "*"
 requests = "*"
 gunicorn = "*"
 attrs = "*"
-thoth-common = {version = "*", extras = ["openshift"]}
+thoth-common = {extras = ["openshift"], version = "*"}
 thoth-storages = "*"
+thoth-analyzer = "*"
 
 [dev-packages]
 pytest = "*"

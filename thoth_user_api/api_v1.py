@@ -34,6 +34,10 @@ from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 
 from .configuration import Configuration
 from .parsing import parse_log as do_parse_log
+from .image import get_image_metadata
+from .exceptions import ImageError
+from .exceptions import ImageManifestUnknownError
+from .exceptions import ImageAuthenticationRequired
 
 
 PAGINATION_SIZE = 100
@@ -41,7 +45,7 @@ _LOGGER = logging.getLogger('thoth.user_api.api_v1')
 _OPENSHIFT = OpenShift()
 
 
-def post_analyze(image: str, debug: bool = False, registry_user: str = None, registry_password=None,
+def post_analyze(image: str, debug: bool = False, registry_user: str = None, registry_password: str = None,
                  verify_tls: bool = True, force: bool = False):
     """Run an analyzer in a restricted namespace."""
     parameters = locals()
@@ -49,6 +53,28 @@ def post_analyze(image: str, debug: bool = False, registry_user: str = None, reg
     parameters.pop('force', None)
     return _do_run(locals(), _OPENSHIFT.run_package_extract, output=Configuration.THOTH_ANALYZER_OUTPUT)
 
+
+def post_image_metadata(image: str, registry_user: str = None, registry_password: str = None,
+                        verify_tls: bool = True) -> dict:
+    """Get image metadata."""
+    try:
+        return get_image_metadata(
+            image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
+        )
+    except ImageManifestUnknownError as exc:
+        status_code = 400
+        error_str = str(exc)
+    except ImageAuthenticationRequired as exc:
+        status_code = 401
+        error_str = str(exc)
+    except ImageError as exc:
+        status_code = 400
+        error_str = str(exc)
+
+    return {
+        'error': error_str,
+        'parameters': locals()
+    }, status_code
 
 def list_analyze(page: int = 0):
     """Retrieve image analyzer result."""

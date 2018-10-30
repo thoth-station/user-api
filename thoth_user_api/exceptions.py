@@ -24,3 +24,15 @@ class UserApiException(Exception):
 
 class NotFoundException(UserApiException):
     """An exception raised if the requested resource could not be found."""
+
+
+class ImageError(UserApiException):
+    """An exception raised if inspection of the given image was not successful."""
+
+
+class ImageManifestUnknownError(ImageError):
+    """An exception raised if manifest of the given image is not known."""
+
+
+class ImageAuthenticationRequired(ImageError):
+    """An exception raised if there is a need to authenticate against registry to inspect the given image."""

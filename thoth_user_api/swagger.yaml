@@ -8,6 +8,55 @@ consumes:
 produces:
   - application/json
 paths:
+  /image/metadata:
+    post:
+      tags: ["Image Analysis"]
+      x-swagger-router-controller: thoth_user_api.api_v1
+      operationId: post_image_metadata
+      summary: Get metadata for the given image
+      parameters:
+        - name: image
+          in: query
+          required: true
+          description: >
+            Name of image - can also specify remote registry to pull
+            image from.
+          type: string
+        - name: registry_user
+          in: query
+          required: false
+          description: >
+            Registry user to be used for pulling images from registry.
+          type: string
+        - name: registry_password
+          in: query
+          required: false
+          description: >
+            Registry password or token to be used for pulling images from
+            registry.
+          type: string
+        - name: verify_tls
+          in: query
+          required: false
+          description: >
+            Verify TLS certificates of registry from where images are
+            pulled from.
+          type: boolean
+          default: true
+      responses:
+        200:
+          description: Information about the given image.
+          schema:
+            $ref: "#/definitions/ImageMetadataResponse"
+        400:
+          description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
+        403:
+          description: If user is not authorized to pull image.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
+
   /analyze:
     post:
       tags: ["Image Analysis"]
@@ -1058,6 +1107,63 @@ definitions:
           type: string
           description: Value of the supplied environment variable.
           example: '1'''
+  ImageMetadataResponse:
+    type: object
+    description: Response information with image metadata.
+    additionalProperties: false
+    properties:
+      name:
+        type: string
+        description: Name of the image with optional tag.
+        example: 'fedora'
+      tag:
+        type: string
+        description: Tag of the image.
+        example: 'latest'
+      digest:
+        type: string
+        description: Digest of the image.
+        example: sha256:cfd8f071bf8da7a466748f522406f7ae5908d002af1b1a1c0dcf893e183e5b32''
+      repo_tags:
+        type: array
+        items:
+          type: string
+          description: Tags available in the registry repository.
+      created:
+        type: string
+        description: Image creation date and time.
+        example: "2016-03-04T18:40:02.92155334Z"
+      docker_version:
+        type: string
+        description: Version of Docker.
+        example: "1.9.1"
+      labels:
+        type: object
+        additionalProperties: true
+        description: Image labels.
+      architecture:
+        type: string
+        description: Target architecture of image.
+        example: "amd64"
+      os:
+        type: string
+        description: "Operating system identifier."
+      layers:
+        type: array
+        items:
+          type: string
+          description: Digests of image layesrs.
+    required:
+      - name
+      - tag
+      - digest
+      - repo_tags
+      - created
+      - docker_version
+      - labels
+      - architecture
+      - os
+      - layers
   AnalysisResponse:
     type: object
     description: Response for a submitted analysis.
