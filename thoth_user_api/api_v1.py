@@ -51,7 +51,7 @@ def post_analyze(image: str, debug: bool = False, registry_user: str = None, reg
     parameters = locals()
     # TODO: check cache here
     parameters.pop('force', None)
-    return _do_run(locals(), _OPENSHIFT.run_package_extract, output=Configuration.THOTH_ANALYZER_OUTPUT)
+    return _do_run(parameters, _OPENSHIFT.run_package_extract, output=Configuration.THOTH_ANALYZER_OUTPUT)
 
 
 def post_image_metadata(image: str, registry_user: str = None, registry_password: str = None,
