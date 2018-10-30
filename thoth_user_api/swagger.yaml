@@ -52,6 +52,10 @@ paths:
           description: On invalid request.
           schema:
             $ref: "#/definitions/AnalysisResponseError"
+        403:
+          description: If user is not authorized to pull image.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
 
   /analyze:
     post:

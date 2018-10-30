@@ -59,11 +59,20 @@ def post_image_metadata(image: str, registry_user: str = None, registry_password
         return get_image_metadata(
             image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
         )
-    except (ImageManifestUnknownError, ImageAuthenticationRequired, ImageError) as exc:
-        return {
-            'error': str(exc),
-            'parameters': locals()
-        }
+    except ImageManifestUnknownError as exc:
+        status_code = 400
+        error_str = str(exc)
+    except ImageAuthenticationRequired as exc:
+        status_code = 401
+        error_str = str(exc)
+    except ImageError as exc:
+        status_code = 400
+        error_str = str(exc)
+
+    return {
+        'error': error_str,
+        'parameters': locals()
+    }, status_code
 
 def list_analyze(page: int = 0):
     """Retrieve image analyzer result."""
