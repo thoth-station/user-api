@@ -48,7 +48,9 @@ _OPENSHIFT = OpenShift()
 def post_analyze(image: str, debug: bool = False, registry_user: str = None, registry_password: str = None,
                  verify_tls: bool = True, force: bool = False):
     """Run an analyzer in a restricted namespace."""
+    parameters = locals()
     # TODO: check cache here
+    parameters.pop('force', None)
     return _do_run(locals(), _OPENSHIFT.run_package_extract, output=Configuration.THOTH_ANALYZER_OUTPUT)
 
 
