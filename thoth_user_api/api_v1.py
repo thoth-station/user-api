@@ -17,10 +17,12 @@
 
 """Implementation of API v1."""
 
+import hashlib
 from itertools import islice
 import asyncio
 import logging
 import typing
+import json
 
 from thoth.storages import AdvisersResultsStore
 from thoth.storages import AnalysisResultsStore
@@ -28,6 +30,8 @@ from thoth.storages import BuildLogsStore
 from thoth.storages import GraphDatabase
 from thoth.storages import ProvenanceResultsStore
 from thoth.storages import SolverResultsStore
+from thoth.storages import AnalysesCacheStore
+from thoth.storages.exceptions import CacheMiss
 from thoth.storages.exceptions import NotFoundError
 from thoth.common import OpenShift
 from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
@@ -44,37 +48,59 @@ PAGINATION_SIZE = 100
 _LOGGER = logging.getLogger('thoth.user_api.api_v1')
 _OPENSHIFT = OpenShift()
 
+def _compute_digest_params(parameters: dict):
+    """Compute digest on parameters passed."""
+    return hashlib.sha256(json.dumps(parameters, sort_keys=True).encode()).hexdigest()
+
 
 def post_analyze(image: str, debug: bool = False, registry_user: str = None, registry_password: str = None,
                  verify_tls: bool = True, force: bool = False):
     """Run an analyzer in a restricted namespace."""
     parameters = locals()
-    # TODO: check cache here
-    parameters.pop('force', None)
-    return _do_run(parameters, _OPENSHIFT.run_package_extract, output=Configuration.THOTH_ANALYZER_OUTPUT)
+    force = parameters.pop('force', None)
+
+    # Always extract metadata to check for authentication issues and such.
+    metadata = _do_get_image_metadata(
+        image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
+    )
+
+    if isinstance(metadata, tuple):
+        # There was an error extracting metadata, tuple holds dictionary with error report and HTTP status code.
+        return metadata
+
+    # We compute digest of parameters so we do not reveal any authentication specific info.
+    parameters_digest = _compute_digest_params(parameters)
+    cache = AnalysesCacheStore()
+    cache.connect()
+    cached_document_id = metadata['digest'] + '+' + parameters_digest
+
+    if not force:
+        try:
+            return {
+                'analysis_id': cache.retrieve_document_record(cached_document_id).pop('analysis_id'),
+                'cached': True,
+                'parameters': parameters
+            }
+        except CacheMiss:
+            pass
+
+    response, status_code = _do_run(
+        parameters, _OPENSHIFT.run_package_extract, output=Configuration.THOTH_ANALYZER_OUTPUT
+    )
+
+    if status_code == 202:
+        cache.store_document_record(cached_document_id, {'analysis_id': response['analysis_id']})
+
+    return response, status_code
 
 
 def post_image_metadata(image: str, registry_user: str = None, registry_password: str = None,
                         verify_tls: bool = True) -> dict:
     """Get image metadata."""
-    try:
-        return get_image_metadata(
-            image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
-        )
-    except ImageManifestUnknownError as exc:
-        status_code = 400
-        error_str = str(exc)
-    except ImageAuthenticationRequired as exc:
-        status_code = 401
-        error_str = str(exc)
-    except ImageError as exc:
-        status_code = 400
-        error_str = str(exc)
+    return _do_get_image_metadata(
+        image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
+    )
 
-    return {
-        'error': error_str,
-        'parameters': locals()
-    }, status_code
 
 def list_analyze(page: int = 0):
     """Retrieve image analyzer result."""
@@ -464,3 +490,26 @@ def _do_run(parameters: dict, runner: typing.Callable, **runner_kwargs):
         'parameters': parameters,
         'cached': False
     }, 202
+
+
+def _do_get_image_metadata(image: str, registry_user: str = None, registry_password: str = None,
+                           verify_tls: bool = True) -> dict:
+    """Wrap function call with additional checks."""
+    try:
+        return get_image_metadata(
+            image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
+        )
+    except ImageManifestUnknownError as exc:
+        status_code = 400
+        error_str = str(exc)
+    except ImageAuthenticationRequired as exc:
+        status_code = 401
+        error_str = str(exc)
+    except ImageError as exc:
+        status_code = 400
+        error_str = str(exc)
+
+    return {
+        'error': error_str,
+        'parameters': locals()
+    }, status_code
