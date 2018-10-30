@@ -363,7 +363,7 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
             try:
                 status = _OPENSHIFT.get_job_status_report(analysis_id, namespace=namespace)
                 if status['state'] == 'running' or \
-                        (status['state'] == 'terminated' and status['terminated']['exitCode'] == 0):
+                        (status['state'] == 'terminated' and status['exit_code'] == 0):
                     # In case we hit terminated and exit code equal to 0, the analysis has just finished and
                     # before this call (document retrieval was unsuccessful, pod finished and we asked later
                     # for status). To fix this time-dependent issue, let's user ask again. Do not do pod status
