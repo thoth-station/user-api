@@ -101,8 +101,10 @@ def get_analyze_status(analysis_id: str):
 
 def post_provenance_python(application_stack: dict, debug: bool = False, force: bool = False):
     """Check provenance for the given application stack."""
+    parameters = locals()
     # TODO: check cache here
-    return _do_run(locals(), _OPENSHIFT.run_provenance_checker, output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT)
+    parameters.pop('force', False)
+    return _do_run(parameters, _OPENSHIFT.run_provenance_checker, output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT)
 
 
 def get_provenance_python(analysis_id: str):
