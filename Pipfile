@@ -8,15 +8,9 @@ connexion = ">=1.0.31"
 flask-script = "*"
 requests = "*"
 gunicorn = "*"
-attrs = "*"
 thoth-common = {extras = ["openshift"], version = "*"}
 thoth-storages = "*"
 thoth-analyzer = "*"
 
 [dev-packages]
 pytest = "*"
-pylint = "*"
-coala = "*"
-pycodestylebear = "*"
-yamllintbear = "*"
-pydocstylebear = "*"
