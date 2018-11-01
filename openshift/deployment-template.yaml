@@ -65,7 +65,7 @@ objects:
             - name: user-api
               env:
                 - name: APP_MODULE
-                  value: 'thoth_user_api.entrypoint:app'
+                  value: 'thoth.user_api.entrypoint:app'
                 - name: KUBERNETES_API_URL
                   value: 'https://kubernetes.default.svc.cluster.local'
                 - name: KUBERNETES_VERIFY_TLS
