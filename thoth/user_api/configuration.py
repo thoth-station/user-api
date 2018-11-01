@@ -23,11 +23,6 @@ import os
 
 _LOGGER = logging.getLogger(__name__)
 
-_AMUN_API_URL = os.getenv('AMUN_API_URL') or '-'
-if _AMUN_API_URL == '-':
-    _LOGGER.warning("Amun API URL was not configured, Dependency Monkey results will not "
-                    "be submitted to Amun for inspection!")
-
 
 class Configuration:
     """Configuration of user-facing API service."""
@@ -38,8 +33,6 @@ class Configuration:
     THOTH_RESULT_API_URL = os.environ['THOTH_RESULT_API_URL']
     THOTH_ADVISER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/adviser-result'
     THOTH_ANALYZER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/analysis-result'
-    THOTH_SOLVER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/solver-result'
-    THOTH_DEPENDENCY_MONKEY_OUTPUT = _AMUN_API_URL
     THOTH_PROVENANCE_CHECKER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/provenance-checker-result'
     THOTH_MIDDLETIER_NAMESPACE = os.environ['THOTH_MIDDLETIER_NAMESPACE']
     THOTH_BACKEND_NAMESPACE = os.environ['THOTH_BACKEND_NAMESPACE']
