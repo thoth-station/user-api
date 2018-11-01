@@ -19,7 +19,6 @@
 
 import hashlib
 from itertools import islice
-import asyncio
 import logging
 import typing
 import json
@@ -29,7 +28,6 @@ from thoth.storages import AnalysisResultsStore
 from thoth.storages import BuildLogsStore
 from thoth.storages import GraphDatabase
 from thoth.storages import ProvenanceResultsStore
-from thoth.storages import SolverResultsStore
 from thoth.storages import AnalysesCacheStore
 from thoth.storages.exceptions import CacheMiss
 from thoth.storages.exceptions import NotFoundError
@@ -45,7 +43,7 @@ from .exceptions import ImageAuthenticationRequired
 
 
 PAGINATION_SIZE = 100
-_LOGGER = logging.getLogger('thoth.user_api.api_v1')
+_LOGGER = logging.getLogger(__name__)
 _OPENSHIFT = OpenShift()
 
 def _compute_digest_params(parameters: dict):
@@ -151,60 +149,6 @@ def get_provenance_python_status(analysis_id: str):
     return _get_job_status(locals(), 'provenance-checker-', Configuration.THOTH_BACKEND_NAMESPACE)
 
 
-def post_solve_python(packages: dict, debug: bool = False, transitive: bool = False, solver: str = None):
-    """Run a solver to solve the given ecosystem dependencies."""
-    packages = packages.pop('requirements', '')
-    parameters = locals()
-    response, status_code = _do_run(parameters, _OPENSHIFT.run_solver, output=Configuration.THOTH_SOLVER_OUTPUT)
-
-    # Handle a special case where no solvers for the given name were found.
-    if status_code == 202 and not response['analysis_id']:
-        if solver:
-            return {
-                'error': "No solver was run",
-                'parameters': parameters
-            }, 400
-        else:
-            return {
-                'error': "Please contact administrator - no solvers were installed",
-                'parameters': parameters
-            }, 500
-
-    return response, status_code
-
-
-def get_solve_python(analysis_id: str):
-    """Retrieve the given solver result."""
-    return _get_document(
-        SolverResultsStore, analysis_id,
-        name_prefix='solver-', namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE
-    )
-
-
-def get_solve_python_log(analysis_id: str):
-    """Get solver log."""
-    return _get_job_log(locals(), 'solver', Configuration.THOTH_MIDDLETIER_NAMESPACE)
-
-
-def get_solve_python_status(analysis_id: str):
-    """Get status of an ecosystem solver."""
-    return _get_job_status(locals(), 'solver', Configuration.THOTH_MIDDLETIER_NAMESPACE)
-
-
-def list_solve_python_results(page: int = 0):
-    """Retrieve a listing of available solver results."""
-    return _do_listing(SolverResultsStore, page)
-
-
-def list_solvers():
-    """List available registered solvers."""
-    # We are fine with 500 here in case of some OpenShift/configuration failures.
-    return {
-        'solvers': {'python': _OPENSHIFT.get_solver_names()},
-        'parameters': {}
-    }
-
-
 def post_advise_python(application_stack: dict, recommendation_type: str, runtime_environment: str = None,
                        debug: bool = False, force: bool = False):
     """Compute results for the given package or package stack using adviser."""
@@ -235,22 +179,6 @@ def get_advise_python_log(analysis_id: str):
 def get_advise_python_status(analysis_id: str):
     """Get status of an adviser run."""
     return _get_job_status(locals(), 'adviser-', Configuration.THOTH_BACKEND_NAMESPACE)
-
-
-def post_dependency_monkey_python(application_stack: str, runtime_environment: str = None, debug: bool = False):
-    """Run dependency monkey on the given application stack to produce all the possible software stacks."""
-    # TODO: Change output to Amun once we will have it hosted.
-    return _do_run(locals(), _OPENSHIFT.run_dependency_monkey, output=Configuration.THOTH_DEPENDENCY_MONKEY_OUTPUT)
-
-
-def get_dependency_monkey_python_log(analysis_id: str):
-    """Get dependency monkey container log."""
-    return _get_job_log(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
-
-
-def get_dependency_monkey_python_status(analysis_id: str):
-    """Get dependency monkey container status."""
-    return _get_job_status(locals(), 'dependency-monkey-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def list_runtime_environments(page: int = 0):
@@ -347,37 +275,6 @@ def parse_log(log_info: dict):
 def list_buildlogs(page: int = 0):
     """List available build logs."""
     return _do_listing(BuildLogsStore, page)
-
-
-def sync(secret: str, force_analysis_results_sync: bool = False, force_solver_results_sync: bool = False):
-    """Sync results to graph database."""
-    parameters = locals()
-    if secret != Configuration.THOTH_SECRET:
-        return {
-            'error': 'Wrong secret provided'
-        }, 401
-
-    return {
-        'sync_id': _OPENSHIFT.run_sync(
-            force_analysis_results_sync=force_analysis_results_sync,
-            force_solver_results_sync=force_solver_results_sync
-        ),
-        'parameters': parameters
-    }, 202
-
-
-def erase_graph(secret: str):
-    """Clean content of the graph database."""
-    if secret != Configuration.THOTH_SECRET:
-        return {
-            'error': 'Wrong secret provided'
-        }, 401
-
-    adapter = GraphDatabase()
-    adapter.connect()
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(adapter.g.V().drop().next())
-    return {}, 201
 
 
 def _do_listing(adapter_class, page: int) -> tuple:
