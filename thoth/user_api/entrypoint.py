@@ -30,7 +30,7 @@ from thoth.common import init_logging
 from thoth.common import logger_setup
 from thoth.storages import SolverResultsStore
 
-import thoth_user_api
+import thoth.user_api as thoth_user_api
 
 from .configuration import Configuration
 

@@ -11,7 +11,7 @@ paths:
   /image/metadata:
     post:
       tags: ["Image Analysis"]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: post_image_metadata
       summary: Get metadata for the given image
       parameters:
@@ -60,7 +60,7 @@ paths:
   /analyze:
     post:
       tags: ["Image Analysis"]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: post_analyze
       summary: Analyze the given image asynchronously.
       parameters:
@@ -119,7 +119,7 @@ paths:
 
     get:
       tags: ["Image Analysis"]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: list_analyze
       summary: Retrieve a list of document ids for analyzer results.
       parameters:
@@ -142,7 +142,7 @@ paths:
   /analyze/{analysis_id}:
     get:
       tags: ["Image Analysis"]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_analyze
       summary: Retrieve an analyzer result.
       parameters:
@@ -172,7 +172,7 @@ paths:
   /analyze/{analysis_id}/log:
     get:
       tags: ["Image Analysis"]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_analyze_log
       summary: Show logs of an analysis.
       parameters:
@@ -198,7 +198,7 @@ paths:
   /analyze/{analysis_id}/status:
     get:
       tags: ["Image Analysis"]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_analyze_status
       summary: Show analysis status.
       parameters:
@@ -220,7 +220,7 @@ paths:
   /provenance/python:
     post:
       tags: [Provenance]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: post_provenance_python
       summary: Check provenance of packages stated in an application stack.
       parameters:
@@ -258,7 +258,7 @@ paths:
   /provenance/python/{analysis_id}:
     get:
       tags: [Provenance]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_provenance_python
       summary: Retrieve a provenance check result.
       parameters:
@@ -288,7 +288,7 @@ paths:
   /provenance/python/{analysis_id}/log:
     get:
       tags: [Provenance]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_provenance_python_log
       summary: Show logs of a provenance checks.
       parameters:
@@ -314,7 +314,7 @@ paths:
   /provenance/python/{analysis_id}/status:
     get:
       tags: [Provenance]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_provenance_python_status
       summary: Show status of a provenance check.
       parameters:
@@ -336,7 +336,7 @@ paths:
   /solve/python:
     post:
       tags: ["Ecosystem Solver"]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: post_solve_python
       summary: Solve the given application stack.
       parameters:
@@ -376,7 +376,7 @@ paths:
 
     get:
       tags: ["Ecosystem Solver"]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: list_solve_python_results
       summary: Retrieve a list of document ids for solver results.
       parameters:
@@ -399,7 +399,7 @@ paths:
   /solve/python/{analysis_id}:
     get:
       tags: ["Ecosystem Solver"]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_solve_python
       summary: Retrieve a solver result.
       parameters:
@@ -429,7 +429,7 @@ paths:
   /solve/python/{analysis_id}/log:
     get:
       tags: ["Ecosystem Solver"]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_solve_python_log
       summary: Retrieve a solver log.
       parameters:
@@ -455,7 +455,7 @@ paths:
   /solve/python/{analysis_id}/status:
     get:
       tags: ["Ecosystem Solver"]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_solve_python_status
       summary: Show status of an ecosystem solver.
       parameters:
@@ -477,7 +477,7 @@ paths:
   /solvers:
     get:
       tags: ["Ecosystem Solver"]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: list_solvers
       summary: Retrieve a list of solvers installed and available.
       responses:
@@ -506,7 +506,7 @@ paths:
   /runtime-environment:
     get:
       tags: [Environments]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: list_runtime_environments
       summary: Retrieve a list of runtime environments analyzed.
       parameters:
@@ -531,7 +531,7 @@ paths:
   /runtime-environment/{runtime_environment_name}/analyses:
     get:
       tags: [Environments]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: list_runtime_environment_analyses
       summary: List analyses for the given runtime environment.
       parameters:
@@ -564,7 +564,7 @@ paths:
   /runtime-environment/{runtime_environment_name}:
     get:
       tags: [Environments]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_runtime_environment
       summary: Retrieve runtime environment information.
       parameters:
@@ -598,7 +598,7 @@ paths:
   /advise/python:
     post:
       tags: [Advise]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: post_advise_python
       summary: Get advise for Python ecosystem.
       parameters:
@@ -650,7 +650,7 @@ paths:
 
     get:
       tags: [Advise]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: list_advise_python
       summary: Get adviser results available.
       parameters:
@@ -673,7 +673,7 @@ paths:
   /advise/python/{analysis_id}/log:
     get:
       tags: [Advise]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_advise_python_log
       summary: Retrieve a adviser run log.
       parameters:
@@ -699,7 +699,7 @@ paths:
   /advise/python/{analysis_id}/status:
     get:
       tags: [Advise]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_advise_python_status
       summary: Show status of an adviser computing recomemendations.
       parameters:
@@ -721,7 +721,7 @@ paths:
   /advise/python/{analysis_id}:
     get:
       tags: [Advise]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_advise_python
       summary: Get computeted adviser result based on its id.
       parameters:
@@ -753,7 +753,7 @@ paths:
   /dependency-monkey/python:
     post:
       tags: [Dependency Monkey]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: post_dependency_monkey_python
       summary: Run Dependency Monkey on the given application stack.
       parameters:
@@ -789,7 +789,7 @@ paths:
   /dependency-monkey/python/{analysis_id}/log:
     get:
       tags: [Dependency Monkey]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_dependency_monkey_python_log
       summary: Retrieve a Dependency Monkey run log.
       parameters:
@@ -815,7 +815,7 @@ paths:
   /dependency-monkey/python/{analysis_id}/status:
     get:
       tags: [Dependency Monkey]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_dependency_monkey_python_status
       summary: Show status of a Dependency Monkey run.
       parameters:
@@ -837,7 +837,7 @@ paths:
   /parse-log:
     post:
       tags: [Buildlogs]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: parse_log
       summary: >
         Parse Docker build log or installation log and show installed packages.
@@ -859,7 +859,7 @@ paths:
   /buildlog:
     post:
       tags: [Buildlogs]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: post_buildlog
       summary: Store the given build log.
       parameters:
@@ -877,7 +877,7 @@ paths:
 
     get:
       tags: [Buildlogs]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: list_buildlogs
       summary: Retrieve a list of document ids for stored build logs.
       parameters:
@@ -896,7 +896,7 @@ paths:
   /buildlog/{document_id}:
     get:
       tags: [Buildlogs]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_buildlog
       summary: Retrieve the given build log.
       parameters:
@@ -916,7 +916,7 @@ paths:
   /erase-graph:
     post:
       tags: [Admin]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: erase_graph
       summary: Clean graph database.
       parameters:
@@ -935,7 +935,7 @@ paths:
   /sync:
     post:
       tags: [Admin]
-      x-swagger-router-controller: thoth_user_api.api_v1
+      x-swagger-router-controller: thoth.user_api.api_v1
       operationId: sync
       summary: Force run sync to graph database.
       parameters:
