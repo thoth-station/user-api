@@ -46,6 +46,7 @@ PAGINATION_SIZE = 100
 _LOGGER = logging.getLogger(__name__)
 _OPENSHIFT = OpenShift()
 
+
 def _compute_digest_params(parameters: dict):
     """Compute digest on parameters passed."""
     return hashlib.sha256(json.dumps(parameters, sort_keys=True).encode()).hexdigest()

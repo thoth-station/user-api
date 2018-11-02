@@ -201,11 +201,6 @@ objects:
               name: 'user-api:${IMAGE_STREAM_TAG}'
 
 parameters:
-  - displayName: Thoth Frontend Namespace
-    description: Name of the Thoth Frontend Namespace
-    required: true
-    name: THOTH_FRONTEND_NAMESPACE
-
   - description: Tag of the ImageStream to use
     displayName: ImageStream Tag
     required: true
