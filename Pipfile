@@ -11,6 +11,7 @@ gunicorn = "*"
 thoth-common = {extras = ["openshift"], version = "*"}
 thoth-storages = "*"
 thoth-analyzer = "*"
+attr = "*"
 
 [dev-packages]
 pytest = "*"
