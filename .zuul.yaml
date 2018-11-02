@@ -34,7 +34,7 @@
     nodeset:
       nodes:
         - name: "pod"
-          label: "thoth-ops-pod"
+          label: "thoth-ops"
 
 - job:
     name: "push-image"
@@ -43,7 +43,7 @@
     nodeset:
       nodes:
         - name: "pod"
-          label: "thoth-ops-pod"
+          label: "thoth-ops"
 
 - secret:
     name: thoth_ops_sa
