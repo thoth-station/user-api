@@ -1,19 +1,25 @@
 - project:
     check:
       jobs:
-        - linters:
+#        - linters:
+#            vars:
+#              linters:
+#                - "ansible-lint"
+#                - "yamllint"
+#        - "thoth-coala"
+        - "push-image":
             vars:
-              linters:
-                - "ansible-lint"
-                - "yamllint"
-        - "thoth-coala"
+              registry: "docker-registry.upshift.redhat.com"
+              repository: "thoth-station"
+              name: "user-api"
+              tag: "v0.4.0"
     gate:
       queue: "thoth-station/core"
       jobs:
         - "thoth-coala"
     post:
       jobs:
-        - trigger-build:
+        - "trigger-build":
             vars:
               webhook_url: "https://paas.upshift.redhat.com/oapi/v1/namespaces/thoth-test-core/buildconfigs/user-api/webhooks"
     kebechet-auto-gate:

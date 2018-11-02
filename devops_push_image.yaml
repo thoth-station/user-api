@@ -3,3 +3,10 @@
     - command: ls
       args:
         chdir: "{{ zuul.project.src_dir }}"
+
+    - name: "Tag and push to {{ registry }}/{{ repository }}/{{ name }}:{{ tag }}"
+      docker_image:
+        repository: "{{ registry }}/{{ repository }}"
+        name: "{{ name }}"
+        tag: "{{ tag }}"
+        push: yes
