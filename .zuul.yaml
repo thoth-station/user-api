@@ -25,10 +25,16 @@
     name: "thoth-redeploy"
     parent: "base-openshift-pod"
     run: "devops_redeploy.yaml"
-    nodeset: "thoth-ops-pod"
+    nodeset:
+      nodes:
+        - name: "pod"
+          label: "thoth-ops-pod"
 
 - job:
     name: "push-image"
     parent: "base-openshift-pod"
     run: "devops_push_image.yaml"
-    nodeset: "thoth-ops-pod"
+    nodeset:
+      nodes:
+        - name: "pod"
+          label: "thoth-ops-pod"
