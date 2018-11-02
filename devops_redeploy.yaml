@@ -1,0 +1,5 @@
+- hosts: pod
+  tasks:
+    - command: ls
+      args:
+        chdir: "{{ zuul.project.src_dir }}"
