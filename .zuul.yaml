@@ -38,3 +38,28 @@
       nodes:
         - name: "pod"
           label: "thoth-ops-pod"
+
+- secret:
+    name: thoth_ops_sa
+    data:
+        token: !encrypted/pkcs1-oaep
+        - P3zkF9uGcuLRn1SiuR6TRBTu/bTchxBqPNMz8osxBBX1ay7ifz1SYipuCfhcj0RslE2ie
+          RPEwa/RN2K5RC6XjD1HU/DiMoT1ArCaDDnAwjN65hOei7kGtWjnPn5sxb+KDNgHCM2WjH
+          74eUF3B1txGbIhLB84///AhabdR2eFI37TgY8dZWiw8BjtqXjfaaxPuQMkPSn1pjU3gZ9
+          zjKgFCpGboKyLgoVD4jmIsDeeoMtfVuJB/OBq/pYNo7qdeepoX4VFNCEcUJMiwFrBx3AB
+          yVoWCqo87xObI7/eVbFjeO1XCAOcUuuj5jKiSmUUKQTljcKeEGKPFeL4w/y4eJ7ZVGykf
+          n7d5Ms/AgZ3r82t26jKow3USGFzWEKDjh6vZP5mXSDI8mL0mX0FgQBlBOXyYMtkCNAObZ
+          roRSrRPRRO98RHml8ItlJmSmlvBI/28PPORMQogwYpCCTQGeMWEvaVcDayfWLFur+XtGO
+          zaEgOKx0eXaH0kdm6Lj66GbFFKpnQM/zPjqEGZXysBipFjlEbAr35Rrr2l605y7T+h3L9
+          VNFnpFCqsysLueroV/cZ6kRAs6yHfTRpExHW4V9jGMtnEJC+tGaH1wTW5VUgIxqR7CO8r
+          hm6ECdC9WSgTzafhUL+/32M9CJkcYSDWfyiPy2wZCNvCo4oJ9sH9RUDX4m6k90=
+        - PnG7Z+uR7hDa+H9Q+4S2vrB7cbQnYA3OJw2uS5aS0TKgYJuNXcKeTWZ5dL0BLhyQPPce0
+          mjlknMu0wY4MeqE5YAjn+pUWeQ85L7jUURwXkyAQQgNnKZR5Rm1ry/1+hH9Z65ze6Dbwq
+          bZAteyBbuuXUrLqZ2B/jMiZZRf8jZu4OpWrhJdfFnw0ieZdrgCKXz2kIFjQ4fsyKZsauO
+          lrN3/Q/GO0KVzoiBkyhxaCkSZ6wtHCciK+gb2CIj06BnDuO5uPdVtkWNfkMaTdrpxmWW9
+          mKsGEu5IS+UxYaLHEzZcD32ik6bhxcvyExKzoixyhQvA7w8BD47vSY99qsOfOC9ktZfaU
+          kbpUm1DQdrmX2cXgMtUkvtJ0+/EL/23kxrHlhxys1V8Be7mwf7dP7zuhtsqdeSlIa2ob5
+          KkREbgYAZwk83Z+t8YoBnKDfa8E7AqEjYrB9sQq4OY34Wz1pujyn59/xhh/doQkJ4QKsq
+          vRNrJYLi32Bgk4PWkZTmyfQVKrYXDHEcV62gFVjrxz+SJM9z3HdN1tiPgmp2yvHQ75XPV
+          MCPUNYlRecwt/dka8fYLhaU708oICxmceGgsM2C2ntEHi+TPVsjOXb7fmnbDfzZm294s1
+          CiagNl7dSfD4M3ipkUrC+HWIMQjfM1mnXysySmddL8HUxr6Uoffsz+wHfJZd4E=
