@@ -27,6 +27,8 @@
     name: "thoth-redeploy"
     parent: "base-openshift-pod"
     run: "devops_redeploy.yaml"
+    secrets:
+      - "service_account"
     nodeset:
       nodes:
         - name: "pod"
@@ -42,7 +44,7 @@
           label: "thoth-ops"
 
 - secret:
-    name: thoth_ops_sa
+    name: service_account
     data:
         api_url: https://paas.upshift.redhat.com:443
         project: thoth-test-core
