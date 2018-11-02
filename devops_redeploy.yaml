@@ -1,5 +1,8 @@
 - hosts: pod
   tasks:
-    - command: ls
-      args:
-        chdir: "{{ zuul.project.src_dir }}"
+    - command: "oc login --insecure-skip-tls-verify=false {{ service_account.api_url }} \
+      --token={{ service_account.token }}"
+
+    - command: "oc project {{ service_account.project }}"
+
+    - command: "oc whoami --show-context"

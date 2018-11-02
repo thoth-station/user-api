@@ -7,12 +7,8 @@
 #                - "ansible-lint"
 #                - "yamllint"
 #        - "thoth-coala"
-        - "push-image":
-            vars:
-              registry: "docker-registry.upshift.redhat.com"
-              repository: "thoth-station"
-              name: "user-api"
-              tag: "v0.4.0"
+        - "thoth-redeploy"
+
     gate:
       queue: "thoth-station/core"
       jobs:
@@ -48,24 +44,26 @@
 - secret:
     name: thoth_ops_sa
     data:
+        api_url: https://paas.upshift.redhat.com:443
+        project: thoth-test-core
         token: !encrypted/pkcs1-oaep
-        - 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
+        - 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
