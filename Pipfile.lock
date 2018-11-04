@@ -79,10 +79,10 @@
         },
         "cachetools": {
             "hashes": [
-                "sha256:90f1d559512fc073483fe573ef5ceb39bf6ad3d39edc98dc55178a2b2b176fa3",
-                "sha256:d1c398969c478d336f767ba02040fa22617333293fb0b8968e79b16028dfee35"
+                "sha256:0a258d82933a1dd18cb540aca4ac5d5690731e24d1239a08577b814998f49785",
+                "sha256:4621965b0d9d4c82a79a29edbad19946f5e7702df4afae7d1ed2df951559a8cc"
             ],
-            "version": "==2.1.0"
+            "version": "==3.0.0"
         },
         "certifi": {
             "hashes": [
@@ -285,6 +285,7 @@
                 "sha256:b370ab4abd925309db69a14a4723487948e9a83de60ca92782ec14992b741c89",
                 "sha256:c80dcf531deca2037105df09c933355c80830ffbf9e496b5e6a3967ac6809ef7"
             ],
+            "markers": "extra == 'openshift'",
             "version": "==6.0.0"
         },
         "markupsafe": {
@@ -338,6 +339,7 @@
             "hashes": [
                 "sha256:aab848277e61ad10446e6187c79781ba65256392ffd13aa874619a588c238dae"
             ],
+            "markers": "extra == 'openshift'",
             "version": "==0.6.2"
         },
         "pexpect": {
@@ -495,15 +497,12 @@
             "version": "==0.1.0"
         },
         "thoth-common": {
-            "extras": [
-                "openshift"
-            ],
             "hashes": [
-                "sha256:96158f8d7871230b44bc9ce69300414a1c6ffcd7de9914ab2b4028a2c90ef5cd",
-                "sha256:981d0b8b9f9d1ac5157e691539911d1008847e4a4255cb625d9e8454ab142b92"
+                "sha256:6b01e9d892b28068efc8cbbb41d790406aebfa47a9eed9fbcacae5f8ae66b94a",
+                "sha256:cd4a757ba3a238028f22aa4e547c6a5924be53f3e6d7bb46a329e30d355524f3"
             ],
             "index": "pypi",
-            "version": "==0.3.16"
+            "version": "==0.4.0"
         },
         "thoth-storages": {
             "hashes": [
