@@ -1,0 +1,16 @@
+- hosts: pod
+  tasks:
+    - command: ls
+      args:
+        chdir: "{{ zuul.project.src_dir }}"
+
+    - name: "pulling {{ name }}:latest from internal registry"
+      command: "skopoe copy docker://docker-registry.default.svc:5000/thoth-test-core/{{ name }}:latest \
+        containers-storage:localhost/{{ name }}:latest"
+
+    - name: "tag and push to {{ registry }}/{{ repository }}/{{ name }}:{{ tag }}"
+      docker_image:
+        repository: "{{ registry }}/{{ repository }}"
+        name: "{{ name }}"
+        tag: "{{ tag }}"
+        push: "yes"
