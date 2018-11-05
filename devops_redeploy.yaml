@@ -1,6 +1,6 @@
 - hosts: pod
   tasks:
-    - command: oc login --insecure-skip-tls-verify=false "{{ service_account.api_url }}" \
+    - command: oc login --insecure-skip-tls-verify=true "{{ service_account.api_url }}" \
         --token="{{ service_account.token }}"
 
     - command: "oc project {{ service_account.project }}"
