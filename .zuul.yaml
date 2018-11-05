@@ -1,14 +1,12 @@
 - project:
     check:
       jobs:
-#        - linters:
-#            vars:
-#              linters:
-#                - "ansible-lint"
-#                - "yamllint"
-#        - "thoth-coala"
-        - "thoth-redeploy"
-
+        - linters:
+            vars:
+              linters:
+                - "ansible-lint"
+                - "yamllint"
+        - "thoth-coala"
     gate:
       queue: "thoth-station/core"
       jobs:
@@ -18,6 +16,7 @@
         - "trigger-build":
             vars:
               webhook_url: "https://paas.upshift.redhat.com/oapi/v1/namespaces/thoth-test-core/buildconfigs/user-api/webhooks"
+        - "thoth-redeploy"
     kebechet-auto-gate:
       queue: "thoth-station/core"
       jobs:
