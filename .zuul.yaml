@@ -27,7 +27,7 @@
     parent: "base-openshift-pod"
     run: "devops_redeploy.yaml"
     secrets:
-      - "service_account"
+      - "thoth_ops_sa"
     nodeset:
       nodes:
         - name: "pod"
@@ -43,28 +43,28 @@
           label: "thoth-ops"
 
 - secret:
-    name: service_account
+    name: thoth_ops_sa
     data:
       api_url: https://paas.upshift.redhat.com:443
       project: thoth-test-core
       token: !encrypted/pkcs1-oaep
-        - vzA4YoJ/f5tg2R1BK8m9kxcBs+XxaZAoUaQwtj+cnRigV1cE6sXobA2V+R/XcsXnDrMxq
-          DGPt7gR1Mysqfyc5VoPzomeOL58chSstj2qKwl2WXZ6lFQf2pN1/02NPgaaQSwdrPgH2n
-          hLdAl0/LyORbC+38P9XpPe2nwZ0iB5d18u4tfx1JME5p6uWv8rA4jxnOEZFYL0XJ0bwlj
-          b2KrbLkrxstm3sYRYoXLi/G5bk88b6SpSQM3rqZy5oB8UjKQxE+qyu1Mv0em/c5fnHicH
-          T2MDfg78kVZQfkg/9ESFglH5cfYSUKTK9lF5/EiTWeRa+PuEErhqexUCtiLffq2jETUcU
-          l2O5yQjp0vJzLclJCfUFi9AtMCFZTezDR7L+xLynVr8CmDyGZoGCn4uFIVr7VXB6hWIfw
-          uD4YIY/udaXAbHI5nyQ1Wn++f1UxV6S00+XHU7hhQjAh4ItVgVMbOqgS//dM0Sv8+XWZI
-          CzonQXeLMUNw3n04CMXqUH/1L7CxRRgJD3KmXUlxImXtoWBGD2Ku5IqcTm7pThCvFQM5j
-          nJHW6lO2ampr8ry1aR5AVjDLKS1yssNYA2cTY7WIZbiD1iJ4yREHndaPrTlwdb3l0RB46
-          XxadJtxkHtFe357IFkYbW1wOsakBJZqFpAwKfiVR0CeirxTZxyXcJ/QGM9/jzQ=
-        - PvCmKsVtmHB75sbRasXm2eZIW87OrgnXy0KAa7tRSzUDLjeaDGbDKqg3Z6aLr0NawRCXs
-          paWe+GPINhwYvaPekh0DuVkqNPQt3kZebaLL/Te67NLL6wTSRrfKZmdgh1JKwrGNUyQcJ
-          ZXtVQAcaTaeV9yfXOz6R4wXZ75eVGBQIYRoc0K/KF5SfOWdRO/sxecLcx7uXcC5+hgciT
-          pbLQclaykUdxDE9W1g3C4g+VnNSDAoqnNbHU1jf8ZO2TF6mNnZH3I36eZc8k3xozfFuQE
-          z0PrmQlDAIW9cDON5jUU1bGQp3QtY3TBHz+wkJJr/DYZO93tWx4TLHJbJWAt6rQ3I6YnJ
-          HYHD/jAAtiGfWHcmjx+zJHL0QZXEmGheIgYrfXIEZm55asUL5hzOdQGsWpS6MimTd7Nm/
-          wy1TcotRYm9mklyUuKReO2a/TCbzJNdvsxjVjw0ceBnNdRY66ztpVy1PL8+7O+gpYj3x3
-          o3f49taQIvYMBiHpOd+8ItykUTVBtMDavdU/ixtpSdSdU4ohRzv/SOnSIumQlEAedBBGw
-          BkxBFGhABOw5mmDdJY3FJNu48ggBC65TP6oKd7DJqwkg/ebSIQZXqhPfwdWp+QiZeSIB2
-          yofHcO2vWh+MvrU2M+HbIw7wlwzG8HG7U0ZcB6L0VM7JW1Up0jx4GUlZxzrVt0=
+        - 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
