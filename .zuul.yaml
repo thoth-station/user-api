@@ -45,9 +45,9 @@
 - secret:
     name: service_account
     data:
-        api_url: https://paas.upshift.redhat.com:443
-        project: thoth-test-core
-        token: !encrypted/pkcs1-oaep
+      api_url: https://paas.upshift.redhat.com:443
+      project: thoth-test-core
+      token: !encrypted/pkcs1-oaep
         - vzA4YoJ/f5tg2R1BK8m9kxcBs+XxaZAoUaQwtj+cnRigV1cE6sXobA2V+R/XcsXnDrMxq
           DGPt7gR1Mysqfyc5VoPzomeOL58chSstj2qKwl2WXZ6lFQf2pN1/02NPgaaQSwdrPgH2n
           hLdAl0/LyORbC+38P9XpPe2nwZ0iB5d18u4tfx1JME5p6uWv8rA4jxnOEZFYL0XJ0bwlj
