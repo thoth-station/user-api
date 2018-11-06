@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-connexion = ">=1.0.31"
+connexion = {extras = ["swagger-ui"], version = "*"}
 flask-script = "*"
 requests = "*"
 gunicorn = "*"
