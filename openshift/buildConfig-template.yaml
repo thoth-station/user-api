@@ -28,7 +28,7 @@ objects:
         app: thoth
         component: user-api
     spec:
-      successfulBuildsHistoryLimit: 1 
+      successfulBuildsHistoryLimit: 1
       failedBuildsHistoryLimit: 2
       resources:
         requests:
