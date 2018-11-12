@@ -113,6 +113,9 @@
             "version": "==1.2.2"
         },
         "connexion": {
+            "extras": [
+                "swagger-ui"
+            ],
             "hashes": [
                 "sha256:1485be2bc4b6d4448975c8cf1e48b541c9b08669b73c333fa850fbb9112cba19",
                 "sha256:94476c76c98e9a4837454ad62eb4b881726c338ae552dc8e7e5e4138452db538"
