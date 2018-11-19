@@ -454,6 +454,16 @@ paths:
             Runtime environment in which the given stack will be run.
           type: string
           required: false
+        - name: count
+          in: query
+          description: Number of software stacks that should be returned.
+          type: integer
+          required: false
+        - name: limit
+          in: query
+          description: Limit number of software stacks scored.
+          type: integer
+          required: false
         - name: debug
           in: query
           required: false
