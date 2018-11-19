@@ -151,7 +151,7 @@ def get_provenance_python_status(analysis_id: str):
 
 
 def post_advise_python(application_stack: dict, recommendation_type: str, runtime_environment: str = None,
-                       debug: bool = False, force: bool = False):
+                       count: int = None, limit: int = None, debug: bool = False, force: bool = False):
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
     # TODO: check cache here
