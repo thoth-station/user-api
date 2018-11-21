@@ -432,12 +432,12 @@ paths:
       operationId: post_advise_python
       summary: Get advise for Python ecosystem.
       parameters:
-        - name: application_stack
+        - name: input
           in: body
           required: true
           description: Specification of Python application stack.
           schema:
-            $ref: "#/definitions/PythonStack"
+            $ref: "#/definitions/AdviseInput"
         - name: recommendation_type
           in: query
           description: Recommendation type.
@@ -448,12 +448,6 @@ paths:
             - testing
             - latest
           default: stable
-        - name: runtime_environment
-          in: query
-          description: >
-            Runtime environment in which the given stack will be run.
-          type: string
-          required: false
         - name: count
           in: query
           description: Number of software stacks that should be returned.
@@ -708,7 +702,7 @@ definitions:
                  Contains all particulars about the build log.
                 example: >
                    "apiVersion:build.openshift.io/v1"
-  PythonStack:
+  PythonStack: &pythonStack
     type: object
     required:
       - 'requirements'
@@ -770,6 +764,24 @@ definitions:
           - pipenv
           - requirements
         example: pipenv
+  AdviseInput:
+    type: object
+    required:
+      - application_stack
+    additionalProperties: false
+    properties:
+      application_stack: *pythonStack
+      runtime_environment:
+        type: object
+        properties:
+          cpu_family:
+            type: integer
+            description: CPU family identifier.
+            example: 6
+          cpu_model:
+            type: integer
+            description: CPU model identifier.
+            example: 94
   ImageMetadataResponse:
     type: object
     description: Response information with image metadata.

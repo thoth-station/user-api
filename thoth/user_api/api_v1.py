@@ -150,10 +150,13 @@ def get_provenance_python_status(analysis_id: str):
     return _get_job_status(locals(), 'provenance-checker-', Configuration.THOTH_BACKEND_NAMESPACE)
 
 
-def post_advise_python(application_stack: dict, recommendation_type: str, runtime_environment: str = None,
-                       count: int = None, limit: int = None, debug: bool = False, force: bool = False):
+def post_advise_python(input: dict, recommendation_type: str, count: int = None, limit: int = None,
+                       debug: bool = False, force: bool = False):
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
+    parameters['application_stack'] = parameters['input'].pop('application_stack')
+    parameters['runtime_environment'] = parameters['input'].pop('runtime_environment', None)
+    parameters.pop('input')
     # TODO: check cache here
     parameters.pop('force', None)
     return _do_run(parameters, _OPENSHIFT.run_adviser, output=Configuration.THOTH_ADVISER_OUTPUT)
