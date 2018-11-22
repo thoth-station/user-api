@@ -358,6 +358,18 @@ paths:
           schema:
             $ref: "#/definitions/AnalysisResponseError"
 
+  /python-package-index:
+    get:
+      tags: [Info]
+      x-swagger-router-controller: thoth.user_api.api_v1
+      operationId: list_python_package_indexes
+      summary: List registered Python package indexes.
+      responses:
+        200:
+          description: Listing of available Python package indexes.
+          schema:
+            $ref: "#/definitions/PythonPackageIndexes"
+
   /runtime-environment/{runtime_environment_name}/analyses:
     get:
       tags: [Environments]
@@ -860,6 +872,29 @@ definitions:
       - analysis_id
       - parameters
       - cached
+  PythonPackageIndexes:
+    type: array
+    description: A listing of Python package indexes.
+    items:
+      type: object
+      description: A Python package index.
+      required:
+        - url
+        - warehouse_api_url
+        - verify_ssl
+      properties:
+        url:
+          type: string
+          description: URL to the warehouse.
+          example: http://pypi.org/
+        warehouse_api_url:
+          type: string
+          description: URL to the warehouse API.
+          example: https://pypi.org/
+        verify_ssl:
+          type: boolean
+          description: Use secured connection to warehouse.
+          example: true
   AnalysisResponseError:
     type: object
     required:
