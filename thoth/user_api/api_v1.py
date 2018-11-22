@@ -129,6 +129,11 @@ def post_provenance_python(application_stack: dict, debug: bool = False, force: 
     parameters = locals()
     # TODO: check cache here
     parameters.pop('force', False)
+
+    graph = GraphDatabase()
+    graph.connect()
+    parameters['whitelisted_sources'] = graph.get_python_package_index_urls()
+
     return _do_run(parameters, _OPENSHIFT.run_provenance_checker, output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT)
 
 
