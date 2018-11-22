@@ -885,12 +885,12 @@ definitions:
       properties:
         url:
           type: string
-          description: URL to the warehouse.
-          example: http://pypi.org/
+          description: URL to the Python simple repository as described in PEP 503.
+          example: http://pypi.org/simple
         warehouse_api_url:
           type: string
           description: URL to the warehouse API.
-          example: https://pypi.org/
+          example: https://pypi.org/pypi
         verify_ssl:
           type: boolean
           description: Use secured connection to warehouse.
