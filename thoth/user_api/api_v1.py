@@ -245,6 +245,13 @@ def list_runtime_environment_analyses(runtime_environment_name: str, page: int =
     }
 
 
+def list_python_package_indexes():
+    """List registered Python package indexes in the graph database."""
+    graph = GraphDatabase()
+    graph.connect()
+    return graph.python_package_index_listing()
+
+
 def post_buildlog(log_info: dict):
     """Store the given build log."""
     adapter = BuildLogsStore()
