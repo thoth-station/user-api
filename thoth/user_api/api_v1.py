@@ -37,6 +37,7 @@ from thoth.storages.exceptions import CacheMiss
 from thoth.storages.exceptions import NotFoundError
 from thoth.common import OpenShift
 from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
+from thoth.python import Project
 
 from .configuration import Configuration
 from .parsing import parse_log as do_parse_log
@@ -133,8 +134,9 @@ def post_provenance_python(application_stack: dict, debug: bool = False, force: 
     parameters = locals()
 
     try:
-        project = Project.from_strings(application_stack['requirements'], application_stack['requirements_locked'])
-    except Exception:
+        project = Project.from_strings(application_stack['requirements'], application_stack['requirements_lock'])
+    except Exception as exc:
+        _LOGGER.exception("Failed to parse project: %s", exc)
         return {'parameters': parameters, 'error': 'Invalid application stack supplied - unable to parse'}, 400
 
     graph = GraphDatabase()
@@ -148,6 +150,7 @@ def post_provenance_python(application_stack: dict, debug: bool = False, force: 
 
     timestamp_now = int(time.mktime(datetime.datetime.utcnow().timetuple()))
     cache = ProvenanceCacheStore()
+    cache.connect()
 
     if not force:
         try:
