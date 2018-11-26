@@ -22,6 +22,8 @@ from itertools import islice
 import logging
 import typing
 import json
+import datetime
+import time
 
 from thoth.storages import AdvisersResultsStore
 from thoth.storages import AnalysisResultsStore
@@ -29,6 +31,8 @@ from thoth.storages import BuildLogsStore
 from thoth.storages import GraphDatabase
 from thoth.storages import ProvenanceResultsStore
 from thoth.storages import AnalysesCacheStore
+from thoth.storages import AdvisersCacheStore
+from thoth.storages import ProvenanceCacheStore
 from thoth.storages.exceptions import CacheMiss
 from thoth.storages.exceptions import NotFoundError
 from thoth.common import OpenShift
@@ -79,7 +83,7 @@ def post_analyze(image: str, debug: bool = False, registry_user: str = None, reg
                 'analysis_id': cache.retrieve_document_record(cached_document_id).pop('analysis_id'),
                 'cached': True,
                 'parameters': parameters
-            }
+            }, 202
         except CacheMiss:
             pass
 
@@ -127,9 +131,46 @@ def get_analyze_status(analysis_id: str):
 def post_provenance_python(application_stack: dict, debug: bool = False, force: bool = False):
     """Check provenance for the given application stack."""
     parameters = locals()
-    # TODO: check cache here
-    parameters.pop('force', False)
-    return _do_run(parameters, _OPENSHIFT.run_provenance_checker, output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT)
+
+    try:
+        project = Project.from_strings(application_stack['requirements'], application_stack['requirements_locked'])
+    except Exception:
+        return {'parameters': parameters, 'error': 'Invalid application stack supplied - unable to parse'}, 400
+
+    graph = GraphDatabase()
+    graph.connect()
+    parameters['whitelisted_sources'] = graph.get_python_package_index_urls()
+
+    force = parameters.pop('force', False)
+    cached_document_id = _compute_digest_params(
+        dict(**project.to_dict(), whitelisted_sources=parameters['whitelisted_sources'])
+    )
+
+    timestamp_now = int(time.mktime(datetime.datetime.utcnow().timetuple()))
+    cache = ProvenanceCacheStore()
+
+    if not force:
+        try:
+            cache_record = cache.retrieve_document_record(cached_document_id)
+            if timestampcache_record['timestamp'] + Configuration.THOTH_CACHE_EXPIRATION < timestamp_now:
+                return {
+                    'analysis_id': cache_record.pop('analysis_id'),
+                    'cached': True,
+                    'parameters': parameters
+                }, 202
+        except CacheMiss:
+            pass
+
+    response, status = _do_run(
+        parameters, _OPENSHIFT.run_provenance_checker, output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT
+    )
+    if status == 202:
+        cache.store_document_record(
+            cached_document_id,
+            {'analysis_id': response['analysis_id'], 'timestamp': timestamp_now}
+        )
+
+    return response, status
 
 
 def get_provenance_python(analysis_id: str):
