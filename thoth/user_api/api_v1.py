@@ -38,6 +38,7 @@ from thoth.storages.exceptions import NotFoundError
 from thoth.common import OpenShift
 from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.python import Project
+from thoth.python.exceptions import ThothPythonException
 
 from .configuration import Configuration
 from .parsing import parse_log as do_parse_log
@@ -135,9 +136,12 @@ def post_provenance_python(application_stack: dict, debug: bool = False, force: 
 
     try:
         project = Project.from_strings(application_stack['requirements'], application_stack['requirements_lock'])
+    except ThothPythonException as exc:
+        _LOGGER.exception("Failed to parse project: %s", exc)
+        return {'parameters': parameters, 'error': f'Invalid application stack supplied: {exc}'}, 400
     except Exception as exc:
         _LOGGER.exception("Failed to parse project: %s", exc)
-        return {'parameters': parameters, 'error': 'Invalid application stack supplied - unable to parse'}, 400
+        return {'parameters': parameters, 'error': 'Invalid application stack supplied'}, 400
 
     graph = GraphDatabase()
     graph.connect()
@@ -155,7 +159,7 @@ def post_provenance_python(application_stack: dict, debug: bool = False, force: 
     if not force:
         try:
             cache_record = cache.retrieve_document_record(cached_document_id)
-            if timestampcache_record['timestamp'] + Configuration.THOTH_CACHE_EXPIRATION < timestamp_now:
+            if cache_record['timestamp'] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
                 return {
                     'analysis_id': cache_record.pop('analysis_id'),
                     'cached': True,

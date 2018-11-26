@@ -4,16 +4,18 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+attrs = "*"
 connexion = {extras = ["swagger-ui"],version = "*"}
 flask-script = "*"
-requests = "*"
 gunicorn = "*"
-thoth-common = {extras = ["openshift"],version = "*"}
-thoth-storages = "*"
-thoth-analyzer = "*"
-attrs = "*"
-prometheus-flask-exporter = "*"
 prometheus-client = "*"
+prometheus-flask-exporter = "*"
+requests = "*"
+thoth-analyzer = "*"
+thoth-analyzer = "*"
+thoth-common = {extras = ["openshift"],version = "*"}
+thoth-python = "*"
+thoth-storages = "*"
 
 [dev-packages]
 pytest = "*"
