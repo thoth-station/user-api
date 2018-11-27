@@ -205,9 +205,57 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
     parameters['application_stack'] = parameters['input'].pop('application_stack')
     parameters['runtime_environment'] = parameters['input'].pop('runtime_environment', None)
     parameters.pop('input')
-    # TODO: check cache here
-    parameters.pop('force', None)
-    return _do_run(parameters, _OPENSHIFT.run_adviser, output=Configuration.THOTH_ADVISER_OUTPUT)
+
+    force = parameters.pop('force', False)
+
+    try:
+        project = Project.from_strings(
+            parameters['application_stack']['requirements'],
+            parameters['application_stack'].get('requirements_lock')
+        )
+    except ThothPythonException as exc:
+        _LOGGER.exception("Failed to parse project: %s", exc)
+        return {'parameters': parameters, 'error': f'Invalid application stack supplied: {exc}'}, 400
+    except Exception as exc:
+        _LOGGER.exception("Failed to parse project: %s", exc)
+        return {'parameters': parameters, 'error': 'Invalid application stack supplied'}, 400
+
+    # We could rewrite this to a decorator and make it shared with provenance
+    # checks etc, but there are small glitches why the solution would not be
+    # generic enough to be used for all POST endpoints.
+    adviser_cache = AdvisersCacheStore()
+    adviser_cache.connect()
+
+    timestamp_now = int(time.mktime(datetime.datetime.utcnow().timetuple()))
+    cached_document_id = _compute_digest_params(dict(
+        **project.to_dict(),
+        count=parameters['count'],
+        limit=parameters['limit'],
+        runtime_environment=parameters['runtime_environment']
+    ))
+
+    if not force:
+        try:
+            cache_record = adviser_cache.retrieve_document_record(cached_document_id)
+            if cache_record['timestamp'] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
+                return {
+                    'analysis_id': cache_record.pop('analysis_id'),
+                    'cached': True,
+                    'parameters': parameters
+                }, 202
+        except CacheMiss:
+            pass
+
+    response, status = _do_run(
+        parameters, _OPENSHIFT.run_adviser, output=Configuration.THOTH_ADVISER_OUTPUT
+    )
+    if status == 202:
+        adviser_cache.store_document_record(
+            cached_document_id,
+            {'analysis_id': response['analysis_id'], 'timestamp': timestamp_now}
+        )
+
+    return response, status
 
 
 def list_advise_python(page: int = 0):
