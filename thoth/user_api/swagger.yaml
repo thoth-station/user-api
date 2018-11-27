@@ -358,6 +358,18 @@ paths:
           schema:
             $ref: "#/definitions/AnalysisResponseError"
 
+  /python-package-index:
+    get:
+      tags: [Info]
+      x-swagger-router-controller: thoth.user_api.api_v1
+      operationId: list_python_package_indexes
+      summary: List registered Python package indexes.
+      responses:
+        200:
+          description: Listing of available Python package indexes.
+          schema:
+            $ref: "#/definitions/PythonPackageIndexes"
+
   /runtime-environment/{runtime_environment_name}/analyses:
     get:
       tags: [Environments]
@@ -432,12 +444,12 @@ paths:
       operationId: post_advise_python
       summary: Get advise for Python ecosystem.
       parameters:
-        - name: application_stack
+        - name: input
           in: body
           required: true
           description: Specification of Python application stack.
           schema:
-            $ref: "#/definitions/PythonStack"
+            $ref: "#/definitions/AdviseInput"
         - name: recommendation_type
           in: query
           description: Recommendation type.
@@ -448,11 +460,15 @@ paths:
             - testing
             - latest
           default: stable
-        - name: runtime_environment
+        - name: count
           in: query
-          description: >
-            Runtime environment in which the given stack will be run.
-          type: string
+          description: Number of software stacks that should be returned.
+          type: integer
+          required: false
+        - name: limit
+          in: query
+          description: Limit number of software stacks scored.
+          type: integer
           required: false
         - name: debug
           in: query
@@ -698,7 +714,7 @@ definitions:
                  Contains all particulars about the build log.
                 example: >
                    "apiVersion:build.openshift.io/v1"
-  PythonStack:
+  PythonStack: &pythonStack
     type: object
     required:
       - 'requirements'
@@ -760,6 +776,24 @@ definitions:
           - pipenv
           - requirements
         example: pipenv
+  AdviseInput:
+    type: object
+    required:
+      - application_stack
+    additionalProperties: false
+    properties:
+      application_stack: *pythonStack
+      runtime_environment:
+        type: object
+        properties:
+          cpu_family:
+            type: integer
+            description: CPU family identifier.
+            example: 6
+          cpu_model:
+            type: integer
+            description: CPU model identifier.
+            example: 94
   ImageMetadataResponse:
     type: object
     description: Response information with image metadata.
@@ -838,6 +872,29 @@ definitions:
       - analysis_id
       - parameters
       - cached
+  PythonPackageIndexes:
+    type: array
+    description: A listing of Python package indexes.
+    items:
+      type: object
+      description: A Python package index.
+      required:
+        - url
+        - warehouse_api_url
+        - verify_ssl
+      properties:
+        url:
+          type: string
+          description: URL to the Python simple repository as described in PEP 503.
+          example: http://pypi.org/simple
+        warehouse_api_url:
+          type: string
+          description: URL to the warehouse API.
+          example: https://pypi.org/pypi
+        verify_ssl:
+          type: boolean
+          description: Use secured connection to warehouse.
+          example: true
   AnalysisResponseError:
     type: object
     required:
