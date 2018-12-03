@@ -637,10 +637,10 @@
         },
         "thoth-python": {
             "hashes": [
-                "sha256:905861ab614307f320ee29576b93135cf632ff6235828d2400e1f947000ea517"
+                "sha256:f6ad884cfe38bfb481fa36031b532a904ca7cdf25d2cb0e66a4879d72ecc1ce7"
             ],
             "index": "pypi",
-            "version": "==0.3.0"
+            "version": "==0.3.1"
         },
         "thoth-storages": {
             "hashes": [
