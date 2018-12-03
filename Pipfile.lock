@@ -48,6 +48,13 @@
             ],
             "version": "==2.2.5"
         },
+        "amun": {
+            "hashes": [
+                "sha256:5cc520a5bb563d5bab23b5c0ba1cd787ab9f7c84f62ee6f701f108bd4833adee",
+                "sha256:70460215448e865856136e58f0acc67bcb550de020085f423aeaa5636cb87394"
+            ],
+            "version": "==0.2.0"
+        },
         "async-timeout": {
             "hashes": [
                 "sha256:0c3c816a028d47f659d6ff5c745cb2acf1f966da1fe5c19c77a70282b25f4c5f",
@@ -637,11 +644,10 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:aab8372a9eda13f2aafead425749f9c249d53d118cc9d1ed7cd340dd5648c6d0",
-                "sha256:c4e2ce6d7fdd00a61b053fe7fb5b738286f2b9d3cc2ebc74f588cab975bbf9de"
+                "sha256:ad147ca3d2fff19f6fbb1431054bdc9df49a473c23f3929bc63d515bba26d081"
             ],
             "index": "pypi",
-            "version": "==0.9.0"
+            "version": "==0.9.3"
         },
         "timestamp": {
             "hashes": [
