@@ -137,10 +137,8 @@ def post_provenance_python(application_stack: dict, debug: bool = False, force: 
     try:
         project = Project.from_strings(application_stack['requirements'], application_stack['requirements_lock'])
     except ThothPythonException as exc:
-        _LOGGER.exception("Failed to parse project: %s", exc)
-        return {'parameters': parameters, 'error': f'Invalid application stack supplied: {exc}'}, 400
+        return {'parameters': parameters, 'error': f'Invalid application stack supplied: {str(exc)}'}, 400
     except Exception as exc:
-        _LOGGER.exception("Failed to parse project: %s", exc)
         return {'parameters': parameters, 'error': 'Invalid application stack supplied'}, 400
 
     graph = GraphDatabase()
@@ -202,22 +200,17 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
                        debug: bool = False, force: bool = False):
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
-    parameters['application_stack'] = parameters['input'].pop('application_stack')
-    parameters['runtime_environment'] = parameters['input'].pop('runtime_environment', None)
-    parameters.pop('input')
-
     force = parameters.pop('force', False)
+    parameters.pop('parameters', None)
 
     try:
         project = Project.from_strings(
-            parameters['application_stack']['requirements'],
-            parameters['application_stack'].get('requirements_lock')
+            parameters['input']['application_stack']['requirements'],
+            parameters['input']['application_stack'].get('requirements_lock')
         )
     except ThothPythonException as exc:
-        _LOGGER.exception("Failed to parse project: %s", exc)
-        return {'parameters': parameters, 'error': f'Invalid application stack supplied: {exc}'}, 400
+        return {'parameters': parameters, 'error': f'Invalid application stack supplied: {str(exc)}'}, 400
     except Exception as exc:
-        _LOGGER.exception("Failed to parse project: %s", exc)
         return {'parameters': parameters, 'error': 'Invalid application stack supplied'}, 400
 
     # We could rewrite this to a decorator and make it shared with provenance
@@ -231,7 +224,7 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
         **project.to_dict(),
         count=parameters['count'],
         limit=parameters['limit'],
-        runtime_environment=parameters['runtime_environment']
+        runtime_environment=parameters['application_stack']['runtime_environment']
     ))
 
     if not force:
