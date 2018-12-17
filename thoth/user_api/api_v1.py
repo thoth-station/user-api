@@ -224,7 +224,7 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
         **project.to_dict(),
         count=parameters['count'],
         limit=parameters['limit'],
-        runtime_environment=parameters['application_stack']['runtime_environment']
+        runtime_environment=parameters['input']['runtime_environment']
     ))
 
     if not force:
