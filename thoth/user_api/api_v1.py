@@ -137,10 +137,8 @@ def post_provenance_python(application_stack: dict, debug: bool = False, force: 
     try:
         project = Project.from_strings(application_stack['requirements'], application_stack['requirements_lock'])
     except ThothPythonException as exc:
-        _LOGGER.exception("Failed to parse project: %s", exc)
-        return {'parameters': parameters, 'error': f'Invalid application stack supplied: {exc}'}, 400
+        return {'parameters': parameters, 'error': f'Invalid application stack supplied: {str(exc)}'}, 400
     except Exception as exc:
-        _LOGGER.exception("Failed to parse project: %s", exc)
         return {'parameters': parameters, 'error': 'Invalid application stack supplied'}, 400
 
     graph = GraphDatabase()
@@ -205,7 +203,6 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
     parameters['application_stack'] = parameters['input'].pop('application_stack')
     parameters['runtime_environment'] = parameters['input'].pop('runtime_environment', None)
     parameters.pop('input')
-
     force = parameters.pop('force', False)
 
     try:
@@ -214,10 +211,8 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
             parameters['application_stack'].get('requirements_lock')
         )
     except ThothPythonException as exc:
-        _LOGGER.exception("Failed to parse project: %s", exc)
-        return {'parameters': parameters, 'error': f'Invalid application stack supplied: {exc}'}, 400
+        return {'parameters': parameters, 'error': f'Invalid application stack supplied: {str(exc)}'}, 400
     except Exception as exc:
-        _LOGGER.exception("Failed to parse project: %s", exc)
         return {'parameters': parameters, 'error': 'Invalid application stack supplied'}, 400
 
     # We could rewrite this to a decorator and make it shared with provenance
@@ -231,7 +226,7 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
         **project.to_dict(),
         count=parameters['count'],
         limit=parameters['limit'],
-        runtime_environment=parameters['runtime_environment']
+        runtime_environment=parameters.get('runtime_environment')
     ))
 
     if not force:
@@ -499,12 +494,12 @@ def _do_run(parameters: dict, runner: typing.Callable, **runner_kwargs):
 
 
 def _do_get_image_metadata(image: str, registry_user: str = None, registry_password: str = None,
-                           verify_tls: bool = True) -> dict:
+                           verify_tls: bool = True) -> typing.Tuple[dict, int]:
     """Wrap function call with additional checks."""
     try:
         return get_image_metadata(
             image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
-        )
+        ), 200
     except ImageManifestUnknownError as exc:
         status_code = 400
         error_str = str(exc)
