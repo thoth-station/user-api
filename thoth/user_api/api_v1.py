@@ -200,13 +200,15 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
                        debug: bool = False, force: bool = False):
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
+    parameters['application_stack'] = parameters['input'].pop('application_stack')
+    parameters['runtime_environment'] = parameters['input'].pop('runtime_environment', None)
+    parameters.pop('input')
     force = parameters.pop('force', False)
-    parameters.pop('parameters', None)
 
     try:
         project = Project.from_strings(
-            parameters['input']['application_stack']['requirements'],
-            parameters['input']['application_stack'].get('requirements_lock')
+            parameters['application_stack']['requirements'],
+            parameters['application_stack'].get('requirements_lock')
         )
     except ThothPythonException as exc:
         return {'parameters': parameters, 'error': f'Invalid application stack supplied: {str(exc)}'}, 400
@@ -224,7 +226,7 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
         **project.to_dict(),
         count=parameters['count'],
         limit=parameters['limit'],
-        runtime_environment=parameters['input']['runtime_environment']
+        runtime_environment=parameters.get('runtime_environment')
     ))
 
     if not force:
