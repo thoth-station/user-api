@@ -492,12 +492,12 @@ def _do_run(parameters: dict, runner: typing.Callable, **runner_kwargs):
 
 
 def _do_get_image_metadata(image: str, registry_user: str = None, registry_password: str = None,
-                           verify_tls: bool = True) -> dict:
+                           verify_tls: bool = True) -> typing.Tuple[dict, int]:
     """Wrap function call with additional checks."""
     try:
         return get_image_metadata(
             image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
-        )
+        ), 200
     except ImageManifestUnknownError as exc:
         status_code = 400
         error_str = str(exc)
