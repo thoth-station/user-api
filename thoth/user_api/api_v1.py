@@ -89,7 +89,7 @@ def post_analyze(image: str, debug: bool = False, registry_user: str = None, reg
         except CacheMiss:
             pass
 
-    response, status_code = _do_run(
+    response, status_code = _do_schedule(
         parameters, _OPENSHIFT.schedule_package_extract, output=Configuration.THOTH_ANALYZER_OUTPUT
     )
 
@@ -166,7 +166,7 @@ def post_provenance_python(application_stack: dict, debug: bool = False, force: 
         except CacheMiss:
             pass
 
-    response, status = _do_run(
+    response, status = _do_schedule(
         parameters, _OPENSHIFT.shedule_provenance_checker, output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT
     )
     if status == 202:
@@ -242,7 +242,7 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
         except CacheMiss:
             pass
 
-    response, status = _do_run(
+    response, status = _do_schedule(
         parameters, _OPENSHIFT.schedule_adviser, output=Configuration.THOTH_ADVISER_OUTPUT
     )
     if status == 202:
@@ -485,8 +485,8 @@ def _get_job_status(parameters: dict, name_prefix: str, namespace: str):
     }
 
 
-def _do_run(parameters: dict, runner: typing.Callable, **runner_kwargs):
-    """Run the given job - a generic method for running any analyzer, solver, ..."""
+def _do_schedule(parameters: dict, runner: typing.Callable, **runner_kwargs):
+    """Schedule the given job - a generic method for running any analyzer, solver, ..."""
     return {
         'analysis_id': runner(**parameters, **runner_kwargs),
         'parameters': parameters,
