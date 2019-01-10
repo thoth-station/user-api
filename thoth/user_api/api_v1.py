@@ -90,7 +90,7 @@ def post_analyze(image: str, debug: bool = False, registry_user: str = None, reg
             pass
 
     response, status_code = _do_run(
-        parameters, _OPENSHIFT.run_package_extract, output=Configuration.THOTH_ANALYZER_OUTPUT
+        parameters, _OPENSHIFT.schedule_package_extract, output=Configuration.THOTH_ANALYZER_OUTPUT
     )
 
     if status_code == 202:
@@ -167,7 +167,7 @@ def post_provenance_python(application_stack: dict, debug: bool = False, force: 
             pass
 
     response, status = _do_run(
-        parameters, _OPENSHIFT.run_provenance_checker, output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT
+        parameters, _OPENSHIFT.shedule_provenance_checker, output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT
     )
     if status == 202:
         cache.store_document_record(
@@ -243,7 +243,7 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
             pass
 
     response, status = _do_run(
-        parameters, _OPENSHIFT.run_adviser, output=Configuration.THOTH_ADVISER_OUTPUT
+        parameters, _OPENSHIFT.schedule_adviser, output=Configuration.THOTH_ADVISER_OUTPUT
     )
     if status == 202:
         adviser_cache.store_document_record(
