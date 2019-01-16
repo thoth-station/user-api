@@ -167,7 +167,7 @@ def post_provenance_python(application_stack: dict, debug: bool = False, force: 
             pass
 
     response, status = _do_schedule(
-        parameters, _OPENSHIFT.shedule_provenance_checker, output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT
+        parameters, _OPENSHIFT.schedule_provenance_checker, output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT
     )
     if status == 202:
         cache.store_document_record(
