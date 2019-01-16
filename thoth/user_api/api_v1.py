@@ -100,7 +100,7 @@ def post_analyze(image: str, debug: bool = False, registry_user: str = None, reg
 
 
 def post_image_metadata(image: str, registry_user: str = None, registry_password: str = None,
-                        verify_tls: bool = True) -> dict:
+                        verify_tls: bool = True) -> tuple:
     """Get image metadata."""
     return _do_get_image_metadata(
         image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
