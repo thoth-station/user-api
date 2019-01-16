@@ -435,7 +435,7 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
                         'error': 'Analysis was not successful',
                         'status': status,
                         'parameters': parameters
-                    }, 404
+                    }, 400
                 elif status['state'] in ('scheduling', 'waiting'):
                     return {
                         'error': 'Analysis is being scheduled',
@@ -478,7 +478,14 @@ def _get_job_status(parameters: dict, name_prefix: str, namespace: str):
             'parameters': parameters
         }, 400
 
-    status = _OPENSHIFT.get_job_status_report(job_id, namespace=namespace)
+    try:
+        status = _OPENSHIFT.get_job_status_report(job_id, namespace=namespace)
+    except OpenShiftNotFound:
+        return {
+            'parameters': parameters,
+            'error': f'Requested status for analysis {job_id!r} was not found',
+        }, 404
+
     return {
         'parameters': parameters,
         'status': status
