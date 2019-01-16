@@ -212,6 +212,10 @@ paths:
           description: Successful response.
           schema:
             $ref: "#/definitions/AnalysisStatusResponse"
+        404:
+          description: No analysis with the given id found.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
         400:
           description: On invalid request.
           schema:
@@ -328,6 +332,10 @@ paths:
           description: Successful response.
           schema:
             $ref: "#/definitions/AnalysisStatusResponse"
+        404:
+          description: No analysis with the given id found.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
         400:
           description: On invalid request.
           schema:
@@ -559,6 +567,10 @@ paths:
           description: Successful response.
           schema:
             $ref: "#/definitions/AnalysisStatusResponse"
+        404:
+          description: No analysis with the given id found.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
         400:
           description: On invalid request.
           schema:
