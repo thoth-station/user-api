@@ -69,10 +69,11 @@ def post_analyze(image: str, debug: bool = False, registry_user: str = None, reg
         image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
     )
 
-    if isinstance(metadata, tuple):
+    if metadata[1] != 200:
         # There was an error extracting metadata, tuple holds dictionary with error report and HTTP status code.
         return metadata
 
+    metadata = metadata[0]
     # We compute digest of parameters so we do not reveal any authentication specific info.
     parameters_digest = _compute_digest_params(parameters)
     cache = AnalysesCacheStore()
@@ -100,7 +101,7 @@ def post_analyze(image: str, debug: bool = False, registry_user: str = None, reg
 
 
 def post_image_metadata(image: str, registry_user: str = None, registry_password: str = None,
-                        verify_tls: bool = True) -> dict:
+                        verify_tls: bool = True) -> tuple:
     """Get image metadata."""
     return _do_get_image_metadata(
         image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
