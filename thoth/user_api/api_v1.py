@@ -33,6 +33,7 @@ from thoth.storages import ProvenanceResultsStore
 from thoth.storages import AnalysesCacheStore
 from thoth.storages import AdvisersCacheStore
 from thoth.storages import ProvenanceCacheStore
+from thoth.storages import AnalysisByDigest
 from thoth.storages.exceptions import CacheMiss
 from thoth.storages.exceptions import NotFoundError
 from thoth.common import OpenShift
@@ -94,6 +95,10 @@ def post_analyze(image: str, debug: bool = False, registry_user: str = None, reg
         parameters, _OPENSHIFT.schedule_package_extract, output=Configuration.THOTH_ANALYZER_OUTPUT
     )
 
+    analysis_by_digest_store = AnalysisByDigest()
+    analysis_by_digest_store.connect()
+    analysis_by_digest_store.store_document(metadata['digest'], response)
+
     if status_code == 202:
         cache.store_document_record(cached_document_id, {'analysis_id': response['analysis_id']})
 
@@ -119,6 +124,24 @@ def get_analyze(analysis_id: str):
         AnalysisResultsStore, analysis_id,
         name_prefix='package-extract-', namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE
     )
+
+
+def get_analyze_by_hash(image_hash: str):
+    """Get image analysis by hash of the analyzed image."""
+    parameters = locals()
+
+    analysis_by_digest_store = AnalysisByDigest()
+    analysis_by_digest_store.connect()
+
+    try:
+        analysis_info = analysis_by_digest_store.retrieve_document(image_hash)
+    except NotFoundError:
+        return {
+            "error": "No analysis was performed for image described by the given image hash",
+            "parameters": parameters
+        }, 404
+
+    return get_analyze(analysis_info["analysis_id"])
 
 
 def get_analyze_log(analysis_id: str):
