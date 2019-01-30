@@ -179,7 +179,7 @@ paths:
         - name: image_hash
           in: path
           required: true
-          description: Image hash for identifying image.
+          description: Image hash for identifying image (including hash type, now supported only "sha256").
           type: string
       responses:
         200:
