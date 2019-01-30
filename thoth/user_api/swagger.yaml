@@ -169,6 +169,37 @@ paths:
           schema:
             $ref: "#/definitions/AnalysisResponseError"
 
+  /analyze/by-hash/{image_hash}:
+    get:
+      tags: ["Image Analysis"]
+      x-swagger-router-controller: thoth.user_api.api_v1
+      operationId: get_analyze_by_hash
+      summary: Retrieve an analyzer result.
+      parameters:
+        - name: image_hash
+          in: path
+          required: true
+          description: Image hash for identifying image.
+          type: string
+      responses:
+        200:
+          description: Analyzer result retrieved.
+          schema:
+            $ref: "#/definitions/AnalysisResultResponse"
+        202:
+          description: Results are not ready yet.
+          schema:
+            $ref: "#/definitions/AnalysisUnfinishedResultResponse"
+        400:
+          description: On invalid request.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
+        404:
+          description: The given document does not exist.
+          schema:
+            $ref: "#/definitions/AnalysisResponseError"
+
+
   /analyze/{analysis_id}/log:
     get:
       tags: ["Image Analysis"]
