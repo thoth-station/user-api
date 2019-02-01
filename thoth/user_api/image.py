@@ -58,7 +58,7 @@ def get_image_metadata(image_name: str, *,
         )
 
     if not verify_tls:
-        cmd += ' --src-tls-verify=false'
+        cmd += ' --tls-verify=false'
 
     result = run_command(cmd, is_json=True, raise_on_error=False)
 
