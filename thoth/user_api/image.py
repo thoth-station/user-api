@@ -50,7 +50,7 @@ def get_image_metadata(image_name: str, *,
     cmd = f'skopeo inspect '
     if registry_user and registry_password:
         # TODO: make sure registry_user and registry_password get escaped.
-        cmd = f'--creds={registry_user}:{registry_password} '
+        cmd += f'--creds={registry_user}:{registry_password} '
     elif (registry_user and not registry_password) or (not registry_user and registry_password):
         raise NotImplementedError(
             "Both parameters registry_user and registry_password have to be supplied for registry authentication"
