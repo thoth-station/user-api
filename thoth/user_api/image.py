@@ -47,19 +47,19 @@ _TRANSLATION_TABLE = {
 def get_image_metadata(image_name: str, *,
                        registry_user: str = None, registry_password: str = None, verify_tls: bool = True) -> dict:
     """Get metadata for the given image and image repository."""
-    if not registry_user and not registry_password:
-        cmd = f'skopeo inspect docker://{image_name!r}'
-    elif registry_user and registry_password:
+    cmd = f'skopeo inspect '
+    if registry_user and registry_password:
         # TODO: make sure registry_user and registry_password get escaped.
-        cmd = f'skopeo inspect --creds={registry_user}:{registry_password} docker://{image_name!r}'
-    else:
+        cmd += f'--creds={registry_user}:{registry_password} '
+    elif (registry_user and not registry_password) or (not registry_user and registry_password):
         raise NotImplementedError(
             "Both parameters registry_user and registry_password have to be supplied for registry authentication"
         )
 
     if not verify_tls:
-        cmd += ' --tls-verify=false'
+        cmd += '--tls-verify=false '
 
+    cmd += f'docker://{image_name!r}'
     result = run_command(cmd, is_json=True, raise_on_error=False)
 
     if result.return_code == 0:
@@ -73,6 +73,10 @@ def get_image_metadata(image_name: str, *,
         raise ImageManifestUnknownError("Unknown manifest for the given image")
     elif 'unauthorized: authentication required' in result.stderr:
         raise ImageAuthenticationRequired("There is required authentication in order to pull image and image details")
+    elif 'x509: certificate signed by unknown authority' in result.stderr:
+        raise ImageAuthenticationRequired(
+            "There was an error with x509 certification check: certificate signed by unknown authority"
+        )
 
     _LOGGER.warning("An unhandled error occurred during extraction of image %r: %s", image_name, result.stderr)
     raise ImageError(
