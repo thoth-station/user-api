@@ -486,7 +486,7 @@ paths:
         - name: input
           in: body
           required: true
-          description: Specification of Python application stack.
+          description: Specification of Python application stack with runtime specific information.
           schema:
             $ref: "#/definitions/AdviseInput"
         - name: recommendation_type
@@ -819,6 +819,26 @@ definitions:
           - pipenv
           - requirements
         example: pipenv
+  RuntimeEnvironment: &runtimeEnvironment
+    type: object
+    description: Runtime environment description, see Thamos configuration for more info.
+    properties:
+      hardware:
+        type: object
+        additionalProperties: true
+      operating_system:
+        type: object
+        additionalProperties: true
+      python_version:
+        type: string
+        example: "3.6"
+      cuda_version:
+        type: string
+        example: "9.0"
+      name:
+        type: string
+        example: "fedora:29-prod"
+    additionalProperties: true
   AdviseInput:
     type: object
     required:
@@ -826,23 +846,7 @@ definitions:
     additionalProperties: false
     properties:
       application_stack: *pythonStack
-      runtime_environment:
-        type: object
-        description: Runtime environment description, see Thamos configuration for more info.
-        properties:
-          hardware:
-            type: object
-            additionalProperties: true
-          operating_system:
-            type: object
-            additionalProperties: true
-          python_version:
-            type: string
-            example: "3.6"
-          cuda_version:
-            type: string
-            example: "9.0"
-        additionalProperties: true
+      runtime_environment: *runtimeEnvironment
   ImageMetadataResponse:
     type: object
     description: Response information with image metadata.
