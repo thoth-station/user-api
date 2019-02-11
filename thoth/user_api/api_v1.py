@@ -225,6 +225,8 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
     parameters['application_stack'] = parameters['input'].pop('application_stack')
+    # We keep runtime environment in a dict representation so that there are no compatibility issues client/adviser.
+    # The user-api just propagates what was posted to adviser which issues warning in case of configuration issues.
     parameters['runtime_environment'] = parameters['input'].pop('runtime_environment', None)
     parameters.pop('input')
     force = parameters.pop('force', False)

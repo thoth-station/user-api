@@ -828,15 +828,21 @@ definitions:
       application_stack: *pythonStack
       runtime_environment:
         type: object
+        description: Runtime environment description, see Thamos configuration for more info.
         properties:
-          cpu_family:
-            type: integer
-            description: CPU family identifier.
-            example: 6
-          cpu_model:
-            type: integer
-            description: CPU model identifier.
-            example: 94
+          hardware:
+            type: object
+            additionalProperties: true
+          operating_system:
+            type: object
+            additionalProperties: true
+          python_version:
+            type: string
+            example: "3.6"
+          cuda_version:
+            type: string
+            example: "9.0"
+        additionalProperties: true
   ImageMetadataResponse:
     type: object
     description: Response information with image metadata.
