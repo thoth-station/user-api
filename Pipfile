@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 attrs = "*"
-connexion = {extras = ["swagger-ui"],version = "*"}
+connexion = {extras = ["swagger-ui"],version = "<2.1.0"}
 flask-script = "*"
 gunicorn = "*"
 prometheus-client = "*"
@@ -21,4 +21,3 @@ pytest = "*"
 
 [requires]
 python_version = "3.6"
-
