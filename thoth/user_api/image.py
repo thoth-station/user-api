@@ -78,7 +78,7 @@ def get_image_metadata(image_name: str, *,
             "There was an error with x509 certification check: certificate signed by unknown authority"
         )
 
-    _LOGGER.warning("An unhandled error occurred during extraction of image %r: %s", image_name, result.stderr)
+    _LOGGER.error("An unhandled error occurred during extraction of image %r: %s", image_name, result.stderr)
     raise ImageError(
         "There was an error when extracting image information, please contact administrator for more details"
     )
