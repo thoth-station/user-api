@@ -137,6 +137,11 @@ objects:
                     secretKeyRef:
                       name: thoth
                       key: ceph-secret-key
+                - name: AMUN_API_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      key: amun-api-url
+                      name: thoth
                 - name: RSYSLOG_HOST
                   valueFrom:
                     configMapKeyRef:
