@@ -84,6 +84,13 @@ paths:
             Registry password or token to be used for pulling images from
             registry.
           type: string
+        - name: origin
+          in: query
+          required: false
+          description: >
+            A remote where the image is being used. This is used for tracking as well as
+            for automated reporting when results are available.
+          type: string
         - name: debug
           in: query
           required: false
@@ -265,6 +272,13 @@ paths:
           description: Pipfile and Pipfile.lock as used by pipenv.
           schema:
             $ref: "#/definitions/PythonStack"
+        - name: origin
+          in: query
+          required: false
+          description: >
+            A repository where the application stack is used. This is used for tracking as well as
+            for automated reporting when results are available.
+          type: string
         - name: debug
           in: query
           required: false
@@ -521,6 +535,13 @@ paths:
           description: Limit number of software stacks scored.
           type: integer
           required: false
+        - name: origin
+          in: query
+          required: false
+          description: >
+            A repository where the application stack is used. This is used for tracking as well as
+            for automated reporting when results are available.
+          type: string
         - name: debug
           in: query
           required: false

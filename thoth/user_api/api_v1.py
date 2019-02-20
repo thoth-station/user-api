@@ -61,7 +61,7 @@ def _compute_digest_params(parameters: dict):
 
 
 def post_analyze(image: str, debug: bool = False, registry_user: str = None, registry_password: str = None,
-                 verify_tls: bool = True, force: bool = False):
+                 origin: str = None, verify_tls: bool = True, force: bool = False):
     """Run an analyzer in a restricted namespace."""
     parameters = locals()
     force = parameters.pop('force', None)
@@ -155,7 +155,7 @@ def get_analyze_status(analysis_id: str):
     return _get_job_status(locals(), 'package-extract-', Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
-def post_provenance_python(application_stack: dict, debug: bool = False, force: bool = False):
+def post_provenance_python(application_stack: dict, origin: str = None, debug: bool = False, force: bool = False):
     """Check provenance for the given application stack."""
     parameters = locals()
 
@@ -172,7 +172,7 @@ def post_provenance_python(application_stack: dict, debug: bool = False, force: 
 
     force = parameters.pop('force', False)
     cached_document_id = _compute_digest_params(
-        dict(**project.to_dict(), whitelisted_sources=parameters['whitelisted_sources'])
+        dict(**project.to_dict(), origin=origin, whitelisted_sources=parameters['whitelisted_sources'])
     )
 
     timestamp_now = int(time.mktime(datetime.datetime.utcnow().timetuple()))
@@ -222,7 +222,7 @@ def get_provenance_python_status(analysis_id: str):
 
 
 def post_advise_python(input: dict, recommendation_type: str, count: int = None, limit: int = None,
-                       debug: bool = False, force: bool = False):
+                       origin: str = None, debug: bool = False, force: bool = False):
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
     parameters['application_stack'] = parameters['input'].pop('application_stack')
@@ -254,7 +254,8 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
         count=parameters['count'],
         limit=parameters['limit'],
         runtime_environment=parameters.get('runtime_environment'),
-        recommendation_type=recommendation_type
+        recommendation_type=recommendation_type,
+        origin=origin
     ))
 
     if not force:
