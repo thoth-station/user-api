@@ -414,10 +414,10 @@ paths:
       tags: [Info]
       x-swagger-router-controller: thoth.user_api.api_v1
       operationId: get_info
-      summary: Get version of Thoth deployment.
+      summary: Get information about Thoth deployment.
       responses:
         200:
-          description: A version identifier with additional information of Thoth deployment.
+          description: A core information about Thoth deployment.
           schema:
             $ref: "#/definitions/Info"
 
