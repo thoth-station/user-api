@@ -27,12 +27,15 @@ from prometheus_flask_exporter import PrometheusMetrics
 
 from thoth.common import SafeJSONEncoder
 from thoth.common import init_logging
-from thoth.common import logger_setup
 from thoth.storages import SolverResultsStore
 
 import thoth.user_api as thoth_user_api
 
 from .configuration import Configuration
+
+
+logger = logging.getLogger("werkzeug")
+logger.setLevel(logging.WARNING)
 
 # Expose for uWSGI.
 app = connexion.App(__name__)
@@ -83,8 +86,6 @@ def _healthiness():
     return jsonify({"status": "ready", "version": thoth_user_api.__version__}), 200, {"ContentType": "application/json"}
 
 
-@logger_setup("werkzeug", logging.WARNING)
-@logger_setup("botocore.vendored.requests.packages.urllib3.connectionpool", logging.WARNING)
 @app.route("/readiness")
 @metrics.do_not_track()
 def api_readiness():
@@ -92,8 +93,6 @@ def api_readiness():
     return _healthiness()
 
 
-@logger_setup("werkzeug", logging.WARNING)
-@logger_setup("botocore.vendored.requests.packages.urllib3.connectionpool", logging.WARNING)
 @app.route("/liveness")
 @metrics.do_not_track()
 def api_liveness():
