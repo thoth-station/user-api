@@ -549,6 +549,11 @@ paths:
             Run the given adviser in a verbose mode so developers can debug it.
           type: boolean
           default: false
+        - name: limit_latest_versions
+          in: query
+          type: integer
+          required: false
+          description: Limit number of packages considering only specific number of versions for each package.
         - name: force
           type: boolean
           in: query
