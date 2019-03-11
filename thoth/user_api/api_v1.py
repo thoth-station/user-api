@@ -271,7 +271,6 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
         except CacheMiss:
             pass
 
-    parameters.pop("origin", None)
     response, status = _do_schedule(
         parameters, _OPENSHIFT.schedule_adviser, output=Configuration.THOTH_ADVISER_OUTPUT
     )
