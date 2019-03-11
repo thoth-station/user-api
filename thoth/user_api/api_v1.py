@@ -222,7 +222,7 @@ def get_provenance_python_status(analysis_id: str):
 
 
 def post_advise_python(input: dict, recommendation_type: str, count: int = None, limit: int = None,
-                       origin: str = None, debug: bool = False, force: bool = False):
+                       limit_latest_versions: int = None, origin: str = None, debug: bool = False, force: bool = False):
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
     parameters['application_stack'] = parameters['input'].pop('application_stack')
@@ -253,6 +253,7 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
         **project.to_dict(),
         count=parameters['count'],
         limit=parameters['limit'],
+        limit_latest_versions=parameters['limit_latest_versions'],
         runtime_environment=parameters.get('runtime_environment'),
         recommendation_type=recommendation_type,
         origin=origin
@@ -270,6 +271,7 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
         except CacheMiss:
             pass
 
+    parameters.pop("origin", None)
     response, status = _do_schedule(
         parameters, _OPENSHIFT.schedule_adviser, output=Configuration.THOTH_ADVISER_OUTPUT
     )
