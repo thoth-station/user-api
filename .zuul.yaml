@@ -15,55 +15,8 @@
       jobs:
         - "trigger-build":
             vars:
-              webhook_url: "https://paas.upshift.redhat.com/oapi/v1/namespaces/thoth-test-core/buildconfigs/user-api/webhooks"
+              webhook_url: "https://paas.upshift.redhat.com/oapi/v1/namespaces/thoth-test-core/buildconfigs/user-api"
     kebechet-auto-gate:
       queue: "thoth-station/core"
       jobs:
         - "thoth-coala"
-
-- job:
-    name: "thoth-redeploy"
-    parent: "base-openshift-pod"
-    run: "devops_redeploy.yaml"
-    secrets:
-      - "service_account"
-    nodeset:
-      nodes:
-        - name: "pod"
-          label: "thoth-ops"
-
-- job:
-    name: "push-image"
-    parent: "base-openshift-pod"
-    run: "devops_push_image.yaml"
-    nodeset:
-      nodes:
-        - name: "pod"
-          label: "thoth-ops"
-
-- secret:
-    name: service_account
-    data:
-      api_url: https://paas.upshift.redhat.com:443
-      project: thoth-test-core
-      token: !encrypted/pkcs1-oaep
-        - VBKI/Uu/A8kOvXELnpLBeoubVkuEKF/pwas5m5V1F7GzbeEkbrVMHA1C7DZbjRBY4vBQy
-          QWq8rUFMZTQUaJ6NHAcmfKKRm1awoMwWJ97J8n33pA1CLC6bzwrfFHD+FVGqeeoBtGN8F
-          f9b5Uy5eh6kD9RxgfxevhFJ8a3lbF+2M3amtX7XcXoauQb/sTMtFw4l9yFEtdVY8ilhE6
-          tdfe0cGOoB/HMM/+bSvTeFb5llNkLCx28XgbKKB901CVknNjqX8d1Ws2HSaXqbJ2VR03v
-          U+lju8NJveFtgkaTS8ztcr3ZVVz5MkbDyWBv61f3d7bOshaxPMg5Vnr2vs2JOSkLI3Bk9
-          X52evLVV1XvjpKU8WPdO+kC9PAobTT5LiE1dvT6kTvdEyoX6ANYnvp2tLOvRff3cr4zUr
-          diLZZDmD1aNN/5Ci9D6wrp44/6k+QzvefVbT20jp4uLGrAabbizZgDe5JzGDKnaPrQPxC
-          Nbj516ebnlZoSLt3Aht+7BF0YLBpIBqvI2JDP2/ltPsW7UhyTaiMzTXb1QUMhx0ArYU53
-          0qnj0NGOFH66E5xGXPZdcDl6j+HYlg0CapkpBtFcL3gupjoYrfqGBJWDT8laY0110Q/hT
-          ksIPN+p78M1mdkPg/z4XZqjSWV+0oXouAHWzW9Dvu3u8HqZLJ0PivbyG4SwjSo=
-        - VVTB3mphjSga/2xVBsLQpMDNetn4qGlOuu0xUOLE02TXOVTwLvLk6W0gN/oTmhZglNa4A
-          w1jwA4cL5F8rsOGWifxadlQekUwNRiMIv5/w+t17LzGA3ipvLsc50eE8Z3ibccWzMOy86
-          KUSiaeTNqtDp97lQNrf02ZIqzVj2vlgNm8BK5dUwA2t1yaS3a8xzpPCETKM2z7ZB2cavB
-          QZ/9/dj55TRaWUyfYO/CvYKrii7AUMWeIEeHP5NZGwGFHGGblVDVqvPDdWD7i3+LGyRgj
-          oB0rgr8iiBDi433uHQ46kvlW4iAGuO8Cn//U/6Ri4UxRuIiHhfBQsKmMNPQVvGE9A+Ps+
-          lfsEr0XBvbW/uE0hI9FqLUhSwyspSxQ1w2gQqHSKVXlWkMuKSoS9scCrqPw4UYkSy1ew7
-          whBVrVq3elTzwSrYRGtCc7aczut/g++zTrmjYSxsxOi2SKYpB/fqC/GGW0/3asDJxn/JT
-          2h9sBrBm0TVslfR/E7HTyj6OnZIlHNG89Kth9q8NMOsux1G7g7TTzY7pFhduToWPFQWvD
-          vT+iLNVRtSv5F9NZgKOnLe4LIKfU5k023bKy0wc0r78aO2QN95Cpanj+8rGmZXp6iPM0j
-          jBu564TQ/eDmfZaKWDXL7dJ3Lm5iNMMHT1wHc64HXDSRn3fwIcAIWjLp9lmN1Y=
