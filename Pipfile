@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 attrs = "*"
-connexion = {extras = ["swagger-ui"],version = "<2.1.0"}
+connexion = {extras = ["swagger-ui"],version = "<2.0.1"}
 flask-script = "*"
 gunicorn = "*"
 prometheus-client = "*"
@@ -15,6 +15,7 @@ thoth-analyzer = "*"
 thoth-common = {extras = ["openshift"],version = "*"}
 thoth-python = "*"
 thoth-storages = "*"
+openapi-spec-validator = "<=0.2.4"
 
 [dev-packages]
 pytest = "*"
