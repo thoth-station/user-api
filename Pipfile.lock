@@ -267,10 +267,10 @@
         },
         "dictdiffer": {
             "hashes": [
-                "sha256:b6eed4cf74ed31ae9646257a9f802bb09e545ca817d5c0119d747b6a05b6a22d",
-                "sha256:cc398dc26600cdb9519b2c768157333a0967b24d64c3913077dd0794274395da"
+                "sha256:97cf4ef98ebc1acf737074aed41e379cf48ab5ff528c92109dfb8e2e619e6809",
+                "sha256:b3ad476fc9cca60302b52c50e1839342d2092aeaba586d69cbf9249f87f52463"
             ],
-            "version": "==0.7.2"
+            "version": "==0.8.0"
         },
         "distro": {
             "hashes": [
@@ -381,10 +381,10 @@
         },
         "kubernetes": {
             "hashes": [
-                "sha256:25928c6067dd47fd45c2960ecc3199d901cd9faeb9ff511ba7eeced3ecf30a78",
-                "sha256:9ce361926687344b4fd1fc661555800b8b6b0d9586f3260a27048aa227161a30"
+                "sha256:0cc9ce02d838da660efa0a67270b4b7d47e6beb8889673cd45c86f897e2d6821",
+                "sha256:54f8e7bb1dd9a55cf416dff76a63c4ae441764280942d9913f2243676f29d02c"
             ],
-            "version": "==8.0.1"
+            "version": "==8.0.0"
         },
         "lxml": {
             "hashes": [
@@ -502,9 +502,9 @@
         },
         "openshift": {
             "hashes": [
-                "sha256:afb6b5152e64147d08f919ec9ddfb8adb8b5e6221589a09b401f6f1b0bddfc0b"
+                "sha256:8465c3ffafab9ac54fda32253cecc4645a181dd276426132caf45be1e85200dd"
             ],
-            "version": "==0.8.6"
+            "version": "==0.8.0"
         },
         "pexpect": {
             "hashes": [
@@ -701,14 +701,11 @@
             "version": "==0.1.2"
         },
         "thoth-common": {
-            "extras": [
-                "openshift"
-            ],
             "hashes": [
-                "sha256:30d0385be9804c1cdad7340bcb3fba8dc80044085afdce43c2ffd27b6f5b1d97"
+                "sha256:ec1987ee0fceaf7829c05ef86b2d32b613730e7fcdb595ced595e99eb96a52dc"
             ],
             "index": "pypi",
-            "version": "==0.7.1"
+            "version": "==0.8.1"
         },
         "thoth-python": {
             "hashes": [
