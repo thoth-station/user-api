@@ -46,6 +46,7 @@ from .configuration import Configuration
 from .parsing import parse_log as do_parse_log
 from .image import get_image_metadata
 from .exceptions import ImageError
+from .exceptions import ImageBadRequestError
 from .exceptions import ImageManifestUnknownError
 from .exceptions import ImageAuthenticationRequired
 
@@ -552,6 +553,9 @@ def _do_get_image_metadata(image: str, registry_user: str = None, registry_passw
         return get_image_metadata(
             image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
         ), 200
+    except ImageBadRequestError as exc:
+        status_code = 400
+        error_str = str(exc)
     except ImageManifestUnknownError as exc:
         status_code = 400
         error_str = str(exc)
