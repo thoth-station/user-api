@@ -62,10 +62,12 @@ def _compute_digest_params(parameters: dict):
 
 
 def post_analyze(image: str, debug: bool = False, registry_user: str = None, registry_password: str = None,
-                 origin: str = None, verify_tls: bool = True, force: bool = False):
+                 environment_type: str = None, origin: str = None, verify_tls: bool = True, force: bool = False):
     """Run an analyzer in a restricted namespace."""
     parameters = locals()
     force = parameters.pop('force', None)
+    # Set default environment type if none provided.
+    parameters["environment_type"] = parameters["environment_type"] or "runtime"
 
     # Always extract metadata to check for authentication issues and such.
     metadata = _do_get_image_metadata(

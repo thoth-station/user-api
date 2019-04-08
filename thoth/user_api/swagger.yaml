@@ -84,6 +84,16 @@ paths:
             Registry password or token to be used for pulling images from
             registry.
           type: string
+        - name: environment_type
+          in: query
+          required: false
+          description: >
+            Type of environment (runtime or buildtime) which is being analyzed.
+          type: string
+          enum:
+            - buildtime
+            - runtime
+          default: runtime
         - name: origin
           in: query
           required: false
