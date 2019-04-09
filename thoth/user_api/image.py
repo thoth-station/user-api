@@ -23,6 +23,7 @@ from thoth.analyzer import run_command
 
 from .configuration import Configuration
 from .exceptions import ImageError
+from .exceptions import ImageBadRequestError
 from .exceptions import ImageManifestUnknownError
 from .exceptions import ImageAuthenticationRequired
 
@@ -52,7 +53,7 @@ def get_image_metadata(image_name: str, *,
         # TODO: make sure registry_user and registry_password get escaped.
         cmd += f'--creds={registry_user}:{registry_password} '
     elif (registry_user and not registry_password) or (not registry_user and registry_password):
-        raise NotImplementedError(
+        raise ImageBadRequestError(
             "Both parameters registry_user and registry_password have to be supplied for registry authentication"
         )
 

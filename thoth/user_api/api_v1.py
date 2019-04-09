@@ -46,6 +46,7 @@ from .configuration import Configuration
 from .parsing import parse_log as do_parse_log
 from .image import get_image_metadata
 from .exceptions import ImageError
+from .exceptions import ImageBadRequestError
 from .exceptions import ImageManifestUnknownError
 from .exceptions import ImageAuthenticationRequired
 
@@ -61,10 +62,12 @@ def _compute_digest_params(parameters: dict):
 
 
 def post_analyze(image: str, debug: bool = False, registry_user: str = None, registry_password: str = None,
-                 origin: str = None, verify_tls: bool = True, force: bool = False):
+                 environment_type: str = None, origin: str = None, verify_tls: bool = True, force: bool = False):
     """Run an analyzer in a restricted namespace."""
     parameters = locals()
     force = parameters.pop('force', None)
+    # Set default environment type if none provided.
+    parameters["environment_type"] = parameters["environment_type"] or "runtime"
 
     # Always extract metadata to check for authentication issues and such.
     metadata = _do_get_image_metadata(
@@ -552,6 +555,9 @@ def _do_get_image_metadata(image: str, registry_user: str = None, registry_passw
         return get_image_metadata(
             image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
         ), 200
+    except ImageBadRequestError as exc:
+        status_code = 400
+        error_str = str(exc)
     except ImageManifestUnknownError as exc:
         status_code = 400
         error_str = str(exc)

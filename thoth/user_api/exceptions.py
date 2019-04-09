@@ -30,6 +30,10 @@ class ImageError(UserApiException):
     """An exception raised if inspection of the given image was not successful."""
 
 
+class ImageBadRequestError(ImageError):
+    """An exception raised if required authentication credentials are not provided in valid format."""
+
+
 class ImageManifestUnknownError(ImageError):
     """An exception raised if manifest of the given image is not known."""
 
