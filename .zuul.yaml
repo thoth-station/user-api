@@ -1,11 +1,6 @@
 - project:
     check:
       jobs:
-        - linters:
-            vars:
-              linters:
-                - "ansible-lint"
-                - "yamllint"
         - "thoth-coala"
     gate:
       queue: "thoth-station/core"
