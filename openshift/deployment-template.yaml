@@ -155,6 +155,16 @@ objects:
                     secretKeyRef:
                       name: thoth
                       key: ceph-secret-key
+                - name: GRAPH_SERVICE_HOST
+                  valueFrom:
+                    configMapKeyRef:
+                      key: graph_service_host
+                      name: thoth
+                - name: GRAPH_TLS_PATH
+                  valueFrom:
+                    configMapKeyRef:
+                      key: graph_tls_path
+                      name: thoth
                 - name: AMUN_API_URL
                   valueFrom:
                     configMapKeyRef:
