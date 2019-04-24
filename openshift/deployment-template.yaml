@@ -3,9 +3,9 @@ kind: Template
 metadata:
   name: user-api-deployment
   annotations:
-    description: "This is Thoth - User API"
+    description: "Thoth: User API"
     openshift.io/display-name: "Thoth Core: User API"
-    version: 0.8.0
+    version: 0.9.0
     tags: thoth,user-api,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
@@ -17,19 +17,19 @@ metadata:
     component: user-api
 
 parameters:
-  - description: Project the ImageStream to be use lives in
-    displayName: ImageStream Project
+  - description: "Project the ImageStream to be use lives in."
+    displayName: "ImageStream Project"
     required: true
-    name: IMAGE_STREAM_PROJECT_NAME
+    name: IMAGE_STREAM_NAMESPACE
 
-  - description: Tag of the ImageStream to be use
-    displayName: ImageStream Tag
+  - description: "Tag of the ImageStream to be use."
+    displayName: "ImageStream Tag"
     required: true
     name: IMAGE_STREAM_TAG
     value: "latest"
 
-  - description: Service account to be used.
-    displayName: Service account name.
+  - description: "Service account to be used."
+    displayName: "Service account name"
     required: true
     name: SERVICE_ACCOUNT_NAME
     value: "user-api"
@@ -188,6 +188,10 @@ objects:
               ports:
                 - containerPort: 8080
                   protocol: TCP
+              volumeMounts:
+                - mountPath: /var/run/secrets/dgraph
+                  name: dgraph-tls-secrets
+                  readOnly: true
               resources:
                 requests:
                   memory: "512Mi"
@@ -211,6 +215,11 @@ objects:
                 initialDelaySeconds: 5
                 periodSeconds: 60
                 timeoutSeconds: 10
+          volumes:
+            - name: dgraph-tls-secrets
+              secret:
+                defaultMode: 420
+                secretName: dgraph-tls
       test: false
       triggers:
         - type: ConfigChange
@@ -221,5 +230,5 @@ objects:
               - user-api
             from:
               kind: ImageStreamTag
-              namespace: "${IMAGE_STREAM_PROJECT_NAME}"
+              namespace: "${IMAGE_STREAM_NAMESPACE}"
               name: "user-api:${IMAGE_STREAM_TAG}"
