@@ -158,13 +158,10 @@ objects:
                 - name: GRAPH_SERVICE_HOST
                   valueFrom:
                     configMapKeyRef:
-                      key: graph_service_host
+                      key: graph-service-host
                       name: thoth
                 - name: GRAPH_TLS_PATH
-                  valueFrom:
-                    configMapKeyRef:
-                      key: graph_tls_path
-                      name: thoth
+                  value: "/var/run/secrets/dgraph"
                 - name: AMUN_API_URL
                   valueFrom:
                     configMapKeyRef:
