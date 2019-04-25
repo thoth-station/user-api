@@ -992,10 +992,10 @@ definitions:
         type: string
         description: Bucket prefix used when storing results on S3 compatible API (Ceph).
         example: "data/thoth"
-      janusgraph_host:
+      dgraph_host:
         type: string
-        description: JanusGraph instance to which the deployment talks to.
-        example: "test-2.janusgraph.thoth-station.ninja"
+        description: Dgraph instance to which the deployment talks to.
+        example: "dgraph.thoth-station.ninja"
       amun_api_url:
         type: string
         description: Amun API host to which this deployment talks to (set to null if no Amun deployment is used).

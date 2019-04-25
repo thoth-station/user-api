@@ -418,7 +418,7 @@ def get_info():
         "deployment_name": os.getenv("THOTH_DEPLOYMENT_NAME"),
         "version:": os.getenv("OPENSHIFT_BUILD_REFERENCE", "@dev"),
         "s3_endpoint_url": os.getenv("THOTH_S3_ENDPOINT_URL"),
-        "janusgraph_host": os.getenv("JANUSGRAPH_SERVICE_HOST"),
+        "dgraph_host": os.getenv("DGRAPH_SERVICE_HOST"),
         "amun_api_url": os.getenv("AMUN_API_URL"),
         "frontend_namespace": os.getenv("THOTH_FRONTEND_NAMESPACE"),
         "middletier_namespace": os.getenv("THOTH_MIDDLETIER_NAMESPACE"),
