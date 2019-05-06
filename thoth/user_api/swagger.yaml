@@ -893,6 +893,9 @@ definitions:
     properties:
       application_stack: *pythonStack
       runtime_environment: *runtimeEnvironment
+      library_usage:
+        type: object
+        description: Static analysis of libraries used within user's project.
   ImageMetadataResponse:
     type: object
     description: Response information with image metadata.
