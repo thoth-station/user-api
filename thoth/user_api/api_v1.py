@@ -232,6 +232,7 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
     # We keep runtime environment in a dict representation so that there are no compatibility issues client/adviser.
     # The user-api just propagates what was posted to adviser which issues warning in case of configuration issues.
     parameters['runtime_environment'] = parameters['input'].pop('runtime_environment', None)
+    parameters['library_usage'] = parameters['input'].pop('library_usage', None)
     parameters.pop('input')
     force = parameters.pop('force', False)
 
@@ -256,6 +257,7 @@ def post_advise_python(input: dict, recommendation_type: str, count: int = None,
         **project.to_dict(),
         count=parameters['count'],
         limit=parameters['limit'],
+        library_usage=parameters['library_usage'],
         limit_latest_versions=parameters['limit_latest_versions'],
         runtime_environment=parameters.get('runtime_environment'),
         recommendation_type=recommendation_type,
