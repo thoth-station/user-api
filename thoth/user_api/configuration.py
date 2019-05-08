@@ -21,6 +21,9 @@ import logging
 import os
 from datetime import timedelta
 
+from jaeger_client import Config as JaegerConfig
+from jaeger_client.metrics.prometheus import PrometheusMetricsFactory
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -28,7 +31,7 @@ class Configuration:
     """Configuration of user-facing API service."""
 
     APP_SECRET_KEY = os.environ['THOTH_USER_API_APP_SECRET_KEY']
-    SWAGGER_YAML_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'swagger.yaml')
+    SWAGGER_YAML_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../openapi")
     SKOPEO_BIN_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'bin', 'skopeo')
     THOTH_RESULT_API_URL = os.environ['THOTH_RESULT_API_URL']
     THOTH_ADVISER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/adviser-result'
@@ -38,3 +41,26 @@ class Configuration:
     THOTH_BACKEND_NAMESPACE = os.environ['THOTH_BACKEND_NAMESPACE']
     # Give cache 3 hours by default.
     THOTH_CACHE_EXPIRATION = int(os.getenv('THOTH_CACHE_EXPIRATION', timedelta(hours=3).total_seconds()))
+
+    JAEGER_HOST = os.getenv("JAEGER_HOST", "localhost")
+
+    OPENAPI_PORT = 8080
+    GRPC_PORT = 8443
+
+    tracer = None
+
+
+def init_jaeger_tracer(service_name):
+    """Create a Jaeger/OpenTracing configuration."""
+    config = JaegerConfig(
+        config={
+            "sampler": {"type": "const", "param": 1},
+            "logging": True,
+            "local_agent": {"reporting_host": Configuration.JAEGER_HOST},
+        },
+        service_name=service_name,
+        validate=True,
+        metrics_factory=PrometheusMetricsFactory(namespace=service_name),
+    )
+
+    return config.initialize_tracer()

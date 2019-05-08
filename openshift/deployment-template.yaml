@@ -47,6 +47,24 @@ objects:
         kind: Service
         name: user-api
 
+  - kind: Route
+    apiVersion: route.openshift.io/v1
+    metadata:
+      labels:
+        app: thoth
+        component: user-api
+      name: user-api-grpc
+    spec:
+      port:
+        targetPort: grpc
+      tls:
+        termination: passthrough
+      to:
+        kind: Service
+        name: user-api-grpc
+        weight: 100
+      wildcardPolicy: None
+
   - kind: Service
     apiVersion: v1
     metadata:
@@ -61,6 +79,23 @@ objects:
           targetPort: 8080
       selector:
         service: user-api
+
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      labels:
+        app: thoth
+        component: user-api
+      name: user-api-grpc
+    spec:
+      type: ClusterIP
+      ports:
+        - name: grpc
+          port: 8443
+          protocol: TCP
+          targetPort: 8443
+      selector:
+        service: stub-api
 
   - kind: DeploymentConfig
     apiVersion: v1
@@ -83,7 +118,7 @@ objects:
             - name: user-api
               env:
                 - name: APP_MODULE
-                  value: "thoth.user_api.entrypoint:app"
+                  value: "thoth.user_api.openapi_server:app"
                 - name: KUBERNETES_API_URL
                   value: "https://kubernetes.default.svc.cluster.local"
                 - name: KUBERNETES_VERIFY_TLS
