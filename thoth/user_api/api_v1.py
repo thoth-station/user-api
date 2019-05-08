@@ -512,9 +512,17 @@ def _get_job_log(parameters: dict, name_prefix: str, namespace: str):
             'parameters': parameters
         }, 400
 
+    try:
+        log = _OPENSHIFT.get_job_log(job_id, namespace=namespace)
+    except OpenShiftNotFound:
+        return {
+            'parameters': parameters,
+            'error': f'No analysis with id {job_id} was found'
+        }, 404
+
     return {
         'parameters': parameters,
-        'log': _OPENSHIFT.get_job_log(job_id, namespace=namespace)
+        'log': log,
     }, 200
 
 
