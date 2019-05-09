@@ -318,7 +318,7 @@ def list_buildtime_environments(page: int = 0):
     graph = GraphDatabase()
     graph.connect()
 
-    result = graph.buildtime_environment_listing(page, PAGINATION_SIZE)
+    result = list(sorted(set(graph.buildtime_environment_listing(page, PAGINATION_SIZE))))
     return {
         'parameters': parameters,
         'results': result
@@ -329,7 +329,7 @@ def list_buildtime_environments(page: int = 0):
     }
 
 
-def get_buildtime_environment_analyses(environment_name: str):
+def list_buildtime_environment_analyses(environment_name: str):
     """List analyses for the given buildtime environment."""
     parameters = locals()
 
@@ -358,7 +358,7 @@ def list_runtime_environments(page: int = 0):
     graph = GraphDatabase()
     graph.connect()
 
-    result = graph.runtime_environment_listing(page, PAGINATION_SIZE)
+    result = list(sorted(set(graph.runtime_environment_listing(page, PAGINATION_SIZE))))
     return {
         'parameters': parameters,
         'results': result
@@ -369,7 +369,7 @@ def list_runtime_environments(page: int = 0):
     }
 
 
-def get_runtime_environment_analyses(environment_name: str):
+def list_runtime_environment_analyses(environment_name: str):
     """Get analyses of given runtime environments."""
     parameters = locals()
 
