@@ -337,7 +337,7 @@ def get_buildtime_environment_analyses(environment_name: str):
     graph.connect()
 
     try:
-        result = graph.buildtime_environment_analyses_listing(environment_name)
+        result = graph.buildtime_environment_analyses_listing(environment_name, convert_datetime=False)
     except NotFoundError as exc:
         return {
             'error': str(exc),
@@ -377,7 +377,7 @@ def get_runtime_environment_analyses(environment_name: str):
     graph.connect()
 
     try:
-        result = graph.runtime_environment_analyses_listing(environment_name)
+        result = graph.runtime_environment_analyses_listing(environment_name, convert_datetime=False)
     except NotFoundError as exc:
         return {
             'error': str(exc),
