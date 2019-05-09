@@ -311,6 +311,46 @@ def get_advise_python_status(analysis_id: str):
     return _get_job_status(locals(), 'adviser-', Configuration.THOTH_BACKEND_NAMESPACE)
 
 
+def list_buildtime_environments(page: int = 0):
+    """List available buildtime environments."""
+    parameters = locals()
+
+    graph = GraphDatabase()
+    graph.connect()
+
+    result = graph.buildtime_environment_listing(page, PAGINATION_SIZE)
+    return {
+        'parameters': parameters,
+        'results': result
+    }, 200, {
+        'page': page,
+        'page_size': PAGINATION_SIZE,
+        'results_count': len(result)
+    }
+
+
+def get_buildtime_environment_analyses(environment_name: str):
+    """List analyses for the given buildtime environment."""
+    parameters = locals()
+
+    graph = GraphDatabase()
+    graph.connect()
+
+    try:
+        result = graph.buildtime_environment_analyses_listing(environment_name)
+    except NotFoundError as exc:
+        return {
+            'error': str(exc),
+            'parameters': parameters,
+        }, 404
+
+    return {
+        'analyses': result,
+        'analyses_count': len(result),
+        'parameters': parameters,
+    }, 200
+
+
 def list_runtime_environments(page: int = 0):
     """List available runtime environments."""
     parameters = locals()
@@ -329,46 +369,26 @@ def list_runtime_environments(page: int = 0):
     }
 
 
-def get_runtime_environment(runtime_environment_name: str, analysis_id: str = None):
-    """Get packages inside the given runtime environment."""
+def get_runtime_environment_analyses(environment_name: str):
+    """Get analyses of given runtime environments."""
     parameters = locals()
 
     graph = GraphDatabase()
     graph.connect()
 
     try:
-        results, analysis_document_id = graph.get_runtime_environment(runtime_environment_name, analysis_id)
+        result = graph.runtime_environment_analyses_listing(environment_name)
     except NotFoundError as exc:
         return {
             'error': str(exc),
             'parameters': parameters,
         }, 404
 
-    results = list(map(lambda x: x.to_pretty_dict(), results))
     return {
-        'results': results,
-        'analysis': graph.get_analysis_metadata(analysis_document_id),
-        'results_count': len(results),
+        'analyses': result,
+        'analyses_count': len(result),
         'parameters': parameters,
     }, 200
-
-
-def list_runtime_environment_analyses(runtime_environment_name: str, page: int = 0):
-    """List analyses for the given runtime environment."""
-    parameters = locals()
-
-    graph = GraphDatabase()
-    graph.connect()
-    results = graph.runtime_environment_analyses_listing(runtime_environment_name, page, PAGINATION_SIZE)
-
-    return {
-        'results': results,
-        'parameters': parameters
-    }, 200, {
-        'page': page,
-        'page_size': PAGINATION_SIZE,
-        'results_count': len(results)
-    }
 
 
 def list_python_package_indexes():
