@@ -20,7 +20,7 @@ metadata:
     component: user-api
 
 objects:
-  - apiVersion: v1
+  - apiVersion: build.openshift.io/v1
     kind: BuildConfig
     metadata:
       name: user-api
