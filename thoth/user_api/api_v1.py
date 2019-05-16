@@ -311,14 +311,14 @@ def get_advise_python_status(analysis_id: str):
     return _get_job_status(locals(), 'adviser-', Configuration.THOTH_BACKEND_NAMESPACE)
 
 
-def list_buildtime_environments(page: int = 0):
+def list_software_environments_for_build(page: int = 0):
     """List available buildtime environments."""
     parameters = locals()
 
     graph = GraphDatabase()
     graph.connect()
 
-    result = list(sorted(set(graph.buildtime_environment_listing(page, PAGINATION_SIZE))))
+    result = list(sorted(set(graph.build_software_environment_listing(page, PAGINATION_SIZE))))
     return {
         'parameters': parameters,
         'results': result
@@ -329,15 +329,15 @@ def list_buildtime_environments(page: int = 0):
     }
 
 
-def list_buildtime_environment_analyses(environment_name: str):
-    """List analyses for the given buildtime environment."""
+def list_software_environment_analyses_for_build(environment_name: str):
+    """List analyses for the given software environment for build."""
     parameters = locals()
 
     graph = GraphDatabase()
     graph.connect()
 
     try:
-        result = graph.buildtime_environment_analyses_listing(environment_name, convert_datetime=False)
+        result = graph.build_software_environment_analyses_listing(environment_name, convert_datetime=False)
     except NotFoundError as exc:
         return {
             'error': str(exc),
@@ -351,14 +351,14 @@ def list_buildtime_environment_analyses(environment_name: str):
     }, 200
 
 
-def list_runtime_environments(page: int = 0):
-    """List available runtime environments."""
+def list_software_environments_for_run(page: int = 0):
+    """List available software environments for run."""
     parameters = locals()
 
     graph = GraphDatabase()
     graph.connect()
 
-    result = list(sorted(set(graph.runtime_environment_listing(page, PAGINATION_SIZE))))
+    result = list(sorted(set(graph.run_software_environment_listing(page, PAGINATION_SIZE))))
     return {
         'parameters': parameters,
         'results': result
@@ -369,7 +369,7 @@ def list_runtime_environments(page: int = 0):
     }
 
 
-def list_runtime_environment_analyses(environment_name: str):
+def list_software_environment_analyses_for_run(environment_name: str):
     """Get analyses of given runtime environments."""
     parameters = locals()
 
@@ -377,7 +377,7 @@ def list_runtime_environment_analyses(environment_name: str):
     graph.connect()
 
     try:
-        result = graph.runtime_environment_analyses_listing(environment_name, convert_datetime=False)
+        result = graph.run_software_environment_analyses_listing(environment_name, convert_datetime=False)
     except NotFoundError as exc:
         return {
             'error': str(exc),
