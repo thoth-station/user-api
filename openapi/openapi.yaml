@@ -483,12 +483,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
 
-  /runtime-environment:
+  /run-software-environment:
     get:
       tags: [Image Analysis]
       x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: list_runtime_environments
-      summary: Retrieve a list of runtime environments analyzed.
+      operationId: list_software_environments_for_run
+      summary: Retrieve a list of software environments analyzed for run.
       parameters:
         - name: page
           in: query
@@ -499,7 +499,7 @@ paths:
             default: 0
       responses:
         "200":
-          description: A list of runtime environments.
+          description: A list of software environments for run.
           content:
             application/json:
               schema:
@@ -512,12 +512,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
 
-  /buildtime-environment:
+  /build-software-environment:
     get:
       tags: [Image Analysis]
       x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: list_buildtime_environments
-      summary: Retrieve a list of buildtime environments analyzed.
+      operationId: list_software_environments_for_build
+      summary: Retrieve a list of software environments analyzed for build.
       parameters:
         - name: page
           in: query
@@ -528,7 +528,7 @@ paths:
             default: 0
       responses:
         "200":
-          description: A list of buildtime environments.
+          description: A list of software environments for build.
           content:
             application/json:
               schema:
@@ -570,24 +570,24 @@ paths:
               schema:
                 $ref: "#/components/schemas/Info"
 
-  /runtime-environment/analyses/{environment_name}:
+  /run-software-environment/analyses/{environment_name}:
     get:
       tags: [Image Analysis]
       x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: list_runtime_environment_analyses
-      summary: List analyses for the given runtime environment.
+      operationId: list_software_environment_analyses_for_run
+      summary: List analyses for the given software environment for run.
       parameters:
         - name: environment_name
           in: path
           required: true
           description: >
-            Runtime environment name for which analyses should be retrieved.
+            Software environment name for run for which analyses should be retrieved.
           schema:
             format: path
             type: string
       responses:
         "200":
-          description: Listing of analyses for the given runtime environment.
+          description: Listing of analyses for the given software environment for run.
           content:
             application/json:
               schema:
@@ -595,30 +595,30 @@ paths:
                 type: object
         "404":
           description: >
-            The given runtime environment with the provided name was not found.
+            The given software environment for run with the provided name was not found.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
 
-  /buildtime-environment/analyses/{environment_name}:
+  /build-software-environment/analyses/{environment_name}:
     get:
       tags: [Image Analysis]
       x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: list_buildtime_environment_analyses
-      summary: List analyses for the given buildtime environment.
+      operationId: list_software_environment_analyses_for_build
+      summary: List analyses for the given software environment for build.
       parameters:
         - name: environment_name
           in: path
           required: true
           description: >
-            Buildtime environment name for which analyses should be retrieved.
+            Software environment name for build for which analyses should be retrieved.
           schema:
             format: path
             type: string
       responses:
         "200":
-          description: Listing of analyses for the given buildtime environment.
+          description: Listing of analyses for the given software environment for build.
           content:
             application/json:
               schema:
@@ -626,7 +626,7 @@ paths:
                 type: object
         "404":
           description: >
-            The given buildtime environment with the provided name was not found.
+            The given software environment for build with the provided name was not found.
           content:
             application/json:
               schema:

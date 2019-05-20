@@ -312,7 +312,7 @@ def get_advise_python_status(analysis_id: str):
 
 
 def list_software_environments_for_build(page: int = 0):
-    """List available buildtime environments."""
+    """List available software environments for build."""
     parameters = locals()
 
     graph = GraphDatabase()
@@ -370,7 +370,7 @@ def list_software_environments_for_run(page: int = 0):
 
 
 def list_software_environment_analyses_for_run(environment_name: str):
-    """Get analyses of given runtime environments."""
+    """Get analyses of given software environments for run."""
     parameters = locals()
 
     graph = GraphDatabase()
