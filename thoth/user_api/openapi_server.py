@@ -73,7 +73,7 @@ manager = Manager(application)
 application.secret_key = Configuration.APP_SECRET_KEY
 
 # static information as metric
-metrics.info("management_api_info", "User API info", version=__version__)
+metrics.info("user_api_info", "User API info", version=__version__)
 
 
 @app.route("/")
