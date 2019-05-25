@@ -193,15 +193,15 @@ def post_provenance_python(application_stack: dict, origin: str = None, debug: b
                 }, 202
         except CacheMiss:
             pass
-
-    response, status = _do_schedule(
-        parameters, _OPENSHIFT.schedule_provenance_checker, output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT
-    )
-    if status == 202:
-        cache.store_document_record(
-            cached_document_id,
-            {'analysis_id': response['analysis_id'], 'timestamp': timestamp_now}
+    with Configuration.tracer.start_span("schedule_provenance_checker") as span:
+        response, status = _do_schedule(
+            parameters, _OPENSHIFT.schedule_provenance_checker, output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT
         )
+        if status == 202:
+            cache.store_document_record(
+                cached_document_id,
+                {'analysis_id': response['analysis_id'], 'timestamp': timestamp_now}
+            )
 
     return response, status
 

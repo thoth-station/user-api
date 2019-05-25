@@ -61,7 +61,9 @@ def get_image_metadata(image_name: str, *,
         cmd += '--tls-verify=false '
 
     cmd += f'docker://{image_name!r}'
-    result = run_command(cmd, is_json=True, raise_on_error=False)
+
+    with Configuration.tracer.start_span("skopeo_inspect") as span:
+        result = run_command(cmd, is_json=True, raise_on_error=False)
 
     if result.return_code == 0:
         result_dict = {}
