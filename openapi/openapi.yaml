@@ -779,7 +779,7 @@ paths:
       tags: [Advise]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_advise_python_status
-      summary: Show status of an adviser computing recomemendations.
+      summary: Show status of an adviser computing recommendations.
       parameters:
         - name: analysis_id
           in: path
@@ -812,7 +812,7 @@ paths:
       tags: [Advise]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_advise_python
-      summary: Get computeted adviser result based on its id.
+      summary: Get computed adviser result based on its id.
       parameters:
         - name: analysis_id
           in: path
