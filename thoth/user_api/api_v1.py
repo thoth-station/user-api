@@ -314,11 +314,14 @@ def get_advise_python_status(analysis_id: str):
 def list_software_environments_for_build(page: int = 0):
     """List available software environments for build."""
     parameters = locals()
+    result = None
 
-    graph = GraphDatabase()
-    graph.connect()
+    with Configuration.tracer.start_span("list_software_environments_for_build") as span:
+        graph = GraphDatabase()
+        graph.connect()
 
-    result = list(sorted(set(graph.build_software_environment_listing(page, PAGINATION_SIZE))))
+        result = list(sorted(set(graph.build_software_environment_listing(page, PAGINATION_SIZE))))
+
     return {
         'parameters': parameters,
         'results': result
