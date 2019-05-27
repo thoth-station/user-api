@@ -42,8 +42,9 @@ from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.python import Project
 from thoth.python.exceptions import ThothPythonException
 
+from thoth.build_analysers.parsing import parse_log as do_parse_log
+
 from .configuration import Configuration
-from .parsing import parse_log as do_parse_log
 from .image import get_image_metadata
 from .exceptions import ImageError
 from .exceptions import ImageBadRequestError
