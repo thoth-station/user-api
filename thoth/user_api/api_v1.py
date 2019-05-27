@@ -505,7 +505,7 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
                         'status': status,
                         'parameters': parameters
                     }, 400
-                elif status['state'] in ('scheduling', 'waiting'):
+                elif status['state'] in ('scheduling', 'waiting', 'registered'):
                     return {
                         'error': 'Analysis is being scheduled',
                         'status': status,
