@@ -319,7 +319,7 @@ def list_software_environments_for_build(page: int = 0):
     graph = GraphDatabase()
     graph.connect()
 
-    result = list(sorted(set(graph.build_software_environment_listing(page, PAGINATION_SIZE))))
+    result = list(sorted(set(graph.build_software_environment_listing(start_offset=page, count=PAGINATION_SIZE))))
     return {
         'parameters': parameters,
         'results': result
@@ -359,7 +359,7 @@ def list_software_environments_for_run(page: int = 0):
     graph = GraphDatabase()
     graph.connect()
 
-    result = list(sorted(set(graph.run_software_environment_listing(page, PAGINATION_SIZE))))
+    result = list(sorted(set(graph.run_software_environment_listing(start_offset=page, count=PAGINATION_SIZE))))
     return {
         'parameters': parameters,
         'results': result
