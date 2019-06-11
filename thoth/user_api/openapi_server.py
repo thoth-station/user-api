@@ -66,7 +66,7 @@ application = app.app
 Configuration.tracer = init_jaeger_tracer("user_api")
 
 # create metrics and manager
-metrics = PrometheusMetrics(application)
+metrics = PrometheusMetrics(application, group_by="endpoint")
 manager = Manager(application)
 
 # Needed for session.
@@ -77,18 +77,15 @@ metrics.info("user_api_info", "User API info", version=__version__)
 
 
 @app.route("/")
-@metrics.do_not_track()
 def base_url():
     """Redirect to UI by default."""
     return redirect("api/v1/ui")
 
 
 @app.route("/api/v1")
-@metrics.do_not_track()
 def api_v1():
     """Provide a listing of all available endpoints."""
     paths = []
-
     for rule in application.url_map.iter_rules():
         rule = str(rule)
         if rule.startswith("/api/v1"):
@@ -102,14 +99,12 @@ def _healthiness():
 
 
 @app.route("/readiness")
-@metrics.do_not_track()
 def api_readiness():
     """Report readiness for OpenShift readiness probe."""
     return _healthiness()
 
 
 @app.route("/liveness")
-@metrics.do_not_track()
 def api_liveness():
     """Report liveness for OpenShift readiness probe."""
     return _healthiness()
