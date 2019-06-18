@@ -429,6 +429,31 @@ def parse_log(log_info: dict):
         # TODO: for production we will need to filter out some errors so they are not exposed to users.
         return {'error': str(exc)}, 400
 
+def schedule_kebechet(hook_data: dict, X-GitHub-Event: str, X-GitLab-Event: str, X-Pagure-Topic: str):
+    # TODO: Update documentation to include creation of environment variables corresponding to git service tokens
+    # TODO: Change for event dependent behaviour?
+    if X-GitHub-Event is not None:
+        service = 'github'
+        token = os.environ['GITHUB_TOKEN']
+        url = hook_data['clone_url']
+    elif X-GitLab-Event is not None:
+        service = 'gitlab'
+        token = os.environ['GITLAB_TOKEN']
+        url = hook_data['repository']['url']
+    elif X-Pagure-Topic is not None:
+        service = 'pagure'
+        token = os.environ['PAGURE_TOKEN']
+        # TODO: URL =
+    else:
+        # TODO: This webhook is not supported
+        return
+    
+    parameters = {'service': service, 'token': token, 'url': url}
+    # TODO get the git url
+    # schedule the kebechet build # TODO: create the kebechet job and the ability to schedule and run a new one
+    response, status = _do_schedule(
+        parameters, _OPENSHIFT.schedule_kebechet
+    )
 
 def list_buildlogs(page: int = 0):
     """List available build logs."""
