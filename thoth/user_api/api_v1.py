@@ -451,9 +451,7 @@ def schedule_kebechet(hook_data: dict, X-GitHub-Event: str, X-GitLab-Event: str,
     parameters = {'service': service, 'token': token, 'url': url}
     # TODO get the git url
     # schedule the kebechet build # TODO: create the kebechet job and the ability to schedule and run a new one
-    response, status = _do_schedule(
-        parameters, _OPENSHIFT.schedule_kebechet
-    )
+    return _do_schedule( parameters, _OPENSHIFT.schedule_kebechet )
 
 def list_buildlogs(page: int = 0):
     """List available build logs."""
