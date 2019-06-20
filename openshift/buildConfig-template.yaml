@@ -62,6 +62,10 @@ objects:
       triggers:
         - type: ImageChange
           imageChange: {}
+        - type: "Generic"
+          generic:
+            secretReference:
+              name: generic-webhook-secret
 
 parameters:
   - description: Name of the github repository for Thoth's User API
