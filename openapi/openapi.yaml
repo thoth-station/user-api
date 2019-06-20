@@ -941,27 +941,10 @@ paths:
         required: true
         description: Body of a git service webhook
         content:
-          application/www-form-urlencoded:
+          application/json:
             schema:
-              x-body-name: hook_data
               type: object
               additionalProperties: true
-      parameters:
-        - name: X-GitHub-Event
-          in: header
-          schema:
-            type: string
-          description: Event type if service is GitHub
-        - name: X-GitLab-Event
-          in: header
-          schema:
-            type: string
-          description: Event type if service is GitLab
-        - name: X-Pagure-Topic
-          in: header
-          schema:
-            type: string
-          description: Event type if service is Pagure
       responses:
         "200":
           description: Success
@@ -969,7 +952,7 @@ paths:
           description: Invalid
         "404":
           description: Not found
-            
+
 components:
   schemas:
     Log:
