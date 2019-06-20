@@ -430,11 +430,11 @@ def schedule_kebechet(body: dict):
     if "X-GitHub-Event" in headers:
         service = "github"
         token = os.environ["GITHUB_TOKEN"]
-        url = hook_data["clone_url"]
+        url = body["clone_url"]
     elif "X_GitLab_Event" in headers:
         service = "gitlab"
         token = os.environ["GITLAB_TOKEN"]
-        url = hook_data["repository"]["url"]
+        url = body["repository"]["url"]
     elif "X_Pagure_Topic" in headers:
         service = "pagure"
         token = os.environ["PAGURE_TOKEN"]
