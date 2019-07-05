@@ -684,10 +684,11 @@
         },
         "opentracing-instrumentation": {
             "hashes": [
-                "sha256:4354c7552e2bf3573749a5dc523e19353732e94ab13af8104737a01f58972a87"
+                "sha256:1296d972a28b880f8718ce2fa200fb23a82167d8785563da614815a31a4fe2eb",
+                "sha256:4afedf1469cb1f868e95eb98668bbae4c26088db98cbd6bf0cfde2b087e80472"
             ],
             "index": "pypi",
-            "version": "==3.0.1"
+            "version": "==3.1.1"
         },
         "pandas": {
             "hashes": [
