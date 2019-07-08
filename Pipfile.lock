@@ -465,10 +465,10 @@
         },
         "jupyter-client": {
             "hashes": [
-                "sha256:b5f9cb06105c1d2d30719db5ffb3ea67da60919fb68deaefa583deccd8813551",
-                "sha256:c44411eb1463ed77548bc2d5ec0d744c9b81c4a542d9637c7a52824e2121b987"
+                "sha256:11168db0695776d7f6131dbede538435893c94a0c4b51b0206d5ab27e3df6915",
+                "sha256:7bd4bd1baac00e21aa171d2b5f61e709e80810ff43eafe0c266ff2ebe4a5c734"
             ],
-            "version": "==5.2.4"
+            "version": "==5.3.0"
         },
         "jupyter-contrib-core": {
             "hashes": [
@@ -985,10 +985,10 @@
         },
         "sentry-sdk": {
             "hashes": [
-                "sha256:692aa93637273365166041ee8e06ccd6b61d5f06560765d78828edbaac83fae1",
-                "sha256:7c9db0e419fb0fb31c1b1d2ec9247667d2b77bd4f3136119ee6f1464e9b088a4"
+                "sha256:14cfbc61e44f7acb18c91b27a0912249c7bf941ecd7e248646e81492464faee0",
+                "sha256:ff50be281cebb77525f0a7ad43aabaf04ee61131ba09885be2544acf959e0451"
             ],
-            "version": "==0.9.5"
+            "version": "==0.10.0"
         },
         "six": {
             "hashes": [
@@ -1064,11 +1064,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:049400715fbf53bced242ecf1460f13d3d855b394605bd31171a0b14f2b4a586",
-                "sha256:bf056be0a53b6aa3d6f5e62434f84bee667e385412068832adc6111b9fa504b9"
+                "sha256:864665d2bf4f1c4058d86a846965779e65c977ae7fc2aaf98d872e0cd1697d9f",
+                "sha256:e5f1a811bcdbb8e5d97bb37abdb6443d732dc42933230a034a96ae2542fedbef"
             ],
             "index": "pypi",
-            "version": "==0.14.3"
+            "version": "==0.14.4"
         },
         "threadloop": {
             "hashes": [
@@ -1244,10 +1244,10 @@
         },
         "zipp": {
             "hashes": [
-                "sha256:8c1019c6aad13642199fbe458275ad6a84907634cc9f0989877ccc4a2840139d",
-                "sha256:ca943a7e809cc12257001ccfb99e3563da9af99d52f261725e96dfe0f9275bc3"
+                "sha256:4970c3758f4e89a7857a973b1e2a5d75bcdc47794442f2e2dd4fe8e0466e809a",
+                "sha256:8a5712cfd3bb4248015eb3b0b3c54a5f6ee3f2425963ef2a0125b8bc40aafaec"
             ],
-            "version": "==0.5.1"
+            "version": "==0.5.2"
         }
     }
 }
