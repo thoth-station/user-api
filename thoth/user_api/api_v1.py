@@ -425,25 +425,20 @@ def parse_log(log_info: dict):
 def schedule_kebechet(body: dict):
     """Schedule Kebechet on Openshift."""
     # TODO: Update documentation to include creation of environment variables corresponding to git service tokens
-    # TODO: Change for event dependent behaviour?
+    # NOTE: Change for event dependent behaviour
     headers = connexion.request.headers
     if "X-GitHub-Event" in headers:
         service = "github"
-        token = os.environ["GITHUB_TOKEN"]
-        url = body["clone_url"]
+        url = body["repository"]["url"]
     elif "X_GitLab_Event" in headers:
         service = "gitlab"
-        token = os.environ["GITLAB_TOKEN"]
         url = body["repository"]["url"]
     elif "X_Pagure_Topic" in headers:
         service = "pagure"
-        token = os.environ["PAGURE_TOKEN"]
-        # TODO: URL =
     else:
-        # TODO: This webhook is not supported
-        return
+        return {"error": "This webhook is not supported"}, 501
 
-    parameters = {"service": service, "token": token, "url": url}
+    parameters = {"subcommand": "run-url", "service": service, "url": url}
     return _do_schedule(parameters, _OPENSHIFT.schedule_kebechet)
 
 
