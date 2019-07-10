@@ -435,6 +435,7 @@ def schedule_kebechet(body: dict):
         url = body["repository"]["url"]
     elif "X_Pagure_Topic" in headers:
         service = "pagure"
+        return {"error": "Pagure is currently not supported"}, 501
     else:
         return {"error": "This webhook is not supported"}, 501
 
