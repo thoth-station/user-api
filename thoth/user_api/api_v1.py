@@ -439,8 +439,8 @@ def schedule_kebechet(body: dict):
     else:
         return {"error": "This webhook is not supported"}, 501
 
-    parameters = {"subcommand": "run-url", "service": service, "url": url}
-    return _do_schedule(parameters, _OPENSHIFT.schedule_kebechet)
+    parameters = {"service": service, "url": url}
+    return _do_schedule(parameters, _OPENSHIFT.schedule_kebechet_run_url)
 
 
 def list_buildlogs(page: int = 0):

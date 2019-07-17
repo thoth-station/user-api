@@ -946,12 +946,12 @@ paths:
               type: object
               additionalProperties: true
       responses:
-        "200":
-          description: Success
+        "202":
+          description: Accepted
         "400":
           description: Invalid
-        "404":
-          description: Not found
+        "501":
+          description: Functionality not supported
 
 components:
   schemas:
