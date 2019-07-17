@@ -1312,6 +1312,7 @@ components:
               type: string
               description: Pod name where the analysis was done.
             python:
+              type: object
               required:
                 - api_version
                 - implementation_name
