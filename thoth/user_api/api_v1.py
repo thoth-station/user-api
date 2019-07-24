@@ -478,7 +478,7 @@ def post_buildlog_analyze(log_info: dict, force: bool = False):
     parameters.update(stored_log_details)
     parameters.pop("log_info", None)
     response, status_code = _do_schedule(
-        parameters, _OPENSHIFT.schedule_build_analyse, output=Configuration.THOTH_BUILDLOG_ANALYZER_OUTPUT
+        parameters, _OPENSHIFT.schedule_build_analyze, output=Configuration.THOTH_BUILDLOG_ANALYZER_OUTPUT
     )
 
     if status_code == 202:
@@ -497,7 +497,7 @@ def get_buildlog_analyze(analysis_id: str):
     return _get_document(
         BuildLogsAnalysisResultsStore,
         analysis_id,
-        name_prefix="build-analyse-",
+        name_prefix="build-analyze-",
         namespace=Configuration.THOTH_BACKEND_NAMESPACE,
     )
 
