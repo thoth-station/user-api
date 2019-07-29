@@ -44,8 +44,6 @@ from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.python import Project
 from thoth.python.exceptions import ThothPythonException
 
-from thoth.build_analysers.parsing import parse_log as do_parse_log
-
 from .configuration import Configuration
 from .image import get_image_metadata
 from .exceptions import ImageError
@@ -514,19 +512,6 @@ def post_buildlog(log_info: dict):
 def get_buildlog(document_id: str):
     """Retrieve the given buildlog."""
     return _get_document(BuildLogsStore, document_id)
-
-
-def parse_log(log_info: dict):
-    """Parse image build log or install log."""
-    if not log_info:
-        return {"error": "No log provided"}, 400
-
-    try:
-        return do_parse_log(log_info.get("log", "")), 200
-    except Exception as exc:
-        _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
-        return {"error": str(exc)}, 400
 
 
 def list_buildlogs(page: int = 0):
