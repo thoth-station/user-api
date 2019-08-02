@@ -1250,17 +1250,26 @@ components:
       properties:
         hardware:
           type: object
+          description: Hardware configuration used.
         operating_system:
           type: object
+          description: Operating system used.
         python_version:
           type: string
           example: "3.6"
+          description: Python version on which the application runs on.
         cuda_version:
           type: string
           example: "9.0"
+          description: Nvidia CUDA version which the application uses.
         name:
           type: string
           example: "fedora:29-prod"
+          description: User defined name of the runtime environment.
+        ipython:
+          type: object
+          description: >
+            Additional information captured when recommendations were requested for Jupyter Notebook environments.
     AdviseInput:
       type: object
       required:
