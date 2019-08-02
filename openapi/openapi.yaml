@@ -1161,13 +1161,13 @@ components:
                     Contains all particulars about the build log.
                   example: >
                     "apiVersion:build.openshift.io/v1"
-    PythonStack: &pythonStack
+    PythonStack:
       type: object
       required:
         - "requirements"
         - "requirements_lock"
       properties:
-        requirements: &pythonRequiremnets
+        requirements:
           type: string
           minLength: 1
           description: Direct dependencies for the application stack.
@@ -1181,7 +1181,7 @@ components:
             daiquiri = "*"
 
             [dev-packages]
-        requirements_lock: &pythonRequirementsLock
+        requirements_lock:
           type: string
           description: Fully pinned down dependency stack.
           example: '{
@@ -1221,7 +1221,7 @@ components:
             - pipenv
             - requirements
           example: pipenv
-    RuntimeEnvironment: &runtimeEnvironment
+    RuntimeEnvironment:
       type: object
       description: Runtime environment description, see Thamos configuration for more info.
       properties:
@@ -1244,9 +1244,9 @@ components:
         - application_stack
       properties:
         application_stack:
-          <<: *pythonStack
+          $ref: "#/components/schemas/PythonStack"
         runtime_environment:
-          <<: *runtimeEnvironment
+          $ref: "#/components/schemas/RuntimeEnvironment"
         library_usage:
           type: object
           description: Static analysis of libraries used within user's project.
@@ -1617,7 +1617,7 @@ components:
         parameters:
           type: object
           description: Parameters echoed back to user.
-    AnalysisStatusResponse: &analysisStatus
+    AnalysisStatusResponse:
       type: object
       description: Information about the current analysis status.
       required:
@@ -1679,7 +1679,7 @@ components:
           type: object
           description: Parameters echoed back to user for debugging.
         status:
-          <<: *analysisStatus
+          $ref: "#/components/schemas/AnalysisStatusResponse"
     AnalysisLogResponse:
       type: object
       required:
