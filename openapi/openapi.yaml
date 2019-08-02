@@ -1250,6 +1250,14 @@ components:
         library_usage:
           type: object
           description: Static analysis of libraries used within user's project.
+          required:
+            - version
+            - report
+          properties:
+            version:
+              type: string
+            report:
+              type: object
     ImageMetadataResponse:
       type: object
       description: Response information with image metadata.
