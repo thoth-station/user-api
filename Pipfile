@@ -18,7 +18,6 @@ prometheus-client = "*"
 prometheus-flask-exporter = "*"
 requests = "*"
 thoth-analyzer = "*"
-thoth-build-analysers = "*"
 thoth-common = {extras = ["openshift"],version = "*"}
 thoth-python = "*"
 thoth-storages = "*"
