@@ -30,6 +30,8 @@ import connexion
 from thoth.storages import AdvisersResultsStore
 from thoth.storages import AnalysisResultsStore
 from thoth.storages import BuildLogsStore
+from thoth.storages import BuildLogsAnalysesCacheStore
+from thoth.storages import BuildLogsAnalysisResultsStore
 from thoth.storages import GraphDatabase
 from thoth.storages import ProvenanceResultsStore
 from thoth.storages import AnalysesCacheStore
@@ -42,8 +44,6 @@ from thoth.common import OpenShift
 from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.python import Project
 from thoth.python.exceptions import ThothPythonException
-
-from thoth.build_analysers.parsing import parse_log as do_parse_log
 
 from .configuration import Configuration
 from .image import get_image_metadata
@@ -395,6 +395,112 @@ def list_python_package_indexes():
     return graph.python_package_index_listing()
 
 
+def post_build(
+    build_detail: dict,
+    debug: bool = False,
+    registry_user: str = None,
+    registry_password: str = None,
+    environment_type: str = None,
+    origin: str = None,
+    registry_verify_tls: bool = True,
+    force: bool = False,
+):
+    """Run analysis on a build."""
+    response = {"base_image_analysis": {}, "output_image_analysis": {}, "build_log_analysis": {}}
+    status = 202
+    if build_detail.get("output_image"):
+        # Run image analysis
+        output_image_analyze_response, output_image_analyze_status = post_analyze(
+            image=build_detail["output_image"],
+            debug=debug,
+            registry_user=registry_user,
+            registry_password=registry_password,
+            environment_type=environment_type,
+            origin=origin,
+            verify_tls=registry_verify_tls,
+            force=force,
+        )
+        response["output_image_analysis"] = output_image_analyze_response
+        if output_image_analyze_status != 202:
+            return response, output_image_analyze_status
+
+    if build_detail.get("base_image"):
+        # Run base image analysis
+        base_image_analyze_response, base_image_analyze_status = post_analyze(
+            image=build_detail["base_image"],
+            debug=debug,
+            environment_type=environment_type,
+            origin=origin,
+            verify_tls=registry_verify_tls,
+            force=force,
+        )
+        response["base_image_analysis"] = base_image_analyze_response
+        if base_image_analyze_status != 202:
+            return response, base_image_analyze_status
+
+    if build_detail.get("build_log"):
+        # attach image analysis details to build log
+        build_detail["output_image_analysis_id"] = response.get("output_image_analysis", {}).get("analysis_id")
+        build_detail["base_image_analysis_id"] = response.get("base_image_analysis", {}).get("analysis_id")
+
+        # Run build log analysis
+        buildlog_analyze_response, buildlog_analyze_status = post_buildlog_analyze(log_info=build_detail, force=force)
+        response["build_log_analysis"] = buildlog_analyze_response
+        if buildlog_analyze_status != 202:
+            return response, buildlog_analyze_status
+
+    if (
+        not build_detail.get("output_image")
+        and not build_detail.get("base_image")
+        and not build_detail.get("build_log")
+    ):
+        return {"error": "Bad Request! No information provided"}, 400
+
+    return response, status
+
+
+def post_buildlog_analyze(log_info: dict, force: bool = False):
+    """Run an analyzer on the given build log."""
+    parameters = locals()
+    cache = BuildLogsAnalysesCacheStore()
+    cache.connect()
+    cached_document_id = _compute_digest_params(parameters)
+    force = parameters.pop("force", False)
+    if not force:
+        try:
+            cache_record = cache.retrieve_document_record(cached_document_id)
+            return {"analysis_id": cache_record.pop("analysis_id"), "cached": True, "parameters": parameters}, 202
+        except CacheMiss:
+            pass
+    # Maybe need to utilize the status code of buillog storage
+    stored_log_details, status = post_buildlog(log_info=log_info)
+    parameters.update(stored_log_details)
+    parameters.pop("log_info", None)
+    response, status_code = _do_schedule(
+        parameters, _OPENSHIFT.schedule_build_analyze, output=Configuration.THOTH_BUILDLOG_ANALYZER_OUTPUT
+    )
+
+    if status_code == 202:
+        cache.store_document_record(cached_document_id, {"analysis_id": response["analysis_id"]})
+
+    return response, status_code
+
+
+def list_buildlog_analyze(page: int = 0):
+    """Retrieve list of build log analysis result."""
+    return _do_listing(BuildLogsAnalysisResultsStore, page)
+
+
+def get_buildlog_analyze(analysis_id: str):
+    """Retrieve build log analysis result."""
+    return _get_document(
+        BuildLogsAnalysisResultsStore,
+        analysis_id,
+        name_prefix="build-analyze-",
+        namespace=Configuration.THOTH_BACKEND_NAMESPACE,
+    )
+
+
 def post_buildlog(log_info: dict):
     """Store the given build log."""
     adapter = BuildLogsStore()
@@ -483,7 +589,7 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
     """Perform actual document retrieval."""
     # Parameters to be reported back to a user of API.
     parameters = {"analysis_id": analysis_id}
-    if not analysis_id.startswith(name_prefix):
+    if name_prefix and not analysis_id.startswith(name_prefix):
         return {"error": "Wrong analysis id provided", "parameters": parameters}, 400
 
     try:
