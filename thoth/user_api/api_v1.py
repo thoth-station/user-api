@@ -25,6 +25,7 @@ import typing
 import json
 import datetime
 import time
+import connexion
 
 from thoth.storages import AdvisersResultsStore
 from thoth.storages import AnalysisResultsStore
@@ -512,6 +513,40 @@ def post_buildlog(log_info: dict):
 def get_buildlog(document_id: str):
     """Retrieve the given buildlog."""
     return _get_document(BuildLogsStore, document_id)
+
+
+def parse_log(log_info: dict):
+    """Parse image build log or install log."""
+    if not log_info:
+        return {"error": "No log provided"}, 400
+
+    try:
+        return do_parse_log(log_info.get("log", "")), 200
+    except Exception as exc:
+        _LOGGER.exception(str(exc))
+        # TODO: for production we will need to filter out some errors so they are not exposed to users.
+        return {"error": str(exc)}, 400
+
+
+def schedule_kebechet(body: dict):
+    """Schedule Kebechet on Openshift."""
+    # TODO: Update documentation to include creation of environment variables corresponding to git service tokens
+    # NOTE: Change for event dependent behaviour
+    headers = connexion.request.headers
+    if "X-GitHub-Event" in headers:
+        service = "github"
+        url = body["repository"]["url"]
+    elif "X_GitLab_Event" in headers:
+        service = "gitlab"
+        url = body["repository"]["url"]
+    elif "X_Pagure_Topic" in headers:
+        service = "pagure"
+        return {"error": "Pagure is currently not supported"}, 501
+    else:
+        return {"error": "This webhook is not supported"}, 501
+
+    parameters = {"service": service, "url": url}
+    return _do_schedule(parameters, _OPENSHIFT.schedule_kebechet_run_url)
 
 
 def list_buildlogs(page: int = 0):
