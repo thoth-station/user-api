@@ -644,10 +644,9 @@
         },
         "ruamel.yaml": {
             "hashes": [
-                "sha256:4c1dbad22790b5ea8587c2a0cae97ebc7a9d0d88de5d0edb70dea2eab7d8534a",
-                "sha256:eb4b1ffd095785c50f110118cb6f7bb9cd011ecc013b014436d38b7f8fb7afa9"
+                "sha256:547aeab5c51c93bc750ed2a320c1559b605bde3aa569216aa75fd91d8a1c4623"
             ],
-            "version": "==0.16.0"
+            "version": "==0.16.1"
         },
         "ruamel.yaml.clib": {
             "hashes": [
@@ -670,7 +669,6 @@
                 "sha256:ef8d4522d231cb9b29f6cdd0edc8faac9d9715c60dc7becbd6eb82c915a98e5b",
                 "sha256:f504d45230cc9abf2810623b924ae048b224a90adb01f97db4e766cfdda8e6eb"
             ],
-            "markers": "platform_python_implementation == 'CPython' and python_version < '3.8'",
             "version": "==0.1.2"
         },
         "s3transfer": {
@@ -740,11 +738,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:16dceb409b17564ac1763cb2b10bd16020fec8fc41a3af5cd30d83d4703058e2",
-                "sha256:fa2a2240582bb23297c0606aa31191aee570ec11fd2b1448a1a294ee6ce28d1d"
+                "sha256:0b4b875f3fd4975e57f5f0e884040c88e775e7d9871cbe6352447b42d59f8777",
+                "sha256:8d381746565430ad50e131ada7a330bd47d6f9387f491ed84127f8f21ff12d5f"
             ],
             "index": "pypi",
-            "version": "==0.18.3"
+            "version": "==0.18.4"
         },
         "threadloop": {
             "hashes": [
