@@ -740,11 +740,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:0b4b875f3fd4975e57f5f0e884040c88e775e7d9871cbe6352447b42d59f8777",
-                "sha256:8d381746565430ad50e131ada7a330bd47d6f9387f491ed84127f8f21ff12d5f"
+                "sha256:36b8c84ee223379a30b008a0666b3c5a25b5ddd7697e53087cdd7e14f547f9d5",
+                "sha256:c1f00dfd5afe2f47a4063a51c988910518cab5f90e0f4e82ac0371229be797e6"
             ],
             "index": "pypi",
-            "version": "==0.18.4"
+            "version": "==0.18.5"
         },
         "threadloop": {
             "hashes": [
