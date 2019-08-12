@@ -535,10 +535,10 @@ def schedule_kebechet(body: dict):
     headers = connexion.request.headers
     if "X-GitHub-Event" in headers:
         service = "github"
-        url = body["repository"]["url"]
+        url = body["repository"]["html-url"]
     elif "X_GitLab_Event" in headers:
         service = "gitlab"
-        url = body["repository"]["url"]
+        url = body["repository"]["homepage"]
     elif "X_Pagure_Topic" in headers:
         service = "pagure"
         return {"error": "Pagure is currently not supported"}, 501
