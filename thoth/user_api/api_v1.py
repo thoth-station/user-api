@@ -41,6 +41,7 @@ from thoth.storages import AnalysisByDigest
 from thoth.storages.exceptions import CacheMiss
 from thoth.storages.exceptions import NotFoundError
 from thoth.common import OpenShift
+from thoth.common import RuntimeEnvironment
 from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.python import Project
 from thoth.python.exceptions import ThothPythonException
@@ -262,7 +263,9 @@ def post_advise_python(
 
     try:
         project = Project.from_strings(
-            parameters["application_stack"]["requirements"], parameters["application_stack"].get("requirements_lock")
+            parameters["application_stack"]["requirements"],
+            parameters["application_stack"].get("requirements_lock"),
+            runtime_environment=RuntimeEnvironment.from_dict(parameters["runtime_environment"]),
         )
     except ThothPythonException as exc:
         return {"parameters": parameters, "error": f"Invalid application stack supplied: {str(exc)}"}, 400
@@ -283,7 +286,6 @@ def post_advise_python(
             limit=parameters["limit"],
             library_usage=parameters["library_usage"],
             limit_latest_versions=parameters["limit_latest_versions"],
-            runtime_environment=parameters.get("runtime_environment"),
             recommendation_type=recommendation_type,
             origin=origin,
         )
