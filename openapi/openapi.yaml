@@ -555,6 +555,55 @@ paths:
               schema:
                 $ref: "#/components/schemas/PythonPackageIndexes"
 
+  /runtime-envrionments:
+    get:
+      tags: [Info]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: list_runtime_environments
+      summary: Retrieve a list of supported runtime environments
+      responses:
+        "200":
+          description: A list of supported runtime environments.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - parameters
+                  - runtime_environments
+                properties:
+                  parameters:
+                    type: object
+                    description: Parameters echoed back to user.
+                  runtime_environments:
+                    type: array
+                    items:
+                      type: object
+                      description: Available runtime environment configurations.
+                      required:
+                        - os_name
+                        - os_version
+                        - python_version
+                      properties:
+                        os_name:
+                          type: string
+                          description: Name of the operating system which is supported.
+                          example: ubi
+                        os_version:
+                          type: string
+                          description: Version of the operating system which is supported.
+                          example: "8"
+                        python_version:
+                          type: string
+                          description: Supported Python version.
+                          example: "3.6"
+        "400":
+          description: On invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResponseError"
+
   /info:
     get:
       tags: [Info]
