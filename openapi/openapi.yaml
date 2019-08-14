@@ -555,7 +555,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/PythonPackageIndexes"
 
-  /runtime-envrionments:
+  /runtime-envrionment:
     get:
       tags: [Info]
       x-openapi-router-controller: thoth.user_api.api_v1
