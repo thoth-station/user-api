@@ -330,6 +330,19 @@ def get_advise_python_status(analysis_id: str):
     return _get_job_status(locals(), "adviser-", Configuration.THOTH_BACKEND_NAMESPACE)
 
 
+def list_runtime_environments():
+    """List available runtime environments."""
+    environments = []
+    for solver_name in _OPENSHIFT.get_solver_names():
+        solver_info = GraphDatabase.parse_python_solver_name(solver_name)
+        environments.append(solver_info)
+
+    return {
+        "runtime_environments": environments,
+        "parameters": {}
+    }
+
+
 def list_software_environments_for_build(page: int = 0):
     """List available software environments for build."""
     parameters = locals()
