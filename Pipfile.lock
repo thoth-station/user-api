@@ -489,11 +489,11 @@
         },
         "opentracing-instrumentation": {
             "hashes": [
-                "sha256:1296d972a28b880f8718ce2fa200fb23a82167d8785563da614815a31a4fe2eb",
-                "sha256:4afedf1469cb1f868e95eb98668bbae4c26088db98cbd6bf0cfde2b087e80472"
+                "sha256:2f0dbf4dcbb405d69cf1a479455e02dc5ca9f5bed5a5783d43de6fadd4fcc662",
+                "sha256:744d30178d8cfda08b859a8b79f8f41698d8170da5dd87c7d07c5bccbf53a0df"
             ],
             "index": "pypi",
-            "version": "==3.1.1"
+            "version": "==3.2.0"
         },
         "pexpect": {
             "hashes": [
@@ -546,10 +546,10 @@
         },
         "pyasn1": {
             "hashes": [
-                "sha256:3bb81821d47b17146049e7574ab4bf1e315eb7aead30efe5d6a9ca422c9710be",
-                "sha256:b773d5c9196ffbc3a1e13bdf909d446cad80a039aa3340bcad72f395b76ebc86"
+                "sha256:62cdade8b5530f0b185e09855dd422bc05c0bbff6b72ff61381c09dac7befd8c",
+                "sha256:a9495356ca1d66ed197a0f72b41eb1823cf7ea8b5bd07191673e8147aecf8604"
             ],
-            "version": "==0.4.6"
+            "version": "==0.4.7"
         },
         "pyasn1-modules": {
             "hashes": [
@@ -841,11 +841,11 @@
         },
         "importlib-metadata": {
             "hashes": [
-                "sha256:23d3d873e008a513952355379d93cbcab874c58f4f034ff657c7a87422fa64e8",
-                "sha256:80d2de76188eabfbfcf27e6a37342c2827801e59c4cc14b0371c56fed43820e3"
+                "sha256:9ff1b1c5a354142de080b8a4e9803e5d0d59283c93aed808617c787d16768375",
+                "sha256:b7143592e374e50584564794fcb8aaf00a23025f9db866627f89a21491847a8d"
             ],
             "markers": "python_version < '3.8'",
-            "version": "==0.19"
+            "version": "==0.20"
         },
         "more-itertools": {
             "hashes": [
