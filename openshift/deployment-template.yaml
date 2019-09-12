@@ -190,13 +190,6 @@ objects:
                     secretKeyRef:
                       name: thoth
                       key: ceph-secret-key
-                - name: GRAPH_SERVICE_HOST
-                  valueFrom:
-                    configMapKeyRef:
-                      key: graph-service-host
-                      name: thoth
-                - name: GRAPH_TLS_PATH
-                  value: "/var/run/secrets/dgraph"
                 - name: AMUN_API_URL
                   valueFrom:
                     configMapKeyRef:
@@ -227,13 +220,30 @@ objects:
                     secretKeyRef:
                       name: thoth
                       key: sentry-dsn
+                - name: POSTGRESQL_SERVICE_HOST
+                  value: postgresql
+                - name: POSTGRESQL_SERVICE_PORT
+                  value: "5432"
+                - name: POSTGRESQL_SSL_DISABLED
+                  value: "1"
+                - name: POSTGRESQL_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgresql
+                      key: database-user
+                - name: POSTGRESQL_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgresql
+                      key: database-password
+                - name: POSTGRESQL_DATABASE
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgresql
+                      key: database-name
               ports:
                 - containerPort: 8080
                   protocol: TCP
-              volumeMounts:
-                - mountPath: /var/run/secrets/dgraph
-                  name: dgraph-tls-secrets
-                  readOnly: true
               resources:
                 requests:
                   memory: "512Mi"
@@ -257,11 +267,6 @@ objects:
                 initialDelaySeconds: 5
                 periodSeconds: 60
                 timeoutSeconds: 10
-          volumes:
-            - name: dgraph-tls-secrets
-              secret:
-                defaultMode: 420
-                secretName: dgraph-tls
       test: false
       triggers:
         - type: ConfigChange
