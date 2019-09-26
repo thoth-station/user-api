@@ -25,9 +25,9 @@
         },
         "alembic": {
             "hashes": [
-                "sha256:5609afbb2ab142a991b15ae436347c475f8a517f1610f2fd1b09cdca7c311f3f"
+                "sha256:9f907d7e8b286a1cfb22db9084f9ce4fde7ad7956bb496dc7c952e10ac90e36a"
             ],
-            "version": "==1.2.0"
+            "version": "==1.2.1"
         },
         "amun": {
             "hashes": [
@@ -61,17 +61,17 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:273d3cb6d0206d40b2020e1871e1d95b284cff870fdf1e8816701da1063474c4",
-                "sha256:6f9c9f393d4951b9e86d4b26ff5cf1d5b9845bd1c3eb9a2f6b969887c2e4155e"
+                "sha256:482ba0750cd9772c9d3bc67fe17a9470eba582aa6cf2810d7656a8d6e82a3b05",
+                "sha256:c8593cf034e678e58b361f555f66f66e7f700ac32bd4341768744b48de9f1f98"
             ],
-            "version": "==1.9.234"
+            "version": "==1.9.236"
         },
         "botocore": {
             "hashes": [
-                "sha256:4103382697418c24702b7731ef2bd73606ca6a86336b1a898e97c34d0d241c69",
-                "sha256:d809ac570f630491778b47ae8d02475162f04eeb0ca39ccd3f4112d729d7eaa7"
+                "sha256:6d1f302ea190e7287eb3909e851e04676f96803c962e46b4f716dd0cea99bce5",
+                "sha256:b65e83183501ee89e2ec8e8f35c30a99ce2680dd41e7bf4f7241a86f4bb9f8a9"
             ],
-            "version": "==1.12.234"
+            "version": "==1.12.236"
         },
         "cachetools": {
             "hashes": [
@@ -537,10 +537,10 @@
         },
         "prometheus-flask-exporter": {
             "hashes": [
-                "sha256:3e16b2748bc85e528fb6ec97f5ceb1ddb8b9ac6725bae3913c003ec9ab2aee14"
+                "sha256:91a4ef569c479592ff7057e7e16ce8102556c6a46630870e333507cee28347db"
             ],
             "index": "pypi",
-            "version": "==0.9.1"
+            "version": "==0.10.0"
         },
         "protobuf": {
             "hashes": [
