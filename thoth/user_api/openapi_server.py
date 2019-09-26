@@ -29,9 +29,11 @@ from connexion.resolver import RestyResolver
 from flask import redirect, jsonify
 from flask_script import Manager
 from prometheus_flask_exporter import PrometheusMetrics
+from flask_cors import CORS
 
 from thoth.common import datetime2datetime_str
 from thoth.common import init_logging
+from thoth.storages import GraphDatabase
 from thoth.user_api import __version__
 from thoth.user_api.configuration import Configuration
 from thoth.user_api.configuration import init_jaeger_tracer
@@ -48,6 +50,7 @@ _LOGGER.debug("DEBUG mode is enabled!")
 
 # Expose for uWSGI.
 app = connexion.FlaskApp(__name__, specification_dir=Configuration.SWAGGER_YAML_PATH, debug=True)
+CORS(app.app)
 
 app.add_api(
     "openapi.yaml",
@@ -95,6 +98,8 @@ def api_v1():
 
 
 def _healthiness():
+    graph = GraphDatabase()
+    graph.connect()
     return jsonify({"status": "ready", "version": __version__}), 200, {"ContentType": "application/json"}
 
 
@@ -133,6 +138,13 @@ def internal_server_error(exc):
         ),
         500,
     )
+
+
+@application.after_request
+def apply_headers(response):
+    """Add headers to each response."""
+    response.headers["X-Thoth-Version"] = __version__
+    return response
 
 
 if __name__ == "__main__":
