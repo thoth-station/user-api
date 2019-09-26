@@ -249,11 +249,11 @@ objects:
                   protocol: TCP
               resources:
                 requests:
-                  memory: "512Mi"
-                  cpu: "125m"
+                  memory: "1Gi"
+                  cpu: "2"
                 limits:
-                  memory: "512Mi"
-                  cpu: "500m"
+                  memory: "1Gi"
+                  cpu: "2"
               readinessProbe:
                 httpGet:
                   path: "/readiness"
