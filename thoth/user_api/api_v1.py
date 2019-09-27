@@ -341,10 +341,7 @@ def list_runtime_environments():
         solver_info = GraphDatabase.parse_python_solver_name(solver_name)
         environments.append(solver_info)
 
-    return {
-        "runtime_environments": environments,
-        "parameters": {}
-    }
+    return {"runtime_environments": environments, "parameters": {}}
 
 
 def list_software_environments_for_build(page: int = 0):
@@ -584,6 +581,7 @@ def list_python_packages():
     Python Package Names and the number of distinct Versions.
     """
     return
+
 
 def _do_listing(adapter_class, page: int) -> tuple:
     """Perform actual listing of documents available."""
