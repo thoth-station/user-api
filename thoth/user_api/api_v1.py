@@ -530,19 +530,6 @@ def get_buildlog(document_id: str):
     return _get_document(BuildLogsStore, document_id)
 
 
-def parse_log(log_info: dict):
-    """Parse image build log or install log."""
-    if not log_info:
-        return {"error": "No log provided"}, 400
-
-    try:
-        return do_parse_log(log_info.get("log", "")), 200
-    except Exception as exc:
-        _LOGGER.exception(str(exc))
-        # TODO: for production we will need to filter out some errors so they are not exposed to users.
-        return {"error": str(exc)}, 400
-
-
 def schedule_kebechet(body: dict):
     """Schedule Kebechet on Openshift."""
     # TODO: Update documentation to include creation of environment variables corresponding to git service tokens
