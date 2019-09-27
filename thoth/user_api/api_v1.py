@@ -550,15 +550,18 @@ def schedule_kebechet(body: dict):
     headers = connexion.request.headers
     if "X-GitHub-Event" in headers:
         service = "github"
-        url = body["repository"]["html-url"]
+        url = body.get("repository", {}).get("html-url")
     elif "X_GitLab_Event" in headers:
         service = "gitlab"
-        url = body["repository"]["homepage"]
+        url = body.get("repository", {}).get("homepage")
     elif "X_Pagure_Topic" in headers:
         service = "pagure"
         return {"error": "Pagure is currently not supported"}, 501
     else:
         return {"error": "This webhook is not supported"}, 501
+
+    if url is None:
+        return {"error", f"Failed to parse webhook payload for service {service!r}"}, 501
 
     parameters = {"service": service, "url": url}
     return _do_schedule(parameters, _OPENSHIFT.schedule_kebechet_run_url)
