@@ -604,20 +604,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
 
-  /info:
-    get:
-      tags: [Info]
-      x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: get_info
-      summary: Get information about Thoth deployment.
-      responses:
-        "200":
-          description: A core information about Thoth deployment.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Info"
-
   /run-software-environment/analyses/{environment_name}:
     get:
       tags: [Image Analysis]

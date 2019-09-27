@@ -556,21 +556,6 @@ def list_buildlogs(page: int = 0):
     return _do_listing(BuildLogsStore, page)
 
 
-def get_info():
-    """Get information about Thoth deployment."""
-    return {
-        "deployment_name": os.getenv("THOTH_DEPLOYMENT_NAME"),
-        "version:": os.getenv("OPENSHIFT_BUILD_REFERENCE", "@dev"),
-        "s3_endpoint_url": os.getenv("THOTH_S3_ENDPOINT_URL"),
-        "dgraph_host": os.getenv("GRAPH_SERVICE_HOST"),
-        "amun_api_url": os.getenv("AMUN_API_URL"),
-        "frontend_namespace": os.getenv("THOTH_FRONTEND_NAMESPACE"),
-        "middletier_namespace": os.getenv("THOTH_MIDDLETIER_NAMESPACE"),
-        "backend_namespace": os.getenv("THOTH_BACKEND_NAMESPACE"),
-        "s3_bucket_prefix": os.getenv("THOTH_CEPH_BUCKET_PREFIX"),
-    }
-
-
 def _do_listing(adapter_class, page: int) -> tuple:
     """Perform actual listing of documents available."""
     adapter = adapter_class()
