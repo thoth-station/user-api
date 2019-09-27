@@ -1120,6 +1120,36 @@ paths:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
 
+  /python/packages:
+    get:
+      tags: [PythonPackage]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: list_python_packages
+      summary: >
+        Retrieve information from the Knowledge Graph with regards 
+        to Python Package Names and the number of distinct Versions.
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Page offset in pagination.
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: A list of Python Package Names and the number of distinct Versions.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonPackagesInfoResponse"
+        "400":
+          description: On invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonPackagesInfoResponseError"
+
 components:
   schemas:
     Build:
@@ -1764,6 +1794,30 @@ components:
           type: string
           description: Analyzer logs printed to stdout/stderr as a plain text.
           nullable: true
+        parameters:
+          type: object
+          description: Parameters echoed back to user for debugging.
+    PythonPackagesInfoResponse:
+      type: object
+      required:
+        - name
+        - distinct_versions
+      properties:
+        name:
+          type: string
+          description: Name of a Python Package.
+        distinct_versions:
+          type: integer
+          description: Numbero of distinct Versions of the Python Package.
+    PythonPackagesInfoResponseError:
+      type: object
+      required:
+        - error
+        - parameters
+      properties:
+        error:
+          type: string
+          description: Error information for user.
         parameters:
           type: object
           description: Parameters echoed back to user for debugging.
