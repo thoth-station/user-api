@@ -1126,7 +1126,7 @@ paths:
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: list_python_packages
       summary: >
-        Retrieve information from the Knowledge Graph with regards 
+        Retrieve information from the Knowledge Graph with regards
         to Python Package Names and the number of distinct Versions.
       parameters:
         - name: page
