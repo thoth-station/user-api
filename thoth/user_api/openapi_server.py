@@ -32,6 +32,7 @@ from prometheus_flask_exporter import PrometheusMetrics
 
 from thoth.common import datetime2datetime_str
 from thoth.common import init_logging
+from thoth.storages import GraphDatabase
 from thoth.user_api import __version__
 from thoth.user_api.configuration import Configuration
 from thoth.user_api.configuration import init_jaeger_tracer
@@ -95,6 +96,8 @@ def api_v1():
 
 
 def _healthiness():
+    graph = GraphDatabase()
+    graph.connect()
     return jsonify({"status": "ready", "version": __version__}), 200, {"ContentType": "application/json"}
 
 
