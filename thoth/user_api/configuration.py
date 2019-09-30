@@ -30,17 +30,18 @@ _LOGGER = logging.getLogger(__name__)
 class Configuration:
     """Configuration of user-facing API service."""
 
-    APP_SECRET_KEY = os.environ['THOTH_USER_API_APP_SECRET_KEY']
+    APP_SECRET_KEY = os.environ["THOTH_USER_API_APP_SECRET_KEY"]
     SWAGGER_YAML_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../openapi")
-    SKOPEO_BIN_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'bin', 'skopeo')
-    THOTH_RESULT_API_URL = os.environ['THOTH_RESULT_API_URL']
-    THOTH_ADVISER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/adviser-result'
-    THOTH_ANALYZER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/analysis-result'
-    THOTH_PROVENANCE_CHECKER_OUTPUT = THOTH_RESULT_API_URL + '/api/v1/provenance-checker-result'
-    THOTH_MIDDLETIER_NAMESPACE = os.environ['THOTH_MIDDLETIER_NAMESPACE']
-    THOTH_BACKEND_NAMESPACE = os.environ['THOTH_BACKEND_NAMESPACE']
+    SKOPEO_BIN_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "bin", "skopeo")
+    THOTH_RESULT_API_URL = os.environ["THOTH_RESULT_API_URL"]
+    THOTH_ADVISER_OUTPUT = THOTH_RESULT_API_URL + "/api/v1/adviser-result"
+    THOTH_ANALYZER_OUTPUT = THOTH_RESULT_API_URL + "/api/v1/analysis-result"
+    THOTH_BUILDLOG_ANALYZER_OUTPUT = THOTH_RESULT_API_URL + "/api/v1/buildlogs-analysis-result"
+    THOTH_PROVENANCE_CHECKER_OUTPUT = THOTH_RESULT_API_URL + "/api/v1/provenance-checker-result"
+    THOTH_MIDDLETIER_NAMESPACE = os.environ["THOTH_MIDDLETIER_NAMESPACE"]
+    THOTH_BACKEND_NAMESPACE = os.environ["THOTH_BACKEND_NAMESPACE"]
     # Give cache 3 hours by default.
-    THOTH_CACHE_EXPIRATION = int(os.getenv('THOTH_CACHE_EXPIRATION', timedelta(hours=3).total_seconds()))
+    THOTH_CACHE_EXPIRATION = int(os.getenv("THOTH_CACHE_EXPIRATION", timedelta(hours=3).total_seconds()))
 
     JAEGER_HOST = os.getenv("JAEGER_HOST", "localhost")
 

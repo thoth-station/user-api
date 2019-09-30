@@ -483,12 +483,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
 
-  /runtime-environment:
+  /run-software-environment:
     get:
       tags: [Image Analysis]
       x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: list_runtime_environments
-      summary: Retrieve a list of runtime environments analyzed.
+      operationId: list_software_environments_for_run
+      summary: Retrieve a list of software environments analyzed for run.
       parameters:
         - name: page
           in: query
@@ -499,7 +499,7 @@ paths:
             default: 0
       responses:
         "200":
-          description: A list of runtime environments.
+          description: A list of software environments for run.
           content:
             application/json:
               schema:
@@ -512,12 +512,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
 
-  /buildtime-environment:
+  /build-software-environment:
     get:
       tags: [Image Analysis]
       x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: list_buildtime_environments
-      summary: Retrieve a list of buildtime environments analyzed.
+      operationId: list_software_environments_for_build
+      summary: Retrieve a list of software environments analyzed for build.
       parameters:
         - name: page
           in: query
@@ -528,7 +528,7 @@ paths:
             default: 0
       responses:
         "200":
-          description: A list of buildtime environments.
+          description: A list of software environments for build.
           content:
             application/json:
               schema:
@@ -540,7 +540,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
 
   /python-package-index:
     get:
@@ -556,6 +555,55 @@ paths:
               schema:
                 $ref: "#/components/schemas/PythonPackageIndexes"
 
+  /runtime-envrionment:
+    get:
+      tags: [Info]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: list_runtime_environments
+      summary: Retrieve a list of supported runtime environments
+      responses:
+        "200":
+          description: A list of supported runtime environments.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - parameters
+                  - runtime_environments
+                properties:
+                  parameters:
+                    type: object
+                    description: Parameters echoed back to user.
+                  runtime_environments:
+                    type: array
+                    items:
+                      type: object
+                      description: Available runtime environment configurations.
+                      required:
+                        - os_name
+                        - os_version
+                        - python_version
+                      properties:
+                        os_name:
+                          type: string
+                          description: Name of the operating system which is supported.
+                          example: ubi
+                        os_version:
+                          type: string
+                          description: Version of the operating system which is supported.
+                          example: "8"
+                        python_version:
+                          type: string
+                          description: Supported Python version.
+                          example: "3.6"
+        "400":
+          description: On invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResponseError"
+
   /info:
     get:
       tags: [Info]
@@ -570,24 +618,24 @@ paths:
               schema:
                 $ref: "#/components/schemas/Info"
 
-  /runtime-environment/analyses/{environment_name}:
+  /run-software-environment/analyses/{environment_name}:
     get:
       tags: [Image Analysis]
       x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: list_runtime_environment_analyses
-      summary: List analyses for the given runtime environment.
+      operationId: list_software_environment_analyses_for_run
+      summary: List analyses for the given software environment for run.
       parameters:
         - name: environment_name
           in: path
           required: true
           description: >
-            Runtime environment name for which analyses should be retrieved.
+            Software environment name for run for which analyses should be retrieved.
           schema:
             format: path
             type: string
       responses:
         "200":
-          description: Listing of analyses for the given runtime environment.
+          description: Listing of analyses for the given software environment for run.
           content:
             application/json:
               schema:
@@ -595,30 +643,30 @@ paths:
                 type: object
         "404":
           description: >
-            The given runtime environment with the provided name was not found.
+            The given software environment for run with the provided name was not found.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
 
-  /buildtime-environment/analyses/{environment_name}:
+  /build-software-environment/analyses/{environment_name}:
     get:
       tags: [Image Analysis]
       x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: list_buildtime_environment_analyses
-      summary: List analyses for the given buildtime environment.
+      operationId: list_software_environment_analyses_for_build
+      summary: List analyses for the given software environment for build.
       parameters:
         - name: environment_name
           in: path
           required: true
           description: >
-            Buildtime environment name for which analyses should be retrieved.
+            Software environment name for build for which analyses should be retrieved.
           schema:
             format: path
             type: string
       responses:
         "200":
-          description: Listing of analyses for the given buildtime environment.
+          description: Listing of analyses for the given software environment for build.
           content:
             application/json:
               schema:
@@ -626,7 +674,7 @@ paths:
                 type: object
         "404":
           description: >
-            The given buildtime environment with the provided name was not found.
+            The given software environment for build with the provided name was not found.
           content:
             application/json:
               schema:
@@ -779,7 +827,7 @@ paths:
       tags: [Advise]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_advise_python_status
-      summary: Show status of an adviser computing recomemendations.
+      summary: Show status of an adviser computing recommendations.
       parameters:
         - name: analysis_id
           in: path
@@ -812,7 +860,7 @@ paths:
       tags: [Advise]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_advise_python
-      summary: Get computeted adviser result based on its id.
+      summary: Get computed adviser result based on its id.
       parameters:
         - name: analysis_id
           in: path
@@ -847,29 +895,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
-  /parse-log:
-    post:
-      tags: [Buildlogs]
-      x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: parse_log
-      summary: >
-        Parse Docker build log or installation log and show installed packages.
-      requestBody:
-        required: true
-        description: A full log.
-        content:
-          application/json:
-            schema:
-              x-body-name: log_info
-              $ref: "#/components/schemas/Log"
-      responses:
-        "200":
-          description: Successful response.
-        "400":
-          description: On invalid request.
-        "401":
-          description: Invalid authorization secret.
 
   /buildlog:
     post:
@@ -931,8 +956,245 @@ paths:
         "404":
           description: The given build log does not exist.
 
+  /kebechet:
+    post:
+      tags: [Kebechet]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: schedule_kebechet
+      summary: Schedule kebechet instance from webhook
+      requestBody:
+        required: true
+        description: Body of a git service webhook
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: Invalid
+        "501":
+          description: Functionality not supported
+
+  /build-analysis:
+    post:
+      tags: [Build Analysis]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: post_build
+      summary: Analyze the given build imagestream and log.
+      requestBody:
+        required: true
+        description: Fill up the Build details such as output imagestream, base imagestream, and build log.
+        content:
+          application/json:
+            schema:
+              x-body-name: build_detail
+              $ref: "#/components/schemas/Build"
+      parameters:
+        - name: registry_user
+          in: query
+          required: false
+          description: >
+            Registry user to be used for pulling images from registry.
+          schema:
+            type: string
+        - name: registry_password
+          in: query
+          required: false
+          description: >
+            Registry password or token to be used for pulling images from
+            registry.
+          schema:
+            type: string
+        - name: environment_type
+          in: query
+          required: false
+          description: >
+            Type of environment (runtime or buildtime) which is being analyzed.
+          schema:
+            type: string
+            enum:
+              - buildtime
+              - runtime
+            default: runtime
+        - name: origin
+          in: query
+          required: false
+          description: >
+            A remote where the image is being used. This is used for tracking as well as
+            for automated reporting when results are available.
+          schema:
+            type: string
+        - name: debug
+          in: query
+          required: false
+          description: >
+            Run the given analyzer in a verbose mode so developers can debug
+            analyzer.
+          schema:
+            type: boolean
+            default: false
+        - name: registry_verify_tls
+          in: query
+          required: false
+          description: >
+            Verify TLS certificates of registry from where images are
+            pulled from.
+          schema:
+            type: boolean
+            default: true
+        - name: force
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+          description: >
+            Do not use cached results, always run analysis.
+      responses:
+        "202":
+          description: Successful response with analyzer id.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuildAnalysisResponse"
+        "400":
+          description: On invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuildAnalysisResponseError"
+
+  /buildlog-analyze:
+    get:
+      tags: ["Buildlogs"]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: list_buildlog_analyze
+      summary: Retrieve a list of document ids for build analyzer results.
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Page offset in pagination.
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: A list of build analyzer results available.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisListingResponse"
+        "400":
+          description: On invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResponseError"
+
+  /buildlog-analyze/{analysis_id}:
+    get:
+      tags: ["Buildlogs"]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: get_buildlog_analyze
+      summary: Retrieve a build analyzer result.
+      parameters:
+        - name: analysis_id
+          in: path
+          required: true
+          description: Id of analysis that results should be retrieved.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Build Analyzer result retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResultResponse"
+        "202":
+          description: Results are not ready yet.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisUnfinishedResultResponse"
+        "400":
+          description: On invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResponseError"
+        "404":
+          description: The given document does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResponseError"
+
 components:
   schemas:
+    Build:
+      type: object
+      properties:
+        base_image:
+          type: string
+          nullable: true
+          description: >
+            Name of base image used by the s2i build.
+          example: >
+            registry.centos.org/centos/python-36-centos7
+        output_image:
+          type: string
+          nullable: true
+          description: >
+            Name of output image - can also specify remote registry to pull
+            image from.
+          example: >
+            registry.centos.org/centos/python-36-centos7
+        build_log:
+          type: object
+          description: >
+            A full build details along with the log.
+          properties:
+            log:
+              type: string
+              nullable: true
+              description: >
+                A full build or installation log that was output during image build.
+              example: >
+                Collecting tensorflow
+                Downloading tensorflow-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (41.2MB)
+                Successfully installed tensorflow-1.4.1
+            apiversion:
+              type: string
+              nullable: true
+              description: >
+                BuildLog api version.
+              example: >
+                "apis/build.openshift.io/v1/namespaces/$NAMESPACE/builds HTTP/1.1"
+            kind:
+              type: string
+              nullable: true
+              description: >
+                Type of log.
+              example: >
+                "BuildLog"
+            metadata:
+              type: string
+              nullable: true
+              properties:
+                annotations:
+                  type: string
+                  properties:
+                    buildlog.thoth-station.ninja/corresponding-build-configuration:
+                      type: string
+                      description: >
+                        Contains all particulars about the build log.
+                      example: >
+                        "apiVersion:build.openshift.io/v1"
     Log:
       type: object
       required:
@@ -970,13 +1232,13 @@ components:
                     Contains all particulars about the build log.
                   example: >
                     "apiVersion:build.openshift.io/v1"
-    PythonStack: &pythonStack
+    PythonStack:
       type: object
       required:
         - "requirements"
         - "requirements_lock"
       properties:
-        requirements: &pythonRequiremnets
+        requirements:
           type: string
           minLength: 1
           description: Direct dependencies for the application stack.
@@ -990,7 +1252,7 @@ components:
             daiquiri = "*"
 
             [dev-packages]
-        requirements_lock: &pythonRequirementsLock
+        requirements_lock:
           type: string
           description: Fully pinned down dependency stack.
           example: '{
@@ -1030,35 +1292,52 @@ components:
             - pipenv
             - requirements
           example: pipenv
-    RuntimeEnvironment: &runtimeEnvironment
+    RuntimeEnvironment:
       type: object
       description: Runtime environment description, see Thamos configuration for more info.
       properties:
         hardware:
           type: object
+          description: Hardware configuration used.
         operating_system:
           type: object
+          description: Operating system used.
         python_version:
           type: string
           example: "3.6"
+          description: Python version on which the application runs on.
         cuda_version:
           type: string
           example: "9.0"
+          description: Nvidia CUDA version which the application uses.
         name:
           type: string
           example: "fedora:29-prod"
+          description: User defined name of the runtime environment.
+        ipython:
+          type: object
+          description: >
+            Additional information captured when recommendations were requested for Jupyter Notebook environments.
     AdviseInput:
       type: object
       required:
         - application_stack
       properties:
         application_stack:
-          <<: *pythonStack
+          $ref: "#/components/schemas/PythonStack"
         runtime_environment:
-          <<: *runtimeEnvironment
+          $ref: "#/components/schemas/RuntimeEnvironment"
         library_usage:
           type: object
           description: Static analysis of libraries used within user's project.
+          required:
+            - version
+            - report
+          properties:
+            version:
+              type: string
+            report:
+              type: object
     ImageMetadataResponse:
       type: object
       description: Response information with image metadata.
@@ -1114,6 +1393,62 @@ components:
         - architecture
         - os
         - layers
+    BuildAnalysisResponse:
+      type: object
+      description: Response for a submitted build analysis.
+      properties:
+        base_image_analysis:
+          type: object
+          description: Response for a submitted analysis.
+          properties:
+            analysis_id:
+              type: string
+              description: >
+                An id of submitted analysis for checking its status and its results.
+            parameters:
+              type: object
+              description: >
+                Parameters echoed back to user (with default parameters if omitted).
+            cached:
+              type: boolean
+              description: >
+                If set to true the given analysis was picked from cache.
+        output_image_analysis:
+          type: object
+          description: Response for a submitted analysis.
+          properties:
+            analysis_id:
+              type: string
+              description: >
+                An id of submitted analysis for checking its status and its results.
+            parameters:
+              type: object
+              description: >
+                Parameters echoed back to user (with default parameters if omitted).
+            cached:
+              type: boolean
+              description: >
+                If set to true the given analysis was picked from cache.
+        build_log_analysis:
+          type: object
+          description: Response for a submitted analysis.
+          properties:
+            analysis_id:
+              type: string
+              description: >
+                An id of submitted analysis for checking its status and its results.
+            parameters:
+              type: object
+              description: >
+                Parameters echoed back to user (with default parameters if omitted).
+            cached:
+              type: boolean
+              description: >
+                If set to true the given analysis was picked from cache.
+      required:
+        - base_image_analysis
+        - output_image_analysis
+        - build_log_analysis
     AnalysisResponse:
       type: object
       description: Response for a submitted analysis.
@@ -1199,6 +1534,41 @@ components:
             type: boolean
             description: Use secured connection to warehouse.
             example: true
+    BuildAnalysisResponseError:
+      type: object
+      description: Error Response for a submitted build analysis.
+      properties:
+        base_image_analysis:
+          type: object
+          properties:
+            error:
+              type: string
+              description: Error information for user.
+            parameters:
+              type: object
+              description: Parameters echoed back to user for debugging.
+        output_image_analysis:
+          type: object
+          properties:
+            error:
+              type: string
+              description: Error information for user.
+            parameters:
+              type: object
+              description: Parameters echoed back to user for debugging.
+        build_log_analysis:
+          type: object
+          properties:
+            error:
+              type: string
+              description: Error information for user.
+            parameters:
+              type: object
+              description: Parameters echoed back to user for debugging.
+      required:
+        - base_image_analysis
+        - output_image_analysis
+        - build_log_analysis
     AnalysisResponseError:
       type: object
       required:
@@ -1290,6 +1660,7 @@ components:
               type: string
               description: Pod name where the analysis was done.
             python:
+              type: object
               required:
                 - api_version
                 - implementation_name
@@ -1334,7 +1705,7 @@ components:
         parameters:
           type: object
           description: Parameters echoed back to user.
-    AnalysisStatusResponse: &analysisStatus
+    AnalysisStatusResponse:
       type: object
       description: Information about the current analysis status.
       required:
@@ -1396,7 +1767,7 @@ components:
           type: object
           description: Parameters echoed back to user for debugging.
         status:
-          <<: *analysisStatus
+          $ref: "#/components/schemas/AnalysisStatusResponse"
     AnalysisLogResponse:
       type: object
       required:

@@ -32,6 +32,7 @@ from prometheus_flask_exporter import PrometheusMetrics
 
 from thoth.common import datetime2datetime_str
 from thoth.common import init_logging
+from thoth.storages import GraphDatabase
 from thoth.user_api import __version__
 from thoth.user_api.configuration import Configuration
 from thoth.user_api.configuration import init_jaeger_tracer
@@ -66,29 +67,26 @@ application = app.app
 Configuration.tracer = init_jaeger_tracer("user_api")
 
 # create metrics and manager
-metrics = PrometheusMetrics(application)
+metrics = PrometheusMetrics(application, group_by="endpoint")
 manager = Manager(application)
 
 # Needed for session.
 application.secret_key = Configuration.APP_SECRET_KEY
 
 # static information as metric
-metrics.info("management_api_info", "User API info", version=__version__)
+metrics.info("user_api_info", "User API info", version=__version__)
 
 
 @app.route("/")
-@metrics.do_not_track()
 def base_url():
     """Redirect to UI by default."""
     return redirect("api/v1/ui")
 
 
 @app.route("/api/v1")
-@metrics.do_not_track()
 def api_v1():
     """Provide a listing of all available endpoints."""
     paths = []
-
     for rule in application.url_map.iter_rules():
         rule = str(rule)
         if rule.startswith("/api/v1"):
@@ -98,18 +96,18 @@ def api_v1():
 
 
 def _healthiness():
+    graph = GraphDatabase()
+    graph.connect()
     return jsonify({"status": "ready", "version": __version__}), 200, {"ContentType": "application/json"}
 
 
 @app.route("/readiness")
-@metrics.do_not_track()
 def api_readiness():
     """Report readiness for OpenShift readiness probe."""
     return _healthiness()
 
 
 @app.route("/liveness")
-@metrics.do_not_track()
 def api_liveness():
     """Report liveness for OpenShift readiness probe."""
     return _healthiness()
@@ -138,6 +136,13 @@ def internal_server_error(exc):
         ),
         500,
     )
+
+
+@application.after_request
+def apply_headers(response):
+    """Add headers to each response."""
+    response.headers["X-Thoth-Version"] = __version__
+    return response
 
 
 if __name__ == "__main__":

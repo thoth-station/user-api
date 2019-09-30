@@ -1,11 +1,19 @@
-host: khemenu.thoth-station.ninja
+host: 'khemenu.thoth-station.ninja'
 tls_verify: false
 requirements_format: pipenv
 
 runtime_environments:
-  - name: centos:7
+  - name: 'ubi:8'
     operating_system:
-      name: centos
-      version: "7"
-    python_version: "3.6"
-    recommendation_type: latest
+      name: 'ubi'
+      version: '8'
+    python_version: '3.6'
+    recommendation_type: STABLE
+
+managers:
+  - name: thoth-advise
+    configuration:
+      labels: [bot, kebechet]
+  - name: thoth-provenance
+    configuration:
+      labels: [bot, kebechet]
