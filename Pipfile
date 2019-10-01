@@ -21,6 +21,7 @@ thoth-analyzer = "*"
 thoth-common = "*"
 thoth-python = "*"
 thoth-storages = "*"
+flask-cors = "*"
 
 [pipenv]
 allow_prereleases = false
