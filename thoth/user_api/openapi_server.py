@@ -51,7 +51,7 @@ _LOGGER.debug("DEBUG mode is enabled!")
 # Expose for uWSGI.
 app = connexion.FlaskApp(__name__, specification_dir=Configuration.SWAGGER_YAML_PATH, debug=True)
 
-#Add Cross Origin Request Policy to all
+# Add Cross Origin Request Policy to all
 CORS(app.app)
 
 app.add_api(
