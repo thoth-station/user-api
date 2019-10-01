@@ -537,15 +537,18 @@ def schedule_kebechet(body: dict):
     headers = connexion.request.headers
     if "X-GitHub-Event" in headers:
         service = "github"
-        url = body["repository"]["html-url"]
+        url = body.get("repository", {}).get("html-url")
     elif "X_GitLab_Event" in headers:
         service = "gitlab"
-        url = body["repository"]["homepage"]
+        url = body.get("repository", {}).get("homepage")
     elif "X_Pagure_Topic" in headers:
         service = "pagure"
         return {"error": "Pagure is currently not supported"}, 501
     else:
         return {"error": "This webhook is not supported"}, 501
+
+    if url is None:
+        return {"error", f"Failed to parse webhook payload for service {service!r}"}, 501
 
     parameters = {"service": service, "url": url}
     return _do_schedule(parameters, _OPENSHIFT.schedule_kebechet_run_url)
@@ -554,21 +557,6 @@ def schedule_kebechet(body: dict):
 def list_buildlogs(page: int = 0):
     """List available build logs."""
     return _do_listing(BuildLogsStore, page)
-
-
-def get_info():
-    """Get information about Thoth deployment."""
-    return {
-        "deployment_name": os.getenv("THOTH_DEPLOYMENT_NAME"),
-        "version:": os.getenv("OPENSHIFT_BUILD_REFERENCE", "@dev"),
-        "s3_endpoint_url": os.getenv("THOTH_S3_ENDPOINT_URL"),
-        "dgraph_host": os.getenv("GRAPH_SERVICE_HOST"),
-        "amun_api_url": os.getenv("AMUN_API_URL"),
-        "frontend_namespace": os.getenv("THOTH_FRONTEND_NAMESPACE"),
-        "middletier_namespace": os.getenv("THOTH_MIDDLETIER_NAMESPACE"),
-        "backend_namespace": os.getenv("THOTH_BACKEND_NAMESPACE"),
-        "s3_bucket_prefix": os.getenv("THOTH_CEPH_BUCKET_PREFIX"),
-    }
 
 
 def _do_listing(adapter_class, page: int) -> tuple:
