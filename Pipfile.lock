@@ -61,17 +61,17 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:0895805810df8cc49898fbeb61479c20c63a59fb6d3adf19f78fde90efec10a2",
-                "sha256:2f174f1e01d898ed940677a66404b7d30cbe92665b1fa2a5086eb64382ce2c41"
+                "sha256:60e711f1113be926bcec1cfe62fa336438d021ce834f4a5228beead3b4bc5142",
+                "sha256:8c9b9b2422c1baa84c0f331ee86ac4d265e1e7d321ce7ba58dbb863585c2191f"
             ],
-            "version": "==1.9.240"
+            "version": "==1.9.241"
         },
         "botocore": {
             "hashes": [
-                "sha256:040f5307387481501bf2db02dc55c6512553081b43642578687fc47ed8ec990b",
-                "sha256:7d30b4cc9546a126ccdc9d325a1c02d7f63ff3759b80c9e1f15fd544785e22a1"
+                "sha256:897415ec68b2cbb65a7d32965c456d332bb2eb936e533c9ad6064cd15e67c0c1",
+                "sha256:e35c2e6b8946be9063d7988b19dea2b6136b80c0e3469b6a076c574d5abca6b3"
             ],
-            "version": "==1.12.240"
+            "version": "==1.12.241"
         },
         "cachetools": {
             "hashes": [
@@ -516,11 +516,11 @@
         },
         "opentracing-instrumentation": {
             "hashes": [
-                "sha256:2f0dbf4dcbb405d69cf1a479455e02dc5ca9f5bed5a5783d43de6fadd4fcc662",
-                "sha256:744d30178d8cfda08b859a8b79f8f41698d8170da5dd87c7d07c5bccbf53a0df"
+                "sha256:918b1f52e3db035002bb26a366bb6cbaea9715d567015ce9f514e08047f84185",
+                "sha256:a8fb8499c6ab71665313c179e327b406bfa09b0277bd7cb02b2941eaa659d8dd"
             ],
             "index": "pypi",
-            "version": "==3.2.0"
+            "version": "==3.2.1"
         },
         "packaging": {
             "hashes": [
