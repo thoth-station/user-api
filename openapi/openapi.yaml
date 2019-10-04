@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   title: Thoth User API
-  version: "0.4.0"
+  version: "0.6.0-dev"
 servers:
   - url: "/api/v1"
 paths:
@@ -1175,8 +1175,8 @@ components:
                 annotations:
                   type: string
                   properties:
-                    buildlog.thoth-station.ninja/corresponding-build-configuration:
-                      type: string
+                    ? buildlog.thoth-station.ninja/corresponding-build-configuration
+                    : type: string
                       description: >
                         Contains all particulars about the build log.
                       example: >

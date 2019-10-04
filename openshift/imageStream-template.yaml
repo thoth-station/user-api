@@ -5,8 +5,8 @@ metadata:
   annotations:
     description: >
       This is User API ImageStream, this template is meant to be used by Bots, but could also be used by humans...
-    openshift.io/display-name: 'Thoth Core: User API'
-    version: 0.5.0
+    openshift.io/display-name: "Thoth Core: User API"
+    version: 0.6.0-dev
     tags: poc,thoth,user-api,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
@@ -33,4 +33,4 @@ parameters:
     displayName: ImageStream Tag
     required: true
     name: IMAGE_STREAM_TAG
-    value: 'latest'
+    value: "latest"

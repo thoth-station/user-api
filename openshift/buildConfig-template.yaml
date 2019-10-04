@@ -6,8 +6,8 @@ metadata:
     description: >
       This is Thoth User API BuildConfig, this template is meant to be used by
       Bots, but could also be used by humans...
-    openshift.io/display-name: 'Thoth Core: User API BuildConfig'
-    version: 0.4.2
+    openshift.io/display-name: "Thoth Core: User API BuildConfig"
+    version: 0.6.0-dev
     tags: thoth,thoth-user-api,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
@@ -54,11 +54,11 @@ objects:
             name: s2i-thoth-ubi8-py36:latest
           env:
             - name: ENABLE_PIPENV
-              value: '1'
+              value: "1"
             - name: UPGRADE_PIP_TO_LATEST
-              value: ''
+              value: ""
             - name: WEB_CONCURRENCY
-              value: '4'
+              value: "4"
             - name: "THOTH_DRY_RUN"
               value: "1"
             - name: "THOTH_ADVISE"
@@ -84,17 +84,17 @@ parameters:
     displayName: Git Repository
     required: true
     name: GITHUB_URL
-    value: 'https://github.com/thoth-station/user-api'
+    value: "https://github.com/thoth-station/user-api"
 
   - description: Git reference to be used for Thoth's User API
     displayName: Git Reference
     required: true
     name: GITHUB_REF
-    value: 'master'
+    value: "master"
 
   - description: >
       Tag of the output ImageStream the resulting container image should go to
     displayName: ImageStream Tag
     required: true
     name: IMAGE_STREAM_TAG
-    value: 'latest'
+    value: "latest"
