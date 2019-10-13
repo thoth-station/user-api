@@ -1122,7 +1122,7 @@ paths:
 
   /python/packages:
     get:
-      tags: [PythonPackage]
+      tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: list_python_packages
       summary: >
@@ -1798,17 +1798,17 @@ components:
           type: object
           description: Parameters echoed back to user for debugging.
     PythonPackagesInfoResponse:
-      type: object
+      type: array
       required:
         - name
-        - distinct_versions
+        - versions
       properties:
         name:
           type: string
           description: Name of a Python Package.
-        distinct_versions:
+        versions:
           type: integer
-          description: Numbero of distinct Versions of the Python Package.
+          description: Number of distinct Versions of the Python Package.
     PythonPackagesInfoResponseError:
       type: object
       required:

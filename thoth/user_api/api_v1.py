@@ -575,14 +575,20 @@ def get_info():
     }
 
 
-def list_python_packages():
+def list_python_packages(page: int = 0):
     """
     Retrieve information from the Knowledge Graph.
 
     This will include Python Package Names and the number
-    of distinct and analysed Versions.
+    of distinct and solved Versions.
     """
-    return
+    graph = GraphDatabase()
+    graph.connect()
+
+    package_versions = [
+        {name: len(versions)} for name, versions in graph.get_python_packages_all_versions().items()
+    ]
+    return package_versions
 
 
 def _do_listing(adapter_class, page: int) -> tuple:
