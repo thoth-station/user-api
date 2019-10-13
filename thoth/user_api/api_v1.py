@@ -586,7 +586,9 @@ def list_python_packages(page: int = 0):
     graph.connect()
 
     package_versions = [
-        {name: len(versions)} for name, versions in graph.get_python_packages_all_versions().items()
+        {name: len(versions)} for name, versions in graph.get_python_packages_all_versions(
+            count=PAGINATION_SIZE,
+            start_offset=page*PAGINATION_SIZE).items()
     ]
     return package_versions
 
