@@ -1120,6 +1120,50 @@ paths:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
 
+  /python/package/metadata:
+    get:
+      tags: [PythonPackageMetadata]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: get_package_metadata
+      summary: >
+        Retrieve metadata relative to a Python Package
+        from the Knowledge Graph.
+      parameters:
+        - name: name
+          in: query
+          required: true
+          description: Name of the Python Package.
+          schema:
+            type: string
+            default: "tensorflow"
+        - name: version
+          in: query
+          required: true
+          description: Version of the Python Package.
+          schema:
+            type: string
+            default: "2.0.0"
+        - name: index
+          in: query
+          required: true
+          description: Index url of the Python Package.
+          schema:
+            type: string
+            default: "https://pypi.org/simple"
+      responses:
+        "200":
+          description: A dict with metadata relative to the Python Package requested.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonPackagesMetadataResponse"
+        "400":
+          description: On invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonPackageMetadataResponseError"
+
 components:
   schemas:
     Build:
@@ -1764,6 +1808,103 @@ components:
           type: string
           description: Analyzer logs printed to stdout/stderr as a plain text.
           nullable: true
+        parameters:
+          type: object
+          description: Parameters echoed back to user for debugging.
+    PythonPackageMetadataResponse:
+      type: object
+      required:
+        - author
+        - author_email
+        - classifier
+        - download_url
+        - home_page
+        - keywords
+        - license
+        - maintainer
+        - maintainer_email
+        - metadata_version
+        - name
+        - platform
+        - requires_dist
+        - summary
+        - version
+      properties:
+        author:
+          type: string
+          nullable: true
+          description: A string containing the author’s name.
+        author_email:
+          type: string
+          nullable: true
+          description: A string containing the author’s e-mail address.
+        classifier:
+          type: string
+          nullable: true
+          description: Each entry is a string giving a single classification value for the distribution.
+        download_url:
+          type: string
+          nullable: true
+          description: A string containing the URL from which this version of the distribution can be downloaded.
+        home_page:
+          type: string
+          nullable: true
+          description: A string containing the URL for the distribution’s home page.
+        keywords:
+          type: string
+          nullable: true
+          description: >
+            A list of additional keywords to be used to assist
+            searching for the distribution in a larger catalog.
+        license:
+          type: string
+          nullable: true
+          description: Text indicating the license covering the distribution.
+        maintainer:
+          type: string
+          nullable: true
+          description: >
+            A string containing the maintainer’s name at a minimum;
+            additional contact information may be provided.
+        maintainer_email:
+          type: string
+          nullable: true
+          description: A string containing the maintainer’s e-mail address.
+        metadata_version:
+          type: string
+          nullable: true
+          description: Version of the file format.
+        name:
+          type: string
+          nullable: true
+          description: Name of the distribution.
+        platform:
+          type: string
+          nullable: true
+          description: A Platform specification describing an operating system supported by the distribution.
+        requires_dist:
+          type: string
+          nullable: true
+          description: >
+            Each entry contains a string naming some
+            other distutils project required by this distribution.
+        summary:
+          type: string
+          nullable: true
+          description: A one-line summary of what the distribution does.
+        version:
+          type: string
+          nullable: true
+          description: version of the distribution.
+    PythonPackageMetadataResponseError:
+      type: object
+      required:
+        - error
+        - parameters
+      properties:
+        error:
+          type: string
+          description: Error information for user.
         parameters:
           type: object
           description: Parameters echoed back to user for debugging.

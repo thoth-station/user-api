@@ -563,6 +563,21 @@ def list_buildlogs(page: int = 0):
     return _do_listing(BuildLogsStore, page)
 
 
+def get_package_metadata(
+    name: str,
+    version: str,
+    index: str,
+):
+    """Retrieve metadata for the given package version."""
+    graph = GraphDatabase()
+    graph.connect()
+    return graph.get_python_package_version_metadata(
+        package_name=name,
+        package_version=version,
+        index_url=index
+    )
+
+
 def _do_listing(adapter_class, page: int) -> tuple:
     """Perform actual listing of documents available."""
     adapter = adapter_class()
