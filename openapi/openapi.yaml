@@ -1124,10 +1124,10 @@ paths:
     get:
       tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: list_python_packages
+      operationId: get_python_package_versions_count
       summary: >
         Retrieve information from the Knowledge Graph with regards
-        to Python Package Names and the number of distinct Versions.
+        to Python package names and the number of distinct versions.
       parameters:
         - name: page
           in: query
@@ -1138,7 +1138,10 @@ paths:
             default: 0
       responses:
         "200":
-          description: A list of Python Package Names and the number of distinct Versions.
+          description: A list of Python package names and the number of distinct versions.
+          headers:
+            'X-Pagination-Size':
+               $ref: '#/components/headers/xPaginationSize'
           content:
             application/json:
               schema:
@@ -1798,17 +1801,17 @@ components:
           type: object
           description: Parameters echoed back to user for debugging.
     PythonPackagesInfoResponse:
-      type: array
+      type: object
       required:
         - name
-        - versions
+        - versions_count
       properties:
         name:
           type: string
-          description: Name of a Python Package.
-        versions:
+          description: Name of a Python package.
+        versions_count:
           type: integer
-          description: Number of distinct Versions of the Python Package.
+          description: Number of distinct versions of the Python package.
     PythonPackagesInfoResponseError:
       type: object
       required:
@@ -1821,3 +1824,9 @@ components:
         parameters:
           type: object
           description: Parameters echoed back to user for debugging.
+  headers:
+    xPaginationSize:
+      description: Pagination size.
+      schema:
+        type: integer
+      example: 100
