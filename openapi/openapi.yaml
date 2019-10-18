@@ -1163,6 +1163,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageMetadataResponseError"
+        "404":
+          description: The given record does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonPackageMetadataResponseError"
 
 components:
   schemas:

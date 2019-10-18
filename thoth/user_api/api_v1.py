@@ -569,13 +569,20 @@ def get_package_metadata(
     index: str,
 ):
     """Retrieve metadata for the given package version."""
+    parameters = locals()
     graph = GraphDatabase()
     graph.connect()
-    return graph.get_python_package_version_metadata(
-        package_name=name,
-        package_version=version,
-        index_url=index
-    )
+    try:
+        return graph.get_python_package_version_metadata(
+            package_name=name,
+            package_version=version,
+            index_url=index
+        )
+    except NotFoundError:
+        return {
+            "error": f"No metadata records for package {name!r} in version {version!r} from index {index!r} found",
+            "parameters": parameters,
+        }, 404
 
 
 def _do_listing(adapter_class, page: int) -> tuple:
