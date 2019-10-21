@@ -414,6 +414,30 @@ def list_python_package_indexes():
     return graph.python_package_index_listing()
 
 
+def list_hardware_environments(
+    is_external: bool = False,
+    page: int = 0,
+):
+    """List hardware environments in the graph database."""
+    graph = GraphDatabase()
+    graph.connect()
+    return {
+        "hardware_environments": graph.get_hardware_environments(is_external, page),
+    }
+
+
+def list_software_environments(
+    is_external: bool = False,
+    page: int = 0,
+):
+    """List software environments in the graph database."""
+    graph = GraphDatabase()
+    graph.connect()
+    return {
+        "software_environments": graph.get_software_environments(is_external, page)
+    }
+
+
 def post_build(
     build_detail: dict,
     debug: bool = False,
