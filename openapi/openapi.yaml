@@ -1156,7 +1156,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PythonPackagesMetadataResponse"
+                $ref: "#/components/schemas/PythonPackageMetadataResponse"
         "400":
           description: On invalid request.
           content:
