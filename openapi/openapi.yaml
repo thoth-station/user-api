@@ -634,8 +634,11 @@ paths:
               schema:
                 type: object
                 required:
+                  - parameters
                   - hardware_environments
                 properties:
+                  parameters:
+                    type: object
                   hardware_environments:
                     type: array
                     items:
@@ -735,8 +738,11 @@ paths:
               schema:
                 type: object
                 required:
+                  - parameters
                   - software_environments
                 properties:
+                  parameters:
+                    type: object
                   software_environments:
                     type: array
                     items:

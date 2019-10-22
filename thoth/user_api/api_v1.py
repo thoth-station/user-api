@@ -422,6 +422,10 @@ def list_hardware_environments(
     graph = GraphDatabase()
     graph.connect()
     return {
+        "parameters": {
+            "is_external": False,
+            "page": page,
+        },
         "hardware_environments": graph.get_hardware_environments(is_external, page),
     }
 
@@ -434,7 +438,11 @@ def list_software_environments(
     graph = GraphDatabase()
     graph.connect()
     return {
-        "software_environments": graph.get_software_environments(is_external, page)
+        "parameters": {
+            "is_external": False,
+            "page": page,
+        },
+        "software_environments": graph.get_software_environments(is_external, page),
     }
 
 
