@@ -1835,6 +1835,10 @@ components:
         - requires_dist
         - summary
         - version
+        - requires_python
+        - description_content_type
+        - project_url
+        - provides_extra
       properties:
         author:
           type: string
@@ -1902,6 +1906,22 @@ components:
           type: string
           nullable: true
           description: version of the distribution.
+        requires_python:
+          type: string
+          nullable: true
+          description: Python requirements for the distribution.
+        description_content_type:
+          type: string
+          nullable: true
+          description: Content-Type of description text.
+        project_url:
+          type: string
+          nullable: true
+          description: URL to project.
+        provides_extra:
+          type: string
+          nullable: true
+          description: Provided extra of the distribution.
     PythonPackageMetadataResponseError:
       type: object
       required:
