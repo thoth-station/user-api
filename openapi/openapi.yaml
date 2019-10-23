@@ -1718,10 +1718,10 @@ components:
           type: string
           description: Bucket prefix used when storing results on S3 compatible API (Ceph).
           example: "data/thoth"
-        dgraph_host:
+        knowledge_graph_host:
           type: string
-          description: Dgraph instance to which the deployment talks to.
-          example: "dgraph.thoth-station.ninja"
+          description: Knowledge Graph instance to which the deployment talks to.
+          example: "knowledge_graph_host.thoth-station.ninja"
         amun_api_url:
           type: string
           description: Amun API host to which this deployment talks to (set to null if no Amun deployment is used).
