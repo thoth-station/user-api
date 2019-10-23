@@ -611,14 +611,6 @@ paths:
       operationId: list_hardware_environments
       summary: Retrieve a list of supported hardware environments
       parameters:
-        - name: is_external
-          in: query
-          required: false
-          description: >
-            Get external hardware environments.
-          schema:
-            type: boolean
-            default: false
         - name: page
           in: query
           required: false
@@ -639,6 +631,14 @@ paths:
                 properties:
                   parameters:
                     type: object
+                    description: Parameters set by user.
+                    required:
+                      - page
+                    properties:
+                      page:
+                        type: integer
+                        description: Pagination.
+                        example: 10
                   hardware_environments:
                     type: array
                     items:
@@ -715,14 +715,6 @@ paths:
       operationId: list_software_environments
       summary: Retrieve a list of supported software environments
       parameters:
-        - name: is_external
-          in: query
-          required: false
-          description: >
-            Get external software environments.
-          schema:
-            type: boolean
-            default: false
         - name: page
           in: query
           required: false
@@ -743,6 +735,14 @@ paths:
                 properties:
                   parameters:
                     type: object
+                    description: Parameters set by user.
+                    required:
+                      - page
+                    properties:
+                      page:
+                        type: integer
+                        description: Pagination.
+                        example: 10
                   software_environments:
                     type: array
                     items:
