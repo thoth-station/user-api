@@ -555,7 +555,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/PythonPackageIndexes"
 
-  /runtime-envrionment:
+  /runtime-environment:
     get:
       tags: [Info]
       x-openapi-router-controller: thoth.user_api.api_v1
@@ -597,6 +597,199 @@ paths:
                           type: string
                           description: Supported Python version.
                           example: "3.6"
+        "400":
+          description: On invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResponseError"
+
+  /hardware-environment:
+    get:
+      tags: [Info]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: list_hardware_environments
+      summary: Retrieve a list of supported hardware environments
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Page offset in pagination.
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: A list of supported hardware environments.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - parameters
+                  - hardware_environments
+                properties:
+                  parameters:
+                    type: object
+                    description: Parameters set by user.
+                    required:
+                      - page
+                    properties:
+                      page:
+                        type: integer
+                        description: Pagination.
+                        example: 10
+                  hardware_environments:
+                    type: array
+                    items:
+                      type: object
+                      description: Available hardware environment configurations.
+                      required:
+                        - cpu_cores
+                        - cpu_family
+                        - cpu_model
+                        - cpu_model_name
+                        - cpu_physical_cpus
+                        - cpu_vendor
+                        - gpu_cores
+                        - gpu_memory_size
+                        - gpu_model_name
+                        - gpu_vendor
+                        - ram_size
+                      properties:
+                        cpu_cores:
+                          type: integer
+                          description: Number of cores of the CPU.
+                          example: 2
+                        cpu_family:
+                          type: integer
+                          description: The CPU family.
+                          example: 6
+                        cpu_model:
+                          type: integer
+                          description: The CPU model.
+                          example: 94
+                        cpu_model_name:
+                          type: string
+                          description: The CPU model name.
+                          example: "AMD"
+                        cpu_physical_cpus:
+                          type: integer
+                          description: The CPU physical CPUs.
+                          example: 6
+                        cpu_vendor:
+                          type: integer
+                          description: The CPU vendor.
+                          example: 1
+                        gpu_cores:
+                          type: integer
+                          description: Number of cores of the GPU.
+                          example: 8
+                        gpu_memory_size:
+                          type: integer
+                          description: The GPU memory size.
+                          example: 8
+                        gpu_model_name:
+                          type: string
+                          description: The GPU model name.
+                          example: "NVIDIA"
+                        gpu_vendor:
+                          type: string
+                          description: The GPU vendor.
+                          example: "Gigabyte"
+                        ram_size:
+                          type: integer
+                          description: The RAM size.
+                          example: 16
+        "400":
+          description: On invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResponseError"
+
+  /software-environment:
+    get:
+      tags: [Info]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: list_software_environments
+      summary: Retrieve a list of supported software environments
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Page offset in pagination.
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: A list of supported software environments.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - parameters
+                  - software_environments
+                properties:
+                  parameters:
+                    type: object
+                    description: Parameters set by user.
+                    required:
+                      - page
+                    properties:
+                      page:
+                        type: integer
+                        description: Pagination.
+                        example: 10
+                  software_environments:
+                    type: array
+                    items:
+                      type: object
+                      description: Available software environment configurations.
+                      required:
+                        - cuda_version
+                        - environment_name
+                        - environment_type
+                        - image_name
+                        - image_sha
+                        - os_name
+                        - os_version
+                        - python_version
+                      properties:
+                        cuda_version:
+                          type: string
+                          description: Cuda version.
+                          example: "2.0"
+                        environment_name:
+                          type: string
+                          description: Environment name.
+                          example: "dev"
+                        environment_type:
+                          type: string
+                          description: Environment type.
+                          example: "test"
+                        image_name:
+                          type: string
+                          description: The name of the image.
+                          example: "fedora"
+                        image_sha:
+                          type: string
+                          description: The sha value of the image.
+                          example: "57e3643ff19f018f8a00dfaa6b7e4620e3c1a7a2171fd218425366ec006b3bfe"
+                        os_name:
+                          type: string
+                          description: The operating system name.
+                          example: "Linux"
+                        os_version:
+                          type: string
+                          description: Operating system version.
+                          example: "8.0"
+                        python_version:
+                          type: string
+                          description: Python version.
+                          example: "3.8"
         "400":
           description: On invalid request.
           content:
