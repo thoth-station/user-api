@@ -420,7 +420,7 @@ def list_hardware_environments(page: int = 0,):
     graph.connect()
     return {
         "parameters": {"page": page,},
-        "hardware_environments": graph.get_hardware_environments(is_external, offset=page),
+        "hardware_environments": graph.get_hardware_environments(is_external=False, offset=page),
     }
 
 
@@ -430,7 +430,7 @@ def list_software_environments(page: int = 0,):
     graph.connect()
     return {
         "parameters": {"page": page,},
-        "software_environments": graph.get_software_environments(is_external, offset=page),
+        "software_environments": graph.get_software_environments(is_external=False, offset=page),
     }
 
 
