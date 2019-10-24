@@ -26,7 +26,7 @@ from datetime import datetime
 import connexion
 from connexion.resolver import RestyResolver
 
-from flask import redirect, jsonify
+from flask import redirect, jsonify, request
 from flask_script import Manager
 from prometheus_flask_exporter import PrometheusMetrics
 from flask_cors import CORS
@@ -79,6 +79,20 @@ application.secret_key = Configuration.APP_SECRET_KEY
 
 # static information as metric
 metrics.info("user_api_info", "User API info", version=__version__)
+_API_GAUGE_METRIC = metrics.info("user_api_schema_up2date", "User API schema up2date")
+
+
+@application.before_request
+def before_request_callback():
+    """Callback registered, runs before each request to this service."""
+    method = request.method
+    path = request.path
+
+    # Update up2date metric exposed.
+    if method == "GET" and path == "/metrics":
+        graph = GraphDatabase()
+        graph.connect()
+        _API_GAUGE_METRIC.set(int(graph.is_schema_up2date()))
 
 
 @app.route("/")
@@ -108,6 +122,11 @@ def _healthiness():
 @app.route("/readiness")
 def api_readiness():
     """Report readiness for OpenShift readiness probe."""
+    graph = GraphDatabase()
+    graph.connect()
+    if not graph.is_schema_up2date():
+        raise ValueError("Database schema is not up to date")
+
     return _healthiness()
 
 
