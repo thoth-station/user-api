@@ -28,6 +28,7 @@ from prometheus_flask_exporter import PrometheusMetrics
 from thoth.common import SafeJSONEncoder
 from thoth.common import init_logging
 from thoth.storages import SolverResultsStore
+from thoth.storages import GraphDatabase
 
 import thoth.user_api as thoth_user_api
 
@@ -90,6 +91,11 @@ def _healthiness():
 @metrics.do_not_track()
 def api_readiness():
     """Report readiness for OpenShift readiness probe."""
+    graph = GraphDatabase()
+    graph.connect()
+    if not graph.is_schema_up2date():
+        raise ValueError("Database schema is not up to date")
+
     return _healthiness()
 
 
