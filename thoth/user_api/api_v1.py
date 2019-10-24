@@ -66,11 +66,11 @@ def _compute_digest_params(parameters: dict):
 
 def post_analyze(
     image: str,
-    debug: bool = False,
     registry_user: str = None,
     registry_password: str = None,
     environment_type: str = None,
     origin: str = None,
+    debug: bool = False,
     verify_tls: bool = True,
     force: bool = False,
 ):
