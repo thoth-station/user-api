@@ -21,7 +21,7 @@ from datetime import datetime
 
 import connexion
 
-from flask import redirect, jsonify
+from flask import redirect, jsonify, request
 from flask_script import Manager
 from prometheus_flask_exporter import PrometheusMetrics
 
@@ -53,7 +53,20 @@ manager = Manager(application)
 application.secret_key = Configuration.APP_SECRET_KEY
 
 # static information as metric
-metrics.info("user_api_info", "User API info", version=thoth_user_api.__version__)
+_API_GAUGE_METRIC = metrics.info("user_api_info", "User API info", version=thoth_user_api.__version__)
+
+
+@app.before_request
+def before_request_callback():
+    """Callback registered, runs before each request to this service."""
+    method = request.method
+    path = request.path
+
+    # Update up2date metric exposed.
+    if method == "GET" and path == "/metrics":
+        graph = GraphDatabase()
+        graph.connect()
+        _API_GAUGE_METRIC.set(int(graph.is_schema_up2date()))
 
 
 @app.route("/")
