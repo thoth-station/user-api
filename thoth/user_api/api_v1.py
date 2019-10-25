@@ -79,10 +79,8 @@ def post_analyze(
     force = parameters.pop("force", None)
     # Set default environment type if none provided. As we are serving user's
     # requests, we always analyze external container images.
-    parameters = {
-        "environment_type": parameters["environment_type"] or "runtime",
-        "is_external": True,
-    }
+    parameters["environment_type"] = parameters.get("runtime_environment") or "runtime"
+    parameters["is_external"] = True
 
     # Always extract metadata to check for authentication issues and such.
     metadata = _do_get_image_metadata(
