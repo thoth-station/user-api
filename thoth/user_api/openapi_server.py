@@ -34,6 +34,7 @@ from flask_cors import CORS
 from thoth.common import datetime2datetime_str
 from thoth.common import init_logging
 from thoth.storages import GraphDatabase
+from thoth.storages.exceptions import DatabaseNotInitialized
 from thoth.user_api import __version__
 from thoth.user_api.configuration import Configuration
 from thoth.user_api.configuration import init_jaeger_tracer
@@ -124,8 +125,13 @@ def api_readiness():
     """Report readiness for OpenShift readiness probe."""
     graph = GraphDatabase()
     graph.connect()
-    if not graph.is_schema_up2date():
-        raise ValueError("Database schema is not up to date")
+    try:
+        if not graph.is_schema_up2date():
+            _LOGGER.warning("Database schema is not up to date")
+            return jsonify({"status": "Database schema is not up to date"}), 503, {"ContentType": "application/json"}
+    except DatabaseNotInitialized as exc:
+        _LOGGER.warning("Database schema is not initialized")
+        return jsonify({"status": str(exc)}), 503, {"ContentType": "application/json"}
 
     return _healthiness()
 
