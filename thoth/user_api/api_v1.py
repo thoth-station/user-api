@@ -339,10 +339,7 @@ def list_runtime_environments():
         solver_info = GraphDatabase.parse_python_solver_name(solver_name)
         environments.append(solver_info)
 
-    return {
-        "runtime_environments": environments,
-        "parameters": {}
-    }
+    return {"runtime_environments": environments, "parameters": {}}
 
 
 def list_software_environments_for_build(page: int = 0):
@@ -418,7 +415,7 @@ def list_hardware_environments(page: int = 0):
     graph.connect()
     return {
         "parameters": {"page": page},
-        "hardware_environments": graph.get_hardware_environments(is_external=False, offset=page)
+        "hardware_environments": graph.get_hardware_environments(is_external=False, offset=page),
     }
 
 
@@ -428,7 +425,7 @@ def list_software_environments(page: int = 0):
     graph.connect()
     return {
         "parameters": {"page": page},
-        "software_environments": graph.get_software_environments(is_external=False, offset=page)
+        "software_environments": graph.get_software_environments(is_external=False, offset=page),
     }
 
 
@@ -559,7 +556,7 @@ def schedule_kebechet(body: dict):
     headers = connexion.request.headers
     if "X-GitHub-Event" in headers:
         service = "github"
-        url = body.get("repository", {}).get("html-url")
+        url = body.get("repository", {}).get("html_url")
     elif "X_GitLab_Event" in headers:
         service = "gitlab"
         url = body.get("repository", {}).get("homepage")
@@ -581,26 +578,21 @@ def list_buildlogs(page: int = 0):
     return _do_listing(BuildLogsStore, page)
 
 
-def get_package_metadata(
-    name: str,
-    version: str,
-    index: str,
-):
+def get_package_metadata(name: str, version: str, index: str):
     """Retrieve metadata for the given package version."""
     parameters = locals()
     graph = GraphDatabase()
     graph.connect()
     try:
-        return graph.get_python_package_version_metadata(
-            package_name=name,
-            package_version=version,
-            index_url=index
-        )
+        return graph.get_python_package_version_metadata(package_name=name, package_version=version, index_url=index)
     except NotFoundError:
-        return {
-            "error": f"No metadata records for package {name!r} in version {version!r} from index {index!r} found",
-            "parameters": parameters,
-        }, 404
+        return (
+            {
+                "error": f"No metadata records for package {name!r} in version {version!r} from index {index!r} found",
+                "parameters": parameters,
+            },
+            404,
+        )
 
 
 def _do_listing(adapter_class, page: int) -> tuple:
