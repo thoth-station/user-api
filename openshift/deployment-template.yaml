@@ -5,12 +5,13 @@ metadata:
   annotations:
     description: "Thoth: User API"
     openshift.io/display-name: "Thoth Core: User API"
-    version: 0.9.1
+    version: 0.6.0-dev
     tags: thoth,user-api,ai-stacks,aistacks
     template.openshift.io/documentation-url: https://github.com/Thoth-Station/
     template.openshift.io/long-description: >
       This template defines resources needed to deploy Thoth User API on OpenShift.
     template.openshift.io/provider-display-name: "Red Hat, Inc."
+    thoth-station.ninja/template-version: 0.6.0-dev
   labels:
     template: user-api-deployment
     app: thoth
@@ -39,6 +40,8 @@ objects:
     apiVersion: v1
     metadata:
       name: user-api
+      annotations:
+        thoth-station.ninja/template-version: 0.6.0-dev
       labels:
         app: thoth
         component: user-api
@@ -50,6 +53,8 @@ objects:
   - kind: Route
     apiVersion: route.openshift.io/v1
     metadata:
+      annotations:
+        thoth-station.ninja/template-version: 0.6.0-dev
       labels:
         app: thoth
         component: user-api
@@ -68,6 +73,8 @@ objects:
   - kind: Service
     apiVersion: v1
     metadata:
+      annotations:
+        thoth-station.ninja/template-version: 0.6.0-dev
       labels:
         app: thoth
         component: user-api
@@ -83,6 +90,8 @@ objects:
   - kind: Service
     apiVersion: v1
     metadata:
+      annotations:
+        thoth-station.ninja/template-version: 0.6.0-dev
       labels:
         app: thoth
         component: user-api
@@ -100,6 +109,8 @@ objects:
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
+      annotations:
+        thoth-station.ninja/template-version: 0.6.0-dev
       labels:
         app: thoth
         component: user-api
