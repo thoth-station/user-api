@@ -349,7 +349,7 @@ def list_software_environments_for_build(page: int = 0):
     graph = GraphDatabase()
     graph.connect()
 
-    result = list(sorted(set(graph.build_software_environment_listing(start_offset=page, count=PAGINATION_SIZE))))
+    result = list(sorted(set(graph.get_build_software_environment_all(start_offset=page, count=PAGINATION_SIZE))))
     return (
         {"parameters": parameters, "results": result},
         200,
@@ -365,7 +365,7 @@ def list_software_environment_analyses_for_build(environment_name: str):
     graph.connect()
 
     try:
-        result = graph.build_software_environment_analyses_listing(environment_name, convert_datetime=False)
+        result = graph.get_build_software_environment_analyses_all(environment_name, convert_datetime=False)
     except NotFoundError as exc:
         return {"error": str(exc), "parameters": parameters}, 404
 
@@ -379,7 +379,7 @@ def list_software_environments_for_run(page: int = 0):
     graph = GraphDatabase()
     graph.connect()
 
-    result = list(sorted(set(graph.run_software_environment_listing(start_offset=page, count=PAGINATION_SIZE))))
+    result = list(sorted(set(graph.get_run_software_environment_all(start_offset=page, count=PAGINATION_SIZE))))
     return (
         {"parameters": parameters, "results": result},
         200,
@@ -395,7 +395,7 @@ def list_software_environment_analyses_for_run(environment_name: str):
     graph.connect()
 
     try:
-        result = graph.run_software_environment_analyses_listing(environment_name, convert_datetime=False)
+        result = graph.get_run_software_environment_analyses_all(environment_name, convert_datetime=False)
     except NotFoundError as exc:
         return {"error": str(exc), "parameters": parameters}, 404
 
@@ -406,7 +406,7 @@ def list_python_package_indexes():
     """List registered Python package indexes in the graph database."""
     graph = GraphDatabase()
     graph.connect()
-    return graph.python_package_index_listing()
+    return graph.get_python_package_index_all()
 
 
 def list_hardware_environments(page: int = 0):
@@ -415,7 +415,7 @@ def list_hardware_environments(page: int = 0):
     graph.connect()
     return {
         "parameters": {"page": page},
-        "hardware_environments": graph.get_hardware_environments(is_external=False, start_offset=page),
+        "hardware_environments": graph.get_hardware_environments_all(is_external=False, start_offset=page),
     }
 
 
@@ -425,7 +425,7 @@ def list_software_environments(page: int = 0):
     graph.connect()
     return {
         "parameters": {"page": page},
-        "software_environments": graph.get_software_environments(is_external=False, start_offset=page),
+        "software_environments": graph.get_software_environments_all(is_external=False, start_offset=page),
     }
 
 
