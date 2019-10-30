@@ -79,10 +79,8 @@ def post_analyze(
     force = parameters.pop("force", None)
     # Set default environment type if none provided. As we are serving user's
     # requests, we always analyze external container images.
-    parameters = {
-        "environment_type": parameters["environment_type"] or "runtime",
-        "is_external": True,
-    }
+    parameters["environment_type"] = parameters.get("runtime_environment") or "runtime"
+    parameters["is_external"] = True
 
     # Always extract metadata to check for authentication issues and such.
     metadata = _do_get_image_metadata(
@@ -341,10 +339,7 @@ def list_runtime_environments():
         solver_info = GraphDatabase.parse_python_solver_name(solver_name)
         environments.append(solver_info)
 
-    return {
-        "runtime_environments": environments,
-        "parameters": {}
-    }
+    return {"runtime_environments": environments, "parameters": {}}
 
 
 def list_software_environments_for_build(page: int = 0):
@@ -354,7 +349,7 @@ def list_software_environments_for_build(page: int = 0):
     graph = GraphDatabase()
     graph.connect()
 
-    result = list(sorted(set(graph.build_software_environment_listing(start_offset=page, count=PAGINATION_SIZE))))
+    result = list(sorted(set(graph.get_build_software_environment_all(start_offset=page, count=PAGINATION_SIZE))))
     return (
         {"parameters": parameters, "results": result},
         200,
@@ -370,7 +365,7 @@ def list_software_environment_analyses_for_build(environment_name: str):
     graph.connect()
 
     try:
-        result = graph.build_software_environment_analyses_listing(environment_name, convert_datetime=False)
+        result = graph.get_build_software_environment_analyses_all(environment_name, convert_datetime=False)
     except NotFoundError as exc:
         return {"error": str(exc), "parameters": parameters}, 404
 
@@ -384,7 +379,7 @@ def list_software_environments_for_run(page: int = 0):
     graph = GraphDatabase()
     graph.connect()
 
-    result = list(sorted(set(graph.run_software_environment_listing(start_offset=page, count=PAGINATION_SIZE))))
+    result = list(sorted(set(graph.get_run_software_environment_all(start_offset=page, count=PAGINATION_SIZE))))
     return (
         {"parameters": parameters, "results": result},
         200,
@@ -400,7 +395,7 @@ def list_software_environment_analyses_for_run(environment_name: str):
     graph.connect()
 
     try:
-        result = graph.run_software_environment_analyses_listing(environment_name, convert_datetime=False)
+        result = graph.get_run_software_environment_analyses_all(environment_name, convert_datetime=False)
     except NotFoundError as exc:
         return {"error": str(exc), "parameters": parameters}, 404
 
@@ -411,7 +406,7 @@ def list_python_package_indexes():
     """List registered Python package indexes in the graph database."""
     graph = GraphDatabase()
     graph.connect()
-    return graph.python_package_index_listing()
+    return graph.get_python_package_index_all()
 
 
 def list_hardware_environments(page: int = 0):
@@ -420,7 +415,7 @@ def list_hardware_environments(page: int = 0):
     graph.connect()
     return {
         "parameters": {"page": page},
-        "hardware_environments": graph.get_hardware_environments(is_external=False, offset=page)
+        "hardware_environments": graph.get_hardware_environments_all(is_external=False, start_offset=page),
     }
 
 
@@ -430,7 +425,7 @@ def list_software_environments(page: int = 0):
     graph.connect()
     return {
         "parameters": {"page": page},
-        "software_environments": graph.get_software_environments(is_external=False, offset=page)
+        "software_environments": graph.get_software_environments_all(is_external=False, start_offset=page),
     }
 
 
@@ -561,7 +556,7 @@ def schedule_kebechet(body: dict):
     headers = connexion.request.headers
     if "X-GitHub-Event" in headers:
         service = "github"
-        url = body.get("repository", {}).get("html-url")
+        url = body.get("repository", {}).get("html_url")
     elif "X_GitLab_Event" in headers:
         service = "gitlab"
         url = body.get("repository", {}).get("homepage")
@@ -583,26 +578,21 @@ def list_buildlogs(page: int = 0):
     return _do_listing(BuildLogsStore, page)
 
 
-def get_package_metadata(
-    name: str,
-    version: str,
-    index: str,
-):
+def get_package_metadata(name: str, version: str, index: str):
     """Retrieve metadata for the given package version."""
     parameters = locals()
     graph = GraphDatabase()
     graph.connect()
     try:
-        return graph.get_python_package_version_metadata(
-            package_name=name,
-            package_version=version,
-            index_url=index
-        )
+        return graph.get_python_package_version_metadata(package_name=name, package_version=version, index_url=index)
     except NotFoundError:
-        return {
-            "error": f"No metadata records for package {name!r} in version {version!r} from index {index!r} found",
-            "parameters": parameters,
-        }, 404
+        return (
+            {
+                "error": f"No metadata records for package {name!r} in version {version!r} from index {index!r} found",
+                "parameters": parameters,
+            },
+            404,
+        )
 
 
 def _do_listing(adapter_class, page: int) -> tuple:

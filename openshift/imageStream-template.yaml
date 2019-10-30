@@ -12,6 +12,7 @@ metadata:
     template.openshift.io/long-description: >
       This is User API ImageStream, this template is meant to be used by Bots, but could also be used by humans...
     template.openshift.io/provider-display-name: Red Hat, Inc.
+    thoth-station.ninja/template-version: 0.6.0-dev
   labels:
     template: user-api-imagestream
     app: thoth
@@ -21,6 +22,8 @@ objects:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
     metadata:
+      annotations:
+        thoth-station.ninja/template-version: 0.6.0-dev
       labels:
         app: thoth
         component: user-api

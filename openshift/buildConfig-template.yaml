@@ -14,6 +14,7 @@ metadata:
       This is Thoth User API BuildConfig, this template is meant to be used
       by Bots, but could also be used by humans...
     template.openshift.io/provider-display-name: Red Hat, Inc.
+    thoth-station.ninja/template-version: 0.6.0-dev
   labels:
     template: user-api-buildconfig
     app: thoth
@@ -24,6 +25,8 @@ objects:
     kind: BuildConfig
     metadata:
       name: user-api
+      annotations:
+        thoth-station.ninja/template-version: 0.6.0-dev
       labels:
         app: thoth
         component: user-api
@@ -62,7 +65,7 @@ objects:
             - name: "THOTH_DRY_RUN"
               value: "1"
             - name: "THOTH_ADVISE"
-              value: "1"
+              value: ${THOTH_ADVISE}
             - name: "THAMOS_VERBOSE"
               value: "1"
             - name: "THAMOS_DEBUG"
@@ -98,3 +101,9 @@ parameters:
     required: true
     name: IMAGE_STREAM_TAG
     value: "latest"
+
+  - description: Thamos Advise setup tag value
+    displayName: THOTH_ADVISE
+    required: true
+    name: THOTH_ADVISE
+    value: "1"
