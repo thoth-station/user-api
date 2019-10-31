@@ -255,6 +255,8 @@ objects:
                     secretKeyRef:
                       name: postgresql
                       key: database-name
+                - name: THOTH_API_HTTPS
+                  value: "1"
               ports:
                 - containerPort: 8080
                   protocol: TCP
