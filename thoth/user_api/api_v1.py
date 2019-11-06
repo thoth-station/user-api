@@ -256,9 +256,15 @@ def post_advise_python(
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
     parameters["application_stack"] = parameters["input"].pop("application_stack")
-    # We keep runtime environment in a dict representation so that there are no compatibility issues client/adviser.
-    # The user-api just propagates what was posted to adviser which issues warning in case of configuration issues.
-    parameters["runtime_environment"] = parameters["input"].pop("runtime_environment", None)
+
+    # Always try to parse runtime environment so that we have it available in JSON reports in a unified form.
+    try:
+        parameters["runtime_environment"] = (
+                RuntimeEnvironment.from_dict(parameters["input"].pop("runtime_environment", {})).to_dict()
+        )
+    except Exception as exc:
+        return {"parameters": parameters, "error": f"Failed to parse runtime environment: {str(exc)}"}
+
     parameters["library_usage"] = parameters["input"].pop("library_usage", None)
     parameters.pop("input")
     force = parameters.pop("force", False)
