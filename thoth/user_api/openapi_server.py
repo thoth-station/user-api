@@ -109,7 +109,7 @@ def base_url():
     """Redirect to UI by default."""
     # https://github.com/pallets/flask/issues/773
     request.environ['wsgi.url_scheme'] = 'https' if _THOTH_API_HTTPS else 'http'
-    return redirect("api/v1/ui")
+    return redirect("api/v1/ui/")
 
 
 @app.route("/api/v1")
