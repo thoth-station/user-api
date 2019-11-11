@@ -412,7 +412,7 @@ def list_python_package_indexes():
     """List registered Python package indexes in the graph database."""
     graph = GraphDatabase()
     graph.connect()
-    return graph.get_python_package_index_all()
+    return graph.get_python_package_index_all(enabled=True)
 
 
 def list_hardware_environments(page: int = 0):
