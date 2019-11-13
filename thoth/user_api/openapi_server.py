@@ -74,7 +74,15 @@ application = app.app
 Configuration.tracer = init_jaeger_tracer("user_api")
 
 # create metrics and manager
-metrics = PrometheusMetrics(application, group_by="endpoint")
+metrics = PrometheusMetrics(
+    application,
+    group_by="endpoint",
+    excluded_paths=[
+        "/liveness",
+        "/readiness",
+        "/api/v1/ui",
+        ]
+    )
 manager = Manager(application)
 
 # Needed for session.
