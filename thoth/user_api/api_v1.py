@@ -571,6 +571,28 @@ def list_buildlogs(page: int = 0):
     return _do_listing(BuildLogsStore, page)
 
 
+def get_python_package_versions_count():
+    """Retrieve number of Python package versions in Thoth Knowledge Graph."""
+    from .openapi_server import GRAPH
+    return GRAPH.get_python_package_versions_count_all(
+    )
+
+
+def get_python_package_versions_count_per_package_name(page: int = 0):
+    """Retrieve number of Python package versions per package name in Thoth Knowledge Graph."""
+    from .openapi_server import GRAPH
+    return (
+        GRAPH.get_python_package_versions_all_count(
+            count=PAGINATION_SIZE,
+            start_offset=page*PAGINATION_SIZE),
+        200,
+        {
+            "X-Page": page,
+            "X-Page-Size": PAGINATION_SIZE
+        }
+    )
+
+
 def get_package_metadata(name: str, version: str, index: str):
     """Retrieve metadata for the given package version."""
     parameters = locals()
