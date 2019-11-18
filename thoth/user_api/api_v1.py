@@ -17,7 +17,6 @@
 
 """Implementation of API v1."""
 
-import os
 import hashlib
 from itertools import islice
 import logging
@@ -183,6 +182,7 @@ def get_analyze_status(analysis_id: str):
 def post_provenance_python(application_stack: dict, origin: str = None, debug: bool = False, force: bool = False):
     """Check provenance for the given application stack."""
     parameters = locals()
+    from .openapi_server import GRAPH
 
     try:
         project = Project.from_strings(application_stack["requirements"], application_stack["requirements_lock"])
@@ -191,9 +191,7 @@ def post_provenance_python(application_stack: dict, origin: str = None, debug: b
     except Exception as exc:
         return {"parameters": parameters, "error": "Invalid application stack supplied"}, 400
 
-    graph = GraphDatabase()
-    graph.connect()
-    parameters["whitelisted_sources"] = list(graph.get_python_package_index_urls())
+    parameters["whitelisted_sources"] = list(GRAPH.get_python_package_index_urls())
 
     force = parameters.pop("force", False)
     cached_document_id = _compute_digest_params(
@@ -351,11 +349,9 @@ def list_runtime_environments():
 def list_software_environments_for_build(page: int = 0):
     """List available software environments for build."""
     parameters = locals()
+    from .openapi_server import GRAPH
 
-    graph = GraphDatabase()
-    graph.connect()
-
-    result = list(sorted(set(graph.get_build_software_environment_all(start_offset=page, count=PAGINATION_SIZE))))
+    result = list(sorted(set(GRAPH.get_build_software_environment_all(start_offset=page, count=PAGINATION_SIZE))))
     return (
         {"parameters": parameters, "results": result},
         200,
@@ -366,12 +362,10 @@ def list_software_environments_for_build(page: int = 0):
 def list_software_environment_analyses_for_build(environment_name: str):
     """List analyses for the given software environment for build."""
     parameters = locals()
-
-    graph = GraphDatabase()
-    graph.connect()
+    from .openapi_server import GRAPH
 
     try:
-        result = graph.get_build_software_environment_analyses_all(environment_name, convert_datetime=False)
+        result = GRAPH.get_build_software_environment_analyses_all(environment_name, convert_datetime=False)
     except NotFoundError as exc:
         return {"error": str(exc), "parameters": parameters}, 404
 
@@ -381,11 +375,9 @@ def list_software_environment_analyses_for_build(environment_name: str):
 def list_software_environments_for_run(page: int = 0):
     """List available software environments for run."""
     parameters = locals()
+    from .openapi_server import GRAPH
 
-    graph = GraphDatabase()
-    graph.connect()
-
-    result = list(sorted(set(graph.get_run_software_environment_all(start_offset=page, count=PAGINATION_SIZE))))
+    result = list(sorted(set(GRAPH.get_run_software_environment_all(start_offset=page, count=PAGINATION_SIZE))))
     return (
         {"parameters": parameters, "results": result},
         200,
@@ -396,12 +388,10 @@ def list_software_environments_for_run(page: int = 0):
 def list_software_environment_analyses_for_run(environment_name: str):
     """Get analyses of given software environments for run."""
     parameters = locals()
-
-    graph = GraphDatabase()
-    graph.connect()
+    from .openapi_server import GRAPH
 
     try:
-        result = graph.get_run_software_environment_analyses_all(environment_name, convert_datetime=False)
+        result = GRAPH.get_run_software_environment_analyses_all(environment_name, convert_datetime=False)
     except NotFoundError as exc:
         return {"error": str(exc), "parameters": parameters}, 404
 
@@ -410,28 +400,25 @@ def list_software_environment_analyses_for_run(environment_name: str):
 
 def list_python_package_indexes():
     """List registered Python package indexes in the graph database."""
-    graph = GraphDatabase()
-    graph.connect()
-    return graph.get_python_package_index_all(enabled=True)
+    from .openapi_server import GRAPH
+    return GRAPH.get_python_package_index_all()
 
 
 def list_hardware_environments(page: int = 0):
     """List hardware environments in the graph database."""
-    graph = GraphDatabase()
-    graph.connect()
+    from .openapi_server import GRAPH
     return {
         "parameters": {"page": page},
-        "hardware_environments": graph.get_hardware_environments_all(is_external=False, start_offset=page),
+        "hardware_environments": GRAPH.get_hardware_environments_all(is_external=False, start_offset=page),
     }
 
 
 def list_software_environments(page: int = 0):
     """List software environments in the graph database."""
-    graph = GraphDatabase()
-    graph.connect()
+    from .openapi_server import GRAPH
     return {
         "parameters": {"page": page},
-        "software_environments": graph.get_software_environments_all(is_external=False, start_offset=page),
+        "software_environments": GRAPH.get_software_environments_all(is_external=False, start_offset=page),
     }
 
 
@@ -584,13 +571,34 @@ def list_buildlogs(page: int = 0):
     return _do_listing(BuildLogsStore, page)
 
 
+def get_python_package_versions_count():
+    """Retrieve number of Python package versions in Thoth Knowledge Graph."""
+    from .openapi_server import GRAPH
+    return GRAPH.get_python_package_versions_count_all(
+    )
+
+
+def get_python_package_versions_count_per_package_name(page: int = 0):
+    """Retrieve number of Python package versions per package name in Thoth Knowledge Graph."""
+    from .openapi_server import GRAPH
+    return (
+        GRAPH.get_python_package_versions_all_count(
+            count=PAGINATION_SIZE,
+            start_offset=page*PAGINATION_SIZE),
+        200,
+        {
+            "X-Page": page,
+            "X-Page-Size": PAGINATION_SIZE
+        }
+    )
+
+
 def get_package_metadata(name: str, version: str, index: str):
     """Retrieve metadata for the given package version."""
     parameters = locals()
-    graph = GraphDatabase()
-    graph.connect()
+    from .openapi_server import GRAPH
     try:
-        return graph.get_python_package_version_metadata(package_name=name, package_version=version, index_url=index)
+        return GRAPH.get_python_package_version_metadata(package_name=name, package_version=version, index_url=index)
     except NotFoundError:
         return (
             {
