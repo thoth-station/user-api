@@ -181,9 +181,8 @@ def get_analyze_status(analysis_id: str):
 
 def post_provenance_python(application_stack: dict, origin: str = None, debug: bool = False, force: bool = False):
     """Check provenance for the given application stack."""
-    from .openapi_server import GRAPH
-
     parameters = locals()
+    from .openapi_server import GRAPH
 
     try:
         project = Project.from_strings(application_stack["requirements"], application_stack["requirements_lock"])
@@ -349,8 +348,8 @@ def list_runtime_environments():
 
 def list_software_environments_for_build(page: int = 0):
     """List available software environments for build."""
-    from .openapi_server import GRAPH
     parameters = locals()
+    from .openapi_server import GRAPH
 
     result = list(sorted(set(GRAPH.get_build_software_environment_all(start_offset=page, count=PAGINATION_SIZE))))
     return (
@@ -362,8 +361,8 @@ def list_software_environments_for_build(page: int = 0):
 
 def list_software_environment_analyses_for_build(environment_name: str):
     """List analyses for the given software environment for build."""
-    from .openapi_server import GRAPH
     parameters = locals()
+    from .openapi_server import GRAPH
 
     try:
         result = GRAPH.get_build_software_environment_analyses_all(environment_name, convert_datetime=False)
@@ -375,8 +374,8 @@ def list_software_environment_analyses_for_build(environment_name: str):
 
 def list_software_environments_for_run(page: int = 0):
     """List available software environments for run."""
-    from .openapi_server import GRAPH
     parameters = locals()
+    from .openapi_server import GRAPH
 
     result = list(sorted(set(GRAPH.get_run_software_environment_all(start_offset=page, count=PAGINATION_SIZE))))
     return (
@@ -388,8 +387,8 @@ def list_software_environments_for_run(page: int = 0):
 
 def list_software_environment_analyses_for_run(environment_name: str):
     """Get analyses of given software environments for run."""
-    from .openapi_server import GRAPH
     parameters = locals()
+    from .openapi_server import GRAPH
 
     try:
         result = GRAPH.get_run_software_environment_analyses_all(environment_name, convert_datetime=False)
@@ -574,9 +573,8 @@ def list_buildlogs(page: int = 0):
 
 def get_package_metadata(name: str, version: str, index: str):
     """Retrieve metadata for the given package version."""
-    from .openapi_server import GRAPH
     parameters = locals()
-    parameters.pop("GRAPH")
+    from .openapi_server import GRAPH
     try:
         return GRAPH.get_python_package_version_metadata(package_name=name, package_version=version, index_url=index)
     except NotFoundError:
