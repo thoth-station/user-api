@@ -581,9 +581,15 @@ def get_python_package_versions_count():
 def get_python_package_versions_count_per_package_name(page: int = 0):
     """Retrieve number of Python package versions per package name in Thoth Knowledge Graph."""
     from .openapi_server import GRAPH
-    return GRAPH.get_python_package_versions_all_count(
-        count=PAGINATION_SIZE,
-        start_offset=page*PAGINATION_SIZE
+    return (
+        GRAPH.get_python_package_versions_all_count(
+            count=PAGINATION_SIZE,
+            start_offset=page*PAGINATION_SIZE),
+        200,
+        {
+            "X-Page": page,
+            "X-Page-Size": PAGINATION_SIZE
+        }
     )
 
 

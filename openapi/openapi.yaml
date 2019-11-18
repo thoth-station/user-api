@@ -1336,6 +1336,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackagesInfoResponse"
+          headers:
+            'X-Page':
+              $ref: '#/components/headers/xPage'
+            'X-Page-Size':
+              $ref: '#/components/headers/xPageSize'
         "400":
           description: On invalid request.
           content:
@@ -2194,3 +2199,13 @@ components:
         parameters:
           type: object
           description: Parameters echoed back to user for debugging.
+
+  headers:
+    xPage:
+      schema:
+        type: integer
+        description: Current Page
+    xPageSize:
+      schema:
+        type: integer
+        description: Page Size
