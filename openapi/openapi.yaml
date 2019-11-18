@@ -2068,7 +2068,7 @@ components:
         - count
       properties:
         count:
-          type: int
+          type: integer
           description: Total number of Python packages.
     PythonPackagesCountInfoResponseError:
       type: object
