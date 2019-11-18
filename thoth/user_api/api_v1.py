@@ -576,6 +576,7 @@ def get_package_metadata(name: str, version: str, index: str):
     """Retrieve metadata for the given package version."""
     from .openapi_server import GRAPH
     parameters = locals()
+    parameters.pop("GRAPH")
     try:
         return GRAPH.get_python_package_version_metadata(package_name=name, package_version=version, index_url=index)
     except NotFoundError:
