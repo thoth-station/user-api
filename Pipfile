@@ -23,6 +23,7 @@ thoth-python = "*"
 thoth-storages = "*"
 flask-cors = "*"
 aiocontextvars = "*"
+sentry-sdk = {extras = ["flask"],version = "*"}
 
 [pipenv]
 allow_prereleases = false
