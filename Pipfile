@@ -22,6 +22,7 @@ thoth-common = "*"
 thoth-python = "*"
 thoth-storages = "*"
 flask-cors = "*"
+aiocontextvars = "*"
 
 [pipenv]
 allow_prereleases = false
