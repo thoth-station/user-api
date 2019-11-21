@@ -92,10 +92,24 @@ application.secret_key = Configuration.APP_SECRET_KEY
 metrics.info("user_api_info", "User API info", version=__version__)
 _API_GAUGE_METRIC = metrics.info("user_api_schema_up2date", "User API schema up2date")
 
+
+class _GraphDatabaseWrapper:
+    """A wrapper for lazy graph database adapter handling."""
+
+    _graph = GraphDatabase()
+
+    def __getattr__(self, item):
+        """Connect to the database lazily on first call."""
+        if not self._graph.is_connected():
+            self._graph.connect()
+
+        return getattr(self._graph, item)
+
+
 # Instantiate one GraphDatabase adapter in the whole application (one per wsgi worker) to correctly
-# reuse connection pooling from one instance.
-GRAPH = GraphDatabase()
-GRAPH.connect()
+# reuse connection pooling from one instance. Any call to this wrapper has to be done after the wsgi fork
+# (hence the wrapper logic).
+GRAPH = _GraphDatabaseWrapper()
 
 
 @application.before_request
