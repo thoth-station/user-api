@@ -11,7 +11,6 @@ metadata:
     template.openshift.io/long-description: >
       This template defines resources needed to deploy Thoth User API on OpenShift.
     template.openshift.io/provider-display-name: "Red Hat, Inc."
-    thoth-station.ninja/template-version: 0.6.0-dev
   labels:
     template: user-api-deployment
     app: thoth
@@ -37,7 +36,7 @@ parameters:
 
 objects:
   - kind: Route
-    apiVersion: v1
+    apiVersion: route.openshift.io/v1
     metadata:
       name: user-api
       annotations:
@@ -107,7 +106,7 @@ objects:
         service: stub-api
 
   - kind: DeploymentConfig
-    apiVersion: v1
+    apiVersion: apps.openshift.io/v1
     metadata:
       annotations:
         thoth-station.ninja/template-version: 0.6.0-dev
