@@ -14,11 +14,36 @@ metadata:
       This is Thoth User API BuildConfig, this template is meant to be used
       by Bots, but could also be used by humans...
     template.openshift.io/provider-display-name: Red Hat, Inc.
-    thoth-station.ninja/template-version: 0.6.0-dev
   labels:
     template: user-api-buildconfig
     app: thoth
     component: user-api
+
+parameters:
+  - description: Name of the github repository for Thoth's User API
+    displayName: Git Repository
+    required: true
+    name: GITHUB_URL
+    value: "https://github.com/thoth-station/user-api"
+
+  - description: Git reference to be used for Thoth's User API
+    displayName: Git Reference
+    required: true
+    name: GITHUB_REF
+    value: "master"
+
+  - description: >
+      Tag of the output ImageStream the resulting container image should go to
+    displayName: ImageStream Tag
+    required: true
+    name: IMAGE_STREAM_TAG
+    value: "latest"
+
+  - description: Thamos Advise setup tag value
+    displayName: THOTH_ADVISE
+    required: true
+    name: THOTH_ADVISE
+    value: "1"
 
 objects:
   - apiVersion: build.openshift.io/v1
@@ -81,29 +106,3 @@ objects:
           generic:
             secretReference:
               name: generic-webhook-secret
-
-parameters:
-  - description: Name of the github repository for Thoth's User API
-    displayName: Git Repository
-    required: true
-    name: GITHUB_URL
-    value: "https://github.com/thoth-station/user-api"
-
-  - description: Git reference to be used for Thoth's User API
-    displayName: Git Reference
-    required: true
-    name: GITHUB_REF
-    value: "master"
-
-  - description: >
-      Tag of the output ImageStream the resulting container image should go to
-    displayName: ImageStream Tag
-    required: true
-    name: IMAGE_STREAM_TAG
-    value: "latest"
-
-  - description: Thamos Advise setup tag value
-    displayName: THOTH_ADVISE
-    required: true
-    name: THOTH_ADVISE
-    value: "1"
