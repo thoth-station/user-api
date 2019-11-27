@@ -81,6 +81,7 @@ metrics = PrometheusMetrics(
         "/liveness",
         "/readiness",
         "/api/v1/ui",
+        "/api/v1/openapi",
         ]
     )
 manager = Manager(application)
