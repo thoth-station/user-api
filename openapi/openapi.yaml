@@ -1313,47 +1313,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
 
-  /python/packages:
-    get:
-      tags: [PythonPackages]
-      x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: get_python_package_versions_count_per_package_name
-      summary: >
-        Retrieve information from the Knowledge Graph with regards
-        to Python package names and the number of distinct versions.
-      parameters:
-        - name: page
-          in: query
-          required: false
-          description: Page offset in pagination.
-          schema:
-            type: integer
-            default: 0
-      responses:
-        "200":
-          description: A list of Python package names and the number of distinct versions.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PythonPackagesInfoResponse"
-          headers:
-            'X-Page':
-              $ref: '#/components/headers/xPage'
-            'X-Page-Size':
-              $ref: '#/components/headers/xPageSize'
-        "400":
-          description: On invalid request.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PythonPackagesInfoResponseError"
-        "404":
-          description: The given record does not exist.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PythonPackagesInfoResponseError"
-
   /python/packages/count:
     get:
       tags: [PythonPackages]
@@ -2038,30 +1997,6 @@ components:
         parameters:
           type: object
           description: Parameters echoed back to user for debugging.
-    PythonPackagesInfoResponse:
-      type: object
-      required:
-        - name
-        - versions_count
-      properties:
-        name:
-          type: string
-          description: Name of a Python package.
-        versions_count:
-          type: integer
-          description: Number of distinct versions of the Python package.
-    PythonPackagesInfoResponseError:
-      type: object
-      required:
-        - error
-        - parameters
-      properties:
-        error:
-          type: string
-          description: Error information for user.
-        parameters:
-          type: object
-          description: Parameters echoed back to user for debugging.
     PythonPackagesCountInfoResponse:
       type: object
       required:
@@ -2209,3 +2144,7 @@ components:
       schema:
         type: integer
         description: Page Size
+    xTotalPages:
+      schema:
+        type: integer
+        description: Total Pages
