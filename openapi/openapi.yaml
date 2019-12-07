@@ -905,6 +905,13 @@ paths:
             for automated reporting when results are available.
           schema:
             type: string
+        - name: is_s2i
+          in: query
+          required: false
+          description: >
+            A flag marking the given request coming from an OpenShift's S2I (Source-to-Image) build.
+          schema:
+            type: boolean
         - name: debug
           in: query
           required: false
