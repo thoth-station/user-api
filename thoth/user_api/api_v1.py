@@ -248,6 +248,7 @@ def post_advise_python(
     limit: int = None,
     limit_latest_versions: int = None,
     origin: str = None,
+    is_s2i: bool = None,
     debug: bool = False,
     force: bool = False,
 ):
@@ -294,6 +295,7 @@ def post_advise_python(
             limit_latest_versions=parameters["limit_latest_versions"],
             recommendation_type=recommendation_type,
             origin=origin,
+            is_s2i=is_s2i,
         )
     )
 
