@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Stub
-# Copyright(C) 2019 Christoph Görn
+# Copyright(C) 2019, 2020 Christoph Görn
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
