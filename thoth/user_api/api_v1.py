@@ -258,9 +258,9 @@ def post_advise_python(
 
     # Always try to parse runtime environment so that we have it available in JSON reports in a unified form.
     try:
-        parameters["runtime_environment"] = (
-                RuntimeEnvironment.from_dict(parameters["input"].pop("runtime_environment", {})).to_dict()
-        )
+        parameters["runtime_environment"] = RuntimeEnvironment.from_dict(
+            parameters["input"].pop("runtime_environment", {})
+        ).to_dict()
     except Exception as exc:
         return {"parameters": parameters, "error": f"Failed to parse runtime environment: {str(exc)}"}
 
@@ -501,12 +501,12 @@ def post_buildlog_analyze(log_info: dict, force: bool = False):
             return {"analysis_id": cache_record.pop("analysis_id"), "cached": True, "parameters": parameters}, 202
         except CacheMiss:
             pass
-    # Maybe need to utilize the status code of buillog storage
+    # Maybe need to utilize the status code of buildlog storage
     stored_log_details, status = post_buildlog(log_info=log_info)
     parameters.update(stored_log_details)
     parameters.pop("log_info", None)
     response, status_code = _do_schedule(
-        parameters, _OPENSHIFT.schedule_build_analyze, output=Configuration.THOTH_BUILDLOG_ANALYZER_OUTPUT
+        parameters, _OPENSHIFT.schedule_build_report, output=Configuration.THOTH_BUILDLOG_ANALYZER_OUTPUT
     )
 
     if status_code == 202:
@@ -576,9 +576,7 @@ def list_buildlogs(page: int = 0):
 def get_python_package_versions_count():
     """Retrieve number of Python package versions in Thoth Knowledge Graph."""
     from .openapi_server import GRAPH
-    return {"count": GRAPH.get_python_package_versions_count_all(
-        distinct=True
-    )}
+    return {"count": GRAPH.get_python_package_versions_count_all(distinct=True)}
 
 
 def get_package_metadata(name: str, version: str, index: str):
