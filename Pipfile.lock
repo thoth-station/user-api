@@ -49,10 +49,10 @@
         },
         "amun": {
             "hashes": [
-                "sha256:78730ac705ed0355e817c615626631c5d7118f678c0370662e3b5fd4de1ac8b3",
-                "sha256:9bc4e562305e045393a74f34bffee5a4b87d94fcb02d8a23a69112dbf80b3cbf"
+                "sha256:e59aa7a6ae58ad2ec15df141bda67e911ea3183d1c78472c9106ddc07deb8686",
+                "sha256:ff0ede46ded775c1508b37a8659dc58fae39b595159d11143a856761ccd46b8e"
             ],
-            "version": "==0.3.0"
+            "version": "==0.3.1"
         },
         "argo-workflows": {
             "hashes": [
@@ -901,11 +901,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:50ada8a43f565b5094e16d4de46acdaa8b7b3494fa0186426be1cdda479b93d0",
-                "sha256:7bd16a9dd6be8636be4994fcac1bb031ee3eee9ba6ec681bcfbdc01e4cbe19fa"
+                "sha256:e6833facd5b6f8d40a107f58b7892d585ac166d1cefc19eb272e1413bd9c92d5",
+                "sha256:fc8f21a5076cf338da7c96906aff67395e35525c4f14a76602b1481da16ea2cd"
             ],
             "index": "pypi",
-            "version": "==0.21.4"
+            "version": "==0.21.5"
         },
         "threadloop": {
             "hashes": [
