@@ -49,10 +49,10 @@
         },
         "amun": {
             "hashes": [
-                "sha256:e59aa7a6ae58ad2ec15df141bda67e911ea3183d1c78472c9106ddc07deb8686",
-                "sha256:ff0ede46ded775c1508b37a8659dc58fae39b595159d11143a856761ccd46b8e"
+                "sha256:31562e69bdf02bbd8bfe3dd791cde337b4888036ac8c2656e5f8f60885e88499",
+                "sha256:8c1519a844b8dc61a0aadc3be6a436358acf7df611ed2ec64f6cfff0ea6535c5"
             ],
-            "version": "==0.3.1"
+            "version": "==0.3.2"
         },
         "argo-workflows": {
             "hashes": [
@@ -170,10 +170,10 @@
         },
         "daiquiri": {
             "hashes": [
-                "sha256:471749af8d6cad0ab473243d751d1225bfd6ce4409e28a600a7b7cdc05f45ded",
-                "sha256:f9999bd9f7a1c9177a2592726d53e2ea0ed4ca87b27a3201b27354a0d5d66cd7"
+                "sha256:6b235ed15b73b87fd3cc2521aacbb727bf8443a0896dc534b07503841d03cfdb",
+                "sha256:d57b9fd5432933c6e899054eb62cee22eab89f560c8493254d327ec27893c866"
             ],
-            "version": "==1.6.1"
+            "version": "==2.0.0"
         },
         "delegator.py": {
             "hashes": [
@@ -736,6 +736,12 @@
             ],
             "version": "==1.0.4"
         },
+        "python-json-logger": {
+            "hashes": [
+                "sha256:b7a31162f2a01965a5efb94453ce69230ed208468b0bbc7fdfc56e6d8df2e281"
+            ],
+            "version": "==0.1.11"
+        },
         "python-string-utils": {
             "hashes": [
                 "sha256:05d24a8d884b629b534af992dc1f35dc4de4c73678ffdffa0efcbe667058af1f"
@@ -877,11 +883,11 @@
         },
         "thoth-analyzer": {
             "hashes": [
-                "sha256:22968662fb0fa6748a0b9069c0e491eadbd3d13c664fcf7998ca016f64fdac45",
-                "sha256:3701bcab8f00b495b47bf2951680101a283a86cd54adecd1d4abfecd3355e1cd"
+                "sha256:3f830334a3ba725cacf64ccc756e42f0c7946fd8038da6565cb2de569ea5c9c1",
+                "sha256:8a29ce615e5feddd301a8c6656132268bede23d4187a5cfb60f790f80cd04dc1"
             ],
             "index": "pypi",
-            "version": "==0.1.7"
+            "version": "==0.1.8"
         },
         "thoth-common": {
             "hashes": [
