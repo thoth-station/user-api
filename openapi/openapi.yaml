@@ -1566,14 +1566,17 @@ components:
         operating_system:
           type: object
           description: Operating system used.
+          nullable: true
         python_version:
           type: string
           example: "3.6"
           description: Python version on which the application runs on.
+          nullable: true
         cuda_version:
           type: string
           example: "9.0"
           description: Nvidia CUDA version which the application uses.
+          nullable: true
         name:
           type: string
           example: "fedora:29-prod"
