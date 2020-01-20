@@ -802,10 +802,10 @@
         },
         "ruamel.yaml": {
             "hashes": [
-                "sha256:0db639b1b2742dae666c6fc009b8d1931ef15c9276ef31c0673cc6dcf766cf40",
-                "sha256:412a6f5cfdc0525dee6a27c08f5415c7fd832a7afcb7a0ed7319628aed23d408"
+                "sha256:91d6bfe4fce401a00388deb0f5d29e10d2d3683a868c1113ae16bbc351ceb6a4",
+                "sha256:966e5a049eebf011c90424b9ec7dab6358cee8de0907354b27a27f20a8c4c2ec"
             ],
-            "version": "==0.16.5"
+            "version": "==0.16.6"
         },
         "ruamel.yaml.clib": {
             "hashes": [
@@ -907,11 +907,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:587ea762d839bca04149ffc8cc0c4c3f910e52d31944e790cf12159184fe55e1",
-                "sha256:69e7dde979beca5b64cddffd2a6db538b27b8d0090dccaee0485e757bf6246bd"
+                "sha256:48cb7a2ee2a21c0982b7b46d50b4069a5fe5a9401702531e3c173a552418054e",
+                "sha256:5bd222c7093d121d6c870682bbb407cb64e84dde4f55276fb7c33a524bad75ab"
             ],
             "index": "pypi",
-            "version": "==0.21.7"
+            "version": "==0.21.8"
         },
         "threadloop": {
             "hashes": [
