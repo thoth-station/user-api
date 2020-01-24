@@ -574,7 +574,12 @@ def schedule_kebechet(body: dict):
 def schedule_thamos_advise(check_run_id: int, repo_url: str, commit_sha: str, installation_id: int):
     """Schedule Thamos Advise for  on Openshift."""
     parameters = locals()
-    return _do_schedule(parameters, _OPENSHIFT.schedule_thamos_workflow)
+    # TODO: Remove the variable
+    os.environ["THOTH_ARGO"] = 1
+    res = _do_schedule(parameters, _OPENSHIFT.schedule_thamos_workflow)
+    os.environ["THOTH_ARGO"] = _OPENSHIFT.use_argo
+
+    return res
 
 
 def list_buildlogs(page: int = 0):
