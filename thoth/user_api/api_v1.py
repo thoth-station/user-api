@@ -403,12 +403,14 @@ def list_software_environment_analyses_for_run(environment_name: str):
 def list_python_package_indexes():
     """List registered Python package indexes in the graph database."""
     from .openapi_server import GRAPH
+
     return GRAPH.get_python_package_index_all()
 
 
 def list_hardware_environments(page: int = 0):
     """List hardware environments in the graph database."""
     from .openapi_server import GRAPH
+
     return {
         "parameters": {"page": page},
         "hardware_environments": GRAPH.get_hardware_environments_all(is_external=False, start_offset=page),
@@ -418,6 +420,7 @@ def list_hardware_environments(page: int = 0):
 def list_software_environments(page: int = 0):
     """List software environments in the graph database."""
     from .openapi_server import GRAPH
+
     return {
         "parameters": {"page": page},
         "software_environments": GRAPH.get_software_environments_all(is_external=False, start_offset=page),
@@ -568,6 +571,12 @@ def schedule_kebechet(body: dict):
     return _do_schedule(parameters, _OPENSHIFT.schedule_kebechet_run_url)
 
 
+def schedule_thamos_advise(check_run_id: int, repo_url: str, commit_sha: str, installation_id: int):
+    """Schedule Thamos Advise for  on Openshift."""
+    parameters = locals()
+    return _do_schedule(parameters, _OPENSHIFT.schedule_thamos_workflow)
+
+
 def list_buildlogs(page: int = 0):
     """List available build logs."""
     return _do_listing(BuildLogsStore, page)
@@ -576,6 +585,7 @@ def list_buildlogs(page: int = 0):
 def get_python_package_versions_count():
     """Retrieve number of Python package versions in Thoth Knowledge Graph."""
     from .openapi_server import GRAPH
+
     return {"count": GRAPH.get_python_package_versions_count_all(distinct=True)}
 
 
@@ -583,6 +593,7 @@ def get_package_metadata(name: str, version: str, index: str):
     """Retrieve metadata for the given package version."""
     parameters = locals()
     from .openapi_server import GRAPH
+
     try:
         return GRAPH.get_python_package_version_metadata(package_name=name, package_version=version, index_url=index)
     except NotFoundError:
