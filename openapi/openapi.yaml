@@ -1164,6 +1164,21 @@ paths:
         "501":
           description: Functionality not supported
 
+  /qeb-hwt:
+    post:
+      tags: [GitHub]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: schedule_thamos_advise
+      summary: Schedule Thamos advise.
+      requestBody:
+        required: true
+        description: Thamos advise inputs.
+        content:
+          application/json:
+            schema:
+              x-body-name: input
+              $ref: "#/components/schemas/QebHwtThamosAdviseInput"
+
   /build-analysis:
     post:
       tags: [Build Analysis]
@@ -2144,6 +2159,26 @@ components:
         parameters:
           type: object
           description: Parameters echoed back to user for debugging.
+    QebHwtThamosAdviseInput:
+      type: object
+      required:
+        - check_run_id
+        - repo_url
+        - commit_sha
+        - installation_id
+      properties:
+        check_run_id:
+          type: int
+          description: ID of the check-run that shall carry the thamos advise.
+        repo_url:
+          type: string
+          description: URL of the GitHub repository containing the Pull Request.
+        commit_sha:
+          type: string
+          description: sha of the Pull Request's head commit.
+        installation_id:
+          type: int
+          description: GitHub App Installation ID.
 
   headers:
     xPage:
