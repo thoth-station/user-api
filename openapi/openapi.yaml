@@ -1178,6 +1178,11 @@ paths:
             schema:
               x-body-name: input
               $ref: "#/components/schemas/QebHwtThamosAdviseInput"
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: Invalid
 
   /build-analysis:
     post:
