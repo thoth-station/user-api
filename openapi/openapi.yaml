@@ -2168,7 +2168,7 @@ components:
         - installation_id
       properties:
         check_run_id:
-          type: int
+          type: integer
           description: ID of the check-run that shall carry the thamos advise.
         repo_url:
           type: string
@@ -2177,7 +2177,7 @@ components:
           type: string
           description: sha of the Pull Request's head commit.
         installation_id:
-          type: int
+          type: integer
           description: GitHub App Installation ID.
 
   headers:
