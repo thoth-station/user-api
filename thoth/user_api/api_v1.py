@@ -719,5 +719,8 @@ def _do_get_image_metadata(
     except ImageError as exc:
         status_code = 400
         error_str = str(exc)
+    except ImageInvalidCredentials as exc:
+        status_code = 403
+        error_str = str(exc)
 
     return {"error": error_str, "parameters": locals()}, status_code
