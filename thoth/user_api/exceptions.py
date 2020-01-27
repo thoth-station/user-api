@@ -40,3 +40,7 @@ class ImageManifestUnknownError(ImageError):
 
 class ImageAuthenticationRequired(ImageError):
     """An exception raised if there is a need to authenticate against registry to inspect the given image."""
+
+
+class ImageInvalidCredentials(ImageError):
+    """An exception raised if the given username/password provided to access the image is invalid."""
