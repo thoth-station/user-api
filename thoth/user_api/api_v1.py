@@ -571,7 +571,9 @@ def schedule_kebechet(body: dict):
     return _do_schedule(parameters, _OPENSHIFT.schedule_kebechet_run_url)
 
 
-def schedule_thamos_advise(check_run_id: int, repo_url: str, commit_sha: str, installation_id: int):
+def schedule_thamos_advise(
+    github_event_type: str, github_check_run_id: int, github_installation_id: int, origin: str, revision: str
+):
     """Schedule Thamos Advise for  on Openshift."""
     parameters = locals()
     # TODO: Remove the variable
