@@ -422,6 +422,84 @@ def list_python_package_indexes():
     return GRAPH.get_python_package_index_all()
 
 
+def get_python_package_dependencies(
+    name: str,
+    version: str,
+    index: str,
+    os_name: typing.Optional[str] = None,
+    os_version: typing.Optional[str] = None,
+    python_version: typing.Optional[str] = None,
+    marker_evaluation_result: typing.Optional[bool] = None,
+) -> typing.Tuple[typing.Dict[typing.Any, typing.Any], int]:
+    """Get dependencies for the given Python package."""
+    parameters = locals()
+
+    from .openapi_server import GRAPH
+
+    if (os_name is None and os_version is not None) or (os_name is not None and os_version is None):
+        return {
+            "error": "Operating system is not fully specified",
+            "parameters": parameters,
+        }, 400
+
+    if marker_evaluation_result is not None and (os_name is None or os_version is None or python_version is None):
+        return {
+            "error": "Operating system and Python interpreter version need "
+                     "to be specified to obtain dependencies dependent on marker evaluation result",
+            "parameters": parameters,
+        }, 400
+
+    try:
+        query_result = GRAPH.get_depends_on(
+            package_name=name,
+            package_version=version,
+            index_url=index,
+            os_name=os_name,
+            os_version=os_version,
+            python_version=python_version,
+            marker_evaluation_result=marker_evaluation_result,
+        )
+    except NotFoundError:
+        return {
+            "error": f"No record found for package {name!r} in version {version!r} from "
+                     f"index {index!r} for {os_name!r} in version {os_version!r} using Python "
+                     f"version {python_version!r}",
+            "parameters": parameters,
+        }, 404
+
+    result = []
+    for extra, entries in query_result.items():
+        for entry in entries:
+            result.append({
+                "name": entry[0],
+                "version": entry[1],
+                "extra": extra,
+                "environment_marker": None,
+            })
+
+            if os_name is not None and os_version is not None and python_version is not None:
+                try:
+                    result[-1]["environment_marker"] = GRAPH.get_python_environment_marker(
+                        package_name=name,
+                        package_version=version,
+                        index_url=index,
+                        dependency_name=entry[0],
+                        dependency_version=entry[1],
+                        os_name=os_name,
+                        os_version=os_version,
+                        python_version=python_version,
+                    )
+                except NotFoundError:
+                    return {
+                        "error": f"No environment marker records found for package {name!r} in version "
+                                 f"{version!r} from index {index!r} with dependency "
+                                 f"on {entry[0]!r} in version {entry[1]!r}",
+                        "parameters": parameters,
+                    }, 404
+
+    return result
+
+
 def list_hardware_environments(page: int = 0):
     """List hardware environments in the graph database."""
     from .openapi_server import GRAPH
