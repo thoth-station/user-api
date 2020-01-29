@@ -2191,23 +2191,27 @@ components:
     QebHwtThamosAdviseInput:
       type: object
       required:
-        - check_run_id
-        - repo_url
-        - commit_sha
-        - installation_id
+        - github_event_type
+        - github_check_run_id
+        - origin
+        - revision
+        - github_installation_id
       properties:
-        check_run_id:
+        github_event_type:
+          type: string
+          description: Type of GitHub event.
+        github_check_run_id:
           type: integer
           description: ID of the check-run that shall carry the thamos advise.
-        repo_url:
-          type: string
-          description: URL of the GitHub repository containing the Pull Request.
-        commit_sha:
-          type: string
-          description: sha of the Pull Request's head commit.
-        installation_id:
+        github_installation_id:
           type: integer
           description: GitHub App Installation ID.
+        origin:
+          type: string
+          description: URL of the GitHub repository containing the Pull Request.
+        revision:
+          type: string
+          description: sha of the Pull Request's head commit.
 
   headers:
     xPage:
