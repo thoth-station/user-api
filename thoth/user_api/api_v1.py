@@ -17,6 +17,7 @@
 
 """Implementation of API v1."""
 
+import os
 import hashlib
 from itertools import islice
 import logging
