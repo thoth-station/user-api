@@ -666,13 +666,12 @@ def schedule_kebechet(body: dict):
 
 
 def schedule_thamos_advise(
-    github_event_type: str, github_check_run_id: int, github_installation_id: int, origin: str, revision: str
+    input: typing.Dict[str, typing.Any],
 ):
     """Schedule Thamos Advise for  on Openshift."""
-    parameters = locals()
     # TODO: Remove the variable
     os.environ["THOTH_ARGO"] = 1
-    res = _do_schedule(parameters, _OPENSHIFT.schedule_thamos_workflow)
+    res = _do_schedule(input, _OPENSHIFT.schedule_thamos_workflow)
     os.environ["THOTH_ARGO"] = _OPENSHIFT.use_argo
 
     return res
