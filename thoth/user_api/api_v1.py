@@ -668,11 +668,11 @@ def schedule_kebechet(body: dict):
 def schedule_thamos_advise(
     input: typing.Dict[str, typing.Any],
 ):
-    """Schedule Thamos Advise for  on Openshift."""
+    """Schedule Thamos Advise for GitHub App."""
     # TODO: Remove the variable
-    os.environ["THOTH_ARGO"] = 1
+    os.environ["THOTH_ARGO"] = "1"
     res = _do_schedule(input, _OPENSHIFT.schedule_thamos_workflow)
-    os.environ["THOTH_ARGO"] = _OPENSHIFT.use_argo
+    os.environ["THOTH_ARGO"] = str(int(_OPENSHIFT.use_argo))
 
     return res
 
