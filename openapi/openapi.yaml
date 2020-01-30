@@ -1193,7 +1193,7 @@ paths:
       tags: [GitHub]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: schedule_thamos_advise
-      summary: Schedule Thamos advise.
+      summary: Schedule Thamos advise for GitHub App.
       requestBody:
         required: true
         description: Thamos advise inputs.
@@ -1204,9 +1204,17 @@ paths:
               $ref: "#/components/schemas/QebHwtThamosAdviseInput"
       responses:
         "202":
-          description: Accepted
+          description: Successful response with analyzer id.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResponse"
         "400":
-          description: Invalid
+          description: On invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResponseError"
 
   /build-analysis:
     post:
@@ -2263,9 +2271,9 @@ components:
       required:
         - github_event_type
         - github_check_run_id
+        - github_installation_id
         - origin
         - revision
-        - github_installation_id
       properties:
         github_event_type:
           type: string
