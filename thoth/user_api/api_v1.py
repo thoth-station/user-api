@@ -670,9 +670,10 @@ def schedule_thamos_advise(
 ):
     """Schedule Thamos Advise for GitHub App."""
     # TODO: Remove the variable
-    os.environ["THOTH_ARGO"] = "1"
+    os.environ["THOTH_USE_ARGO"] = "1"
+    input["host"] = Configuration.THOTH_HOST
     res = _do_schedule(input, _OPENSHIFT.schedule_thamos_workflow)
-    os.environ["THOTH_ARGO"] = str(int(_OPENSHIFT.use_argo))
+    os.environ["THOTH_USE_ARGO"] = str(int(_OPENSHIFT.use_argo))
 
     return res
 

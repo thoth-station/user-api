@@ -40,6 +40,7 @@ class Configuration:
     THOTH_PROVENANCE_CHECKER_OUTPUT = THOTH_RESULT_API_URL + "/api/v1/provenance-checker-result"
     THOTH_MIDDLETIER_NAMESPACE = os.environ["THOTH_MIDDLETIER_NAMESPACE"]
     THOTH_BACKEND_NAMESPACE = os.environ["THOTH_BACKEND_NAMESPACE"]
+    THOTH_HOST = os.environ["THOTH_HOST"]
     # Give cache 3 hours by default.
     THOTH_CACHE_EXPIRATION = int(os.getenv("THOTH_CACHE_EXPIRATION", timedelta(hours=3).total_seconds()))
 

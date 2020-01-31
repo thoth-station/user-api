@@ -135,6 +135,8 @@ objects:
                   value: "0"
                 - name: THOTH_RESULT_API_URL
                   value: http://result-api
+                - name: THOTH_HOST
+                  value: "khemenu.thoth-station.ninja"
                 - name: THOTH_MIDDLETIER_POD_CPU_LIMIT
                   valueFrom:
                     configMapKeyRef:
