@@ -797,12 +797,6 @@ paths:
             for automated reporting when results are available.
           schema:
             type: string
-        - name: revision
-          in: query
-          required: false
-          schema:
-            type: string
-          description: Commit hash or revision to origin if origin is a Git repo.
         - name: is_s2i
           in: query
           required: false
@@ -850,6 +844,12 @@ paths:
           schema:
             type: integer
           description: GitHub's installation id.
+        - name: github_base_repo_url
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: URL of the GitHub repository containing the Pull Request.
       responses:
         "202":
           description: The adviser is scheduled.
