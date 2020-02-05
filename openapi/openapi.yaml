@@ -848,7 +848,7 @@ paths:
           in: query
           required: false
           schema:
-            type: integer
+            type: string
           description: URL of the GitHub repository containing the Pull Request.
       responses:
         "202":
