@@ -252,10 +252,10 @@ def post_advise_python(
     is_s2i: bool = None,
     debug: bool = False,
     force: bool = False,
-    revision: typing.Optional[str] = None,
     github_event_type: typing.Optional[str] = None,
     github_check_run_id: typing.Optional[int] = None,
     github_installation_id: typing.Optional[int] = None,
+    github_base_repo_url: typing.Optional[int] = None,
 ):
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
@@ -265,8 +265,8 @@ def post_advise_python(
         github_event_type is not None,
         github_check_run_id is not None,
         github_installation_id is not None,
+        github_base_repo_url is not None,
         origin is not None,
-        revision is not None,
     )
     github_webhook_params_present = sum(github_webhook_params)
     if github_webhook_params_present != 0 and github_webhook_params_present != len(github_webhook_params):

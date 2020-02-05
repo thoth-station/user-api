@@ -797,12 +797,6 @@ paths:
             for automated reporting when results are available.
           schema:
             type: string
-        - name: revision
-          in: query
-          required: false
-          schema:
-            type: string
-          description: Commit hash or revision to origin if origin is a Git repo.
         - name: is_s2i
           in: query
           required: false
@@ -850,6 +844,12 @@ paths:
           schema:
             type: integer
           description: GitHub's installation id.
+        - name: github_base_repo_url
+          in: query
+          required: false
+          schema:
+            type: string
+          description: URL of the GitHub repository containing the Pull Request.
       responses:
         "202":
           description: The adviser is scheduled.
@@ -2190,6 +2190,8 @@ components:
         - github_event_type
         - github_check_run_id
         - github_installation_id
+        - github_base_repo_url
+        - github_head_repo_url
         - origin
         - revision
       properties:
@@ -2202,9 +2204,15 @@ components:
         github_installation_id:
           type: integer
           description: GitHub App Installation ID.
-        origin:
+        github_base_repo_url:
           type: string
           description: URL of the GitHub repository containing the Pull Request.
+        github_head_repo_url:
+          type: string
+          description: URL of the Pull Request's head commit.
+        origin:
+          type: string
+          description: Origin of the repo where the Pull Request was opened.
         revision:
           type: string
           description: sha of the Pull Request's head commit.
