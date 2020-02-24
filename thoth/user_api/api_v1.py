@@ -255,7 +255,7 @@ def post_advise_python(
     github_event_type: typing.Optional[str] = None,
     github_check_run_id: typing.Optional[int] = None,
     github_installation_id: typing.Optional[int] = None,
-    github_base_repo_url: typing.Optional[int] = None,
+    github_base_repo_url: typing.Optional[str] = None,
 ):
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
