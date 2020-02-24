@@ -21,7 +21,7 @@ import logging
 
 from thoth.analyzer import run_command
 
-from .configuration import Configuration
+from .exceptions import ImageInvalidCredentials
 from .exceptions import ImageError
 from .exceptions import ImageBadRequestError
 from .exceptions import ImageManifestUnknownError
