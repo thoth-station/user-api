@@ -268,7 +268,7 @@ def post_advise_python(
         github_base_repo_url is not None,
     )
     github_webhook_params_present = sum(github_webhook_params)
-    if github_webhook_params_present != 0 and github_webhook_params_present != len(github_webhook_params):
+    if github_webhook_params_present != 0 and (github_webhook_params_present != len(github_webhook_params) or not origin):
         return {"parameters": parameters, "error": "Not all webhook parameters provided for GitHub webhook"}, 400
 
     # Always try to parse runtime environment so that we have it available in JSON reports in a unified form.
