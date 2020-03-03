@@ -41,6 +41,10 @@ class Configuration:
     THOTH_MIDDLETIER_NAMESPACE = os.environ["THOTH_MIDDLETIER_NAMESPACE"]
     THOTH_BACKEND_NAMESPACE = os.environ["THOTH_BACKEND_NAMESPACE"]
     THOTH_HOST = os.environ["THOTH_HOST"]
+    THOTH_DEPLOYMENT_NAME = os.environ["THOTH_DEPLOYMENT_NAME"]
+    THOTH_CEPH_BUCKET = os.environ["THOTH_CEPH_BUCKET"]
+    THOTH_CEPH_BUCKET_PREFIX = os.environ["THOTH_CEPH_BUCKET_PREFIX"]
+    THOTH_S3_ENDPOINT_URL = os.environ["THOTH_S3_ENDPOINT_URL"]
     # Give cache 3 hours by default.
     THOTH_CACHE_EXPIRATION = int(os.getenv("THOTH_CACHE_EXPIRATION", timedelta(hours=3).total_seconds()))
 

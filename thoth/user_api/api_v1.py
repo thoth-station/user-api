@@ -323,6 +323,11 @@ def post_advise_python(
         except CacheMiss:
             pass
 
+    parameters["deployment_name"] = Configuration.THOTH_DEPLOYMENT_NAME
+    parameters["ceph_bucket_name"] = Configuration.THOTH_CEPH_BUCKET
+    parameters["ceph_bucket_prefix"] = Configuration.THOTH_CEPH_BUCKET_PREFIX
+    parameters["ceph_host"] = Configuration.THOTH_S3_ENDPOINT_URL
+
     response, status = _do_schedule(parameters, _OPENSHIFT.schedule_adviser, output=Configuration.THOTH_ADVISER_OUTPUT)
     if status == 202:
         adviser_cache.store_document_record(
