@@ -126,6 +126,7 @@ objects:
           serviceAccountName: "${SERVICE_ACCOUNT_NAME}"
           containers:
             - name: user-api
+              imagePullPolicy: Always
               env:
                 - name: APP_MODULE
                   value: "thoth.user_api.openapi_server:app"
