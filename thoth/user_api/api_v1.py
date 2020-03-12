@@ -370,7 +370,7 @@ def get_advise_python_status(analysis_id: str):
                 "finished_at": wf_status.get("finishedAt"),
                 "reason": None,
                 "started_at": wf_status.get("startedAt"),
-                "state": wf_status["phase"]
+                "state": wf_status.get("phase", "Pending")
             }, 200
 
             status.pop("error")
