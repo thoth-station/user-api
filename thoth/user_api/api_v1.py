@@ -193,7 +193,7 @@ def post_provenance_python(application_stack: dict, origin: str = None, debug: b
     except Exception as exc:
         return {"parameters": parameters, "error": "Invalid application stack supplied"}, 400
 
-    parameters["whitelisted_sources"] = list(GRAPH.get_python_package_index_urls())
+    parameters["whitelisted_sources"] = list(GRAPH.get_python_package_index_urls_all())
 
     force = parameters.pop("force", False)
     cached_document_id = _compute_digest_params(
