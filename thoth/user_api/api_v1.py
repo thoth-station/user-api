@@ -353,7 +353,7 @@ def get_advise_python_log(analysis_id: str):
 def get_advise_python_status(analysis_id: str):
     """Get status of an adviser run."""
     status, code = _get_job_status(locals(), "adviser-", Configuration.THOTH_BACKEND_NAMESPACE)
-    if "error" in status:
+    if code == 404:
         wf_status = None
         try:
             wf_status = _OPENSHIFT.get_workflow_status(
