@@ -259,6 +259,8 @@ objects:
                       key: database-name
                 - name: THOTH_API_HTTPS
                   value: "1"
+                - name: THOTH_USE_ARGO
+                  value: "1"
               ports:
                 - containerPort: 8080
                   protocol: TCP
