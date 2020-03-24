@@ -52,6 +52,7 @@ from .exceptions import ImageError
 from .exceptions import ImageBadRequestError
 from .exceptions import ImageManifestUnknownError
 from .exceptions import ImageAuthenticationRequired
+from .exceptions import NotFoundException
 
 
 PAGINATION_SIZE = 100
@@ -192,7 +193,7 @@ def post_provenance_python(application_stack: dict, origin: str = None, debug: b
     except Exception as exc:
         return {"parameters": parameters, "error": "Invalid application stack supplied"}, 400
 
-    parameters["whitelisted_sources"] = list(GRAPH.get_python_package_index_urls())
+    parameters["whitelisted_sources"] = list(GRAPH.get_python_package_index_urls_all())
 
     force = parameters.pop("force", False)
     cached_document_id = _compute_digest_params(
@@ -351,7 +352,35 @@ def get_advise_python_log(analysis_id: str):
 
 def get_advise_python_status(analysis_id: str):
     """Get status of an adviser run."""
-    return _get_job_status(locals(), "adviser-", Configuration.THOTH_BACKEND_NAMESPACE)
+    status, code = _get_job_status(locals(), "adviser-", Configuration.THOTH_BACKEND_NAMESPACE)
+    if code == 404:
+        wf_status = None
+        try:
+            wf_status = _OPENSHIFT.get_workflow_status(
+                name=analysis_id,
+                namespace=Configuration.THOTH_BACKEND_NAMESPACE
+            )
+
+            # the Job has not started (yet) but the Workflow has been submitted
+            # if the Workflow fails, the status will contain the finished
+            # time of the workflow
+            status["status"], code = {
+                "container": None,
+                "exit_code": None,
+                "finished_at": wf_status.get("finishedAt"),
+                "reason": None,
+                "started_at": wf_status.get("startedAt"),
+                "state": wf_status.get("phase", "Pending")
+            }, 200
+
+            status.pop("error")
+
+        except NotFoundException as exc:
+            # Handle this since the adviser run can still be scheduled
+            # with workload-operator instead, otherwise we could raise here
+            _LOGGER.error(status["error"])
+
+    return status, code
 
 
 def list_runtime_environments():
@@ -784,7 +813,7 @@ def _get_job_status(parameters: dict, name_prefix: str, namespace: str):
     except OpenShiftNotFound:
         return {"parameters": parameters, "error": f"Requested status for analysis {job_id!r} was not found"}, 404
 
-    return {"parameters": parameters, "status": status}
+    return {"parameters": parameters, "status": status}, 200
 
 
 def _do_schedule(parameters: dict, runner: typing.Callable, **runner_kwargs):
