@@ -434,6 +434,12 @@
             ],
             "version": "==0.9.5"
         },
+        "jsonformatter": {
+            "hashes": [
+                "sha256:e4bbbb1a79013d2f4b1d249fbed755ade679fd03af9a40de8e45148cde3d21af"
+            ],
+            "version": "==0.1.4"
+        },
         "jsonschema": {
             "hashes": [
                 "sha256:4e5b3cf8216f577bee9ce139cbe72eca3ea4f292ec60928ff24758ce626cd163",
@@ -895,11 +901,11 @@
         },
         "thoth-common": {
             "hashes": [
-                "sha256:82d03bd468aa7ee47332c75599344186e84146b9d506f1838a10e0328efb9cd4",
-                "sha256:8a82fb6b0dc5f9f0d3462ec8c6399b9ad79d455bee6724ed4f76f8ae028b2de8"
+                "sha256:61a7662dba3cb96badb7aab98661bc9edbb7078129701d521daf43eebf57cc26",
+                "sha256:e5f14670177884508d246b12fd4f5dd08a989fbf02a1f4e4de5c2ada6030749e"
             ],
             "index": "pypi",
-            "version": "==0.12.0"
+            "version": "==0.12.1"
         },
         "thoth-python": {
             "hashes": [
