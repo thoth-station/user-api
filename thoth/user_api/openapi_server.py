@@ -49,7 +49,7 @@ init_logging(logging_env_var_start="THOTH_USER_API_LOG_")
 _LOGGER = logging.getLogger("thoth.user_api")
 _LOGGER.setLevel(logging.DEBUG if bool(int(os.getenv("THOTH_USER_API_DEBUG", 0))) else logging.INFO)
 
-__service_versin__ = f"{__version__}+storage.{__storages__version__}.common.{__common__version__}"
+__service_version__ = f"{__version__}+storage.{__storages__version__}.common.{__common__version__}"
 
 _LOGGER.info(f"This is User API v%s", __service_version__)
 _LOGGER.debug("DEBUG mode is enabled!")
