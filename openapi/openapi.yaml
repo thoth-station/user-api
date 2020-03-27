@@ -804,6 +804,14 @@ paths:
             A flag marking the given request coming from an OpenShift's S2I (Source-to-Image) build.
           schema:
             type: boolean
+        - name: dev
+          in: query
+          required: false
+          description: >
+            Consider or do not consider development dependencies when resolving stacks.
+          schema:
+            type: boolean
+            default: false
         - name: debug
           in: query
           required: false

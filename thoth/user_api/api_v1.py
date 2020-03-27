@@ -253,6 +253,7 @@ def post_advise_python(
     is_s2i: bool = None,
     debug: bool = False,
     force: bool = False,
+    dev: bool = False,
     github_event_type: typing.Optional[str] = None,
     github_check_run_id: typing.Optional[int] = None,
     github_installation_id: typing.Optional[int] = None,
@@ -313,6 +314,7 @@ def post_advise_python(
             recommendation_type=recommendation_type,
             origin=origin,
             is_s2i=is_s2i,
+            dev=dev,
         )
     )
 
