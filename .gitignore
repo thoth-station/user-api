@@ -104,3 +104,4 @@ venv.bak/
 .mypy_cache/
 .idea
 .vscode/
+.thoth_last_analysis_id

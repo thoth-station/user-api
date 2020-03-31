@@ -253,6 +253,7 @@ def post_advise_python(
     is_s2i: bool = None,
     debug: bool = False,
     force: bool = False,
+    dev: bool = False,
     github_event_type: typing.Optional[str] = None,
     github_check_run_id: typing.Optional[int] = None,
     github_installation_id: typing.Optional[int] = None,
@@ -313,6 +314,7 @@ def post_advise_python(
             recommendation_type=recommendation_type,
             origin=origin,
             is_s2i=is_s2i,
+            dev=dev,
         )
     )
 
@@ -809,10 +811,9 @@ def _get_job_status(parameters: dict, name_prefix: str, namespace: str):
         return {"error": "Wrong analysis id provided", "parameters": parameters}, 400
 
     try:
-        status = _OPENSHIFT.get_job_status_report(job_id, namespace=namespace)
-    except OpenShiftNotFound:
+        status = _OPENSHIFT.get_job_status_report(job_id, namespace=namespace).get("pods")[0]
+    except (OpenShiftNotFound, TypeError):
         return {"parameters": parameters, "error": f"Requested status for analysis {job_id!r} was not found"}, 404
-
     return {"parameters": parameters, "status": status}, 200
 
 
