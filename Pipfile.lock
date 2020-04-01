@@ -911,11 +911,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:544311be2a25d3aae24e99e6e822c3080cbaae521faf2cc9fce7e7be5af9fb17",
-                "sha256:94557adfef6079999ca2039f76145918a0ab9def3fa774be894e3b5716034ae4"
+                "sha256:2ac898df1f613e04afed22b9eb614fb411ab14f4be16deea409302c1b8195c61",
+                "sha256:37bffb90ea1d4fe36fdb35d690efb9e997d3279f1e5b6c3d0fdd2f1dea698f94"
             ],
             "index": "pypi",
-            "version": "==0.22.5"
+            "version": "==0.22.7"
         },
         "threadloop": {
             "hashes": [
