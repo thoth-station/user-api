@@ -52,6 +52,7 @@ from .exceptions import ImageError
 from .exceptions import ImageBadRequestError
 from .exceptions import ImageManifestUnknownError
 from .exceptions import ImageAuthenticationRequired
+from .exceptions import ImageInvalidCredentials
 from .exceptions import NotFoundException
 
 
