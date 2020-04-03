@@ -52,6 +52,7 @@ from .exceptions import ImageError
 from .exceptions import ImageBadRequestError
 from .exceptions import ImageManifestUnknownError
 from .exceptions import ImageAuthenticationRequired
+from .exceptions import ImageInvalidCredentials
 from .exceptions import NotFoundException
 
 
@@ -705,13 +706,8 @@ def schedule_thamos_advise(
     input: typing.Dict[str, typing.Any],
 ):
     """Schedule Thamos Advise for GitHub App."""
-    # TODO: Remove the variable
-    os.environ["THOTH_USE_ARGO"] = "1"
     input["host"] = Configuration.THOTH_HOST
-    res = _do_schedule(input, _OPENSHIFT.schedule_thamos_workflow)
-    os.environ["THOTH_USE_ARGO"] = str(int(_OPENSHIFT.use_argo))
-
-    return res
+    return _do_schedule(input, _OPENSHIFT.schedule_thamos_workflow)
 
 
 def list_buildlogs(page: int = 0):
