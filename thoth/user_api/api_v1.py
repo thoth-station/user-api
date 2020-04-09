@@ -316,6 +316,11 @@ def post_advise_python(
             origin=origin,
             is_s2i=is_s2i,
             dev=dev,
+            debug=parameters["debug"],
+            github_event_type=parameters["github_event_type"],
+            github_check_run_id=parameters["github_check_run_id"],
+            github_installation_id=parameters["github_installation_id"],
+            github_base_repo_url=parameters["github_base_repo_url"],
         )
     )
 
