@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # thoth-user-api
-# Copyright(C) 2018, 2019 Fridolin Pokorny
+# Copyright(C) 2018, 2019, 2020 Fridolin Pokorny
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import logging
 
 from thoth.analyzer import run_command
 
-from .configuration import Configuration
+from .exceptions import ImageInvalidCredentials
 from .exceptions import ImageError
 from .exceptions import ImageBadRequestError
 from .exceptions import ImageManifestUnknownError
@@ -77,6 +77,10 @@ def get_image_metadata(image_name: str, *,
     elif 'x509: certificate signed by unknown authority' in result.stderr:
         raise ImageAuthenticationRequired(
             "There was an error with x509 certification check: certificate signed by unknown authority"
+        )
+    elif 'unable to retrieve auth token: invalid username/password' in result.stderr:
+        raise ImageInvalidCredentials(
+            "There was an error accessing the image as the username/password provided was invalid"
         )
 
     _LOGGER.error("An unhandled error occurred during extraction of image %r: %s", image_name, result.stderr)

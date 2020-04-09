@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # thoth-user-api
-# Copyright(C) 2018, 2019 Fridolin Pokorny
+# Copyright(C) 2018, 2019, 2020 Fridolin Pokorny
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ class Configuration:
     THOTH_PROVENANCE_CHECKER_OUTPUT = THOTH_RESULT_API_URL + "/api/v1/provenance-checker-result"
     THOTH_MIDDLETIER_NAMESPACE = os.environ["THOTH_MIDDLETIER_NAMESPACE"]
     THOTH_BACKEND_NAMESPACE = os.environ["THOTH_BACKEND_NAMESPACE"]
+    THOTH_HOST = os.environ["THOTH_HOST"]
     # Give cache 3 hours by default.
     THOTH_CACHE_EXPIRATION = int(os.getenv("THOTH_CACHE_EXPIRATION", timedelta(hours=3).total_seconds()))
 

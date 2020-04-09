@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Stub
-# Copyright(C) 2019 Christoph Görn
+# Copyright(C) 2019, 2020 Christoph Görn
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,8 +31,11 @@ from flask_script import Manager
 from prometheus_flask_exporter import PrometheusMetrics
 from flask_cors import CORS
 
+
+from thoth.common import __version__ as __common__version__
 from thoth.common import datetime2datetime_str
 from thoth.common import init_logging
+from thoth.storages import __version__ as __storages__version__
 from thoth.storages import GraphDatabase
 from thoth.storages.exceptions import DatabaseNotInitialized
 from thoth.user_api import __version__
@@ -46,7 +49,9 @@ init_logging(logging_env_var_start="THOTH_USER_API_LOG_")
 _LOGGER = logging.getLogger("thoth.user_api")
 _LOGGER.setLevel(logging.DEBUG if bool(int(os.getenv("THOTH_USER_API_DEBUG", 0))) else logging.INFO)
 
-_LOGGER.info(f"This is User API v%s", __version__)
+__service_version__ = f"{__version__}+storage.{__storages__version__}.common.{__common__version__}"
+
+_LOGGER.info(f"This is User API v%s", __service_version__)
 _LOGGER.debug("DEBUG mode is enabled!")
 
 _THOTH_API_HTTPS = bool(int(os.getenv("THOTH_API_HTTPS", 1)))
@@ -81,6 +86,7 @@ metrics = PrometheusMetrics(
         "/liveness",
         "/readiness",
         "/api/v1/ui",
+        "/api/v1/openapi",
         ]
     )
 manager = Manager(application)
@@ -89,7 +95,7 @@ manager = Manager(application)
 application.secret_key = Configuration.APP_SECRET_KEY
 
 # static information as metric
-metrics.info("user_api_info", "User API info", version=__version__)
+metrics.info("user_api_info", "User API info", version=__service_version__)
 _API_GAUGE_METRIC = metrics.info("user_api_schema_up2date", "User API schema up2date")
 
 
@@ -150,20 +156,12 @@ def api_v1():
 
 
 def _healthiness():
-    return jsonify({"status": "ready", "version": __version__}), 200, {"ContentType": "application/json"}
+    return jsonify({"status": "ready", "version": __service_version__}), 200, {"ContentType": "application/json"}
 
 
 @app.route("/readiness")
 def api_readiness():
     """Report readiness for OpenShift readiness probe."""
-    try:
-        if not GRAPH.is_schema_up2date():
-            _LOGGER.warning("Database schema is not up to date")
-            return jsonify({"status": "Database schema is not up to date"}), 503, {"ContentType": "application/json"}
-    except DatabaseNotInitialized as exc:
-        _LOGGER.warning("Database schema is not initialized")
-        return jsonify({"status": str(exc)}), 503, {"ContentType": "application/json"}
-
     return _healthiness()
 
 

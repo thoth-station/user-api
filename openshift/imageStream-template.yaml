@@ -12,11 +12,17 @@ metadata:
     template.openshift.io/long-description: >
       This is User API ImageStream, this template is meant to be used by Bots, but could also be used by humans...
     template.openshift.io/provider-display-name: Red Hat, Inc.
-    thoth-station.ninja/template-version: 0.6.0-dev
   labels:
     template: user-api-imagestream
     app: thoth
     component: user-api
+
+parameters:
+  - description: Tag of the ImageStream to use
+    displayName: ImageStream Tag
+    required: true
+    name: IMAGE_STREAM_TAG
+    value: "latest"
 
 objects:
   - kind: ImageStream
@@ -30,10 +36,3 @@ objects:
       name: user-api
     spec:
       name: ${IMAGE_STREAM_TAG}
-
-parameters:
-  - description: Tag of the ImageStream to use
-    displayName: ImageStream Tag
-    required: true
-    name: IMAGE_STREAM_TAG
-    value: "latest"

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # thoth-user-api
-# Copyright(C) 2018, 2019 Fridolin Pokorny
+# Copyright(C) 2018, 2019, 2020 Fridolin Pokorny
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 """Implementation of API v1."""
 
+import os
 import hashlib
 from itertools import islice
 import logging
@@ -51,6 +52,8 @@ from .exceptions import ImageError
 from .exceptions import ImageBadRequestError
 from .exceptions import ImageManifestUnknownError
 from .exceptions import ImageAuthenticationRequired
+from .exceptions import ImageInvalidCredentials
+from .exceptions import NotFoundException
 
 
 PAGINATION_SIZE = 100
@@ -191,7 +194,7 @@ def post_provenance_python(application_stack: dict, origin: str = None, debug: b
     except Exception as exc:
         return {"parameters": parameters, "error": "Invalid application stack supplied"}, 400
 
-    parameters["whitelisted_sources"] = list(GRAPH.get_python_package_index_urls())
+    parameters["whitelisted_sources"] = list(GRAPH.get_python_package_index_urls_all())
 
     force = parameters.pop("force", False)
     cached_document_id = _compute_digest_params(
@@ -248,18 +251,35 @@ def post_advise_python(
     limit: int = None,
     limit_latest_versions: int = None,
     origin: str = None,
+    is_s2i: bool = None,
     debug: bool = False,
     force: bool = False,
+    dev: bool = False,
+    github_event_type: typing.Optional[str] = None,
+    github_check_run_id: typing.Optional[int] = None,
+    github_installation_id: typing.Optional[int] = None,
+    github_base_repo_url: typing.Optional[str] = None,
 ):
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
     parameters["application_stack"] = parameters["input"].pop("application_stack")
 
+    github_webhook_params = (
+        github_event_type is not None,
+        github_check_run_id is not None,
+        github_installation_id is not None,
+        github_base_repo_url is not None,
+    )
+    github_webhook_params_present = sum(github_webhook_params)
+    if github_webhook_params_present != 0 and (github_webhook_params_present != len(github_webhook_params)
+                                               or not origin):
+        return {"parameters": parameters, "error": "Not all webhook parameters provided for GitHub webhook"}, 400
+
     # Always try to parse runtime environment so that we have it available in JSON reports in a unified form.
     try:
-        parameters["runtime_environment"] = (
-                RuntimeEnvironment.from_dict(parameters["input"].pop("runtime_environment", {})).to_dict()
-        )
+        parameters["runtime_environment"] = RuntimeEnvironment.from_dict(
+            parameters["input"].pop("runtime_environment", {})
+        ).to_dict()
     except Exception as exc:
         return {"parameters": parameters, "error": f"Failed to parse runtime environment: {str(exc)}"}
 
@@ -294,6 +314,13 @@ def post_advise_python(
             limit_latest_versions=parameters["limit_latest_versions"],
             recommendation_type=recommendation_type,
             origin=origin,
+            is_s2i=is_s2i,
+            dev=dev,
+            debug=parameters["debug"],
+            github_event_type=parameters["github_event_type"],
+            github_check_run_id=parameters["github_check_run_id"],
+            github_installation_id=parameters["github_installation_id"],
+            github_base_repo_url=parameters["github_base_repo_url"],
         )
     )
 
@@ -333,7 +360,35 @@ def get_advise_python_log(analysis_id: str):
 
 def get_advise_python_status(analysis_id: str):
     """Get status of an adviser run."""
-    return _get_job_status(locals(), "adviser-", Configuration.THOTH_BACKEND_NAMESPACE)
+    status, code = _get_job_status(locals(), "adviser-", Configuration.THOTH_BACKEND_NAMESPACE)
+    if code == 404:
+        wf_status = None
+        try:
+            wf_status = _OPENSHIFT.get_workflow_status(
+                name=analysis_id,
+                namespace=Configuration.THOTH_BACKEND_NAMESPACE
+            )
+
+            # the Job has not started (yet) but the Workflow has been submitted
+            # if the Workflow fails, the status will contain the finished
+            # time of the workflow
+            status["status"], code = {
+                "container": None,
+                "exit_code": None,
+                "finished_at": wf_status.get("finishedAt"),
+                "reason": None,
+                "started_at": wf_status.get("startedAt"),
+                "state": wf_status.get("phase", "Pending")
+            }, 200
+
+            status.pop("error")
+
+        except NotFoundException as exc:
+            # Handle this since the adviser run can still be scheduled
+            # with workload-operator instead, otherwise we could raise here
+            _LOGGER.error(status["error"])
+
+    return status, code
 
 
 def list_runtime_environments():
@@ -401,12 +456,92 @@ def list_software_environment_analyses_for_run(environment_name: str):
 def list_python_package_indexes():
     """List registered Python package indexes in the graph database."""
     from .openapi_server import GRAPH
+
     return GRAPH.get_python_package_index_all()
+
+
+def get_python_package_dependencies(
+    name: str,
+    version: str,
+    index: str,
+    os_name: typing.Optional[str] = None,
+    os_version: typing.Optional[str] = None,
+    python_version: typing.Optional[str] = None,
+    marker_evaluation_result: typing.Optional[bool] = None,
+) -> typing.Tuple[typing.Dict[typing.Any, typing.Any], int]:
+    """Get dependencies for the given Python package."""
+    parameters = locals()
+
+    from .openapi_server import GRAPH
+
+    if (os_name is None and os_version is not None) or (os_name is not None and os_version is None):
+        return {
+            "error": "Operating system is not fully specified",
+            "parameters": parameters,
+        }, 400
+
+    if marker_evaluation_result is not None and (os_name is None or os_version is None or python_version is None):
+        return {
+            "error": "Operating system and Python interpreter version need "
+                     "to be specified to obtain dependencies dependent on marker evaluation result",
+            "parameters": parameters,
+        }, 400
+
+    try:
+        query_result = GRAPH.get_depends_on(
+            package_name=name,
+            package_version=version,
+            index_url=index,
+            os_name=os_name,
+            os_version=os_version,
+            python_version=python_version,
+            marker_evaluation_result=marker_evaluation_result,
+        )
+    except NotFoundError:
+        return {
+            "error": f"No record found for package {name!r} in version {version!r} from "
+                     f"index {index!r} for {os_name!r} in version {os_version!r} using Python "
+                     f"version {python_version!r}",
+            "parameters": parameters,
+        }, 404
+
+    result = []
+    for extra, entries in query_result.items():
+        for entry in entries:
+            result.append({
+                "name": entry[0],
+                "version": entry[1],
+                "extra": extra,
+                "environment_marker": None,
+            })
+
+            if os_name is not None and os_version is not None and python_version is not None:
+                try:
+                    result[-1]["environment_marker"] = GRAPH.get_python_environment_marker(
+                        package_name=name,
+                        package_version=version,
+                        index_url=index,
+                        dependency_name=entry[0],
+                        dependency_version=entry[1],
+                        os_name=os_name,
+                        os_version=os_version,
+                        python_version=python_version,
+                    )
+                except NotFoundError:
+                    return {
+                        "error": f"No environment marker records found for package {name!r} in version "
+                                 f"{version!r} from index {index!r} with dependency "
+                                 f"on {entry[0]!r} in version {entry[1]!r}",
+                        "parameters": parameters,
+                    }, 404
+
+    return result
 
 
 def list_hardware_environments(page: int = 0):
     """List hardware environments in the graph database."""
     from .openapi_server import GRAPH
+
     return {
         "parameters": {"page": page},
         "hardware_environments": GRAPH.get_hardware_environments_all(is_external=False, start_offset=page),
@@ -416,6 +551,7 @@ def list_hardware_environments(page: int = 0):
 def list_software_environments(page: int = 0):
     """List software environments in the graph database."""
     from .openapi_server import GRAPH
+
     return {
         "parameters": {"page": page},
         "software_environments": GRAPH.get_software_environments_all(is_external=False, start_offset=page),
@@ -499,12 +635,12 @@ def post_buildlog_analyze(log_info: dict, force: bool = False):
             return {"analysis_id": cache_record.pop("analysis_id"), "cached": True, "parameters": parameters}, 202
         except CacheMiss:
             pass
-    # Maybe need to utilize the status code of buillog storage
+    # Maybe need to utilize the status code of buildlog storage
     stored_log_details, status = post_buildlog(log_info=log_info)
     parameters.update(stored_log_details)
     parameters.pop("log_info", None)
     response, status_code = _do_schedule(
-        parameters, _OPENSHIFT.schedule_build_analyze, output=Configuration.THOTH_BUILDLOG_ANALYZER_OUTPUT
+        parameters, _OPENSHIFT.schedule_build_report, output=Configuration.THOTH_BUILDLOG_ANALYZER_OUTPUT
     )
 
     if status_code == 202:
@@ -566,6 +702,14 @@ def schedule_kebechet(body: dict):
     return _do_schedule(parameters, _OPENSHIFT.schedule_kebechet_run_url)
 
 
+def schedule_thamos_advise(
+    input: typing.Dict[str, typing.Any],
+):
+    """Schedule Thamos Advise for GitHub App."""
+    input["host"] = Configuration.THOTH_HOST
+    return _do_schedule(input, _OPENSHIFT.schedule_thamos_workflow)
+
+
 def list_buildlogs(page: int = 0):
     """List available build logs."""
     return _do_listing(BuildLogsStore, page)
@@ -574,29 +718,15 @@ def list_buildlogs(page: int = 0):
 def get_python_package_versions_count():
     """Retrieve number of Python package versions in Thoth Knowledge Graph."""
     from .openapi_server import GRAPH
-    return GRAPH.get_python_package_versions_count_all(
-    )
 
-
-def get_python_package_versions_count_per_package_name(page: int = 0):
-    """Retrieve number of Python package versions per package name in Thoth Knowledge Graph."""
-    from .openapi_server import GRAPH
-    return (
-        GRAPH.get_python_package_versions_all_count(
-            count=PAGINATION_SIZE,
-            start_offset=page*PAGINATION_SIZE),
-        200,
-        {
-            "X-Page": page,
-            "X-Page-Size": PAGINATION_SIZE
-        }
-    )
+    return {"count": GRAPH.get_python_package_versions_count_all(distinct=True)}
 
 
 def get_package_metadata(name: str, version: str, index: str):
     """Retrieve metadata for the given package version."""
     parameters = locals()
     from .openapi_server import GRAPH
+
     try:
         return GRAPH.get_python_package_version_metadata(package_name=name, package_version=version, index_url=index)
     except NotFoundError:
@@ -682,11 +812,10 @@ def _get_job_status(parameters: dict, name_prefix: str, namespace: str):
         return {"error": "Wrong analysis id provided", "parameters": parameters}, 400
 
     try:
-        status = _OPENSHIFT.get_job_status_report(job_id, namespace=namespace)
-    except OpenShiftNotFound:
+        status = _OPENSHIFT.get_job_status_report(job_id, namespace=namespace).get("pods")[0]
+    except (OpenShiftNotFound, TypeError):
         return {"parameters": parameters, "error": f"Requested status for analysis {job_id!r} was not found"}, 404
-
-    return {"parameters": parameters, "status": status}
+    return {"parameters": parameters, "status": status}, 200
 
 
 def _do_schedule(parameters: dict, runner: typing.Callable, **runner_kwargs):
@@ -716,6 +845,9 @@ def _do_get_image_metadata(
         error_str = str(exc)
     except ImageError as exc:
         status_code = 400
+        error_str = str(exc)
+    except ImageInvalidCredentials as exc:
+        status_code = 403
         error_str = str(exc)
 
     return {"error": error_str, "parameters": locals()}, status_code

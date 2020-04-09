@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # thoth-user-api
-# Copyright(C) 2018, 2019 Fridolin Pokorny
+# Copyright(C) 2018, 2019, 2020 Fridolin Pokorny
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,3 +40,7 @@ class ImageManifestUnknownError(ImageError):
 
 class ImageAuthenticationRequired(ImageError):
     """An exception raised if there is a need to authenticate against registry to inspect the given image."""
+
+
+class ImageInvalidCredentials(ImageError):
+    """An exception raised if the given username/password provided to access the image is invalid."""
