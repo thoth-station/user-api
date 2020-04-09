@@ -198,7 +198,7 @@ def post_provenance_python(application_stack: dict, origin: str = None, debug: b
 
     force = parameters.pop("force", False)
     cached_document_id = _compute_digest_params(
-        dict(**project.to_dict(), origin=origin, whitelisted_sources=parameters["whitelisted_sources"])
+        dict(**project.to_dict(), origin=origin, whitelisted_sources=parameters["whitelisted_sources"], debug=debug)
     )
 
     timestamp_now = int(time.mktime(datetime.datetime.utcnow().timetuple()))
