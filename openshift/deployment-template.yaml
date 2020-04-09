@@ -130,6 +130,8 @@ objects:
               env:
                 - name: APP_MODULE
                   value: "thoth.user_api.openapi_server:app"
+                - name: APP_CONFIG
+                  value: "gunicorn.conf.py"
                 - name: KUBERNETES_API_URL
                   value: "https://kubernetes.default.svc.cluster.local"
                 - name: KUBERNETES_VERIFY_TLS
