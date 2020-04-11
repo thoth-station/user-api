@@ -60,11 +60,11 @@ objects:
       failedBuildsHistoryLimit: 2
       resources:
         requests:
-          cpu: "2"
-          memory: "2Gi"
+          cpu: "1"
+          memory: "1Gi"
         limits:
-          cpu: "2"
-          memory: "2Gi"
+          cpu: "1"
+          memory: "1Gi"
       output:
         to:
           kind: ImageStreamTag
