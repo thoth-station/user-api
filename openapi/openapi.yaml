@@ -1314,6 +1314,28 @@ paths:
       summary: >
         Retrieve information from the Knowledge Graph with regards
         to total number of Python packages.
+      parameters:
+        - name: name
+          in: query
+          required: false
+          description: Name of the Python Package.
+          schema:
+            type: string
+            default: "tensorflow"
+        - name: version
+          in: query
+          required: false
+          description: Version of the Python Package.
+          schema:
+            type: string
+            default: "2.0.0"
+        - name: index
+          in: query
+          required: false
+          description: Index url of the Python Package.
+          schema:
+            type: string
+            default: "https://pypi.org/simple"
       responses:
         "200":
           description: The number of Python packages in Thoth Knowledge Graph.

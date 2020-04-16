@@ -715,11 +715,31 @@ def list_buildlogs(page: int = 0):
     return _do_listing(BuildLogsStore, page)
 
 
-def get_python_package_versions_count():
+def get_python_package_versions_count(
+    name: typing.Optional[str] = None,
+    version: typing.Optional[str] = None,
+    index: typing.Optional[str] = None
+):
     """Retrieve number of Python package versions in Thoth Knowledge Graph."""
+    parameters = locals()
     from .openapi_server import GRAPH
 
-    return {"count": GRAPH.get_python_package_versions_count_all(distinct=True)}
+    try:
+        return {
+            "count": GRAPH.get_python_package_versions_count_all(
+                package_name=name,
+                package_version=version,
+                index_url=index
+            )
+        }
+    except NotFoundError:
+        return (
+            {
+                "error": "Not able to retrieve the number with the given inputs",
+                "parameters": parameters,
+            },
+            404,
+        )
 
 
 def get_package_metadata(name: str, version: str, index: str):
