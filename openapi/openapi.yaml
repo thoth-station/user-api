@@ -1647,6 +1647,11 @@ components:
           example: "9.0"
           description: Nvidia CUDA version which the application uses.
           nullable: true
+        platform:
+          type: string
+          example: "linux-x86_64"
+          description: Platform used - corresponds to sysconfig.get_platform() call.
+          nullable: true
         name:
           type: string
           example: "fedora:29-prod"
