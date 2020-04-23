@@ -702,6 +702,13 @@ def schedule_kebechet(body: dict):
     return _do_schedule(parameters, _OPENSHIFT.schedule_kebechet_run_url)
 
 
+def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
+    """Schedule Kebechet on Openshift."""
+    parsed_payload = json.dumps(body['webhook_payload'])
+    body['webhook_payload'] = parsed_payload
+    return _do_schedule(body, _OPENSHIFT.schedule_kebechet_workflow)
+
+
 def schedule_thamos_advise(
     input: typing.Dict[str, typing.Any],
 ):
