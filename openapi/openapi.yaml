@@ -2244,12 +2244,7 @@ components:
           description: Parameters echoed back to user for debugging.
     KebechetWebhookInput:
       type: object
-      required:
-        - webhook_payload
-      properties:
-        webhook_payload:
-          type: object
-          description: Webhook payload from Github event.
+      description: Webhook payload from Github event.
     QebHwtThamosAdviseInput:
       type: object
       required:

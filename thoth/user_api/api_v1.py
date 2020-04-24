@@ -704,9 +704,13 @@ def schedule_kebechet(body: dict):
 
 def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     """Schedule Kebechet on Openshift."""
-    parsed_payload = json.dumps(body['webhook_payload'])
-    body['webhook_payload'] = parsed_payload
-    return _do_schedule(body, _OPENSHIFT.schedule_kebechet_workflow)
+    try:
+        parsed_payload = json.dumps(body)
+    except err:
+        return {"error": "This webhook is not supported"}, 501
+    payload = {}
+    payload['webhook_payload'] = parsed_payload
+    return _do_schedule(payload, _OPENSHIFT.schedule_kebechet_workflow)
 
 
 def schedule_thamos_advise(
