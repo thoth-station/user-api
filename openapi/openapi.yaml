@@ -1076,6 +1076,29 @@ paths:
         "501":
           description: Functionality not supported
 
+  /kebechet-webhook:
+    post:
+      tags: [Kebechet]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: schedule_kebechet_webhook
+      summary: Schedule kebechet instance from webhook
+      requestBody:
+        required: true
+        description: Body of a git service webhook
+        content:
+          application/json:
+            schema:
+              x-body-name: body
+              $ref: "#/components/schemas/KebechetWebhookInput"
+              additionalProperties: true
+      responses:
+        "202":
+          description: Accepted
+        "400":
+          description: Invalid
+        "501":
+          description: Functionality not supported
+
   /qeb-hwt:
     post:
       tags: [GitHub]
@@ -2219,6 +2242,9 @@ components:
         parameters:
           type: object
           description: Parameters echoed back to user for debugging.
+    KebechetWebhookInput:
+      type: object
+      description: Webhook payload from Github event.
     QebHwtThamosAdviseInput:
       type: object
       required:
