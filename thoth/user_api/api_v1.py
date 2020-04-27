@@ -712,6 +712,7 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
         webhook_payload["payload"] = body
         webhook_payload["service"] = "github"
     elif "X_GitLab_Event" in headers:
+        webhook_payload["event"] = headers["X_GitLab_Event"]
         webhook_payload["payload"] = body
         webhook_payload["service"] = "gitlab"
     elif "X_Pagure_Topic" in headers:
