@@ -706,7 +706,7 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     """Schedule Kebechet run-webhook on Openshift using Argo Workflow."""
     payload, webhook_payload = {}, {}
     headers = connexion.request.headers
-    
+
     if "X-GitHub-Event" in headers:
         webhook_payload["event"] = headers["X-GitHub-Event"]
         webhook_payload["payload"] = body
@@ -719,12 +719,12 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
         return {"error": "Pagure is currently not supported"}, 501
     else:
         return {"error": "This webhook is not supported"}, 501
-    
+
     try:
         parsed_payload = json.dumps(webhook_payload)
     except err:
         return {"error": "This webhook is not supported"}, 501
-    
+
     payload['webhook_payload'] = parsed_payload
     return _do_schedule(payload, _OPENSHIFT.schedule_kebechet_workflow)
 
