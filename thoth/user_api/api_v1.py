@@ -721,12 +721,7 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     else:
         return {"error": "This webhook is not supported"}, 501
 
-    try:
-        parsed_payload = json.dumps(webhook_payload)
-    except err:
-        return {"error": "This webhook is not supported"}, 501
-
-    payload['webhook_payload'] = parsed_payload
+    payload['webhook_payload'] = webhook_payload
     return _do_schedule(payload, _OPENSHIFT.schedule_kebechet_workflow)
 
 
