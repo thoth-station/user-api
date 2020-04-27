@@ -99,6 +99,7 @@
         },
         "boto3": {
             "hashes": [
+                "sha256:0f01cd63dbfa0d2b789f427f7c1a18cc4067580c6e2b31078d64b3bb6375a6dd",
                 "sha256:4f7f11e7489c267f9ea0c6193bfbe20ef1a8dd639d780aea0ac61a769de722e1"
             ],
             "version": "==1.12.46"
@@ -923,11 +924,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:2ac898df1f613e04afed22b9eb614fb411ab14f4be16deea409302c1b8195c61",
-                "sha256:37bffb90ea1d4fe36fdb35d690efb9e997d3279f1e5b6c3d0fdd2f1dea698f94"
+                "sha256:af37e2f93b552645a33252d6209a28257917b956678a9aa1627251d778b3e950",
+                "sha256:e84d37669530c565480044534e8fc5cec6639ba31b5a7c0ca445ff97a293c46c"
             ],
             "index": "pypi",
-            "version": "==0.22.7"
+            "version": "==0.22.8"
         },
         "threadloop": {
             "hashes": [
