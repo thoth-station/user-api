@@ -361,7 +361,7 @@ def get_advise_python_log(analysis_id: str):
 def get_advise_python_status(analysis_id: str):
     """Get status of an adviser run."""
     status, code = _get_job_status(locals(), "adviser-", Configuration.THOTH_BACKEND_NAMESPACE)
-    if code == 404:
+    if code == 404 and os.getenv("THOTH_USE_ARGO") == "1":
         wf_status = None
         try:
             wf_status = _OPENSHIFT.get_workflow_status(
