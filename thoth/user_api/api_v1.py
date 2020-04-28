@@ -679,7 +679,7 @@ def get_buildlog(document_id: str):
 
 
 def schedule_kebechet(body: dict):
-    """Schedule Kebechet on Openshift."""
+    """Schedule Kebechet run-url on Openshift."""
     # TODO: Update documentation to include creation of environment variables corresponding to git service tokens
     # NOTE: Change for event dependent behaviour
     headers = connexion.request.headers
@@ -703,13 +703,25 @@ def schedule_kebechet(body: dict):
 
 
 def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
-    """Schedule Kebechet on Openshift."""
-    try:
-        parsed_payload = json.dumps(body)
-    except err:
+    """Schedule Kebechet run-webhook on Openshift using Argo Workflow."""
+    payload, webhook_payload = {}, {}
+    headers = connexion.request.headers
+
+    if "X-GitHub-Event" in headers:
+        webhook_payload["event"] = headers["X-GitHub-Event"]
+        webhook_payload["payload"] = body
+        webhook_payload["service"] = "github"
+    elif "X_GitLab_Event" in headers:
+        webhook_payload["event"] = headers["X_GitLab_Event"]
+        webhook_payload["payload"] = body
+        webhook_payload["service"] = "gitlab"
+    elif "X_Pagure_Topic" in headers:
+        service = "pagure"
+        return {"error": "Pagure is currently not supported"}, 501
+    else:
         return {"error": "This webhook is not supported"}, 501
-    payload = {}
-    payload['webhook_payload'] = parsed_payload
+
+    payload['webhook_payload'] = webhook_payload
     return _do_schedule(payload, _OPENSHIFT.schedule_kebechet_workflow)
 
 
