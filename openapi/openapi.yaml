@@ -461,7 +461,7 @@ paths:
 
   /python-package-index:
     get:
-      tags: [Info]
+      tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: list_python_package_indexes
       summary: List registered Python package indexes.
@@ -1344,21 +1344,27 @@ paths:
           description: Name of the Python Package.
           schema:
             type: string
-            default: "tensorflow"
+            nullable: true
+            default: null
+            example: "tensorflow"
         - name: version
           in: query
           required: false
           description: Version of the Python Package.
           schema:
             type: string
-            default: "2.0.0"
+            nullable: true
+            default: null
+            example: "2.0.0"
         - name: index
           in: query
           required: false
           description: Index url of the Python Package.
           schema:
             type: string
-            default: "https://pypi.org/simple"
+            nullable: true
+            default: null
+            example: "https://pypi.org/simple"
       responses:
         "200":
           description: The number of Python packages in Thoth Knowledge Graph.
