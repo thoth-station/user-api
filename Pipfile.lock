@@ -746,10 +746,10 @@
         },
         "pytz": {
             "hashes": [
-                "sha256:1c557d7d0e871de1f5ccd5833f60fb2550652da6be2693c1e02300743d21500d",
-                "sha256:b02c06db6cf09c12dd25137e563b31700d3b80fcc4ad23abb7a315f2789819be"
+                "sha256:a494d53b6d39c3c6e44c3bec237336e14305e4f29bbf800b599253057fbb79ed",
+                "sha256:c35965d010ce31b23eeb663ed3cc8c906275d6be1a34393a1d73a41febf4a048"
             ],
-            "version": "==2019.3"
+            "version": "==2020.1"
         },
         "pyyaml": {
             "hashes": [
@@ -924,11 +924,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:af37e2f93b552645a33252d6209a28257917b956678a9aa1627251d778b3e950",
-                "sha256:e84d37669530c565480044534e8fc5cec6639ba31b5a7c0ca445ff97a293c46c"
+                "sha256:77d3e3930bf177ddd904249b5311704d95a901182ac7c928a9d027336772d50f",
+                "sha256:a9b53f591c54afd61e2ab4ff0dc1c29fbe4857373efcb91de02cd6d6b2d5adde"
             ],
             "index": "pypi",
-            "version": "==0.22.8"
+            "version": "==0.22.9"
         },
         "threadloop": {
             "hashes": [
