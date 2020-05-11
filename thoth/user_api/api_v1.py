@@ -679,7 +679,7 @@ def get_buildlog(document_id: str):
 
 
 def schedule_kebechet(body: dict):
-    """Schedule Kebechet on Openshift."""
+    """Schedule Kebechet run-url on Openshift."""
     # TODO: Update documentation to include creation of environment variables corresponding to git service tokens
     # NOTE: Change for event dependent behaviour
     headers = connexion.request.headers
@@ -703,13 +703,25 @@ def schedule_kebechet(body: dict):
 
 
 def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
-    """Schedule Kebechet on Openshift."""
-    try:
-        parsed_payload = json.dumps(body)
-    except err:
+    """Schedule Kebechet run-webhook on Openshift using Argo Workflow."""
+    payload, webhook_payload = {}, {}
+    headers = connexion.request.headers
+
+    if "X-GitHub-Event" in headers:
+        webhook_payload["event"] = headers["X-GitHub-Event"]
+        webhook_payload["payload"] = body
+        webhook_payload["service"] = "github"
+    elif "X_GitLab_Event" in headers:
+        webhook_payload["event"] = headers["X_GitLab_Event"]
+        webhook_payload["payload"] = body
+        webhook_payload["service"] = "gitlab"
+    elif "X_Pagure_Topic" in headers:
+        service = "pagure"
+        return {"error": "Pagure is currently not supported"}, 501
+    else:
         return {"error": "This webhook is not supported"}, 501
-    payload = {}
-    payload['webhook_payload'] = parsed_payload
+
+    payload['webhook_payload'] = webhook_payload
     return _do_schedule(payload, _OPENSHIFT.schedule_kebechet_workflow)
 
 
@@ -802,7 +814,8 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
         if namespace:
             try:
                 status = _OPENSHIFT.get_job_status_report(analysis_id, namespace=namespace)
-                if status["state"] == "running" or (status["state"] == "terminated" and status["exit_code"] == 0):
+                if status["pods"][0]["state"] == "running" or \
+                        (status["pods"][0]["state"] == "terminated" and status["pods"][0]["exit_code"] == 0):
                     # In case we hit terminated and exit code equal to 0, the analysis has just finished and
                     # before this call (document retrieval was unsuccessful, pod finished and we asked later
                     # for status). To fix this time-dependent issue, let's user ask again. Do not do pod status
