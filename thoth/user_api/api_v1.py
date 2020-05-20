@@ -252,7 +252,7 @@ def post_advise_python(
     limit: typing.Optional[int] = None,
     limit_latest_versions: typing.Optional[int] = None,
     origin: typing.Optional[str] = None,
-    source_type: Optional[ThothAdviserIntegrationEnum] = None,
+    source_type: typing.Optional[ThothAdviserIntegrationEnum] = None,
     debug: bool = False,
     force: bool = False,
     dev: bool = False,
