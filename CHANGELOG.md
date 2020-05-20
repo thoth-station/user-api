@@ -14,3 +14,895 @@ Starting with this release we have a Zuul-CI pipeline that:
 ### Added
 
 Set resource limits of BuildConfig and Deployment to reasonable values, this will prevent unpredicted behavior on UpShift.
+## Release 0.6.1 (2020-05-11T11:32:36)
+* :pushpin: Automatic update of dependency pytest from 5.4.1 to 5.4.2
+* :pushpin: Automatic dependency re-locking
+* :pushpin: Automatic update of dependency thoth-common from 0.13.1 to 0.13.2
+* make coala happy
+* fix key error state
+* :pushpin: Automatic update of dependency thoth-storages from 0.22.8 to 0.22.9
+* Use correct keys
+* :pushpin: Automatic update of dependency thoth-common from 0.13.0 to 0.13.1
+* Moved serialization to common.
+* Added event for gitlab
+* Fixed coala err
+* Handle Github Webhooks
+* condition for argo check before workflow status check
+* :pushpin: Automatic update of dependency thoth-storages from 0.22.7 to 0.22.8
+* :pushpin: Automatic update of dependency connexion from 2.6.0 to 2.7.0
+* :pushpin: Automatic update of dependency thoth-common from 0.12.10 to 0.13.0
+* Consumes whole payload
+* Added a route to receive webhook
+* :pushpin: Automatic update of dependency thoth-common from 0.12.9 to 0.12.10
+* Add platform information to OpenAPI spec
+* :pushpin: Automatic update of dependency thoth-python from 0.9.1 to 0.9.2
+* Add filters for python packages count
+* Pin grpcio to <1.28
+* :pushpin: Automatic update of dependency thoth-common from 0.12.8 to 0.12.9
+* :pushpin: Automatic update of dependency thoth-common from 0.12.7 to 0.12.8
+* Remove latest version restriction from .thoth.yaml
+* :pushpin: Automatic update of dependency thoth-common from 0.12.6 to 0.12.7
+* Increase resources for build even more
+* Increase memory requirements for the s2i build
+* :pushpin: Automatic update of dependency grpcio-tools from 1.27.2 to 1.28.1
+* :pushpin: Automatic update of dependency grpcio from 1.27.2 to 1.28.1
+* :pushpin: Automatic update of dependency flask from 1.1.1 to 1.1.2
+* Distinguish debug option when accessing the cache for provenance results
+* Make GitHub events parameters options to the cache
+* :pushpin: Automatic dependency re-locking
+* Remove variable not required
+* Missing exception import
+* :pushpin: Automatic update of dependency grpcio-tools from 1.27.2 to 1.28.0
+* :pushpin: Automatic update of dependency grpcio from 1.27.2 to 1.28.0
+* :pushpin: Automatic update of dependency thoth-common from 0.12.5 to 0.12.6
+* :pushpin: Automatic update of dependency thoth-storages from 0.22.5 to 0.22.7
+* :pushpin: Automatic update of dependency thoth-common from 0.12.1 to 0.12.5
+* Introduce adviser's dev flag to consider or not consider dev dependencies
+* Configure logging for access log
+* :pushpin: Automatic update of dependency thoth-common from 0.12.0 to 0.12.1
+* removed these unused files
+* fixed a typo
+* introduced a service version string that contains the depending module's versions
+* :pushpin: Automatic update of dependency thoth-common from 0.10.12 to 0.12.0
+* :pushpin: Automatic update of dependency sentry-sdk from 0.14.2 to 0.14.3
+* :pushpin: Automatic update of dependency thoth-storages from 0.22.3 to 0.22.5
+* Changed to fix thamos error
+* :pushpin: Automatic update of dependency thoth-common from 0.10.11 to 0.10.12
+* Add env variable to use Argo
+* Fix for GraphDatabase has no attribute get_python_package_index_urls
+* Issue check on not found (404)
+* :pushpin: Automatic update of dependency pytest from 5.4.0 to 5.4.1
+* :pushpin: Automatic update of dependency pytest from 5.3.5 to 5.4.0
+* Return Pending state if wf doesn't have a phase set
+* Get status of an adviser run from a Workflow
+* :pushpin: Automatic update of dependency thoth-common from 0.10.9 to 0.10.11
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.12.2 to 0.13.0
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.12.2 to 0.13.0
+* Remove check on graph initialization
+* Set image pull policy to always
+* Add missing import
+* :pushpin: Automatic update of dependency thoth-common from 0.10.8 to 0.10.9
+* :pushpin: Automatic update of dependency sentry-sdk from 0.14.1 to 0.14.2
+* Fallback if thoth fails to give advise in bc
+* :pushpin: Automatic update of dependency thoth-storages from 0.22.2 to 0.22.3
+* fixed coala errors
+* changed condition
+* Reverted back
+* Advise route fix
+* :pushpin: Automatic update of dependency thoth-common from 0.10.7 to 0.10.8
+* Correct datatype
+* :pushpin: Automatic update of dependency requests from 2.22.0 to 2.23.0
+* :pushpin: Automatic update of dependency thoth-common from 0.10.6 to 0.10.7
+* :pushpin: Automatic update of dependency grpcio-tools from 1.27.1 to 1.27.2
+* :pushpin: Automatic update of dependency grpcio from 1.27.1 to 1.27.2
+* :pushpin: Automatic update of dependency thoth-storages from 0.22.1 to 0.22.2
+* :pushpin: Automatic update of dependency thoth-common from 0.10.5 to 0.10.6
+* :pushpin: Automatic update of dependency thoth-storages from 0.22.0 to 0.22.1
+* :pushpin: Automatic update of dependency thoth-storages from 0.21.11 to 0.22.0
+* Update .thoth.yaml
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.12.1 to 0.12.2
+* :pushpin: Automatic update of dependency grpcio-tools from 1.26.0 to 1.27.1
+* :pushpin: Automatic update of dependency grpcio from 1.26.0 to 1.27.1
+* :pushpin: Automatic update of dependency thoth-common from 0.10.4 to 0.10.5
+* :pushpin: Automatic update of dependency thoth-common from 0.10.3 to 0.10.4
+* :pushpin: Automatic update of dependency thoth-common from 0.10.2 to 0.10.3
+* :pushpin: Automatic dependency re-locking
+* Modify post_advise
+* remove revision
+* Modify parameters for GitHub App
+* :pushpin: Automatic update of dependency grpcio-tools from 1.26.0 to 1.27.0
+* :pushpin: Automatic update of dependency grpcio from 1.26.0 to 1.27.0
+* :pushpin: Automatic update of dependency thoth-common from 0.10.1 to 0.10.2
+* Moved common parameters to components
+* Introduce env var for Thoth host
+* :pushpin: Automatic update of dependency thoth-common from 0.10.0 to 0.10.1
+* Use string for env variable
+* POST endpoint accepts input body
+* Add missing import
+* :pushpin: Automatic update of dependency connexion from 2.5.1 to 2.6.0
+* :pushpin: Automatic update of dependency pytest from 5.3.4 to 5.3.5
+* Add endpoint exposing package dependencies
+* :pushpin: Automatic update of dependency thoth-common from 0.9.31 to 0.10.0
+* standardize parameters for GitHubApp workflow scheduling
+* Add GitHub specific metadata for GitHub integration
+* Added handlin to user facing function
+* Fixed coala errors
+* Added an extra exception catch
+* :pushpin: Automatic update of dependency thoth-storages from 0.21.10 to 0.21.11
+* :pushpin: Automatic update of dependency thoth-common from 0.9.30 to 0.9.31
+* :pushpin: Automatic update of dependency thoth-common from 0.9.29 to 0.9.30
+* Add responses
+* Correct wrong datatype
+* Add temporary variable to use Argo workflow
+* New Endpoint to schedule Thamos Advise workflow for QebHwt
+* :pushpin: Automatic update of dependency sentry-sdk from 0.14.0 to 0.14.1
+* :pushpin: Automatic update of dependency thoth-storages from 0.21.9 to 0.21.10
+* :pushpin: Automatic update of dependency thoth-storages from 0.21.8 to 0.21.9
+* :pushpin: Automatic update of dependency pytest from 5.3.3 to 5.3.4
+* :pushpin: Automatic update of dependency thoth-storages from 0.21.7 to 0.21.8
+* :pushpin: Automatic update of dependency thoth-common from 0.9.28 to 0.9.29
+* Added nullables to Runtime Environment properties
+* :pushpin: Automatic update of dependency pytest from 5.3.2 to 5.3.3
+* :pushpin: Automatic update of dependency thoth-common from 0.9.27 to 0.9.28
+* :pushpin: Automatic update of dependency thoth-common from 0.9.26 to 0.9.27
+* :pushpin: Automatic update of dependency thoth-analyzer from 0.1.7 to 0.1.8
+* :pushpin: Automatic update of dependency thoth-storages from 0.21.6 to 0.21.7
+* :pushpin: Automatic update of dependency jaeger-client from 4.2.0 to 4.3.0
+* :pushpin: Automatic update of dependency thoth-common from 0.9.25 to 0.9.26
+* :pushpin: Automatic update of dependency thoth-storages from 0.21.5 to 0.21.6
+* use build-report instead of build-analyze
+* :pushpin: Automatic update of dependency thoth-common from 0.9.24 to 0.9.25
+* :pushpin: Automatic update of dependency thoth-storages from 0.21.4 to 0.21.5
+* :pushpin: Automatic update of dependency thoth-storages from 0.21.3 to 0.21.4
+* :pushpin: Automatic update of dependency thoth-storages from 0.21.2 to 0.21.3
+* :pushpin: Automatic update of dependency thoth-storages from 0.21.1 to 0.21.2
+* :pushpin: Automatic update of dependency thoth-storages from 0.21.0 to 0.21.1
+* :pushpin: Automatic update of dependency thoth-common from 0.9.23 to 0.9.24
+* :pushpin: Automatic update of dependency thoth-storages from 0.20.6 to 0.21.0
+* :pushpin: Automatic update of dependency thoth-python from 0.9.0 to 0.9.1
+* :pushpin: Automatic update of dependency thoth-python from 0.8.0 to 0.9.0
+* :pushpin: Automatic update of dependency sentry-sdk from 0.13.5 to 0.14.0
+* :pushpin: Automatic update of dependency thoth-storages from 0.20.5 to 0.20.6
+* Do not run adviser from bc in debug mode
+* :pushpin: Automatic update of dependency thoth-common from 0.9.22 to 0.9.23
+* :pushpin: Automatic update of dependency thoth-storages from 0.20.4 to 0.20.5
+* :pushpin: Automatic update of dependency thoth-python from 0.7.1 to 0.8.0
+* :pushpin: Automatic update of dependency thoth-storages from 0.20.3 to 0.20.4
+* :pushpin: Automatic update of dependency thoth-storages from 0.20.2 to 0.20.3
+* :pushpin: Automatic update of dependency thoth-storages from 0.20.1 to 0.20.2
+* Happy new year!
+* :pushpin: Automatic update of dependency thoth-storages from 0.20.0 to 0.20.1
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.30 to 0.20.0
+* :pushpin: Automatic update of dependency connexion from 2.5.0 to 2.5.1
+* :pushpin: Automatic update of dependency grpcio-tools from 1.25.0 to 1.26.0
+* :pushpin: Automatic update of dependency grpcio from 1.25.0 to 1.26.0
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.27 to 0.19.30
+* :pushpin: Automatic update of dependency connexion from 2.4.0 to 2.5.0
+* :pushpin: Automatic update of dependency pytest from 5.3.1 to 5.3.2
+* :pushpin: Automatic update of dependency thoth-common from 0.9.21 to 0.9.22
+* :pushpin: Automatic update of dependency thoth-analyzer from 0.1.6 to 0.1.7
+* Provide is_s2i flag on user API
+* Use RHEL instead of UBI
+* Update Thoth configuration file and Thoth's s2i configuration
+* Connect to database lazily, after fork
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.26 to 0.19.27
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.25 to 0.19.26
+* :pushpin: Automatic update of dependency sentry-sdk from 0.13.4 to 0.13.5
+* :pushpin: Automatic update of dependency thoth-analyzer from 0.1.5 to 0.1.6
+* :pushpin: Automatic update of dependency thoth-common from 0.9.20 to 0.9.21
+* :pushpin: Automatic update of dependency thoth-common from 0.9.19 to 0.9.20
+* Two new endpoints
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.11.0 to 0.12.1
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.24 to 0.19.25
+* :pushpin: Automatic update of dependency thoth-common from 0.9.17 to 0.9.19
+* :pushpin: Automatic update of dependency thoth-analyzer from 0.1.4 to 0.1.5
+* :pushpin: Automatic update of dependency thoth-common from 0.9.16 to 0.9.17
+* :pushpin: Automatic update of dependency jaeger-client from 4.1.0 to 4.2.0
+* :pushpin: Automatic update of dependency gunicorn from 20.0.3 to 20.0.4
+* :pushpin: Automatic update of dependency pytest from 5.3.0 to 5.3.1
+* :pushpin: Automatic update of dependency sentry-sdk from 0.13.3 to 0.13.4
+* :pushpin: Automatic update of dependency gunicorn from 20.0.2 to 20.0.3
+* :pushpin: Automatic update of dependency sentry-sdk from 0.13.2 to 0.13.3
+* :pushpin: Automatic update of dependency gunicorn from 20.0.0 to 20.0.2
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.23 to 0.19.24
+* :green_heart: updated some kinds, apiVersions
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.22 to 0.19.23
+* :pushpin: Automatic update of dependency pytest from 5.2.4 to 5.3.0
+* Add sentry-sdk[flask] for Sentry Flask integration
+* Add aiocontextvars for sentry-sdk integration with aiohttp
+* :green_heart: fixed the type
+* Added headers to response
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.19 to 0.19.22
+* New endpoints for Python packages in Thoth Knowledge Graph
+* Correct output for error response for all queries
+* Correct error response output
+* :pushpin: Automatic update of dependency pytest from 5.2.3 to 5.2.4
+* Maintain one graph datababase adapter instance also in health checks
+* Instantiate one adapter per wsgi worker
+* :pushpin: Automatic update of dependency pytest from 5.2.2 to 5.2.3
+* :pushpin: Automatic update of dependency thoth-common from 0.9.15 to 0.9.16
+* :pushpin: Automatic update of dependency thoth-common from 0.9.14 to 0.9.15
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.18 to 0.19.19
+* Track only user endpoints
+* List only enabled Python package indexes to users
+* :pushpin: Automatic update of dependency gunicorn from 19.9.0 to 20.0.0
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.17 to 0.19.18
+* :pushpin: Automatic update of dependency thoth-python from 0.6.5 to 0.7.1
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.15 to 0.19.17
+* Fix redirect to Swagger UI to make it work
+* Always parse runtime environment before submitting to adviser
+* :pushpin: Automatic update of dependency grpcio-tools from 1.24.3 to 1.25.0
+* :pushpin: Automatic update of dependency grpcio from 1.24.3 to 1.25.0
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.14 to 0.19.15
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.13 to 0.19.14
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.12 to 0.19.13
+* Update queries according to standardize naming convention
+* updated templates with annotations and param thoth-advise-value
+* Fix offset to start_offset
+* use github webhook variable html_url
+* Catch exception when database is not initialized
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.11 to 0.19.12
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.10 to 0.19.11
+* Fix issue when overwriting parameters
+* :pushpin: Automatic update of dependency pytest from 5.2.1 to 5.2.2
+* Do not introduce fatal fail if database schema was removed
+* Redirect to HTTPS instead of HTTP if configured so
+* Fix entrypoint - remove old entrypoint
+* Check if database schema is up2date in readiness probe
+* Remove Info
+* Remove Dgraph memories
+* Make coala happy
+* Set is_external to False explicitly
+* Remove is_external from api_v1.py
+* Removed is_external
+* Fix typo
+* Return parameters
+* Add software & hardware environment listing
+* Add missing properties to User API
+* :pushpin: Automatic update of dependency grpcio-tools from 1.24.1 to 1.24.3
+* :pushpin: Automatic update of dependency grpcio from 1.24.1 to 1.24.3
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.9 to 0.19.10
+* :pushpin: Automatic update of dependency thoth-python from 0.6.4 to 0.6.5
+* :pushpin: Automatic update of dependency connexion from 2.3.0 to 2.4.0
+* Fix component reference in openapi
+* Report 404 if no metadata are found for the given package
+* :sparkles: added a PR template
+* [Feature] Get metadata for a Python package
+* :pushpin: Automatic update of dependency attrs from 19.2.0 to 19.3.0
+* :pushpin: Automatic update of dependency thoth-common from 0.9.12 to 0.9.14
+* :pushpin: Automatic update of dependency thoth-python from 0.6.3 to 0.6.4
+* Provide is_external flag to package-extract runs explictly
+* :pushpin: Automatic update of dependency thoth-common from 0.9.11 to 0.9.12
+* :pushpin: Automatic update of dependency pytest from 5.2.0 to 5.2.1
+* :sparkles: bounce the version to 0.6.0-dev
+* :pushpin: Automatic update of dependency grpcio-tools from 1.24.0 to 1.24.1
+* :pushpin: Automatic update of dependency grpcio from 1.24.0 to 1.24.1
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.10.0 to 0.11.0
+* :pushpin: Automatic update of dependency opentracing-instrumentation from 3.2.0 to 3.2.1
+* :pushpin: Automatic update of dependency thoth-common from 0.9.10 to 0.9.11
+* :pushpin: Automatic update of dependency attrs from 19.1.0 to 19.2.0
+* add pipfile lock
+* Made changes
+* fixing cors issue
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.8 to 0.19.9
+* :pushpin: Automatic update of dependency pytest from 5.1.3 to 5.2.0
+* Add Thoth version information to each response
+* Delete Info
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.7 to 0.19.8
+* :pushpin: Automatic update of dependency thoth-analyzer from 0.1.3 to 0.1.4
+* Be more safe when parsing webhook payload
+* Remove unused function - log parsing has been moved to async handling
+* :pushpin: Automatic update of dependency grpcio-tools from 1.23.0 to 1.24.0
+* :pushpin: Automatic update of dependency grpcio from 1.23.0 to 1.24.0
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.9.1 to 0.10.0
+* updated cpu and memory allocation
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.6 to 0.19.7
+* use postgresql hostname from thoth configmap
+* :pushpin: Automatic update of dependency thoth-python from 0.6.2 to 0.6.3
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.5 to 0.19.6
+* Check PostgreSQL in liveness or readiness probe
+* :pushpin: Automatic update of dependency pytest from 5.1.2 to 5.1.3
+* :pushpin: Automatic update of dependency thoth-analyzer from 0.1.2 to 0.1.3
+* :pushpin: Automatic update of dependency thoth-common from 0.9.9 to 0.9.10
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.4 to 0.19.5
+* :pushpin: Automatic update of dependency thoth-common from 0.9.8 to 0.9.9
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.3 to 0.19.4
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.2 to 0.19.3
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.1 to 0.19.2
+* :pushpin: Automatic update of dependency thoth-storages from 0.19.0 to 0.19.1
+* :pushpin: Automatic update of dependency thoth-storages from 0.18.6 to 0.19.0
+* :pushpin: Automatic update of dependency thoth-python from 0.6.1 to 0.6.2
+* Use more generic env var names
+* Switch from Dgraph to PostgreSQL in deployment
+* :pushpin: Automatic update of dependency opentracing-instrumentation from 3.1.1 to 3.2.0
+* :pushpin: Automatic update of dependency jaeger-client from 4.0.0 to 4.1.0
+* :pushpin: Automatic update of dependency pytest from 5.1.1 to 5.1.2
+* :pushpin: Automatic update of dependency pytest from 5.1.0 to 5.1.1
+* Start using Thoth's s2i base image
+* :pushpin: Automatic update of dependency pytest from 5.0.1 to 5.1.0
+* :pushpin: Automatic update of dependency grpcio-tools from 1.22.0 to 1.23.0
+* :pushpin: Automatic update of dependency grpcio from 1.22.1 to 1.23.0
+* :pushpin: Automatic update of dependency grpcio from 1.22.0 to 1.22.1
+* Use singular to be compatible with other endpoints
+* Provide endpoint for listing supported runtime environments
+* :pushpin: Automatic update of dependency thoth-storages from 0.18.5 to 0.18.6
+* Added config
+* :pushpin: Automatic update of dependency thoth-common from 0.9.7 to 0.9.8
+* Initial dependency lock
+* Runtime environment is now reported on the project instance
+* Stop using extras in thoth-common
+* Wrong URLs
+* :pushpin: Automatic update of dependency thoth-storages from 0.18.4 to 0.18.5
+* :pushpin: Automatic update of dependency thoth-python from 0.6.0 to 0.6.1
+* Remove old .thoth.yaml configuration file
+* Change name of Thoth template to make Coala happy
+* Start using Thoth in OpenShift's s2i
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.9.0 to 0.9.1
+* :pushpin: Automatic update of dependency thoth-storages from 0.18.3 to 0.18.4
+* :pushpin: Automatic update of dependency thoth-common from 0.9.5 to 0.9.6
+* Enforce new invectio version by providing required schema
+* Remove anchors and use refs instead
+* Add information comming from Jupyter Notebooks
+* :pushpin: Automatic update of dependency thoth-storages from 0.18.1 to 0.18.3
+* :pushpin: Automatic update of dependency thoth-storages from 0.18.0 to 0.18.1
+* :pushpin: Automatic update of dependency thoth-storages from 0.17.0 to 0.18.0
+* :pushpin: Automatic update of dependency thoth-storages from 0.16.0 to 0.17.0
+* :pushpin: Automatic update of dependency thoth-storages from 0.14.8 to 0.16.0
+* :pushpin: Automatic update of dependency thoth-python from 0.5.0 to 0.6.0
+* :pushpin: Automatic update of dependency thoth-common from 0.9.3 to 0.9.5
+* Removed thoth-build-analyzers dependencies from user-api
+* :sunrise: Modified the names to standard convention
+* :dolphin: user-api support for build analysis and build log analysis
+* Changed based on review
+* Explicitly state python type
+* :pushpin: Automatic update of dependency thoth-storages from 0.14.7 to 0.14.8
+* :pushpin: Automatic update of dependency thoth-common from 0.9.2 to 0.9.3
+* :pushpin: Automatic update of dependency thoth-storages from 0.14.6 to 0.14.7
+* Added error return value for pagure
+* :pushpin: Automatic update of dependency thoth-common from 0.9.1 to 0.9.2
+* :pushpin: Automatic update of dependency thoth-storages from 0.14.5 to 0.14.6
+* :pushpin: Automatic update of dependency thoth-storages from 0.14.4 to 0.14.5
+* :pushpin: Automatic update of dependency flask from 1.1.0 to 1.1.1
+* :star: python black linting and styling fixes
+* updated the deprecated version check
+* Error code return values
+* :pushpin: Automatic update of dependency thoth-storages from 0.14.3 to 0.14.4
+* :pushpin: Automatic update of dependency pytest from 5.0.0 to 5.0.1
+* :pushpin: Automatic update of dependency opentracing-instrumentation from 3.0.1 to 3.1.1
+* :pushpin: Automatic update of dependency flask from 1.0.4 to 1.1.0
+* :pushpin: Automatic update of dependency flask from 1.0.3 to 1.0.4
+* :pushpin: Automatic update of dependency pytest from 4.6.3 to 5.0.0
+* :pushpin: Automatic update of dependency thoth-storages from 0.14.1 to 0.14.3
+* :pushpin: Automatic update of dependency thoth-common from 0.8.11 to 0.9.1
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.8.1 to 0.9.0
+* :pushpin: Automatic update of dependency prometheus-client from 0.7.0 to 0.7.1
+* :pushpin: Automatic update of dependency grpcio-tools from 1.21.1 to 1.22.0
+* :pushpin: Automatic update of dependency grpcio from 1.21.1 to 1.22.0
+* Changed variable name
+* /kebechet endpoint works
+* Addition
+* Interface with thoth-common kebechet scheduler
+* Update the trigger-build job to use the latest job API
+* :pushpin: Automatic update of dependency connexion from 2.2.0 to 2.3.0
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.8.0 to 0.8.1
+* :pushpin: Automatic update of dependency pytest from 4.6.2 to 4.6.3
+* Metrics are available for Prometheus and grouped by endpoint
+* :pushpin: Automatic update of dependency prometheus-client from 0.6.0 to 0.7.0
+* :pushpin: Automatic update of dependency thoth-common from 0.8.7 to 0.8.11
+* :pushpin: Automatic update of dependency thoth-storages from 0.14.0 to 0.14.1
+* Internal Error Connection due to attributes
+* :pushpin: Automatic update of dependency pytest from 4.5.0 to 4.6.2
+* :pushpin: Automatic update of dependency thoth-storages from 0.11.4 to 0.14.0
+* Update Pipfile.lock
+* Handle workload registered state
+* Migrate parsing API to thoth-build-analysers
+* :pushpin: Automatic update of dependency grpcio-tools from 1.20.1 to 1.21.1
+* :pushpin: Automatic update of dependency grpcio from 1.20.1 to 1.21.1
+* Typos corrected
+* Correct metric info
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.7.4 to 0.8.0
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.7.3 to 0.7.4
+* Modified endpoints
+* Update functions for user API
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.7.2 to 0.7.3
+* :pushpin: Automatic update of dependency flask from 1.0.2 to 1.0.3
+* :pushpin: Automatic update of dependency requests from 2.21.0 to 2.22.0
+* :wrench: minor fix template for openshift >=3.11
+* :pushpin: Automatic update of dependency thoth-common from 0.8.5 to 0.8.7
+* :pushpin: Automatic update of dependency pytest from 4.4.2 to 4.5.0
+* :pushpin: Automatic update of dependency thoth-storages from 0.11.3 to 0.11.4
+* :pushpin: Automatic update of dependency thoth-storages from 0.11.2 to 0.11.3
+* Fix method names, provide image names only once
+* Do not convert datetimes, keep them as strings
+* Consolidate endpoints for buildtime and runtime analyses
+* :pushpin: Automatic update of dependency pytest from 4.4.1 to 4.4.2
+* :pushpin: Automatic update of dependency thoth-storages from 0.11.1 to 0.11.2
+* Implement User API using Stub API template
+* Add library usage parameter to adviser's API
+* :pushpin: Automatic update of dependency thoth-storages from 0.11.0 to 0.11.1
+* :bug: convert set to a list, so that it is json serializable
+* Fix env variable name of Dgraph instance in info endpoint
+* :pushpin: Automatic update of dependency thoth-storages from 0.10.0 to 0.11.0
+* Adjust deployment to respect new Dgraph configuration
+* :sparkles: added required ENV
+* :sparkles: added mounting the Dgraph TLS secrets
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.7.1 to 0.7.2
+* Switch to Dgraph
+* :pushpin: Automatic update of dependency thoth-storages from 0.9.7 to 0.10.0
+* :pushpin: Automatic update of dependency pytest from 4.4.0 to 4.4.1
+* :pushpin: Automatic update of dependency thoth-common from 0.8.4 to 0.8.5
+* Introduce environment type parameter for image analysis
+* Automatic update of dependency thoth-common from 0.8.3 to 0.8.4
+* Return Bad Request for invalid format request
+* Automatic update of dependency thoth-common from 0.8.2 to 0.8.3
+* Remove pylint zuul job
+* Automatic update of dependency thoth-common from 0.8.1 to 0.8.2
+* Automatic update of dependency prometheus-flask-exporter from 0.7.0 to 0.7.1
+* Automatic update of dependency pytest from 4.3.1 to 4.4.0
+* Automatic update of dependency prometheus-flask-exporter from 0.6.0 to 0.7.0
+* Automatic update of dependency thoth-storages from 0.9.6 to 0.9.7
+* Automatic update of dependency thoth-python from 0.4.6 to 0.5.0
+* Add Thoth's configuration file
+* Automatic update of dependency thoth-common from 0.7.1 to 0.8.1
+* Fix requirements so that updates are possible
+* :bookmark: bouncing swagger api version to 0.4.0
+* reworked the service account part
+* remove unused stuff
+* Fix wrong pop
+* Expose parameter for limiting number of latest versions
+* Increase memory requests in deployment
+* Set WARNING level before the actual handler function
+* Automatic update of dependency pytest from 4.2.1 to 4.3.0
+* Automatic update of dependency prometheus-client from 0.5.0 to 0.6.0
+* Introduce origin parameter
+* Adjust description to respect semantics
+* Expose deployment specific configuration to users
+* Report unknown errors happening during image extraction
+* Fix issues with Pipfile in s2i
+* Place runtime environment specification into a standalone model
+* Adjustments to respect Thoth configuration
+* Use Python 3.6 by default
+* It's already 2019
+* Fix wrong operator
+* Change order of parameters to skopeo
+* Skopeo flag for TLS verification has changed
+* State hash type in description
+* Introduce endpoint for gathering image information based on image digest
+* Make image analysis endpoint work again
+* Fix typo in method name
+* Fix return value in function signature
+* Return 404 in status endpoints if the given analysis id was not found
+* Rename method to reflect its semantics
+* Schedule workload instead of directly running it
+* Cache should also distinguish recommendation type
+* Pop supplied input
+* Fix key error
+* Respect signature of function, return a tuple
+* Avoid circular JSONs on error response
+* Automatic update of dependency requests from 2.20.1 to 2.21.0
+* Automatic update of dependency prometheus-flask-exporter from 0.4.0 to 0.4.1
+* Automatic update of dependency prometheus-client from 0.4.2 to 0.5.0
+* Update thoth-python to avoid attribute errors
+* Update thoth-storages to include Amun client dependency
+* Dependency locking
+* Implement cache for adviser runs
+* Update dependencies, let Kebechet do relocking
+* Fixes to make things work
+* Introduce cache in provenance checks
+* Automatic update of dependency thoth-common from 0.4.5 to 0.4.6
+* Automatic update of dependency thoth-storages from 0.8.0 to 0.9.0
+* added prometheus metric export for all things REST
+* added a pyproject.toml to keep black happy
+* added prometheus
+* Automatic update of dependency pytest from 4.0.0 to 4.0.1
+* Be more precise with swagger model examples
+* Automatic update of dependency thoth-common from 0.4.4 to 0.4.5
+* Expose available Python package indexes on API
+* Provide runtime environment as a JSON
+* Automatic update of dependency thoth-common from 0.4.3 to 0.4.4
+* Introduce count and limit on API for advise
+* Automatic update of dependency thoth-common from 0.4.2 to 0.4.3
+* Extras are not markers
+* Automatic update of dependency thoth-common from 0.4.1 to 0.4.2
+* Extras are not markers
+* Automatic update of dependency thoth-common from 0.4.0 to 0.4.1
+* Automatic update of dependency thoth-storages from 0.7.6 to 0.8.0
+* Automatic update of dependency connexion from 2.0.1 to 2.0.2
+* Automatic update of dependency pytest from 3.10.1 to 4.0.0
+* Extras are not markers
+* Markers are not extras
+* fixing markers/extra
+* Automatic update of dependency pytest from 3.10.0 to 3.10.1
+* fixing markers/extra
+* Automatic update of dependency requests from 2.20.0 to 2.20.1
+* Extras are not markers
+* Automatic update of dependency thoth-storages from 0.7.5 to 0.7.6
+* Automatic update of dependency thoth-storages from 0.7.4 to 0.7.5
+* Markers are not extras
+* Markers are not extras
+* Automatic update of dependency connexion from 2.0.0 to 2.0.1
+* Update buildConfig-template.yaml
+* Automatic update of dependency thoth-storages from 0.7.2 to 0.7.4
+* added HistoryLimits to BuildConfig
+* fixed
+* Update .zuul.yaml
+* Update .zuul.yaml
+* Update .zuul.yaml
+* New connexion requires swagger-ui extras
+* Extras are not markers
+* updated to use the latest token (recreated after last reprovisioning of thoth)
+* updated to use the latest token (recreated after last reprovisioning of thoth)
+* actually do --insecure-skip-tls-verify
+* fixed errors
+* fixed errors
+* fixed errors
+* OpenShift are not markers but extras
+* Automatic update of dependency pytest from 3.9.3 to 3.10.0
+* Automatic update of dependency thoth-common from 0.3.16 to 0.4.0
+* OpenShift are not markers but extras
+* Automatic update of dependency pytest from 3.9.3 to 3.10.0
+* working on redeployment
+* using skopeo to pull image
+* corrected the label name
+* ...
+* added thoth-ops SA secret
+* Fix dependency name
+* fixed coala errors
+* Markers are not extras
+* Add missing attr dependency
+* we dont have a nodeset defined for it yet, lets create it here.
+* 1. redeploy after build finished, 2. push image to upstream registry
+* started a job that will redeploy user-api to a given OpenShift project
+* fixed coala errors
+* using thoth zuul jobs now
+* Amun and dependency monkey is not used by user API
+* Remove unused secret
+* Remove endpoints that were moved to management API
+* Clear unused dependencies
+* Frontend namespace is set from configmap
+* Move user API under thoth directory
+* Update thoth-storages to 0.7.2
+* Provenance checks will be cached as well
+* Implement caching of package-extract results
+* Update thoth-common and thoth-storages
+* Fix parameter name
+* Extras are not markers
+* Fix key error when gathering pod status
+* Automatic update of dependency thoth-common from 0.3.14 to 0.3.15
+* Report issues using status codes
+* Implement metadata gathering for images
+* Do not propagate force to actual package-extract run
+* Do not propagate force to analysis run
+* Automatic update of dependency thoth-common from 0.3.13 to 0.3.14
+* Automatic update of dependency thoth-common from 0.3.12 to 0.3.13
+* Automatic dependency re-locking
+* Automatic update of dependency pytest from 3.9.1 to 3.9.2
+* Automatic update of dependency thoth-storages from 0.5.4 to 0.6.0
+* Automatic update of dependency thoth-common from 0.3.11 to 0.3.12
+* Automatic update of dependency requests from 2.19.1 to 2.20.0
+* Automatic update of dependency pytest from 3.8.2 to 3.9.1
+* Amun API is URL not host
+* Respect dependency monkey output configuration
+* Introduce cached results of analyses
+* Revert "Use TLS in route", it resulted in an unavailable Web UI.
+* fixing some misformatted lines
+* minor fixes
+* Automatic update of dependency thoth-storages from 0.5.3 to 0.5.4
+* Automatic update of dependency thoth-storages from 0.5.2 to 0.5.3
+* Automatic update of dependency thoth-common from 0.3.10 to 0.3.11
+* using envvar that are injected by OpenShift to discover janusgraph servcie host and port
+* added THOTH_JANUSGRAPH_{HOST|POST} as template parameters
+* Automatic update of dependency thoth-common from 0.3.9 to 0.3.10
+* Fix typo in argument name
+* Logs can be nullable
+* Fix CI
+* Use TLS in route
+* fixed the template name
+* split out the imagestream into his own template
+* Automatic update of dependency thoth-common from 0.3.8 to 0.3.9
+* Automatic update of dependency thoth-common from 0.3.7 to 0.3.8
+* Fix status gathering
+* Automatic update of dependency thoth-common from 0.3.6 to 0.3.7
+* Move from Pods to Jobs
+* Fix linter complains
+* Introduce dependency monkey endpoints
+* Add skopeo binary
+* Automatic update of dependency pytest from 3.8.1 to 3.8.2
+* Automatic update of dependency thoth-common from 0.3.5 to 0.3.6
+* Automatic update of dependency thoth-common from 0.3.2 to 0.3.5
+* Fix gathering pod status
+* Automatic update of dependency thoth-common from 0.3.1 to 0.3.2
+* Fix CI complains
+* State nullable values in swagger
+* Fix reStructuredText issues
+* fixed linter errors
+* now the ImageStreamTag to be deployed can pe configured via a parameter, default is "latest"
+* added a badge
+* fixed the badge
+* Revert "Add a Codacy badge to README.rst"
+* Update README file
+* Automatic update of dependency pytest from 3.8.0 to 3.8.1
+* Gathering status report moved to common
+* Remove unused import
+* Fix retrieving documents on wrong endpoint
+* Remove 400 responses where not needed
+* Provide custom error handlers with more information
+* Fix analysis listing model
+* Fix linter
+* Allow empty lock to be submitted
+* Automatic update of dependency thoth-common from 0.3.0 to 0.3.1
+* Comment out nullable values due to incompatibility
+* Container SHA can be null when analysis is pending
+* Fix status response definition
+* Remove underscore in cotainer name in response
+* Fix parameter name
+* Add response schemas to swagger definitions
+* Automatic update of dependency connexion from 1.5.2 to 1.5.3
+* Signalize user if no solvers were run
+* Automatic update of dependency pytest from 3.7.4 to 3.8.0
+* Rename recommend to advise all over the places
+* Enhance reporting issues when gathering documents to user
+* Expose provenance debug option on API
+* Fix built-in type shadowing
+* Automatic update of dependency thoth-common from 0.2.7 to 0.3.0
+* Fix parameter name
+* Notify user about running analyses if results are not ready yet
+* Report user timeout issues with long-running analyses
+* Refactor API to reflect current functionality
+* better formating
+* removed, as we use Zuul for gating
+* Add Codacy badge
+* Remove accidentally duplicated function
+* Add Codacy badge
+* Fix method name
+* Code refactoring and always replying parameters
+* Automatic update of dependency thoth-common from 0.2.6 to 0.2.7
+* Implement provenance checker run
+* Introduce provenance endpoint
+* Automatic update of dependency thoth-common from 0.2.5 to 0.2.6
+* better formating
+* Automatic update of dependency thoth-storages from 0.5.1 to 0.5.2
+* better formating
+* nano fixed
+* change the queue
+* Provide frontend namespace configuration
+* Automatic update of dependency attrs from 18.1.0 to 18.2.0
+* Automatic update of dependency thoth-common from 0.2.4 to 0.2.5
+* Automatic update of dependency pytest from 3.7.3 to 3.7.4
+* Initial dependency lock
+* Let Kebechet lock dependencies
+* OpenShift and K8s are no longer direct deps
+* Automatic update of dependency thoth-storages from 0.5.0 to 0.5.1
+* Automatic update of dependency thoth-common from 0.2.2 to 0.2.3
+* Automatic update of dependency pytest from 3.7.1 to 3.7.3
+* Automatic update of dependency kubernetes from 6.0.0 to 7.0.0
+* Automatic update of dependency thoth-storages from 0.4.0 to 0.5.0
+* Automatic update of dependency thoth-storages from 0.3.0 to 0.4.0
+* Automatic update of dependency thoth-storages from 0.2.0 to 0.3.0
+* Automatic update of dependency thoth-storages from 0.1.1 to 0.2.0
+* Configuration is now available via env vars
+* Remove unused entries from configuration
+* Use OpenShift object from thoth-common
+* Tweak running adviser
+* Automatic update of dependency pylint from 2.1.0 to 2.1.1
+* Initial dependency lock
+* @sesheta please relock
+* Add endpoint for listing adviser results
+* Label graph sync job triggered by user
+* Use OpenShift as a naming service
+* Increase memory for user-api
+* Automatic update of dependency pylint from 2.0.1 to 2.1.0
+* Automatic update of dependency pytest from 3.6.4 to 3.7.0
+* Increase memory otherwise container exits on os error 14
+* Disable HTTP request logs (#168)
+* Automatic update of dependency thoth-common from 0.2.1 to 0.2.2
+* Automatic update of dependency pytest from 3.6.3 to 3.6.4
+* Automatic update of dependency thoth-storages from 0.1.0 to 0.1.1
+* Automatic update of dependency connexion from 1.5.1 to 1.5.2
+* Fix label 2
+* Fix label
+* Adjust template labels (#166)
+* new templates
+* Automatic update of dependency pytest-timeout from 1.3.0 to 1.3.1
+* Automatic update of dependency pylint from 2.0.0 to 2.0.1
+* Automatic update of dependency connexion from 1.4.2 to 1.5.1
+* increasing the requested resources
+* Use default port for services
+* modified message in example to correct format
+* Adjust python recommendation endpoint (#161)
+* Linter  solutions
+* Linter error solutions
+* Linter error solution
+* Automatic update of dependency thoth-storages from 0.0.33 to 0.1.0
+* Including all the possible artifacts and corrected space checks
+* Including all the possible artifacts
+* adding more values to log_info param
+* Introduce initial recommendation endpoints (#114)
+* Do not restrict logging of user endpoints (#158)
+* Automatic update of dependency pylint from 1.9.2 to 2.0.0
+* Use Prometheus host and port environment variables when running analyzer
+* Automatic update of dependency thoth-common from 0.2.0 to 0.2.1
+* Automatic update of dependency thoth-common from 0.2.0 to 0.2.1
+* Automatic update of dependency thoth-common from 0.2.0 to 0.2.1
+* Initial dependency lock
+* Delete Pipfile.lock for relocking dependencies
+* Automatic update of dependency thoth-common from 0.1.0 to 0.2.0
+* relocked
+* Automatic update of dependency pytest from 3.6.2 to 3.6.3
+* Update .zuul.yaml
+* Automatic update of dependency thoth-common from 0.0.9 to 0.1.0
+* removed pydocstyle
+* relocked
+* Update deployment-template.yaml
+* Use service account token function from thoth-common
+* Update .zuul.yaml
+* removed some E501, as the max line lenght is 120 now!
+* Automatic update of dependency thoth-storages from 0.0.32 to 0.0.33
+* Extended Generic log Wrappers
+* Do not query OpenShift API in readiness/liveness probes
+* fixes #137
+* relocked
+* Automatic update of dependency thoth-storages from 0.0.29 to 0.0.32
+* Automatic update of dependency thoth-common from 0.0.7 to 0.0.9
+* Update .zuul.yaml
+* Added minlength to swagger.yaml
+* Added min lenghth to swagger.yaml
+* Update .coafile
+* Variable THOTH_CEPH_HOST was renamed
+* Move resource definition for buildconfig to proper entry
+* added the gate pipeline to the core queue
+* fixing a parser error...
+* fixing E252
+* fixed template names
+* bounced version to 0.4.0
+* adding linting-only zuul project definition
+* fixing coala issues
+* added all the stuff we need for coala
+* rename ceph_host to s3_endpoint_url
+* set resource limits of BC, DC
+* Added pagination info in response header
+* Changed wrongname in logmodule init
+* Rename THOTH_MIDDLEEND_NAMESPACE to THOTH_MIDDLETIER_NAMESPACE
+* re-locked Pipenv
+* Do not restrict Thoth packages
+* Update thoth-common for rsyslog logging
+* Propagate rsyslog configuration to pods run
+* Add rsyslog logging
+* Update issue templates
+* Extend liveness probe with Ceph connection check
+* Update thoth-storages
+* Test to trigger CI
+* Test to trigger CI
+* Run coala in non-interactive mode
+* Run Coala in CI
+* Use coala for code checks
+* Update thoth-storages
+* Remove accidentally committed __pycache__
+* we dont use travis-ci at this moment
+* Do not restrict image names on API
+* Remove the /run endpoint
+* Fix wrong argument for pagination
+* Bump thoth-storages with new methods
+* Introduce listing of analyses for the given runtime environment
+* Provide also information about analyzes
+* Update thoth-storages
+* Handle not found results in the graph database
+* Handle forward slashes in image names
+* Update thoth-storages
+* Get packages found inside a runtime environment
+* List runtime environments endpoint
+* Fix graph sync endpoint
+* Add license headers
+* Add proper LICENSE file
+* Use capitals in tags
+* Use path parameters instead of query where appropriate
+* Remove thoth- prefix
+* adding the OWNERS file
+* humans: let's reclaim our mattermost channelgit st
+* Add missing argument for transitive dependencies scan
+* Provide an option to disable TLS cert verification in analyzer
+* reset ImageStreamTag to :stable, so that we should land in a deployable configuration
+* Return 404 if the given document was not found
+* humans: let's reclaim our mattermost channelgit st
+* APP_MODULE is an ENV of deployment and not buildconfig
+* just define imagestream once, moved s2i config into buildconfig rather than .s2i/environment
+* adding version string to /readiness and /liveness
+* Remove dependencies.yaml
+* Introduce force sync options
+* Place /sync endpoint to admin section
+* HOTIFX :)
+* moving more parts from core to user-api
+* using same tag...
+* Unify output handling
+* Service name has changed
+* using CentOS7 Python3.6 as a base now, pushing to :latest tag
+* fixing image names
+* fixed the Jenkins Environment Variable Name to be used for CI namespace
+* Respect transition to a new org
+* Do not update pip to latest for now
+* Assign env vars to the correct container
+* Fix parameter naming
+* Provide a way to specify registry user and registry password
+* Remove setup.py, we use s2i
+* last minute fixes
+* Remove requirements.txt
+* reenabled Mattermost notification on failure
+* Git Source Ref must not contain slashes
+* ImageStreamTag must not contain slashes
+* [WIP] do not trigger build if buildconfig changes, jenkins pipeline is going to reconfigure buildconfigs
+* [WIP] initial Jenkinsfile and OpenShift BuildConfig template
+* Log POST content on errors
+* Update thoth-storages to place files into new Ceph location
+* Use common logging facilities
+* Remove PV leftover
+* Show dropdown with available solvers and analyzers
+* Fix wrong variable name naming
+* Add secret to the sync job
+* Add endpoint for erasing graph database
+* Show result count in responses
+* Log exceptions
+* Instantiate class in try-catch block to capture errors in constructor
+* Refactoring, build logs retrieval endpoint
+* Expose page parameters in Swagger
+* Fix pagination computing
+* Submit build logs to Ceph
+* Paginate results listings
+* Update thoth-storages package with new adapters
+* Add endpoints for Ceph access
+* Provide a way to request syncing observations
+* Fix function name collisions
+* Be consistent with pod id naming in responses
+* Do not shadow already existing function
+* Rename Requirements to Packages in swagger definitions
+* Adjust resource and operation ids
+* Dummy change to test github webhooks
+* Check for kubernetes master response in liveness probe
+* Submit adviser results based on URL to other namespace
+* Implement logic around running adviser pod
+* Create initial dependencies.yml config
+* Fix casting to bool
+* Use thoth-common for shared logic
+* Rename _do_run() to _do_run_pod() to respect semantics
+* Make TLS cert verification for k8s configurable
+* Add empty Travis CI configuration
+* Rename ANALYZER_NAMESPACE to MIDDLEEND_NAMESPACE
+* Implement logic around syncing graph database
+* Add function for retrieving cronjobs
+* Fix example package name
+* Omit "pod" from endpoint names
+* Respect new lines in input, encode them for solver
+* Adjust solver output endpoint
+* Fix packages supplying
+* Implement endpoint for running solvers
+* Introduce endpoints for manipulating with buildlogs
+* Parametrize endpoint hitting with results
+* Do not let users browse result-storing API logs
+* Add TODO comments
+* Add README file
+* Introduce pod status endpoint
+* Unify pod labeling
+* There is no puller container
+* Create endpoint for running raw pods
+* Define endpoint tags
+* Fix resources specification
+* Restrict user's access to the pod logs
+* Add CPU and memory requests for analyzers
+* Rename analysis-log endpoint
+* Fix wrong key reference
+* Code refactoring
+* Be able to supply API token to pod via env variables
+* Set CPY and memory limits for spawned pods
+* Add .gitignore
+* Add TODO comment
+* Supply result API hostname to analyzers
+* Add endpoint for retrieving analysis logs
+* Add endpoint for parsing build logs
+* Return pod name as analysis name
+* Label thoth analyzers
+* Use readiness probe for analyzer hard timeout
+* Do not restrict to one image
+* Rename supplied env variable
+* Replace jobs with pods
+* Replace build with a job
+* Remove unused configuration entry
+* Initial project import
