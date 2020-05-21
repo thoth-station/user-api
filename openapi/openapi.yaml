@@ -797,13 +797,24 @@ paths:
             for automated reporting when results are available.
           schema:
             type: string
-        - name: is_s2i
+        - name: source_type
           in: query
           required: false
           description: >
-            A flag marking the given request coming from an OpenShift's S2I (Source-to-Image) build.
+            A flag marking what Thoth integration is requesting adviser:
+              - CLI: Thamos CLI.
+              - S2I: OpenShift's S2I (Source-to-Image) build.
+              - GITHUB_APP: Qeb-Hwt GitHub App.
+              - KEBECHET: Kebechet Bot.
+              - JUPYTER_NOTEBOOK: Jupyter Notebook (nb-requirements).
           schema:
-            type: boolean
+            type: string
+            enum:
+              - CLI
+              - S2I
+              - GITHUB_APP
+              - KEBECHET
+              - JUPYTER_NOTEBOOK
         - name: dev
           in: query
           required: false
