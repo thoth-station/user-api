@@ -42,6 +42,7 @@ from thoth.storages.exceptions import CacheMiss
 from thoth.storages.exceptions import NotFoundError
 from thoth.common import OpenShift
 from thoth.common import RuntimeEnvironment
+from thoth.common import ThothAdviserIntegrationEnum
 from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.python import Project
 from thoth.python.exceptions import ThothPythonException
@@ -246,12 +247,12 @@ def get_provenance_python_status(analysis_id: str):
 
 def post_advise_python(
     input: dict,
-    recommendation_type: str,
-    count: int = None,
-    limit: int = None,
-    limit_latest_versions: int = None,
-    origin: str = None,
-    is_s2i: bool = None,
+    recommendation_type: typing.Optional[str] = None,
+    count: typing.Optional[int] = None,
+    limit: typing.Optional[int] = None,
+    limit_latest_versions: typing.Optional[int] = None,
+    origin: typing.Optional[str] = None,
+    source_type: typing.Optional[ThothAdviserIntegrationEnum] = None,
     debug: bool = False,
     force: bool = False,
     dev: bool = False,
@@ -314,7 +315,7 @@ def post_advise_python(
             limit_latest_versions=parameters["limit_latest_versions"],
             recommendation_type=recommendation_type,
             origin=origin,
-            is_s2i=is_s2i,
+            source_type=source_type,
             dev=dev,
             debug=parameters["debug"],
             github_event_type=parameters["github_event_type"],
