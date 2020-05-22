@@ -810,11 +810,11 @@ paths:
           schema:
             type: string
             enum:
-              - CLI
-              - S2I
-              - GITHUB_APP
-              - KEBECHET
-              - JUPYTER_NOTEBOOK
+              - cli
+              - s2i
+              - github_app
+              - kebechet
+              - jupyter_notebook
         - name: dev
           in: query
           required: false
