@@ -46,6 +46,7 @@ from thoth.common import ThothAdviserIntegrationEnum
 from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.python import Project
 from thoth.python.exceptions import ThothPythonException
+from thoth.user_api.payload_filter import PayloadProcess
 
 from .configuration import Configuration
 from .image import get_image_metadata
@@ -711,6 +712,11 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     else:
         return {"error": "This webhook is not supported"}, 501
 
+    # Handle installation events and check if webhooks are relevant to Kebechet.
+    preprocess_payload = PayloadProcess().process(webhook_payload=webhook_payload)
+    # Not schedule workload if pre-processed payload is None.
+    if preprocess_payload is None:
+        return
     payload['webhook_payload'] = webhook_payload
     return _do_schedule(payload, _OPENSHIFT.schedule_kebechet_workflow)
 
