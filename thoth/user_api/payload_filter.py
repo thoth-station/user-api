@@ -31,6 +31,7 @@ _LOGGER = logging.getLogger(__name__)
 
 _SUPPORTED_ACTIONS = ["opened", "edited"]
 _EVENT_TYPES = ["issues", "pull_request", "installation"]
+_DEPRECATED_EVENTS = ["integration_installation", "integration_installation_repositories"]
 
 
 class PayloadProcess:
@@ -52,7 +53,12 @@ class PayloadProcess:
                 webhook_payload.get("event"),
                 webhook_payload.get("payload"),
             )
-            if event == "integration_installation_repositories":
+            if event in _DEPRECATED_EVENTS:
+                _LOGGER.info(
+                        f"We ignore deprecated event webhooks. Event type - {event}"
+                    )
+                return None
+            if event == "installation_repositories":
                 if payload.get("action") == "added":
                     self._install_event(payload.get("repositories_added"))
                     return None
