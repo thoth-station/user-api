@@ -162,6 +162,13 @@ def _healthiness():
 @app.route("/readiness")
 def api_readiness():
     """Report readiness for OpenShift readiness probe."""
+    try:
+        if not GRAPH.is_schema_up2date():
+            _LOGGER.warning("Database schema is not up to date")
+            return jsonify({"status": "Database schema is not up to date"}), 503, {"ContentType": "application/json"}
+    except DatabaseNotInitialized as exc:
+        _LOGGER.warning("Database is not initialized")
+        return jsonify({"status": str(exc)}), 503, {"ContentType": "application/json"}
     return _healthiness()
 
 
