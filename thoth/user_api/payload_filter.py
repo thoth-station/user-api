@@ -67,7 +67,7 @@ class PayloadProcess:
                     self._remove_event(payload.get("repositories_removed"))
                     return None
             if event == "push":
-                # Do not re-run kebechet if push event is on bot branch. 
+                # Do not re-run kebechet if push event is on bot branch.
                 ref = payload.get("ref")
                 if ref.startswith(_BOT_BRANCH):
                     _LOGGER.info(
