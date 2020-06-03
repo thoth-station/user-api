@@ -69,7 +69,7 @@ class PayloadProcess:
             if event == "push":
                 # Do not re-run kebechet if push event is on bot branch.
                 ref = payload.get("ref")
-                if ref.startswith(_BOT_BRANCH):
+                if ref is None or ref.startswith(_BOT_BRANCH):
                     _LOGGER.info(
                         f"For event type - {event}, we ignore bot branch."
                     )
