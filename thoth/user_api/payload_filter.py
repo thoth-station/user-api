@@ -29,9 +29,9 @@ from typing import List
 
 _LOGGER = logging.getLogger(__name__)
 
-_SUPPORTED_ACTIONS = ["opened", "edited"]
-_EVENT_TYPES = ["issues", "pull_request", "installation"]
-_DEPRECATED_EVENTS = ["integration_installation", "integration_installation_repositories"]
+_SUPPORTED_ACTIONS = frozenset({"opened", "edited"})
+_EVENT_TYPES = frozenset({"issues", "pull_request", "installation"})
+_DEPRECATED_EVENTS = frozenset({"integration_installation", "integration_installation_repositories"})
 
 
 class PayloadProcess:
