@@ -15,8 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Payload Filter.
+"""Payload Filter.
 
 Payload filter handles installation and remove events for a Kebechet workflow.
 And also filters the webhooks that Kebechet doesn't support to prevent unnecessary workflows.
@@ -24,8 +23,10 @@ And also filters the webhooks that Kebechet doesn't support to prevent unnecessa
 
 import logging
 from thoth.storages import GraphDatabase
+from typing import Any
 from typing import Dict
 from typing import List
+from typing import Optional
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,7 +43,7 @@ class PayloadProcess:
         """Init Method."""
         pass
 
-    def process(self, webhook_payload: dict) -> dict:
+    def process(self, webhook_payload: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
         Initialize the payload and check if we need to process it.
 
@@ -90,7 +91,8 @@ class PayloadProcess:
                     return None
         return webhook_payload
 
-    def _install_event(self, install_repos: List[dict]) -> None:
+    @staticmethod
+    def _install_event(install_repos: List[Dict[str, Any]]) -> None:
         """Handle Github App install webhooks."""
         graph = GraphDatabase()
         graph.connect()
@@ -101,7 +103,8 @@ class PayloadProcess:
             except Exception as exc:
                 _LOGGER.error(f"The repo couldn't be added to the database. Repo details - {repo} Exception - {exc}")
 
-    def _remove_event(self, uninstall_repos: List[dict]) -> None:
+    @staticmethod
+    def _remove_event(uninstall_repos: List[Dict[str, Any]]) -> None:
         """Handle Github App remove webhooks."""
         graph = GraphDatabase()
         graph.connect()
