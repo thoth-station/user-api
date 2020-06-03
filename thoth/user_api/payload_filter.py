@@ -33,6 +33,7 @@ _LOGGER = logging.getLogger(__name__)
 _SUPPORTED_ACTIONS = frozenset({"opened", "edited"})
 _EVENT_TYPES = frozenset({"issues", "pull_request", "installation"})
 _DEPRECATED_EVENTS = frozenset({"integration_installation", "integration_installation_repositories"})
+_BOT_BRANCH = "refs/heads/kebechet-"
 
 
 class PayloadProcess:
@@ -65,6 +66,14 @@ class PayloadProcess:
                     return None
                 elif payload.get("action") == "removed":
                     self._remove_event(payload.get("repositories_removed"))
+                    return None
+            if event == "push":
+                # Do not re-run kebechet if push event is on bot branch.
+                ref = payload.get("ref")
+                if ref is None or ref.startswith(_BOT_BRANCH):
+                    _LOGGER.info(
+                        f"For event type - {event}, we ignore bot branch."
+                    )
                     return None
             if event in _EVENT_TYPES:
                 # We ignore issues, PR actions like reopened, closed.
