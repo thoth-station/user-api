@@ -906,3 +906,30 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Replace build with a job
 * Remove unused configuration entry
 * Initial project import
+
+## Release 0.6.2 (2020-06-05T08:56:40)
+* Add null check
+* Use frozenset for constants
+* Be more specific with method signatures
+* :green_heart: coala fix
+* :ambulance: Ignore kebechet run on push event on bot branch
+* :pushpin: Automatic update of dependency pytest from 5.4.2 to 5.4.3
+* Filter out deprecated event's
+* added a 'tekton trigger tag_release pipeline issue'
+* :pushpin: Automatic update of dependency thoth-common from 0.13.7 to 0.13.8
+* :pushpin: Automatic update of dependency thoth-storages from 0.22.11 to 0.22.12
+* :pushpin: Automatic update of dependency thoth-common from 0.13.6 to 0.13.7
+* Changed docstring
+* :pushpin: Automatic update of dependency prometheus-client from 0.7.1 to 0.8.0
+* Added filter methods and installation methods
+* :pushpin: Automatic update of dependency thoth-common from 0.13.5 to 0.13.6
+* :pushpin: Automatic update of dependency thoth-common from 0.13.4 to 0.13.5
+* :pushpin: Automatic update of dependency thoth-storages from 0.22.10 to 0.22.11
+* Make integration enum lower-case on endpoints
+* :pushpin: Automatic update of dependency thoth-common from 0.13.3 to 0.13.4
+* Remove logic
+* Adjust typing
+* Introduce source_type flag
+* :pushpin: Automatic update of dependency sentry-sdk from 0.14.3 to 0.14.4
+* :pushpin: Automatic update of dependency thoth-storages from 0.22.9 to 0.22.10
+* Remove unused environment variable
