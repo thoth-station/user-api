@@ -34,6 +34,7 @@ _SUPPORTED_ACTIONS = frozenset({"opened", "edited"})
 _EVENT_TYPES = frozenset({"issues", "pull_request", "installation"})
 _DEPRECATED_EVENTS = frozenset({"integration_installation", "integration_installation_repositories"})
 _BOT_BRANCH = "refs/heads/kebechet-"
+_IGNORED_ACTIONS = frozenset({"suspend", "unsuspend", "new_permissions_accepted"})
 
 
 class PayloadProcess:
@@ -67,6 +68,13 @@ class PayloadProcess:
                 elif payload.get("action") == "removed":
                     self._remove_event(payload.get("repositories_removed"))
                     return None
+            if event == "installation":
+                if payload.get("action") == "created":
+                    self._install_event(payload.get("repositories"))
+                    return None
+                elif payload.get("action") == "deleted":
+                    self._remove_event(payload.get("repositories"))
+                    return None
             if event == "push":
                 # Do not re-run kebechet if push event is on bot branch.
                 ref = payload.get("ref")
@@ -79,7 +87,7 @@ class PayloadProcess:
                 # We ignore issues, PR actions like reopened, closed.
                 action = payload.get("action")
                 # This is needed for advanced usage like change of application permission.
-                if event == "installation":
+                if event == "installation" and action in _IGNORED_ACTIONS:
                     _LOGGER.info(
                         f"For event type - {event}, we don't support action - {action}"
                     )
