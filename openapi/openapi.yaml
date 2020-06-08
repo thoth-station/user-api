@@ -1267,6 +1267,20 @@ paths:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
 
+  /python/platform:
+    get:
+      tags: [PythonPackages]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: get_python_platform
+      summary: Get supported platforms for Python ecosystem.
+      responses:
+        "200":
+          description: A list of platforms supported for Python ecosystem.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonPlatforms"
+
   /python/dependencies:
     get:
       tags: [PythonPackages]
@@ -2266,6 +2280,12 @@ components:
         revision:
           type: string
           description: sha of the Pull Request's head commit.
+    PythonPlatforms:
+      type: array
+      items:
+        type: string
+        description: Platform information.
+        example: linux-x86_64
     PythonPackageDependencies:
       type: array
       items:
