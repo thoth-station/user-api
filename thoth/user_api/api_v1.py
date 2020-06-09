@@ -305,7 +305,7 @@ def post_advise_python(
             limit_latest_versions=parameters["limit_latest_versions"],
             recommendation_type=recommendation_type,
             origin=origin,
-            source_type=getattr(ThothAdviserIntegrationEnum, source_type.upper()) if source_type else None,
+            source_type=source_type.upper() if source_type else None,
             dev=dev,
             debug=parameters["debug"],
             github_event_type=parameters["github_event_type"],
@@ -323,6 +323,7 @@ def post_advise_python(
         except CacheMiss:
             pass
 
+    parameters["source_type"] = getattr(ThothAdviserIntegrationEnum, source_type.upper()) if source_type else None
     response, status = _do_schedule(parameters, _OPENSHIFT.schedule_adviser, output=Configuration.THOTH_ADVISER_OUTPUT)
     if status == 202:
         adviser_cache.store_document_record(
