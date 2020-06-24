@@ -952,3 +952,6 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Fix serialization issues
 * Lower letters
 * Also listen to installation events
+
+## Release 0.6.4 (2020-06-24T20:00:39)
+* :pushpin: Automatic update of dependency thoth-storages from 0.23.2 to 0.24.0
