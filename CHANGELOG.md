@@ -933,3 +933,22 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :pushpin: Automatic update of dependency sentry-sdk from 0.14.3 to 0.14.4
 * :pushpin: Automatic update of dependency thoth-storages from 0.22.9 to 0.22.10
 * Remove unused environment variable
+
+## Release 0.6.3 (2020-06-24T17:04:51)
+* Adding sesheta as a maintainer
+* :pushpin: Automatic update of dependency opentracing-instrumentation from 3.2.1 to 3.3.1
+* :arrow_up: update github project templates
+* :pushpin: Automatic update of dependency sentry-sdk from 0.14.4 to 0.15.1
+* :pushpin: Automatic update of dependency requests from 2.23.0 to 2.24.0
+* :pushpin: Automatic update of dependency thoth-storages from 0.23.0 to 0.23.2
+* :pushpin: Automatic update of dependency thoth-python from 0.9.2 to 0.10.0
+* :pushpin: Automatic update of dependency thoth-common from 0.13.11 to 0.13.12
+* :pushpin: Automatic update of dependency requests from 2.23.0 to 2.24.0
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.13.0 to 0.14.1
+* :pushpin: Automatic update of dependency thoth-storages from 0.22.12 to 0.23.0
+* :pushpin: Automatic update of dependency thoth-common from 0.13.10 to 0.13.11
+* :pushpin: Automatic update of dependency thoth-common from 0.13.9 to 0.13.10
+* :pushpin: Automatic update of dependency thoth-common from 0.13.8 to 0.13.9
+* Fix serialization issues
+* Lower letters
+* Also listen to installation events
