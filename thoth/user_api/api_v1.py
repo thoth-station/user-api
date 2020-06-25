@@ -357,7 +357,37 @@ def _get_log(node_name: str, analysis_id: str, namespace: str) -> typing.Tuple[t
 
 def get_advise_python_status(analysis_id: str):
     """Get status of an adviser run."""
-    return _get_workflow_status(locals(), "adviser-", Configuration.THOTH_BACKEND_NAMESPACE)
+    status, code = _get_job_status(locals(), "adviser-", Configuration.THOTH_BACKEND_NAMESPACE)
+    if code == 404 and os.getenv("THOTH_USE_ARGO") == "1":
+        wf_status = None
+        try:
+            wf_status = _OPENSHIFT.get_workflow_status(
+                name=analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE
+            )
+
+            # the Job has not started (yet) but the Workflow has been submitted
+            # if the Workflow fails, the status will contain the finished
+            # time of the workflow
+            status["status"], code = (
+                {
+                    "container": None,
+                    "exit_code": None,
+                    "finished_at": wf_status.get("finishedAt"),
+                    "reason": None,
+                    "started_at": wf_status.get("startedAt"),
+                    "state": wf_status.get("phase", "Pending"),
+                },
+                200,
+            )
+
+            status.pop("error")
+
+        except NotFoundException:
+            # Handle this since the adviser run can still be scheduled
+            # with workload-operator instead, otherwise we could raise here
+            _LOGGER.error(status["error"])
+
+    return status, code
 
 
 def list_runtime_environments():
@@ -513,7 +543,8 @@ def get_python_package_dependencies(
                         },
                         404,
                     )
-    return result, 200
+
+    return result
 
 
 def list_hardware_environments(page: int = 0):
@@ -783,8 +814,15 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
     except NotFoundError:
         if namespace:
             try:
-                status = _OPENSHIFT.get_workflow_status_report(analysis_id, namespace=namespace)
-                if status["state"] == "running":
+                status = _OPENSHIFT.get_job_status_report(analysis_id, namespace=namespace)
+                if status["pods"][0]["state"] == "running" or (
+                    status["pods"][0]["state"] == "terminated" and status["pods"][0]["exit_code"] == 0
+                ):
+                    # In case we hit terminated and exit code equal to 0, the analysis has just finished and
+                    # before this call (document retrieval was unsuccessful, pod finished and we asked later
+                    # for status). To fix this time-dependent issue, let's user ask again. Do not do pod status
+                    # check before document retrieval - this solution is more optimal as we do not ask master
+                    # status each time.
                     return {"error": "Analysis is still in progress", "status": status, "parameters": parameters}, 202
                 elif status["state"] in ("failed", "error"):
                     return {"error": "Analysis was not successful", "status": status, "parameters": parameters}, 400
