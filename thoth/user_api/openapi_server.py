@@ -80,15 +80,8 @@ Configuration.tracer = init_jaeger_tracer("user_api")
 
 # create metrics and manager
 metrics = PrometheusMetrics(
-    application,
-    group_by="endpoint",
-    excluded_paths=[
-        "/liveness",
-        "/readiness",
-        "/api/v1/ui",
-        "/api/v1/openapi",
-        ]
-    )
+    application, group_by="endpoint", excluded_paths=["/liveness", "/readiness", "/api/v1/ui", "/api/v1/openapi",]
+)
 manager = Manager(application)
 
 # Needed for session.
@@ -120,7 +113,7 @@ GRAPH = _GraphDatabaseWrapper()
 
 @application.before_request
 def before_request_callback():
-    """Callback registered, runs before each request to this service."""
+    """Register this callback, so it is run before each request to this service."""
     method = request.method
     path = request.path
 
@@ -139,7 +132,7 @@ def before_request_callback():
 def base_url():
     """Redirect to UI by default."""
     # https://github.com/pallets/flask/issues/773
-    request.environ['wsgi.url_scheme'] = 'https' if _THOTH_API_HTTPS else 'http'
+    request.environ["wsgi.url_scheme"] = "https" if _THOTH_API_HTTPS else "http"
     return redirect("api/v1/ui/")
 
 

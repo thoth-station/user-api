@@ -57,9 +57,7 @@ class PayloadProcess:
                 webhook_payload.get("payload"),
             )
             if event in _DEPRECATED_EVENTS:
-                _LOGGER.info(
-                        f"We ignore deprecated event webhooks. Event type - {event}"
-                    )
+                _LOGGER.info(f"We ignore deprecated event webhooks. Event type - {event}")
                 return None
             if event == "installation_repositories":
                 if payload.get("action") == "added":
@@ -79,23 +77,17 @@ class PayloadProcess:
                 # Do not re-run kebechet if push event is on bot branch.
                 ref = payload.get("ref")
                 if ref is None or ref.startswith(_BOT_BRANCH):
-                    _LOGGER.info(
-                        f"For event type - {event}, we ignore bot branch."
-                    )
+                    _LOGGER.info(f"For event type - {event}, we ignore bot branch.")
                     return None
             if event in _EVENT_TYPES:
                 # We ignore issues, PR actions like reopened, closed.
                 action = payload.get("action")
                 # This is needed for advanced usage like change of application permission.
                 if event == "installation" and action in _IGNORED_ACTIONS:
-                    _LOGGER.info(
-                        f"For event type - {event}, we don't support action - {action}"
-                    )
+                    _LOGGER.info(f"For event type - {event}, we don't support action - {action}")
                     return None
                 if action not in _SUPPORTED_ACTIONS:
-                    _LOGGER.info(
-                        f"For event type - {event}, we don't support action - {action}"
-                    )
+                    _LOGGER.info(f"For event type - {event}, we don't support action - {action}")
                     return None
         return webhook_payload
 
@@ -106,8 +98,12 @@ class PayloadProcess:
         graph.connect()
         for repo in install_repos:
             try:
-                status = graph.create_github_app_installation(slug=repo.get("full_name"), repo_name=repo.get(
-                    "name"), private=repo.get("private"), installation_id=str(repo.get("id")))
+                _ = graph.create_github_app_installation(
+                    slug=repo.get("full_name"),
+                    repo_name=repo.get("name"),
+                    private=repo.get("private"),
+                    installation_id=str(repo.get("id")),
+                )
             except Exception as exc:
                 _LOGGER.error(f"The repo couldn't be added to the database. Repo details - {repo} Exception - {exc}")
 
@@ -118,8 +114,7 @@ class PayloadProcess:
         graph.connect()
         for repo in uninstall_repos:
             try:
-                status = graph.update_kebechet_github_installations_on_is_active(
-                    slug=repo.get("full_name"))
+                status = graph.update_kebechet_github_installations_on_is_active(slug=repo.get("full_name"))
                 if not status:
                     _LOGGER.error(f"Failed to deactivate repo - {repo}")
             except Exception as exc:
