@@ -955,3 +955,8 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 
 ## Release 0.6.4 (2020-06-24T20:00:39)
 * :pushpin: Automatic update of dependency thoth-storages from 0.23.2 to 0.24.0
+
+## Release 0.6.5 (2020-06-25T18:00:15)
+* :pushpin: Automatic update of dependency thoth-common from 0.13.12 to 0.13.13
+* User upper
+* User-API response requires string not enum
