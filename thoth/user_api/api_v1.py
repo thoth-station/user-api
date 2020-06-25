@@ -323,7 +323,8 @@ def post_advise_python(
         except CacheMiss:
             pass
 
-    parameters["source_type"] = getattr(ThothAdviserIntegrationEnum, source_type.upper()) if source_type else None
+    # Enum type is checked on thoth-common side to avoid serialization issue in user-api side when providing response
+    parameters["source_type"] = source_type if source_type else None
     response, status = _do_schedule(parameters, _OPENSHIFT.schedule_adviser, output=Configuration.THOTH_ADVISER_OUTPUT)
     if status == 202:
         adviser_cache.store_document_record(
