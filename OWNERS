@@ -1,7 +1,11 @@
+# See the OWNERS docs at https://go.k8s.io/owners
+
 approvers:
-  - goern
   - fridex
-reviewers:
-  - fridex
-  - harshad16
   - pacospace
+  - sesheta
+reviewers:
+  - kpostoffice
+  - harshad16
+  - bissenbay
+  - saisankargochhayat
