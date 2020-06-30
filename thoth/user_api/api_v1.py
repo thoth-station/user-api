@@ -114,10 +114,7 @@ def post_analyze(
         except CacheMiss:
             pass
 
-    response, status_code = _do_schedule(
-        parameters, _OPENSHIFT.schedule_package_extract, output=Configuration.THOTH_ANALYZER_OUTPUT
-    )
-
+    response, status_code = _do_schedule(parameters, _OPENSHIFT.schedule_package_extract)
     analysis_by_digest_store = AnalysisByDigest()
     analysis_by_digest_store.connect()
     analysis_by_digest_store.store_document(metadata["digest"], response)
@@ -214,9 +211,7 @@ def post_provenance_python(application_stack: dict, origin: str = None, debug: b
         except CacheMiss:
             pass
 
-    response, status = _do_schedule(
-        parameters, _OPENSHIFT.schedule_provenance_checker, output=Configuration.THOTH_PROVENANCE_CHECKER_OUTPUT
-    )
+    response, status = _do_schedule(parameters, _OPENSHIFT.schedule_provenance_checker)
     if status == 202:
         cache.store_document_record(
             cached_document_id, {"analysis_id": response["analysis_id"], "timestamp": timestamp_now}
@@ -324,7 +319,7 @@ def post_advise_python(
 
     # Enum type is checked on thoth-common side to avoid serialization issue in user-api side when providing response
     parameters["source_type"] = source_type.upper() if source_type else None
-    response, status = _do_schedule(parameters, _OPENSHIFT.schedule_adviser, output=Configuration.THOTH_ADVISER_OUTPUT)
+    response, status = _do_schedule(parameters, _OPENSHIFT.schedule_adviser)
     if status == 202:
         adviser_cache.store_document_record(
             cached_document_id, {"analysis_id": response["analysis_id"], "timestamp": timestamp_now}
@@ -636,10 +631,7 @@ def post_buildlog_analyze(log_info: dict, force: bool = False):
     stored_log_details, status = post_buildlog(log_info=log_info)
     parameters.update(stored_log_details)
     parameters.pop("log_info", None)
-    response, status_code = _do_schedule(
-        parameters, _OPENSHIFT.schedule_build_report, output=Configuration.THOTH_BUILDLOG_ANALYZER_OUTPUT
-    )
-
+    response, status_code = _do_schedule(parameters, _OPENSHIFT.schedule_build_report)
     if status_code == 202:
         cache.store_document_record(cached_document_id, {"analysis_id": response["analysis_id"]})
 
