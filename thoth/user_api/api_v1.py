@@ -42,7 +42,6 @@ from thoth.storages.exceptions import CacheMiss
 from thoth.storages.exceptions import NotFoundError
 from thoth.common import OpenShift
 from thoth.common import RuntimeEnvironment
-from thoth.common import ThothAdviserIntegrationEnum
 from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.python import Project
 from thoth.python.exceptions import ThothPythonException
@@ -193,7 +192,7 @@ def post_provenance_python(application_stack: dict, origin: str = None, debug: b
         project = Project.from_strings(application_stack["requirements"], application_stack["requirements_lock"])
     except ThothPythonException as exc:
         return {"parameters": parameters, "error": f"Invalid application stack supplied: {str(exc)}"}, 400
-    except Exception as exc:
+    except Exception:
         return {"parameters": parameters, "error": "Invalid application stack supplied"}, 400
 
     parameters["whitelisted_sources"] = list(GRAPH.get_python_package_index_urls_all())
@@ -286,7 +285,7 @@ def post_advise_python(
         )
     except ThothPythonException as exc:
         return {"parameters": parameters, "error": f"Invalid application stack supplied: {str(exc)}"}, 400
-    except Exception as exc:
+    except Exception:
         return {"parameters": parameters, "error": "Invalid application stack supplied"}, 400
 
     # We could rewrite this to a decorator and make it shared with provenance
@@ -358,25 +357,27 @@ def get_advise_python_status(analysis_id: str):
         wf_status = None
         try:
             wf_status = _OPENSHIFT.get_workflow_status(
-                name=analysis_id,
-                namespace=Configuration.THOTH_BACKEND_NAMESPACE
+                name=analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE
             )
 
             # the Job has not started (yet) but the Workflow has been submitted
             # if the Workflow fails, the status will contain the finished
             # time of the workflow
-            status["status"], code = {
-                "container": None,
-                "exit_code": None,
-                "finished_at": wf_status.get("finishedAt"),
-                "reason": None,
-                "started_at": wf_status.get("startedAt"),
-                "state": wf_status.get("phase", "Pending")
-            }, 200
+            status["status"], code = (
+                {
+                    "container": None,
+                    "exit_code": None,
+                    "finished_at": wf_status.get("finishedAt"),
+                    "reason": None,
+                    "started_at": wf_status.get("startedAt"),
+                    "state": wf_status.get("phase", "Pending"),
+                },
+                200,
+            )
 
             status.pop("error")
 
-        except NotFoundException as exc:
+        except NotFoundException:
             # Handle this since the adviser run can still be scheduled
             # with workload-operator instead, otherwise we could raise here
             _LOGGER.error(status["error"])
@@ -468,17 +469,17 @@ def get_python_package_dependencies(
     from .openapi_server import GRAPH
 
     if (os_name is None and os_version is not None) or (os_name is not None and os_version is None):
-        return {
-            "error": "Operating system is not fully specified",
-            "parameters": parameters,
-        }, 400
+        return {"error": "Operating system is not fully specified", "parameters": parameters,}, 400
 
     if marker_evaluation_result is not None and (os_name is None or os_version is None or python_version is None):
-        return {
-            "error": "Operating system and Python interpreter version need "
-                     "to be specified to obtain dependencies dependent on marker evaluation result",
-            "parameters": parameters,
-        }, 400
+        return (
+            {
+                "error": "Operating system and Python interpreter version need "
+                "to be specified to obtain dependencies dependent on marker evaluation result",
+                "parameters": parameters,
+            },
+            400,
+        )
 
     try:
         query_result = GRAPH.get_depends_on(
@@ -491,22 +492,22 @@ def get_python_package_dependencies(
             marker_evaluation_result=marker_evaluation_result,
         )
     except NotFoundError:
-        return {
-            "error": f"No record found for package {name!r} in version {version!r} from "
-                     f"index {index!r} for {os_name!r} in version {os_version!r} using Python "
-                     f"version {python_version!r}",
-            "parameters": parameters,
-        }, 404
+        return (
+            {
+                "error": f"No record found for package {name!r} in version {version!r} from "
+                f"index {index!r} for {os_name!r} in version {os_version!r} using Python "
+                f"version {python_version!r}",
+                "parameters": parameters,
+            },
+            404,
+        )
 
     result = []
     for extra, entries in query_result.items():
         for entry in entries:
-            result.append({
-                "name": entry[0],
-                "version": entry[1],
-                "extra": extra,
-                "environment_marker": None,
-            })
+            result.append(
+                {"name": entry[0], "version": entry[1], "extra": extra, "environment_marker": None,}
+            )
 
             if os_name is not None and os_version is not None and python_version is not None:
                 try:
@@ -521,12 +522,15 @@ def get_python_package_dependencies(
                         python_version=python_version,
                     )
                 except NotFoundError:
-                    return {
-                        "error": f"No environment marker records found for package {name!r} in version "
-                                 f"{version!r} from index {index!r} with dependency "
-                                 f"on {entry[0]!r} in version {entry[1]!r}",
-                        "parameters": parameters,
-                    }, 404
+                    return (
+                        {
+                            "error": f"No environment marker records found for package {name!r} in version "
+                            f"{version!r} from index {index!r} with dependency "
+                            f"on {entry[0]!r} in version {entry[1]!r}",
+                            "parameters": parameters,
+                        },
+                        404,
+                    )
 
     return result
 
@@ -709,7 +713,6 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
         webhook_payload["payload"] = body
         webhook_payload["service"] = "gitlab"
     elif "X_Pagure_Topic" in headers:
-        service = "pagure"
         return {"error": "Pagure is currently not supported"}, 501
     else:
         return {"error": "This webhook is not supported"}, 501
@@ -719,13 +722,11 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     # Not schedule workload if pre-processed payload is None.
     if preprocess_payload is None:
         return
-    payload['webhook_payload'] = webhook_payload
+    payload["webhook_payload"] = webhook_payload
     return _do_schedule(payload, _OPENSHIFT.schedule_kebechet_workflow)
 
 
-def schedule_thamos_advise(
-    input: typing.Dict[str, typing.Any],
-):
+def schedule_thamos_advise(input: typing.Dict[str, typing.Any],):
     """Schedule Thamos Advise for GitHub App."""
     input["host"] = Configuration.THOTH_HOST
     return _do_schedule(input, _OPENSHIFT.schedule_thamos_workflow)
@@ -737,9 +738,7 @@ def list_buildlogs(page: int = 0):
 
 
 def get_python_package_versions_count(
-    name: typing.Optional[str] = None,
-    version: typing.Optional[str] = None,
-    index: typing.Optional[str] = None
+    name: typing.Optional[str] = None, version: typing.Optional[str] = None, index: typing.Optional[str] = None
 ):
     """Retrieve number of Python package versions in Thoth Knowledge Graph."""
     parameters = locals()
@@ -748,17 +747,12 @@ def get_python_package_versions_count(
     try:
         return {
             "count": GRAPH.get_python_package_versions_count_all(
-                package_name=name,
-                package_version=version,
-                index_url=index
+                package_name=name, package_version=version, index_url=index
             )
         }
     except NotFoundError:
         return (
-            {
-                "error": "Not able to retrieve the number with the given inputs",
-                "parameters": parameters,
-            },
+            {"error": "Not able to retrieve the number with the given inputs", "parameters": parameters,},
             404,
         )
 
@@ -812,8 +806,9 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
         if namespace:
             try:
                 status = _OPENSHIFT.get_job_status_report(analysis_id, namespace=namespace)
-                if status["pods"][0]["state"] == "running" or \
-                        (status["pods"][0]["state"] == "terminated" and status["pods"][0]["exit_code"] == 0):
+                if status["pods"][0]["state"] == "running" or (
+                    status["pods"][0]["state"] == "terminated" and status["pods"][0]["exit_code"] == 0
+                ):
                     # In case we hit terminated and exit code equal to 0, the analysis has just finished and
                     # before this call (document retrieval was unsuccessful, pod finished and we asked later
                     # for status). To fix this time-dependent issue, let's user ask again. Do not do pod status

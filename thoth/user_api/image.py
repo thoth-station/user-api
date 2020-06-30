@@ -41,26 +41,27 @@ _TRANSLATION_TABLE = {
     "Labels": "labels",
     "Architecture": "architecture",
     "Os": "os",
-    "Layers": "layers"
+    "Layers": "layers",
 }
 
 
-def get_image_metadata(image_name: str, *,
-                       registry_user: str = None, registry_password: str = None, verify_tls: bool = True) -> dict:
+def get_image_metadata(
+    image_name: str, *, registry_user: str = None, registry_password: str = None, verify_tls: bool = True
+) -> dict:
     """Get metadata for the given image and image repository."""
-    cmd = f'skopeo inspect '
+    cmd = f"skopeo inspect "
     if registry_user and registry_password:
         # TODO: make sure registry_user and registry_password get escaped.
-        cmd += f'--creds={registry_user}:{registry_password} '
+        cmd += f"--creds={registry_user}:{registry_password} "
     elif (registry_user and not registry_password) or (not registry_user and registry_password):
         raise ImageBadRequestError(
             "Both parameters registry_user and registry_password have to be supplied for registry authentication"
         )
 
     if not verify_tls:
-        cmd += '--tls-verify=false '
+        cmd += "--tls-verify=false "
 
-    cmd += f'docker://{image_name!r}'
+    cmd += f"docker://{image_name!r}"
     result = run_command(cmd, is_json=True, raise_on_error=False)
 
     if result.return_code == 0:
@@ -70,15 +71,15 @@ def get_image_metadata(image_name: str, *,
 
         return result_dict
 
-    if 'manifest unknown' in result.stderr:
+    if "manifest unknown" in result.stderr:
         raise ImageManifestUnknownError("Unknown manifest for the given image")
-    elif 'unauthorized: authentication required' in result.stderr:
+    elif "unauthorized: authentication required" in result.stderr:
         raise ImageAuthenticationRequired("There is required authentication in order to pull image and image details")
-    elif 'x509: certificate signed by unknown authority' in result.stderr:
+    elif "x509: certificate signed by unknown authority" in result.stderr:
         raise ImageAuthenticationRequired(
             "There was an error with x509 certification check: certificate signed by unknown authority"
         )
-    elif 'unable to retrieve auth token: invalid username/password' in result.stderr:
+    elif "unable to retrieve auth token: invalid username/password" in result.stderr:
         raise ImageInvalidCredentials(
             "There was an error accessing the image as the username/password provided was invalid"
         )
