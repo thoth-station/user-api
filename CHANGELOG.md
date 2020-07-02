@@ -960,3 +960,14 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :pushpin: Automatic update of dependency thoth-common from 0.13.12 to 0.13.13
 * User upper
 * User-API response requires string not enum
+
+## Release 0.6.6 (2020-07-02T22:44:18)
+* Fixed pre-commit errors
+* :pushpin: Automatic update of dependency thoth-common from 0.13.13 to 0.14.0
+* Update OWNERS
+* Remove OpenShift related files as they are part of thoth-application
+* Invalid credentials are a special type of image error
+* Drop result-api bits
+* switching to pre-commit (#943)
+* Update OWNERS
+* Update OWNERS
