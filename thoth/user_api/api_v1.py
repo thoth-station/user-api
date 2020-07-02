@@ -86,15 +86,15 @@ def post_analyze(
     parameters["is_external"] = True
 
     # Always extract metadata to check for authentication issues and such.
-    metadata = _do_get_image_metadata(
+    metadata_req = _do_get_image_metadata(
         image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
     )
 
-    if metadata[1] != 200:
+    if metadata_req[1] != 200:
         # There was an error extracting metadata, tuple holds dictionary with error report and HTTP status code.
-        return metadata
+        return metadata_req
 
-    metadata = metadata[0]
+    metadata = metadata_req[0]
     # We compute digest of parameters so we do not reveal any authentication specific info.
     parameters_digest = _compute_digest_params(parameters)
     cache = AnalysesCacheStore()
@@ -462,7 +462,7 @@ def get_python_package_dependencies(
     os_version: typing.Optional[str] = None,
     python_version: typing.Optional[str] = None,
     marker_evaluation_result: typing.Optional[bool] = None,
-) -> typing.Tuple[typing.Dict[typing.Any, typing.Any], int]:
+) -> typing.Tuple[typing.Any, int]:
     """Get dependencies for the given Python package."""
     parameters = locals()
 
@@ -531,8 +531,7 @@ def get_python_package_dependencies(
                         },
                         404,
                     )
-
-    return result
+    return result, 200
 
 
 def list_hardware_environments(page: int = 0):
@@ -566,7 +565,7 @@ def post_build(
     force: bool = False,
 ):
     """Run analysis on a build."""
-    response = {"base_image_analysis": {}, "output_image_analysis": {}, "build_log_analysis": {}}
+    response: dict = {"base_image_analysis": {}, "output_image_analysis": {}, "build_log_analysis": {}}
     status = 202
     if build_detail.get("output_image"):
         # Run image analysis
@@ -831,6 +830,8 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
 def _get_job_log(parameters: dict, name_prefix: str, namespace: str):
     """Get job log based on analysis id."""
     job_id = parameters.get("analysis_id")
+    if job_id is None:
+        return {"error": "No analysis id provided", "parameters": parameters}, 400
     if not job_id.startswith(name_prefix):
         return {"error": "Wrong analysis id provided", "parameters": parameters}, 400
 
@@ -845,6 +846,8 @@ def _get_job_log(parameters: dict, name_prefix: str, namespace: str):
 def _get_job_status(parameters: dict, name_prefix: str, namespace: str):
     """Get status for a job."""
     job_id = parameters.get("analysis_id")
+    if job_id is None:
+        return {"error": "No analysis id provided", "parameters": parameters}, 400
     if not job_id.startswith(name_prefix):
         return {"error": "Wrong analysis id provided", "parameters": parameters}, 400
 
