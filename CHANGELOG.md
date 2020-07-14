@@ -971,3 +971,9 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * switching to pre-commit (#943)
 * Update OWNERS
 * Update OWNERS
+
+## Release 0.6.7 (2020-07-14T07:50:20)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.15.1 to 0.16.1
+* :pushpin: Automatic update of dependency thoth-storages from 0.24.0 to 0.24.3
+* :pushpin: Automatic update of dependency thoth-common from 0.14.0 to 0.14.1
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.14.1 to 0.15.0
