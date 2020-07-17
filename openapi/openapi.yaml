@@ -831,12 +831,6 @@ paths:
           schema:
             type: boolean
             default: false
-        - name: limit_latest_versions
-          in: query
-          schema:
-            type: integer
-          required: false
-          description: Limit number of packages considering only specific number of versions for each package.
         - name: force
           in: query
           required: false
