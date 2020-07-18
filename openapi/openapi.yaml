@@ -776,6 +776,8 @@ paths:
               - stable
               - testing
               - latest
+              - performance
+              - security
             default: stable
         - name: count
           in: query
