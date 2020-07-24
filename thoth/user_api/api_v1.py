@@ -793,26 +793,20 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
     except NotFoundError:
         if namespace:
             try:
-                status = _OPENSHIFT.get_job_status_report(analysis_id, namespace=namespace)
-                if status["pods"][0]["state"] == "running" or (
-                    status["pods"][0]["state"] == "terminated" and status["pods"][0]["exit_code"] == 0
-                ):
-                    # In case we hit terminated and exit code equal to 0, the analysis has just finished and
-                    # before this call (document retrieval was unsuccessful, pod finished and we asked later
-                    # for status). To fix this time-dependent issue, let's user ask again. Do not do pod status
-                    # check before document retrieval - this solution is more optimal as we do not ask master
-                    # status each time.
+                status = _OPENSHIFT.get_workflow_status_report(analysis_id, namespace=namespace).get("status")                
+                print(status)
+                if status["state"] == "Running":
                     return {"error": "Analysis is still in progress", "status": status, "parameters": parameters}, 202
-                elif status["state"] == "terminated":
+                elif status["state"] == "Failed":
                     return {"error": "Analysis was not successful", "status": status, "parameters": parameters}, 400
-                elif status["state"] in ("scheduling", "waiting", "registered"):
+                elif status["state"] in ("Pending"):
                     return {"error": "Analysis is being scheduled", "status": status, "parameters": parameters}, 202
                 else:
                     # Can be:
                     #   - return 500 to user as this is our issue
-                    raise ValueError(f"Unreachable - unknown job state: {status}")
-            except OpenShiftNotFound:
-                pass
+                    raise ValueError(f"Unreachable - unknown workflow state: {status}")
+            except NotFoundException:
+                _LOGGER.error(status["error"])
         return {"error": f"Requested result for analysis {analysis_id!r} was not found", "parameters": parameters}, 404
 
 

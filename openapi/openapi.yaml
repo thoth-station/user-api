@@ -2051,8 +2051,6 @@ components:
           type: object
           description: Status information about the analysis run.
           required:
-            - container
-            - exit_code
             - finished_at
             - reason
             - started_at
