@@ -793,8 +793,7 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
     except NotFoundError:
         if namespace:
             try:
-                status = _OPENSHIFT.get_workflow_status_report(analysis_id, namespace=namespace).get("status")                
-                print(status)
+                status = _OPENSHIFT.get_workflow_status_report(analysis_id, namespace=namespace).get("status")
                 if status["state"] == "Running":
                     return {"error": "Analysis is still in progress", "status": status, "parameters": parameters}, 202
                 elif status["state"] == "Failed":
