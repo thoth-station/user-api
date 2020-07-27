@@ -344,37 +344,19 @@ def get_advise_python_log(analysis_id: str):
 
 def get_advise_python_status(analysis_id: str):
     """Get status of an adviser run."""
-    status, code = _get_job_status(locals(), "adviser-", Configuration.THOTH_BACKEND_NAMESPACE)
-    if code == 404:
-        wf_status = None
-        try:
-            wf_status = _OPENSHIFT.get_workflow_status(
-                name=analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE
-            )
-
-            # the Job has not started (yet) but the Workflow has been submitted
-            # if the Workflow fails, the status will contain the finished
-            # time of the workflow
-            status["status"], code = (
-                {
-                    "container": None,
-                    "exit_code": None,
-                    "finished_at": wf_status.get("finishedAt"),
-                    "reason": None,
-                    "started_at": wf_status.get("startedAt"),
-                    "state": wf_status.get("phase", "Pending"),
-                },
-                200,
-            )
-
-            status.pop("error")
-
-        except NotFoundException:
-            # Handle this since the adviser run can still be scheduled
-            # with workload-operator instead, otherwise we could raise here
-            _LOGGER.error(status["error"])
-
-    return status, code
+    if not analysis_id:
+        return {"error": "No analysis id provided.", "parameters": analysis_id}, 400
+    if not analysis_id.startswith("adviser-"):
+        return {"error": "Wrong analysis id provided", "parameters": analysis_id}, 400
+    try:
+        status = _OPENSHIFT.get_workflow_status_report(
+            analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE
+        ).get("status")
+        return status, 200
+    except NotFoundException:
+        return {"error": "Analysis id not found.", "parameters": analysis_id}, 404
+    except Exception as exc:
+        _LOGGER.error(exc)
 
 
 def list_runtime_environments():
