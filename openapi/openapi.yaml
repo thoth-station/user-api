@@ -2074,7 +2074,7 @@ components:
                 has started.
             state:
               type: string
-              example: terminated
+              example: Running
         parameters:
           type: object
           description: Parameters echoed back to user for debugging.
