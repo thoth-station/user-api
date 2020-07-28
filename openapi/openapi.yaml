@@ -149,7 +149,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AnalysisUnfinishedResultResponse"
+                $ref: "#/components/schemas/AnalysisStatusResponse"
         "400":
           description: On invalid request.
           content:
@@ -188,7 +188,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AnalysisUnfinishedResultResponse"
+                $ref: "#/components/schemas/AnalysisStatusResponse"
         "400":
           description: On invalid request.
           content:
@@ -332,7 +332,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AnalysisUnfinishedResultResponse"
+                $ref: "#/components/schemas/AnalysisStatusResponse"
         "400":
           description: On invalid request.
           content:
@@ -991,7 +991,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AnalysisUnfinishedResultResponse"
+                $ref: "#/components/schemas/AnalysisStatusResponse"
         "400":
           description: On invalid request.
           content:
@@ -1250,7 +1250,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AnalysisUnfinishedResultResponse"
+                $ref: "#/components/schemas/AnalysisStatusResponse"
         "400":
           description: On invalid request.
           content:
@@ -2078,21 +2078,6 @@ components:
         parameters:
           type: object
           description: Parameters echoed back to user for debugging.
-    AnalysisUnfinishedResultResponse:
-      type: object
-      required:
-        - error
-        - parameters
-        - status
-      properties:
-        error:
-          type: string
-          description: Error information for user.
-        parameters:
-          type: object
-          description: Parameters echoed back to user for debugging.
-        status:
-          $ref: "#/components/schemas/AnalysisStatusResponse"
     AnalysisLogResponse:
       type: object
       required:
