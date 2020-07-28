@@ -176,7 +176,7 @@ def get_analyze_log(analysis_id: str):
 
 def get_analyze_status(analysis_id: str):
     """Get status of an image analysis."""
-    return _get_job_status(locals(), "package-extract-", Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_workflow_status(locals(), "package-extract-", Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def post_provenance_python(application_stack: dict, origin: str = None, debug: bool = False, force: bool = False):
@@ -236,7 +236,7 @@ def get_provenance_python_log(analysis_id: str):
 
 def get_provenance_python_status(analysis_id: str):
     """Get status of a provenance check."""
-    return _get_job_status(locals(), "provenance-checker-", Configuration.THOTH_BACKEND_NAMESPACE)
+    return _get_workflow_status(locals(), "provenance-checker-", Configuration.THOTH_BACKEND_NAMESPACE)
 
 
 def post_advise_python(
@@ -344,19 +344,7 @@ def get_advise_python_log(analysis_id: str):
 
 def get_advise_python_status(analysis_id: str):
     """Get status of an adviser run."""
-    if not analysis_id:
-        return {"error": "No analysis id provided.", "parameters": analysis_id}, 400
-    if not analysis_id.startswith("adviser-"):
-        return {"error": "Wrong analysis id provided", "parameters": analysis_id}, 400
-    try:
-        status = _OPENSHIFT.get_workflow_status_report(
-            analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE
-        ).get("status")
-        return status, 200
-    except NotFoundException:
-        return {"error": "Analysis id not found.", "parameters": analysis_id}, 404
-    except Exception as exc:
-        _LOGGER.error(exc)
+    return _get_workflow_status(locals(), "adviser-", Configuration.THOTH_BACKEND_NAMESPACE)
 
 
 def list_runtime_environments():
@@ -775,12 +763,12 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
     except NotFoundError:
         if namespace:
             try:
-                status = _OPENSHIFT.get_workflow_status_report(analysis_id, namespace=namespace).get("status")
-                if status["state"] == "Running":
+                status = _OPENSHIFT.get_workflow_status_report(analysis_id, namespace=namespace)
+                if status["state"] == "running":
                     return {"error": "Analysis is still in progress", "status": status, "parameters": parameters}, 202
-                elif status["state"] == "Failed":
+                elif status["state"] == "failed":
                     return {"error": "Analysis was not successful", "status": status, "parameters": parameters}, 400
-                elif status["state"] in ("Pending"):
+                elif status["state"] == "pending":
                     return {"error": "Analysis is being scheduled", "status": status, "parameters": parameters}, 202
                 else:
                     # Can be:
@@ -807,18 +795,18 @@ def _get_job_log(parameters: dict, name_prefix: str, namespace: str):
     return {"parameters": parameters, "log": log}, 200
 
 
-def _get_job_status(parameters: dict, name_prefix: str, namespace: str):
-    """Get status for a job."""
-    job_id = parameters.get("analysis_id")
-    if job_id is None:
-        return {"error": "No analysis id provided", "parameters": parameters}, 400
-    if not job_id.startswith(name_prefix):
-        return {"error": "Wrong analysis id provided", "parameters": parameters}, 400
+def _get_workflow_status(parameters: dict, name_prefix: str, namespace: str):
+    """Get status for a argo workflow."""
+    workflow_id = parameters.get("analysis_id")
+    if workflow_id is None:
+        return {"error": "No workflow id provided", "parameters": parameters}, 400
+    if not workflow_id.startswith(name_prefix):
+        return {"error": "Wrong workflow id provided", "parameters": parameters}, 400
 
     try:
-        status = _OPENSHIFT.get_job_status_report(job_id, namespace=namespace).get("pods")[0]
-    except (OpenShiftNotFound, TypeError):
-        return {"parameters": parameters, "error": f"Requested status for analysis {job_id!r} was not found"}, 404
+        status = _OPENSHIFT.get_workflow_status_report(workflow_id=workflow_id, namespace=namespace)
+    except NotFoundException:
+        return {"parameters": parameters, "error": f"Requested status for workflow {workflow_id!r} was not found"}, 404
     return {"parameters": parameters, "status": status}, 200
 
 
