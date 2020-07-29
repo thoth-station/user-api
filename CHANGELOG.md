@@ -1936,3 +1936,22 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Replace build with a job
 * Remove unused configuration entry
 * Initial project import
+
+## Release 0.6.9 (2020-07-29T21:25:49)
+* Fix (#987)
+* Source type is nullable (#981)
+* Moving changed function (#980)
+* Extend recommendation types (#970)
+* Changed to new workflow status (#971)
+* :pushpin: Automatic update of dependency pytest from 5.4.3 to 6.0.0 (#979)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.16.1 to 0.16.2 (#978)
+* :pushpin: Automatic update of dependency thoth-storages from 0.24.4 to 0.24.5 (#977)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.16.1 to 0.16.2 (#976)
+* :pushpin: Automatic update of dependency thoth-storages from 0.24.4 to 0.24.5 (#975)
+* :pushpin: Automatic update of dependency thoth-common from 0.14.2 to 0.15.0 (#974)
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.15.0 to 0.15.4 (#973)
+* :pushpin: Automatic update of dependency thoth-storages from 0.24.3 to 0.24.4 (#969)
+* Remove limit_latest_versions from API (#968)
+* Remove latest versions limitation (#967)
+* :pushpin: Automatic update of dependency thoth-common from 0.14.1 to 0.14.2 (#966)
+* Removed un-necessary variable (#964)
