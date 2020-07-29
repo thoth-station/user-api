@@ -811,6 +811,7 @@ paths:
               - jupyter_notebook: Jupyter Notebook (nb-requirements).
           schema:
             type: string
+            nullable: true
             enum:
               - cli
               - s2i
