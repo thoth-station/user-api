@@ -56,7 +56,7 @@ class PayloadProcess:
                 webhook_payload.get("event"),
                 webhook_payload.get("payload"),
             )
-            if event or payload is None:
+            if event is None or payload is None:
                 _LOGGER.info(f"Webhook didn't have required components. Webhook - {webhook_payload}")
                 return None
             if event in _DEPRECATED_EVENTS:
