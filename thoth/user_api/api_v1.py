@@ -31,7 +31,6 @@ from thoth.storages import AnalysisResultsStore
 from thoth.storages import BuildLogsStore
 from thoth.storages import BuildLogsAnalysesCacheStore
 from thoth.storages import BuildLogsAnalysisResultsStore
-from thoth.storages import GraphDatabase
 from thoth.storages import ProvenanceResultsStore
 from thoth.storages import AnalysesCacheStore
 from thoth.storages import AdvisersCacheStore
