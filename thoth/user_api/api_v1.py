@@ -351,7 +351,7 @@ def list_runtime_environments():
     """List available runtime environments."""
     environments = []
     for solver_name in _OPENSHIFT.get_solver_names():
-        solver_info = GraphDatabase.parse_python_solver_name(solver_name)
+        solver_info = _OPENSHIFT.parse_python_solver_name(solver_name)
         environments.append(solver_info)
 
     return {"runtime_environments": environments, "parameters": {}}
