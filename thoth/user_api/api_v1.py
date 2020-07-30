@@ -804,7 +804,7 @@ def _get_workflow_status(parameters: dict, name_prefix: str, namespace: str):
 
     try:
         status = _OPENSHIFT.get_workflow_status_report(workflow_id=workflow_id, namespace=namespace)
-    except NotFoundException:
+    except (OpenShiftNotFound, NotFoundException):
         return {"parameters": parameters, "error": f"Requested status for workflow {workflow_id!r} was not found"}, 404
     return {"parameters": parameters, "status": status}, 200
 
