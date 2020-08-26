@@ -1972,3 +1972,8 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Fix unhandled workflow state in responses (#1009)
 * Fix variable reference
 * :pushpin: Automatic update of dependency sentry-sdk from 0.16.5 to 0.17.0 (#1008)
+
+## Release 0.6.12 (2020-08-26T13:24:46)
+### Features
+* Turn on smart changelog to group messages using AI/ML
+* Add endpoint for listing supported platforms
