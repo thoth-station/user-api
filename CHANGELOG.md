@@ -1967,3 +1967,8 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :pushpin: Automatic update of dependency pytest from 6.0.0 to 6.0.1 (#994)
 * :pushpin: Automatic update of dependency thoth-storages from 0.24.5 to 0.25.0 (#993)
 * Wrong exception caught (#991)
+
+## Release 0.6.11 (2020-08-26T11:58:30)
+* Fix unhandled workflow state in responses (#1009)
+* Fix variable reference
+* :pushpin: Automatic update of dependency sentry-sdk from 0.16.5 to 0.17.0 (#1008)
