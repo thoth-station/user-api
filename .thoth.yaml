@@ -25,3 +25,4 @@ managers:
         - sesheta
       labels: [bot]
       changelog_file: true
+      changelog_smart: true
