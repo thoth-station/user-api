@@ -765,7 +765,7 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
                 status = _OPENSHIFT.get_workflow_status_report(analysis_id, namespace=namespace)
                 if status["state"] == "running":
                     return {"error": "Analysis is still in progress", "status": status, "parameters": parameters}, 202
-                elif status["state"] == "failed":
+                elif status["state"] in ("failed", "error"):
                     return {"error": "Analysis was not successful", "status": status, "parameters": parameters}, 400
                 elif status["state"] == "pending":
                     return {"error": "Analysis is being scheduled", "status": status, "parameters": parameters}, 202
