@@ -774,7 +774,8 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
                     #   - return 500 to user as this is our issue
                     raise ValueError(f"Unreachable - unknown workflow state: {status}")
             except NotFoundException:
-                _LOGGER.error(status["error"])
+                _LOGGER.exception("Workflow %r was not found", analysis_id)
+
         return {"error": f"Requested result for analysis {analysis_id!r} was not found", "parameters": parameters}, 404
 
 
