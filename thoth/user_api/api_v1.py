@@ -168,9 +168,9 @@ def get_analyze_by_hash(image_hash: str):
     return get_analyze(analysis_info["analysis_id"])
 
 
-def get_analyze_log(analysis_id: str):
+def get_analyze_log(analysis_id: str) -> typing.Dict[str, typing.Any]:
     """Get image analysis log."""
-    return _get_job_log(locals(), "package-extract-", Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_log("extract-packages", analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def get_analyze_status(analysis_id: str):
@@ -230,7 +230,7 @@ def get_provenance_python(analysis_id: str):
 
 def get_provenance_python_log(analysis_id: str):
     """Get provenance-checker logs."""
-    return _get_job_log(locals(), "provenance-checker-", Configuration.THOTH_BACKEND_NAMESPACE)
+    return _get_log("provenance-check", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
 
 
 def get_provenance_python_status(analysis_id: str):
@@ -336,9 +336,23 @@ def get_advise_python(analysis_id):
     )
 
 
-def get_advise_python_log(analysis_id: str):
+def get_advise_python_log(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
     """Get adviser log."""
-    return _get_job_log(locals(), "adviser-", Configuration.THOTH_BACKEND_NAMESPACE)
+    return _get_log("advise", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
+
+
+def _get_log(node_name: str, analysis_id: str, namespace: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+    """Get log for a node in a workflow."""
+    result = {"parameters": {"analysis_id": analysis_id}}
+    try:
+        log = _OPENSHIFT.get_workflow_node_log(node_name, analysis_id, namespace)
+    except NotFoundError as exc:
+        _LOGGER.exception(f"Log for {analysis_id} were not found: {str(exc)}")
+        result.update({"error": f"Log for analysis {analysis_id} was not found or it has not started yet"})
+        return result, 404
+    else:
+        result.update({"log": log})
+        return result, 200
 
 
 def get_advise_python_status(analysis_id: str):
@@ -418,6 +432,7 @@ def list_python_package_indexes():
 def get_python_platform() -> typing.List[str]:
     """List available platforms for the Python ecosystem."""
     from .openapi_server import GRAPH
+
     return GRAPH.get_python_package_version_platform_all()
 
 
@@ -783,22 +798,6 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
                 _LOGGER.exception("Workflow %r was not found", analysis_id)
 
         return {"error": f"Requested result for analysis {analysis_id!r} was not found", "parameters": parameters}, 404
-
-
-def _get_job_log(parameters: dict, name_prefix: str, namespace: str):
-    """Get job log based on analysis id."""
-    job_id = parameters.get("analysis_id")
-    if job_id is None:
-        return {"error": "No analysis id provided", "parameters": parameters}, 400
-    if not job_id.startswith(name_prefix):
-        return {"error": "Wrong analysis id provided", "parameters": parameters}, 400
-
-    try:
-        log = _OPENSHIFT.get_job_log(job_id, namespace=namespace)
-    except OpenShiftNotFound:
-        return {"parameters": parameters, "error": f"No analysis with id {job_id} was found"}, 404
-
-    return {"parameters": parameters, "log": log}, 200
 
 
 def _get_workflow_status(parameters: dict, name_prefix: str, namespace: str):
