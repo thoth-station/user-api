@@ -168,7 +168,7 @@ def get_analyze_by_hash(image_hash: str):
     return get_analyze(analysis_info["analysis_id"])
 
 
-def get_analyze_log(analysis_id: str) -> typing.Dict[str, typing.Any]:
+def get_analyze_log(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
     """Get image analysis log."""
     return _get_log("extract-packages", analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
@@ -228,7 +228,7 @@ def get_provenance_python(analysis_id: str):
     )
 
 
-def get_provenance_python_log(analysis_id: str):
+def get_provenance_python_log(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
     """Get provenance-checker logs."""
     return _get_log("provenance-check", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
 
@@ -343,7 +343,7 @@ def get_advise_python_log(analysis_id: str) -> typing.Tuple[typing.Dict[str, typ
 
 def _get_log(node_name: str, analysis_id: str, namespace: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
     """Get log for a node in a workflow."""
-    result = {"parameters": {"analysis_id": analysis_id}}
+    result: typing.Dict[str, typing.Any] = {"parameters": {"analysis_id": analysis_id}}
     try:
         log = _OPENSHIFT.get_workflow_node_log(node_name, analysis_id, namespace)
     except NotFoundError as exc:
