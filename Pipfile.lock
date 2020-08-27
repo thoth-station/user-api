@@ -623,7 +623,7 @@
                 "sha256:c590656b45fa6dd23d81dec3d3dc1e31b17fcba48310f69d0ff31b5c865fc799"
             ],
             "index": "pypi",
-            "version": "==0.15.4"
+            "version": "==0.16.0"
         },
         "protobuf": {
             "hashes": [
