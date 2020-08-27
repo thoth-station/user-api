@@ -1977,3 +1977,11 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 ### Features
 * Turn on smart changelog to group messages using AI/ML
 * Add endpoint for listing supported platforms
+
+## Release 0.6.13 (2020-08-27T20:08:08)
+### Features
+* Fix mypy complains about typing
+* Make black happy again
+* Fix obtaining logs when Argo workflows are used
+### Automatic Updates
+* :pushpin: Automatic update of dependency thoth-common from 0.16.1 to 0.17.0
