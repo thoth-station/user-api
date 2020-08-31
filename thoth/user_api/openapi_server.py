@@ -193,6 +193,7 @@ def internal_server_error(exc):
 def apply_headers(response):
     """Add headers to each response."""
     response.headers["X-Thoth-Version"] = __version__
+    response.headers["X-User-API-Service-Version"] = __service_version__
     return response
 
 
