@@ -1995,3 +1995,12 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Relock dependencies due to Pipenv/Kebechet bug
 ### Improvements
 * :arrow_down: removed the files as they are no longer required
+
+## Release 0.6.15 (2020-08-31T12:03:55)
+### Features
+* Include service version in response headers (#1034)
+### Bug Fixes
+* :bug: fixed  pre-commit config file
+* Revert ":white_check_mark: some fixes for pre-commit"
+### Automatic Updates
+* :pushpin: Automatic update of dependency flask-cors from 3.0.8 to 3.0.9 (#1033)
