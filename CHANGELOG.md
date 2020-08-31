@@ -1985,3 +1985,13 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Fix obtaining logs when Argo workflows are used
 ### Automatic Updates
 * :pushpin: Automatic update of dependency thoth-common from 0.16.1 to 0.17.0
+
+## Release 0.6.14 (2020-08-29T10:19:11)
+### Features
+* :arrow_up: relocked
+* :sparkles: standard pre-commit-config
+### Bug Fixes
+* :white_check_mark: some fixes for pre-commit
+* Relock dependencies due to Pipenv/Kebechet bug
+### Improvements
+* :arrow_down: removed the files as they are no longer required
