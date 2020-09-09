@@ -620,10 +620,10 @@
         },
         "prometheus-flask-exporter": {
             "hashes": [
-                "sha256:559f6e786fe20accfca49442ec3cd8b0ff637a8a5184b4fa29e1833ad9437551"
+                "sha256:0d2d29e641b59bda9e9fa66b9bf93a46e0b09b4cb538e76eb7eae175dfc749ce"
             ],
             "index": "pypi",
-            "version": "==0.16.4"
+            "version": "==0.17.0"
         },
         "protobuf": {
             "hashes": [
