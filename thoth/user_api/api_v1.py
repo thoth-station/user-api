@@ -703,7 +703,7 @@ def schedule_kebechet(body: dict):
         return {"error", f"Failed to parse webhook payload for service {service!r}"}, 501
 
     # TODO: add kebechet cache
-    parameters = {"service": service, "url": url,}
+    parameters = {"service": service, "url": url, "job_id": _OPENSHIFT.generate_id("kebechet-job")}
     return _send_schedule_message(parameters, KebechetTriggerMessage)
 
 
@@ -733,12 +733,14 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
 
     # Should we share a kebechet cache here?
     payload["webhook_payload"] = webhook_payload
+    payload["job_id"] = _OPENSHIFT.generate_id("kebechet-job")
     return _send_schedule_message(payload, KebechetTriggerMessage)
 
 
 def schedule_thamos_advise(input: typing.Dict[str, typing.Any],):
     """Schedule Thamos Advise for GitHub App."""
     input["host"] = Configuration.THOTH_HOST
+    input["job_id"] = _OPENSHIFT.generate_id("qeb-hwt")
     return _send_schedule_message(input, ThamosTriggerMessage)
 
 
@@ -857,7 +859,20 @@ def _send_schedule_message(message_contents: dict, message_type: MessageBase):
     message_contents["component_name"] = component_name
     message = message_type.MessageContents(**message_contents)
     p.produce(message_type().topic_name, value=message.dumps())
-    return {"message_topic": message_type().topic_name, "message_contents": message_contents, "cached": False}, 202
+    if "job_id" in message_contents
+        return {
+            "message_topic": message_type().topic_name,
+            "analysis_id": message_contents["job_id"],
+            "parameters": message_contents,
+            "cached": False,
+        }, 202
+
+    return {
+        "message_topic": message_type().topic_name,
+        "analysis_id": "job_id was not set",
+        "parameters": message_contents,
+        "cached": False,
+    }, 202
 
 
 def _do_get_image_metadata(
