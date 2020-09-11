@@ -1111,7 +1111,7 @@ paths:
     post:
       tags: [GitHub]
       x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: schedule_thamos_advise
+      operationId: schedule_qebhwt_advise
       summary: Schedule Thamos advise for GitHub App.
       requestBody:
         required: true
