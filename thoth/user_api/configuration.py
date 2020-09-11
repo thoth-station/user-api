@@ -46,6 +46,9 @@ class Configuration:
 
     tracer = None
 
+    # Kafka Config
+    KAFKA_CAFILE = os.getenv("KAFKA_CAFILE", "ca.cert")
+
 
 def init_jaeger_tracer(service_name):
     """Create a Jaeger/OpenTracing configuration."""
