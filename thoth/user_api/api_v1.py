@@ -704,10 +704,10 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     return _do_schedule(payload, _OPENSHIFT.schedule_kebechet_workflow)
 
 
-def schedule_thamos_advise(input: typing.Dict[str, typing.Any],):
+def schedule_qebhwt_advise(input: typing.Dict[str, typing.Any],):
     """Schedule Thamos Advise for GitHub App."""
     input["host"] = Configuration.THOTH_HOST
-    return _do_schedule(input, _OPENSHIFT.schedule_thamos_workflow)
+    return _do_schedule(input, _OPENSHIFT.schedule_qebhwt_workflow)
 
 
 def list_buildlogs(page: int = 0):
