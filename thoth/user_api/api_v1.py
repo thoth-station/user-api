@@ -137,13 +137,13 @@ def post_analyze(
             pass
 
     parameters["job_id"] = _OPENSHIFT.generate_id("package-extract")
-    _send_schedule_message(parameters, PackageExtractTriggerMessage)
+    response, status_code = _send_schedule_message(parameters, PackageExtractTriggerMessage)
     analysis_by_digest_store = AnalysisByDigest()
     analysis_by_digest_store.connect()
     analysis_by_digest_store.store_document(metadata["digest"], response)
 
     if status_code == 202:
-        cache.store_document_record(cached_document_id, {"analysis_id": parameters["job_id"]})
+        cache.store_document_record(cached_document_id, {"analysis_id": response["analysis_id"]})
 
     return response, status_code
 
@@ -235,11 +235,11 @@ def post_provenance_python(application_stack: dict, origin: str = None, debug: b
             pass
 
     parameters["job_id"] = _OPENSHIFT.generate_id("provenance-checker")
-    _send_schedule_message(parameters, ProvenanceCheckerTriggerMessage)
-    # TODO: keep cache
+    response, status = _send_schedule_message(parameters, ProvenanceCheckerTriggerMessage)
+
     if status == 202:
         cache.store_document_record(
-            cached_document_id, {"analysis_id": parameters["job_id"], "timestamp": timestamp_now}
+            cached_document_id, {"analysis_id": response["analysis_id"], "timestamp": timestamp_now}
         )
 
     return response, status
@@ -347,7 +347,7 @@ def post_advise_python(
     # TODO: Keep cache even with new messaging implementation
     if status == 202:
         adviser_cache.store_document_record(
-            cached_document_id, {"analysis_id": parameters["job_id"], "timestamp": timestamp_now}
+            cached_document_id, {"analysis_id": response["analysis_id"], "timestamp": timestamp_now}
         )
 
     return response, status
