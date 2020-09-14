@@ -40,11 +40,10 @@ from thoth.storages import GraphDatabase
 from thoth.storages.exceptions import DatabaseNotInitialized
 from thoth.user_api import __version__
 from thoth.user_api.configuration import Configuration
-from thoth.user_api.configuration import init_jaeger_tracer
 
 
 # Configure global application logging using Thoth's init_logging.
-init_logging(logging_env_var_start="THOTH_USER_API_LOG_")
+# init_logging(logging_env_var_start="THOTH_USER_API_LOG_")
 
 _LOGGER = logging.getLogger("thoth.user_api")
 _LOGGER.setLevel(logging.DEBUG if bool(int(os.getenv("THOTH_USER_API_DEBUG", 0))) else logging.INFO)
@@ -73,10 +72,6 @@ app.add_api(
 
 
 application = app.app
-
-
-# create tracer and put it in the application configuration
-Configuration.tracer = init_jaeger_tracer("user_api")
 
 # create metrics and manager
 metrics = PrometheusMetrics(
@@ -199,7 +194,5 @@ def apply_headers(response):
 
 if __name__ == "__main__":
     app.run()
-
-    Configuration.tracer.close()
 
     sys.exit(1)

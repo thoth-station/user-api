@@ -49,7 +49,7 @@ from thoth.messaging import AdviserTriggerMessage
 from thoth.messaging import KebechetTriggerMessage
 from thoth.messaging import PackageExtractTriggerMessage
 from thoth.messaging import ProvenanceCheckerTriggerMessage
-from thoth.messaging import ThamosTriggerMessage
+from thoth.messaging import QebHwtTriggerMessage
 
 from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import Producer
@@ -71,7 +71,7 @@ _LOGGER = logging.getLogger(__name__)
 _OPENSHIFT = OpenShift()
 
 # Set this so that we don't create a faust app. We are using thoth.messaging for it's configuration not functionality
-MessageBase.app = "foo"  # type: ignore
+# MessageBase.app = "foo"  # type: ignore
 config_topic = MessageBase()
 
 if config_topic.ssl_auth == 1:
@@ -344,7 +344,7 @@ def post_advise_python(
     parameters["source_type"] = source_type.upper() if source_type else None
     parameters["job_id"] = _OPENSHIFT.generate_id('adviser')
     response, status = _send_schedule_message(parameters, AdviserTriggerMessage)
-    # TODO: Keep cache even with new messaging implementation
+    TODO: Keep cache even with new messaging implementation
     if status == 202:
         adviser_cache.store_document_record(
             cached_document_id, {"analysis_id": response["analysis_id"], "timestamp": timestamp_now}
@@ -859,7 +859,7 @@ def _send_schedule_message(message_contents: dict, message_type: MessageBase):
     message_contents["component_name"] = component_name
     message = message_type.MessageContents(**message_contents)
     p.produce(message_type().topic_name, value=message.dumps())
-    if "job_id" in message_contents
+    if "job_id" in message_contents:
         return {
             "message_topic": message_type().topic_name,
             "analysis_id": message_contents["job_id"],

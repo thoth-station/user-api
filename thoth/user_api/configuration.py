@@ -21,9 +21,6 @@ import logging
 import os
 from datetime import timedelta
 
-from jaeger_client import Config as JaegerConfig
-from jaeger_client.metrics.prometheus import PrometheusMetricsFactory
-
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -48,19 +45,3 @@ class Configuration:
 
     # Kafka Config
     KAFKA_CAFILE = os.getenv("KAFKA_CAFILE", "ca.cert")
-
-
-def init_jaeger_tracer(service_name):
-    """Create a Jaeger/OpenTracing configuration."""
-    config = JaegerConfig(
-        config={
-            "sampler": {"type": "const", "param": 1},
-            "logging": True,
-            "local_agent": {"reporting_host": Configuration.JAEGER_HOST},
-        },
-        service_name=service_name,
-        validate=True,
-        metrics_factory=PrometheusMetricsFactory(namespace=service_name),
-    )
-
-    return config.initialize_tracer()

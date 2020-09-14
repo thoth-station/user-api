@@ -9,11 +9,8 @@ connexion = {extras = ["swagger-ui"],version = "*"}
 flask = "*"
 flask-script = "*"
 grpcio = "<1.28"
-grpcio-opentracing = "*"
 grpcio-tools = "<1.28"
 gunicorn = "*"
-jaeger-client = "*"
-opentracing-instrumentation = "*"
 prometheus-client = "*"
 prometheus-flask-exporter = "*"
 requests = "*"
@@ -25,7 +22,7 @@ flask-cors = "*"
 aiocontextvars = "*"
 sentry-sdk = {extras = ["flask"],version = "*"}
 confluent-kafka = "*"
-thoth-messaging = {editable = true, git = "https://github.com/kpostoffice/messaging", ref = "feature/scheduling_messages"}
+thoth-messaging = {editable = true, git = "https://github.com/KPostOffice/messaging.git", ref = "feature/scheduling_messages"}
 
 [pipenv]
 allow_prereleases = false
