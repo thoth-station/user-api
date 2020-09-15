@@ -737,11 +737,11 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     return _send_schedule_message(payload, KebechetTriggerMessage)
 
 
-def schedule_thamos_advise(input: typing.Dict[str, typing.Any],):
+def schedule_qebhwt_advise(input: typing.Dict[str, typing.Any],):
     """Schedule Thamos Advise for GitHub App."""
     input["host"] = Configuration.THOTH_HOST
     input["job_id"] = _OPENSHIFT.generate_id("qeb-hwt")
-    return _send_schedule_message(input, ThamosTriggerMessage)
+    return _send_schedule_message(input, QebHwtTriggerMessage)
 
 
 def list_buildlogs(page: int = 0):

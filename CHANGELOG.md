@@ -2004,3 +2004,15 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Revert ":white_check_mark: some fixes for pre-commit"
 ### Automatic Updates
 * :pushpin: Automatic update of dependency flask-cors from 3.0.8 to 3.0.9 (#1033)
+
+## Release 0.6.16 (2020-09-09T13:12:44)
+### Features
+* Empty commit to trigger a release
+### Automatic Updates
+* :pushpin: Automatic update of dependency attrs from 20.1.0 to 20.2.0
+* :pushpin: Automatic update of dependency sentry-sdk from 0.17.2 to 0.17.3
+* :pushpin: Automatic update of dependency thoth-common from 0.17.2 to 0.17.3
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.16.4 to 0.17.0
+* :pushpin: Automatic update of dependency sentry-sdk from 0.17.1 to 0.17.2 (#1043)
+* :pushpin: Automatic update of dependency thoth-common from 0.17.0 to 0.17.2 (#1042)
+* :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.16.0 to 0.16.4 (#1041)
