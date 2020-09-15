@@ -1062,28 +1062,6 @@ paths:
         "404":
           description: The given build log does not exist.
 
-  /kebechet:
-    post:
-      tags: [Kebechet]
-      x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: schedule_kebechet
-      summary: Schedule kebechet instance from webhook
-      requestBody:
-        required: true
-        description: Body of a git service webhook
-        content:
-          application/json:
-            schema:
-              type: object
-              additionalProperties: true
-      responses:
-        "202":
-          description: Accepted
-        "400":
-          description: Invalid
-        "501":
-          description: Functionality not supported
-
   /kebechet-webhook:
     post:
       tags: [Kebechet]

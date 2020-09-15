@@ -43,7 +43,7 @@ from thoth.user_api.configuration import Configuration
 
 
 # Configure global application logging using Thoth's init_logging.
-# init_logging(logging_env_var_start="THOTH_USER_API_LOG_")
+init_logging(logging_env_var_start="THOTH_USER_API_LOG_")
 
 _LOGGER = logging.getLogger("thoth.user_api")
 _LOGGER.setLevel(logging.DEBUG if bool(int(os.getenv("THOTH_USER_API_DEBUG", 0))) else logging.INFO)

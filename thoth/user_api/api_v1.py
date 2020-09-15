@@ -51,7 +51,6 @@ from thoth.messaging import PackageExtractTriggerMessage
 from thoth.messaging import ProvenanceCheckerTriggerMessage
 from thoth.messaging import QebHwtTriggerMessage
 
-from confluent_kafka.admin import AdminClient, NewTopic
 from confluent_kafka import Producer
 
 from .configuration import Configuration
@@ -62,7 +61,7 @@ from .exceptions import ImageManifestUnknownError
 from .exceptions import ImageAuthenticationRequired
 from .exceptions import ImageInvalidCredentials
 from .exceptions import NotFoundException
-from . import __version__  as service_version
+from . import __version__ as service_version
 from . import __name__ as component_name
 
 
@@ -70,18 +69,18 @@ PAGINATION_SIZE = 100
 _LOGGER = logging.getLogger(__name__)
 _OPENSHIFT = OpenShift()
 
-# Set this so that we don't create a faust app. We are using thoth.messaging for it's configuration not functionality
-# MessageBase.app = "foo"  # type: ignore
 config_topic = MessageBase()
 
 if config_topic.ssl_auth == 1:
-    p = Producer({
-        'bootstrap.servers': config_topic.bootstrap_server,
-        'ssl.ca.location': Configuration.KAFKA_CAFILE,
-        'security.protocol': config_topic.protocol,
-    })
+    p = Producer(
+        {
+            "bootstrap.servers": config_topic.bootstrap_server,
+            "ssl.ca.location": Configuration.KAFKA_CAFILE,
+            "security.protocol": config_topic.protocol,
+        }
+    )
 else:
-    p = Producer({'bootstrap.servers': config_topic.bootstrap_server})
+    p = Producer({"bootstrap.servers": config_topic.bootstrap_server})
 
 
 def _compute_digest_params(parameters: dict):
@@ -342,9 +341,9 @@ def post_advise_python(
 
     # Enum type is checked on thoth-common side to avoid serialization issue in user-api side when providing response
     parameters["source_type"] = source_type.upper() if source_type else None
-    parameters["job_id"] = _OPENSHIFT.generate_id('adviser')
+    parameters["job_id"] = _OPENSHIFT.generate_id("adviser")
     response, status = _send_schedule_message(parameters, AdviserTriggerMessage)
-    TODO: Keep cache even with new messaging implementation
+
     if status == 202:
         adviser_cache.store_document_record(
             cached_document_id, {"analysis_id": response["analysis_id"], "timestamp": timestamp_now}
@@ -682,31 +681,6 @@ def get_buildlog(document_id: str):
     return _get_document(BuildLogsStore, document_id)
 
 
-def schedule_kebechet(body: dict):
-    """Schedule Kebechet run-url on Openshift."""
-    # TODO: Update documentation to include creation of environment variables corresponding to git service tokens
-    # NOTE: Change for event dependent behaviour
-    headers = connexion.request.headers
-    if "X-GitHub-Event" in headers:
-        service = "github"
-        url = body.get("repository", {}).get("html_url")
-    elif "X_GitLab_Event" in headers:
-        service = "gitlab"
-        url = body.get("repository", {}).get("homepage")
-    elif "X_Pagure_Topic" in headers:
-        service = "pagure"
-        return {"error": "Pagure is currently not supported"}, 501
-    else:
-        return {"error": "This webhook is not supported"}, 501
-
-    if url is None:
-        return {"error", f"Failed to parse webhook payload for service {service!r}"}, 501
-
-    # TODO: add kebechet cache
-    parameters = {"service": service, "url": url, "job_id": _OPENSHIFT.generate_id("kebechet-job")}
-    return _send_schedule_message(parameters, KebechetTriggerMessage)
-
-
 def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     """Schedule Kebechet run-webhook on Openshift using Argo Workflow."""
     payload, webhook_payload = {}, {}
@@ -731,7 +705,6 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     if preprocess_payload is None:
         return
 
-    # Should we share a kebechet cache here?
     payload["webhook_payload"] = webhook_payload
     payload["job_id"] = _OPENSHIFT.generate_id("kebechet-job")
     return _send_schedule_message(payload, KebechetTriggerMessage)
@@ -860,19 +833,25 @@ def _send_schedule_message(message_contents: dict, message_type: MessageBase):
     message = message_type.MessageContents(**message_contents)
     p.produce(message_type().topic_name, value=message.dumps())
     if "job_id" in message_contents:
-        return {
+        return (
+            {
+                "message_topic": message_type().topic_name,
+                "analysis_id": message_contents["job_id"],
+                "parameters": message_contents,
+                "cached": False,
+            },
+            202,
+        )
+
+    return (
+        {
             "message_topic": message_type().topic_name,
-            "analysis_id": message_contents["job_id"],
+            "analysis_id": "job_id was not set",
             "parameters": message_contents,
             "cached": False,
-        }, 202
-
-    return {
-        "message_topic": message_type().topic_name,
-        "analysis_id": "job_id was not set",
-        "parameters": message_contents,
-        "cached": False,
-    }, 202
+        },
+        202,
+    )
 
 
 def _do_get_image_metadata(
