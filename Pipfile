@@ -22,7 +22,7 @@ flask-cors = "*"
 aiocontextvars = "*"
 sentry-sdk = {extras = ["flask"],version = "*"}
 confluent-kafka = "*"
-thoth-messaging = {editable = true, git = "https://github.com/KPostOffice/messaging.git", ref = "feature/scheduling_messages"}
+thoth-messaging = "*"
 
 [pipenv]
 allow_prereleases = false
