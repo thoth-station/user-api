@@ -2016,3 +2016,12 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :pushpin: Automatic update of dependency sentry-sdk from 0.17.1 to 0.17.2 (#1043)
 * :pushpin: Automatic update of dependency thoth-common from 0.17.0 to 0.17.2 (#1042)
 * :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.16.0 to 0.16.4 (#1041)
+
+## Release 0.6.17 (2020-09-16T07:50:38)
+### Features
+* Correct exception type handled
+### Improvements
+* semantically correct name for qebhwt function (#1057)
+### Automatic Updates
+* :pushpin: Automatic update of dependency sentry-sdk from 0.17.3 to 0.17.4 (#1056)
+* :pushpin: Automatic update of dependency thoth-storages from 0.25.5 to 0.25.6 (#1055)
