@@ -61,8 +61,8 @@ from .exceptions import ImageManifestUnknownError
 from .exceptions import ImageAuthenticationRequired
 from .exceptions import ImageInvalidCredentials
 from .exceptions import NotFoundException
-from . import __version__ as service_version
-from . import __name__ as component_name
+from . import __version__ as SERVICE_VERSION  # noqa
+from . import __name__ as COMPONENT_NAME  # noqa
 
 
 PAGINATION_SIZE = 100
@@ -828,8 +828,8 @@ def _do_schedule(parameters: dict, runner: typing.Callable, **runner_kwargs):
 
 
 def _send_schedule_message(message_contents: dict, message_type: MessageBase):
-    message_contents["service_version"] = service_version
-    message_contents["component_name"] = component_name
+    message_contents["service_version"] = SERVICE_VERSION
+    message_contents["component_name"] = COMPONENT_NAME
     message = message_type.MessageContents(**message_contents)
     p.produce(message_type().topic_name, value=message.dumps())
     if "job_id" in message_contents:
@@ -843,15 +843,7 @@ def _send_schedule_message(message_contents: dict, message_type: MessageBase):
             202,
         )
 
-    return (
-        {
-            "message_topic": message_type().topic_name,
-            "analysis_id": "job_id was not set",
-            "parameters": message_contents,
-            "cached": False,
-        },
-        202,
-    )
+    raise ValueError(f"job_id was not set for message sent to {message_type().topic_name}")
 
 
 def _do_get_image_metadata(
