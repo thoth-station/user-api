@@ -9,11 +9,8 @@ connexion = {extras = ["swagger-ui"],version = "*"}
 flask = "*"
 flask-script = "*"
 grpcio = "<1.28"
-grpcio-opentracing = "*"
 grpcio-tools = "<1.28"
 gunicorn = "*"
-jaeger-client = "*"
-opentracing-instrumentation = "*"
 prometheus-client = "*"
 prometheus-flask-exporter = "*"
 requests = "*"
@@ -24,6 +21,8 @@ thoth-storages = "*"
 flask-cors = "*"
 aiocontextvars = "*"
 sentry-sdk = {extras = ["flask"],version = "*"}
+confluent-kafka = "*"
+thoth-messaging = "*"
 
 [pipenv]
 allow_prereleases = false

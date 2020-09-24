@@ -44,6 +44,14 @@ from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.python import Project
 from thoth.python.exceptions import ThothPythonException
 from thoth.user_api.payload_filter import PayloadProcess
+from thoth.messaging import MessageBase
+from thoth.messaging import AdviserTriggerMessage
+from thoth.messaging import KebechetTriggerMessage
+from thoth.messaging import PackageExtractTriggerMessage
+from thoth.messaging import ProvenanceCheckerTriggerMessage
+from thoth.messaging import QebHwtTriggerMessage
+
+from confluent_kafka import Producer
 
 from .configuration import Configuration
 from .image import get_image_metadata
@@ -53,11 +61,26 @@ from .exceptions import ImageManifestUnknownError
 from .exceptions import ImageAuthenticationRequired
 from .exceptions import ImageInvalidCredentials
 from .exceptions import NotFoundException
+from . import __version__ as SERVICE_VERSION  # noqa
+from . import __name__ as COMPONENT_NAME  # noqa
 
 
 PAGINATION_SIZE = 100
 _LOGGER = logging.getLogger(__name__)
 _OPENSHIFT = OpenShift()
+
+config_topic = MessageBase()
+
+if config_topic.ssl_auth == 1:
+    p = Producer(
+        {
+            "bootstrap.servers": config_topic.bootstrap_server,
+            "ssl.ca.location": Configuration.KAFKA_CAFILE,
+            "security.protocol": config_topic.protocol,
+        }
+    )
+else:
+    p = Producer({"bootstrap.servers": config_topic.bootstrap_server})
 
 
 def _compute_digest_params(parameters: dict):
@@ -112,7 +135,8 @@ def post_analyze(
         except CacheMiss:
             pass
 
-    response, status_code = _do_schedule(parameters, _OPENSHIFT.schedule_package_extract)
+    parameters["job_id"] = _OPENSHIFT.generate_id("package-extract")
+    response, status_code = _send_schedule_message(parameters, PackageExtractTriggerMessage)
     analysis_by_digest_store = AnalysisByDigest()
     analysis_by_digest_store.connect()
     analysis_by_digest_store.store_document(metadata["digest"], response)
@@ -209,7 +233,9 @@ def post_provenance_python(application_stack: dict, origin: str = None, debug: b
         except CacheMiss:
             pass
 
-    response, status = _do_schedule(parameters, _OPENSHIFT.schedule_provenance_checker)
+    parameters["job_id"] = _OPENSHIFT.generate_id("provenance-checker")
+    response, status = _send_schedule_message(parameters, ProvenanceCheckerTriggerMessage)
+
     if status == 202:
         cache.store_document_record(
             cached_document_id, {"analysis_id": response["analysis_id"], "timestamp": timestamp_now}
@@ -315,7 +341,9 @@ def post_advise_python(
 
     # Enum type is checked on thoth-common side to avoid serialization issue in user-api side when providing response
     parameters["source_type"] = source_type.upper() if source_type else None
-    response, status = _do_schedule(parameters, _OPENSHIFT.schedule_adviser)
+    parameters["job_id"] = _OPENSHIFT.generate_id("adviser")
+    response, status = _send_schedule_message(parameters, AdviserTriggerMessage)
+
     if status == 202:
         adviser_cache.store_document_record(
             cached_document_id, {"analysis_id": response["analysis_id"], "timestamp": timestamp_now}
@@ -617,7 +645,7 @@ def post_buildlog_analyze(log_info: dict, force: bool = False):
     stored_log_details, status = post_buildlog(log_info=log_info)
     parameters.update(stored_log_details)
     parameters.pop("log_info", None)
-    response, status_code = _do_schedule(parameters, _OPENSHIFT.schedule_build_report)
+    response, status_code = _do_schedule(parameters, _OPENSHIFT.schedule_build_report)  # NOTE: this func doesn't exist
     if status_code == 202:
         cache.store_document_record(cached_document_id, {"analysis_id": response["analysis_id"]})
 
@@ -653,30 +681,6 @@ def get_buildlog(document_id: str):
     return _get_document(BuildLogsStore, document_id)
 
 
-def schedule_kebechet(body: dict):
-    """Schedule Kebechet run-url on Openshift."""
-    # TODO: Update documentation to include creation of environment variables corresponding to git service tokens
-    # NOTE: Change for event dependent behaviour
-    headers = connexion.request.headers
-    if "X-GitHub-Event" in headers:
-        service = "github"
-        url = body.get("repository", {}).get("html_url")
-    elif "X_GitLab_Event" in headers:
-        service = "gitlab"
-        url = body.get("repository", {}).get("homepage")
-    elif "X_Pagure_Topic" in headers:
-        service = "pagure"
-        return {"error": "Pagure is currently not supported"}, 501
-    else:
-        return {"error": "This webhook is not supported"}, 501
-
-    if url is None:
-        return {"error", f"Failed to parse webhook payload for service {service!r}"}, 501
-
-    parameters = {"service": service, "url": url}
-    return _do_schedule(parameters, _OPENSHIFT.schedule_kebechet_run_url)
-
-
 def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     """Schedule Kebechet run-webhook on Openshift using Argo Workflow."""
     payload, webhook_payload = {}, {}
@@ -700,14 +704,17 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     # Not schedule workload if pre-processed payload is None.
     if preprocess_payload is None:
         return
+
     payload["webhook_payload"] = webhook_payload
-    return _do_schedule(payload, _OPENSHIFT.schedule_kebechet_workflow)
+    payload["job_id"] = _OPENSHIFT.generate_id("kebechet-job")
+    return _send_schedule_message(payload, KebechetTriggerMessage)
 
 
 def schedule_qebhwt_advise(input: typing.Dict[str, typing.Any],):
     """Schedule Thamos Advise for GitHub App."""
     input["host"] = Configuration.THOTH_HOST
-    return _do_schedule(input, _OPENSHIFT.schedule_qebhwt_workflow)
+    input["job_id"] = _OPENSHIFT.generate_id("qeb-hwt")
+    return _send_schedule_message(input, QebHwtTriggerMessage)
 
 
 def list_buildlogs(page: int = 0):
@@ -818,6 +825,25 @@ def _get_workflow_status(parameters: dict, name_prefix: str, namespace: str):
 def _do_schedule(parameters: dict, runner: typing.Callable, **runner_kwargs):
     """Schedule the given job - a generic method for running any analyzer, solver, ..."""
     return {"analysis_id": runner(**parameters, **runner_kwargs), "parameters": parameters, "cached": False}, 202
+
+
+def _send_schedule_message(message_contents: dict, message_type: MessageBase):
+    message_contents["service_version"] = SERVICE_VERSION
+    message_contents["component_name"] = COMPONENT_NAME
+    message = message_type.MessageContents(**message_contents)
+    p.produce(message_type().topic_name, value=message.dumps())
+    if "job_id" in message_contents:
+        return (
+            {
+                "message_topic": message_type().topic_name,
+                "analysis_id": message_contents["job_id"],
+                "parameters": message_contents,
+                "cached": False,
+            },
+            202,
+        )
+
+    raise ValueError(f"job_id was not set for message sent to {message_type().topic_name}")
 
 
 def _do_get_image_metadata(
