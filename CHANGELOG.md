@@ -2035,3 +2035,12 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :pushpin: Automatic update of dependency thoth-storages from 0.25.9 to 0.25.11 (#1073)
 * :pushpin: Automatic update of dependency thoth-common from 0.19.0 to 0.20.0 (#1072)
 * :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.17.0 to 0.18.0 (#1071)
+
+## Release 0.6.19 (2020-09-29T14:06:21)
+### Features
+* Catch missing exception (#1087)
+* Feature/user api message prod (#1063)
+### Automatic Updates
+* :pushpin: Automatic update of dependency thoth-storages from 0.25.11 to 0.25.13 (#1089)
+* :pushpin: Automatic update of dependency pytest from 6.0.2 to 6.1.0 (#1086)
+* :pushpin: Automatic update of dependency thoth-messaging from 0.7.2 to 0.7.6 (#1084)
