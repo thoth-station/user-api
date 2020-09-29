@@ -60,7 +60,6 @@ from .exceptions import ImageBadRequestError
 from .exceptions import ImageManifestUnknownError
 from .exceptions import ImageAuthenticationRequired
 from .exceptions import ImageInvalidCredentials
-from .exceptions import NotFoundException
 from . import __version__ as SERVICE_VERSION  # noqa
 from . import __name__ as COMPONENT_NAME  # noqa
 
@@ -801,7 +800,7 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
                     # Can be:
                     #   - return 500 to user as this is our issue
                     raise ValueError(f"Unreachable - unknown workflow state: {status}")
-            except NotFoundException:
+            except OpenShiftNotFound:
                 _LOGGER.exception("Workflow %r was not found", analysis_id)
 
         return {"error": f"Requested result for analysis {analysis_id!r} was not found", "parameters": parameters}, 404
@@ -817,7 +816,7 @@ def _get_workflow_status(parameters: dict, name_prefix: str, namespace: str):
 
     try:
         status = _OPENSHIFT.get_workflow_status_report(workflow_id=workflow_id, namespace=namespace)
-    except (OpenShiftNotFound, NotFoundException):
+    except OpenShiftNotFound:
         return {"parameters": parameters, "error": f"Requested status for workflow {workflow_id!r} was not found"}, 404
     return {"parameters": parameters, "status": status}, 200
 
