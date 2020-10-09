@@ -1002,11 +1002,11 @@
         },
         "thoth-messaging": {
             "hashes": [
-                "sha256:42a0a0a3129da703c7574bea7f12b8d3fd48856b27aa75744951410340eaa062",
-                "sha256:f9dbd841ad5fa880576b2549e1fd650c20d89ee05d0f3a447331e601a03f8ed1"
+                "sha256:01e75f6bf37be3fd322582b3dd07c2205323f3454be9cb90ee8699eca2068fee",
+                "sha256:52a21aeb961f35548785bc44272d5bc189ab4525f1bcca6c461dc86f5eeba5eb"
             ],
             "index": "pypi",
-            "version": "==0.7.10"
+            "version": "==0.7.11"
         },
         "thoth-python": {
             "hashes": [
@@ -1037,7 +1037,7 @@
                 "sha256:99d4073b617d30288f569d3f13d2bd7548c3a7e4c8de87db09a9d29bb3a4a60c",
                 "sha256:dafc7639cde7f1b6e1acc0f457842a83e722ccca8eef5270af2d74792619a89f"
             ],
-            "markers": "python_version < '3.8'",
+            "markers": "python_version < '3.7'",
             "version": "==3.7.4.3"
         },
         "tzlocal": {
