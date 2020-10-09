@@ -2044,3 +2044,14 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :pushpin: Automatic update of dependency thoth-storages from 0.25.11 to 0.25.13 (#1089)
 * :pushpin: Automatic update of dependency pytest from 6.0.2 to 6.1.0 (#1086)
 * :pushpin: Automatic update of dependency thoth-messaging from 0.7.2 to 0.7.6 (#1084)
+
+## Release 0.6.20 (2020-10-09T17:16:37)
+### Features
+* Update README file
+### Automatic Updates
+* :pushpin: Automatic update of dependency thoth-common from 0.20.0 to 0.20.1 (#1100)
+* :pushpin: Automatic update of dependency thoth-messaging from 0.7.8 to 0.7.10 (#1097)
+* :pushpin: Automatic update of dependency pytest from 6.1.0 to 6.1.1 (#1096)
+* :pushpin: Automatic update of dependency thoth-messaging from 0.7.8 to 0.7.10 (#1095)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.17.8 to 0.18.0 (#1094)
+* :pushpin: Automatic update of dependency thoth-storages from 0.25.13 to 0.25.15 (#1093)
