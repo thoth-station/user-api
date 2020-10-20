@@ -1017,11 +1017,11 @@
         },
         "thoth-messaging": {
             "hashes": [
-                "sha256:01e75f6bf37be3fd322582b3dd07c2205323f3454be9cb90ee8699eca2068fee",
-                "sha256:52a21aeb961f35548785bc44272d5bc189ab4525f1bcca6c461dc86f5eeba5eb"
+                "sha256:861a44398ded145dc83c6d805c4524f24bc838bfe4a501dd34dce69e3f46e13a",
+                "sha256:f5de111d4f78d77f403109f6c360f416b882f818e668b37bcec31a2065ae0ef8"
             ],
             "index": "pypi",
-            "version": "==0.7.11"
+            "version": "==0.7.13"
         },
         "thoth-python": {
             "hashes": [
