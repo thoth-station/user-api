@@ -105,3 +105,4 @@ venv.bak/
 .idea
 .vscode/
 .thoth_last_analysis_id
+.local/
