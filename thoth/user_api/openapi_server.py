@@ -82,7 +82,14 @@ application = app.app
 
 # create metrics and manager
 metrics = PrometheusMetrics(
-    application, group_by="endpoint", excluded_paths=["/liveness", "/readiness", "/api/v1/ui", "/api/v1/openapi",]
+    application,
+    group_by="endpoint",
+    excluded_paths=[
+        "/liveness",
+        "/readiness",
+        "/api/v1/ui",
+        "/api/v1/openapi",
+    ],
 )
 manager = Manager(application)
 

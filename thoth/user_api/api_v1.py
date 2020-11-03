@@ -463,6 +463,28 @@ def get_python_platform() -> typing.List[str]:
     return GRAPH.get_python_package_version_platform_all()
 
 
+def list_python_package_versions(
+    name: str,
+    page: int = 0,
+) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+    """Get information about versions available."""
+    parameters = locals()
+
+    from .openapi_server import GRAPH
+
+    try:
+        query_result = GRAPH.get_python_package_versions_all(
+            package_name=name,
+            distinct=True,
+            is_missing=False,
+            start_offset=page,
+        )
+    except NotFoundError:
+        return {"error": f"Package {name!r} not found", "parameters": parameters}, 404
+
+    return {"versions": [{"package_name": i[0], "package_version": i[1], "index_url": i[2]} for i in query_result]}, 200
+
+
 def get_python_package_dependencies(
     name: str,
     version: str,
@@ -478,7 +500,10 @@ def get_python_package_dependencies(
     from .openapi_server import GRAPH
 
     if (os_name is None and os_version is not None) or (os_name is not None and os_version is None):
-        return {"error": "Operating system is not fully specified", "parameters": parameters,}, 400
+        return {
+            "error": "Operating system is not fully specified",
+            "parameters": parameters,
+        }, 400
 
     if marker_evaluation_result is not None and (os_name is None or os_version is None or python_version is None):
         return (
@@ -515,7 +540,12 @@ def get_python_package_dependencies(
     for extra, entries in query_result.items():
         for entry in entries:
             result.append(
-                {"name": entry[0], "version": entry[1], "extra": extra, "environment_marker": None,}
+                {
+                    "name": entry[0],
+                    "version": entry[1],
+                    "extra": extra,
+                    "environment_marker": None,
+                }
             )
 
             if os_name is not None and os_version is not None and python_version is not None:
@@ -709,7 +739,9 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     return _send_schedule_message(payload, KebechetTriggerMessage)
 
 
-def schedule_qebhwt_advise(input: typing.Dict[str, typing.Any],):
+def schedule_qebhwt_advise(
+    input: typing.Dict[str, typing.Any],
+):
     """Schedule Thamos Advise for GitHub App."""
     input["host"] = Configuration.THOTH_HOST
     input["job_id"] = _OPENSHIFT.generate_id("qeb-hwt")
@@ -736,7 +768,10 @@ def get_python_package_versions_count(
         }
     except NotFoundError:
         return (
-            {"error": "Not able to retrieve the number with the given inputs", "parameters": parameters,},
+            {
+                "error": "Not able to retrieve the number with the given inputs",
+                "parameters": parameters,
+            },
             404,
         )
 
