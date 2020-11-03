@@ -1259,7 +1259,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/PythonPlatforms"
 
-  /python/dependencies:
+  /python/package/dependencies:
     get:
       tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
