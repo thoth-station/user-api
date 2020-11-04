@@ -1387,7 +1387,7 @@ paths:
 
   /python/package/metadata:
     get:
-      tags: [PythonPackageMetadata]
+      tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_package_metadata
       summary: >
