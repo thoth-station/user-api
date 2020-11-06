@@ -22,6 +22,7 @@ import os
 import sys
 import logging
 from datetime import datetime
+from typing import List
 
 import connexion
 from connexion.resolver import RestyResolver
@@ -138,16 +139,21 @@ def base_url():
     return redirect("api/v1/ui/")
 
 
-@app.route("/api/v1")
-def api_v1():
-    """Provide a listing of all available endpoints."""
+def _list_registered_paths() -> List[str]:
+    """List available paths registerd to this service."""
     paths = []
     for rule in application.url_map.iter_rules():
         rule = str(rule)
         if rule.startswith("/api/v1"):
             paths.append(rule)
 
-    return jsonify({"paths": paths})
+    return paths
+
+
+@app.route("/api/v1")
+def api_v1():
+    """Provide a listing of all available endpoints."""
+    return jsonify({"paths": _list_registered_paths()})
 
 
 def _healthiness():
@@ -157,6 +163,8 @@ def _healthiness():
 @app.route("/readiness")
 def api_readiness():
     """Report readiness for OpenShift readiness probe."""
+    if "/api/v1/advise/python" not in _list_registered_paths():
+        raise RuntimeError("Advise endpoint was not registered, service not ready")
     return _healthiness()
 
 
