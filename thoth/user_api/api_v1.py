@@ -143,6 +143,11 @@ def post_analyze(
     if status_code == 202:
         cache.store_document_record(cached_document_id, {"analysis_id": response["analysis_id"]})
 
+        # Store the request for traceability.
+        store = AnalysisResultsStore()
+        store.connect()
+        store.store_request(parameters["job_id"], parameters)
+
     return response, status_code
 
 
@@ -239,6 +244,11 @@ def post_provenance_python(application_stack: dict, origin: str = None, debug: b
         cache.store_document_record(
             cached_document_id, {"analysis_id": response["analysis_id"], "timestamp": timestamp_now}
         )
+
+        # Store the request for traceability.
+        store = ProvenanceResultsStore()
+        store.connect()
+        store.store_request(parameters["job_id"], parameters)
 
     return response, status
 
@@ -347,6 +357,11 @@ def post_advise_python(
         adviser_cache.store_document_record(
             cached_document_id, {"analysis_id": response["analysis_id"], "timestamp": timestamp_now}
         )
+
+        # Store the request for traceability.
+        store = AdvisersResultsStore()
+        store.connect()
+        store.store_request(parameters["job_id"], parameters)
 
     return response, status
 
@@ -781,9 +796,10 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
     if name_prefix and not analysis_id.startswith(name_prefix):
         return {"error": "Wrong analysis id provided", "parameters": parameters}, 400
 
+    adapter = adapter_class()
+    adapter.connect()
+
     try:
-        adapter = adapter_class()
-        adapter.connect()
         result = adapter.retrieve_document(analysis_id)
         return result, 200
     except NotFoundError:
@@ -801,7 +817,16 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
                     #   - return 500 to user as this is our issue
                     raise ValueError(f"Unreachable - unknown workflow state: {status}")
             except OpenShiftNotFound:
-                _LOGGER.exception("Workflow %r was not found", analysis_id)
+                if adapter.request_exists(analysis_id):
+                    status = {"finished_at": None, "reason": None, "started_at": None, "state": "pending"}
+                    return (
+                        {
+                            "error": "Analysis is being queued and scheduled for processing",
+                            "status": status,
+                            "parameters": parameters,
+                        },
+                        202,
+                    )
 
         return {"error": f"Requested result for analysis {analysis_id!r} was not found", "parameters": parameters}, 404
 
