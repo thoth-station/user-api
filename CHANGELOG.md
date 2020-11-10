@@ -2078,3 +2078,9 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :pushpin: Automatic update of dependency prometheus-flask-exporter from 0.18.0 to 0.18.1 (#1105)
 * :pushpin: Automatic update of dependency thoth-messaging from 0.7.10 to 0.7.11 (#1103)
 * :pushpin: Automatic update of dependency thoth-messaging from 0.7.10 to 0.7.11 (#1101)
+
+## Release 0.8.0 (2020-11-10T12:11:22)
+### Features
+* Messaging 0.7.13 (#1136)
+### Bug Fixes
+* Make sure the advise endpoint is available when becoming ready (#1134)
