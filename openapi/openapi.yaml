@@ -1385,6 +1385,41 @@ paths:
               schema:
                 $ref: "#/components/schemas/PythonPackagesCountInfoResponseError"
 
+  /python/package/versions:
+    get:
+      tags: [PythonPackages]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: list_python_package_versions
+      summary: List versions of the given Python package.
+      parameters:
+        - name: name
+          in: query
+          required: true
+          description: Name of the Python Package.
+          schema:
+            type: string
+            default: "tensorflow"
+        - name: page
+          in: query
+          required: false
+          description: Page offset in pagination.
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Listing of available Python versions.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonPackageVersionsResponse"
+        "404":
+          description: The given record does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonPackageVersionsResponseError"
+
   /python/package/metadata:
     get:
       tags: [PythonPackages]
@@ -2106,6 +2141,37 @@ components:
         parameters:
           type: object
           description: Parameters echoed back to user for debugging.
+
+    PythonPackageVersionsResponse:
+      type: object
+      required:
+        - versions
+      properties:
+        versions:
+          type: array
+          items:
+            type: object
+            required:
+              - package_name
+              - package_version
+              - index_url
+            properties:
+              package_name:
+                type: string
+                nullable: false
+                description: Name of the package.
+                example: tensorflow
+              package_version:
+                type: string
+                nullable: false
+                description: Version of the package.
+                example: "2.0.0"
+              index_url:
+                type: string
+                nullable: false
+                description: Source index URL of the package.
+                example: "https://pypi.org/simple"
+
     PythonPackageMetadataResponse:
       type: object
       required:
@@ -2211,6 +2277,18 @@ components:
           type: string
           nullable: true
           description: Provided extra of the distribution.
+    PythonPackageVersionsResponseError:
+      type: object
+      required:
+        - error
+        - parameters
+      properties:
+        error:
+          type: string
+          description: Error information for user.
+        parameters:
+          type: object
+          description: Parameters echoed back to user for debugging.
     PythonPackageMetadataResponseError:
       type: object
       required:
