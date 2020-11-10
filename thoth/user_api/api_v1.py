@@ -70,7 +70,7 @@ _OPENSHIFT = OpenShift()
 
 config_topic = MessageBase()
 
-if config_topic.ssl_auth == 1:
+if config_topic.protocol == "SSL":
     p = Producer(
         {
             "bootstrap.servers": config_topic.bootstrap_server,
