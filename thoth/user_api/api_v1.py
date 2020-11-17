@@ -201,9 +201,9 @@ def get_analyze_log(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.An
     return _get_log("extract-packages", analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
-def get_analyze_status(analysis_id: str):
+def get_analyze_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
     """Get status of an image analysis."""
-    return _get_workflow_status(locals(), "package-extract-", Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_status("extract-packages", analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
 def post_provenance_python(application_stack: dict, origin: str = None, debug: bool = False, force: bool = False):
@@ -268,9 +268,9 @@ def get_provenance_python_log(analysis_id: str) -> typing.Tuple[typing.Dict[str,
     return _get_log("provenance-check", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
 
 
-def get_provenance_python_status(analysis_id: str):
+def get_provenance_python_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
     """Get status of a provenance check."""
-    return _get_workflow_status(locals(), "provenance-checker-", Configuration.THOTH_BACKEND_NAMESPACE)
+    return _get_status("provenance-check", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
 
 
 def post_advise_python(
@@ -397,9 +397,9 @@ def _get_log(node_name: str, analysis_id: str, namespace: str) -> typing.Tuple[t
         return result, 200
 
 
-def get_advise_python_status(analysis_id: str):
+def get_advise_python_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
     """Get status of an adviser run."""
-    return _get_workflow_status(locals(), "adviser-", Configuration.THOTH_BACKEND_NAMESPACE)
+    return _get_status("advise", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
 
 
 def list_runtime_environments():
@@ -855,11 +855,18 @@ def _get_workflow_status(parameters: dict, name_prefix: str, namespace: str):
     if not workflow_id.startswith(name_prefix):
         return {"error": "Wrong workflow id provided", "parameters": parameters}, 400
 
+
+def _get_status(node_name: str, analysis_id: str, namespace: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+    """Get status for a node in a workflow."""
+    result: typing.Dict[str, typing.Any] = {"parameters": {"analysis_id": analysis_id}}
     try:
-        status = _OPENSHIFT.get_workflow_status_report(workflow_id=workflow_id, namespace=namespace)
+        status = _OPENSHIFT.get_workflow_node_status(node_name, analysis_id, namespace)
     except OpenShiftNotFound:
-        return {"parameters": parameters, "error": f"Requested status for workflow {workflow_id!r} was not found"}, 404
-    return {"parameters": parameters, "status": status}, 200
+        result.update({"error": f"Status for analysis {analysis_id} was not found or it has not started yet"})
+        return result, 404
+    else:
+        result.update({"status": status})
+        return result, 200
 
 
 def _do_schedule(parameters: dict, runner: typing.Callable, **runner_kwargs):
