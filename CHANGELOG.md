@@ -2084,3 +2084,15 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Messaging 0.7.13 (#1136)
 ### Bug Fixes
 * Make sure the advise endpoint is available when becoming ready (#1134)
+
+## Release 0.9.0 (2020-11-18T15:01:47)
+### Features
+* Removed list endpoints (#1143)
+### Automatic Updates
+* :pushpin: Automatic update of dependency sentry-sdk from 0.19.2 to 0.19.3 (#1148)
+* :pushpin: Automatic update of dependency thoth-storages from 0.26.1 to 0.27.0 (#1146)
+* :pushpin: Automatic update of dependency sentry-sdk from 0.19.2 to 0.19.3 (#1147)
+* :pushpin: Automatic update of dependency prometheus-client from 0.8.0 to 0.9.0 (#1145)
+* :pushpin: Automatic update of dependency thoth-storages from 0.26.0 to 0.26.1 (#1142)
+* :pushpin: Automatic update of dependency thoth-storages from 0.26.0 to 0.26.1 (#1141)
+* :pushpin: Automatic update of dependency requests from 2.24.0 to 2.25.0 (#1140)
