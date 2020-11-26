@@ -675,7 +675,7 @@ def post_buildlog_analyze(log_info: dict, force: bool = False):
     stored_log_details, status = post_buildlog(log_info=log_info)
     parameters.update(stored_log_details)
     parameters.pop("log_info", None)
-    response, status_code = _do_schedule(parameters, _OPENSHIFT.schedule_build_report)  # NOTE: this func doesn't exist
+    response, status_code = _do_schedule(parameters, _OPENSHIFT.schedule_buildlog_analysis)
     if status_code == 202:
         cache.store_document_record(cached_document_id, {"analysis_id": response["analysis_id"]})
 
