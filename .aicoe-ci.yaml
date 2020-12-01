@@ -8,3 +8,8 @@ build:
   registry-org: thoth-station
   registry-project: user-api
   registry-secret: thoth-station-thoth-pusher-secret
+deploy:
+  project-org: "thoth-station"
+  project-name: "thoth-application"
+  image-name: "user-api"
+  overlay-contextpath: "user-api/overlays/test/imagestreamtag.yaml"
