@@ -882,7 +882,6 @@ def _send_schedule_message(message_contents: dict, message_type: MessageBase):
     if "job_id" in message_contents:
         return (
             {
-                "message_topic": message_type().topic_name,
                 "analysis_id": message_contents["job_id"],
                 "parameters": message_contents,
                 "cached": False,
