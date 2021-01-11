@@ -711,15 +711,6 @@ def get_buildlog_analyze(analysis_id: str):
     )
 
 
-def post_buildlog(log_info: dict):
-    """Store the given build log."""
-    adapter = BuildLogsStore()
-    adapter.connect()
-    document_id = adapter.store_document(log_info)
-
-    return {"document_id": document_id}, 202
-
-
 def get_buildlog(document_id: str):
     """Retrieve the given buildlog."""
     return _get_document(BuildLogsStore, document_id)
