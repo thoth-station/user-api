@@ -47,7 +47,7 @@ from thoth.user_api.payload_filter import PayloadProcess
 from thoth.messaging import MessageBase
 from thoth.messaging import AdviserTriggerMessage
 from thoth.messaging import KebechetTriggerMessage
-from thoth.messaging import BuildlogTriggerMessage
+from thoth.messaging import BuildAnalysisTriggerMessage
 from thoth.messaging import PackageExtractTriggerMessage
 from thoth.messaging import ProvenanceCheckerTriggerMessage
 from thoth.messaging import QebHwtTriggerMessage
@@ -653,15 +653,13 @@ def post_build(
             return response, base_image_analyze_status
 
     if build_detail.get("build_log"):
-        # attach image analysis details to build log
-        build_detail["output_image_analysis_id"] = response.get("output_image_analysis", {}).get("analysis_id")
-        build_detail["base_image_analysis_id"] = response.get("base_image_analysis", {}).get("analysis_id")
+        # Link build details to the log stored.
+        build_log = dict(build_detail["build_log"])
+        build_log["output_image_analysis_id"] = response.get("output_image_analysis", {}).get("analysis_id")
+        build_log["base_image_analysis_id"] = response.get("base_image_analysis", {}).get("analysis_id")
 
-        # Run build log analysis
-        buildlog_analyze_response, buildlog_analyze_status = post_buildlog_analyze(log_info=build_detail, force=force)
-        response["build_log_analysis"] = buildlog_analyze_response
-        if buildlog_analyze_status != 202:
-            return response, buildlog_analyze_status
+        buildlog_document_id = _store_build_log(build_log, force=force)
+        response["build_analysis_id"] = buildlog_document_id
 
     if (
         not build_detail.get("output_image")
@@ -673,13 +671,11 @@ def post_build(
     return response, status
 
 
-def post_buildlog_analyze(log_info: dict, force: bool = False):
-    """Run an analyzer on the given build log."""
-    parameters = locals()
+def _store_build_log(build_log: typing.Dict[str, typing.Any], force: bool = False) -> str:
+    """Store the given build log."""
     cache = BuildLogsAnalysesCacheStore()
     cache.connect()
-    cached_document_id = _compute_digest_params(parameters)
-    force = parameters.pop("force", False)
+    cached_document_id = _compute_digest_params(build_log)
     if not force:
         try:
             cache_record = cache.retrieve_document_record(cached_document_id)
@@ -691,7 +687,7 @@ def post_buildlog_analyze(log_info: dict, force: bool = False):
     adapter.connect()
     document_id = adapter.store_document(log_info)
     parameters["job_id"] = document_id
-    response, status = _send_schedule_message(parameters, BuildlogTriggerMessage)
+    response, status = _send_schedule_message(parameters, BuildAnalysisTriggerMessage)
 
     if status == 202:
         cache.store_document_record(cached_document_id, {"analysis_id": response["analysis_id"]})
