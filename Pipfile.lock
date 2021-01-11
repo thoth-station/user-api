@@ -135,17 +135,17 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:7b59ca28e17256ccd900c9a8c02061ce538a24b44b4d816e803e6431f8550ee0",
-                "sha256:e6915ac164a05367787db2416eeaa8662ae5e0b9c53902dbf23b407686ef5028"
+                "sha256:11dc492682cf2a4f8ff397b0a109837340ef93e77ca2e65715ce24ecf043717c",
+                "sha256:ca97e1d591fe4214bac09cf347a8425061d9eecc456c147692749e383a0f3dfe"
             ],
-            "version": "==1.16.48"
+            "version": "==1.16.51"
         },
         "botocore": {
             "hashes": [
-                "sha256:549aa9619b51c5b103c7bb906497f60824576366aa4e3642b4e57f9f53a06f7d",
-                "sha256:b954c596f8bdf31d5fdf1eff8a2296bde8094e1e22961a79b83bb62ddeba8a49"
+                "sha256:76c0ce78fd2a7e9e08d038f2bba2ce10bee08e04546c7812a9654edb2dc4d496",
+                "sha256:b204c5b477b043c7f61cba5db479c6b25f684f7409b71a8ecdb5a6b3f57b5cb4"
             ],
-            "version": "==1.19.48"
+            "version": "==1.19.51"
         },
         "cachetools": {
             "hashes": [
@@ -283,11 +283,11 @@
         },
         "croniter": {
             "hashes": [
-                "sha256:12ced475dfc107bf7c6c1440af031f34be14cd97bbbfaf0f62221a9c11e86404",
-                "sha256:8f573a889ca9379e08c336193435c57c02698c2dd22659cdbe04fee57426d79b"
+                "sha256:3af6ea39a34cd9bb15d4662b5962a24c08c66ccd487de12063ff61bb1319d7f4",
+                "sha256:9d9942beaae10c0f9f5de4dcbfab4d85b10638cf407195b82d990bc086d6de0d"
             ],
             "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
-            "version": "==0.3.37"
+            "version": "==1.0.1"
         },
         "daiquiri": {
             "hashes": [
@@ -331,11 +331,11 @@
         },
         "flask-cors": {
             "hashes": [
-                "sha256:6bcfc100288c5d1bcb1dbb854babd59beee622ffd321e444b05f24d6d58466b8",
-                "sha256:cee4480aaee421ed029eaa788f4049e3e26d15b5affb6a880dade6bafad38324"
+                "sha256:74efc975af1194fc7891ff5cd85b0f7478be4f7f59fe158102e91abb72bb4438",
+                "sha256:b60839393f3b84a0f3746f6cdca56c1ad7426aa738b70d6c61375857823181de"
             ],
             "index": "pypi",
-            "version": "==3.0.9"
+            "version": "==3.0.10"
         },
         "flask-script": {
             "hashes": [
@@ -978,11 +978,11 @@
         },
         "rsa": {
             "hashes": [
-                "sha256:109ea5a66744dd859bf16fe904b8d8b627adafb9408753161e766a92e7d681fa",
-                "sha256:6166864e23d6b5195a5cfed6cd9fed0fe774e226d8f854fcb23b7bbef0350233"
+                "sha256:69805d6b69f56eb05b62daea3a7dbd7aa44324ad1306445e05da8060232d00f4",
+                "sha256:a8774e55b59fd9fc893b0d05e9bfc6f47081f46ff5b46f39ccf24631b7be356b"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==4.6"
+            "version": "==4.7"
         },
         "ruamel.yaml": {
             "hashes": [
@@ -1169,11 +1169,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:a4f29d0f493b7cd481c725ebb2af7adac7d33f0293fbc454ee90bd585e533c1b",
-                "sha256:bcddb5e2a1db38fdf7ae330a7d12906031d32160ad042d4df31e984f8d855c1a"
+                "sha256:38b4f65ca055a368fbf920b17cb81bbd152e28825c0b3005dbc9f717bd44dbbd",
+                "sha256:dbda1efa425b843e5d318462f669df9014792aa4a4320006d8f5696b10c32c14"
             ],
             "index": "pypi",
-            "version": "==0.30.0"
+            "version": "==0.30.1"
         },
         "toml": {
             "hashes": [
