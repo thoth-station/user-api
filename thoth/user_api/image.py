@@ -42,6 +42,7 @@ _TRANSLATION_TABLE = {
     "Architecture": "architecture",
     "Os": "os",
     "Layers": "layers",
+    "Env": "env",
 }
 
 

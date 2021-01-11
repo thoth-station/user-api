@@ -1047,8 +1047,54 @@ paths:
               x-body-name: build_detail
               $ref: "#/components/schemas/Build"
       parameters:
-        - $ref: "#/components/parameters/registry_user"
-        - $ref: "#/components/parameters/registry_password"
+        - name: base_registry_user
+          in: query
+          required: false
+          description: >
+            Registry user to be used for pulling images from registry.
+          schema:
+            type: string
+        - name: base_registry_password
+          in: query
+          required: false
+          description: >
+            Registry password or token to be used for pulling images from
+            source registry.
+          schema:
+            type: string
+        - name: base_registry_verify_tls
+          in: query
+          required: false
+          description: >
+            Verify TLS certificates of registry from where images are
+            pulled from during the build.
+          schema:
+            type: boolean
+            default: true
+        - name: output_registry_user
+          in: query
+          required: false
+          description: >
+            Registry user to be used for pulling images from registry.
+          schema:
+            type: string
+        - name: output_registry_password
+          in: query
+          required: false
+          description: >
+            Registry password or token to be used for pulling images from
+            destination registry.
+          schema:
+            type: string
+        - name: output_registry_verify_tls
+          in: query
+          required: false
+          description: >
+            Verify TLS certificates of registry from where images are
+            pulled to during the build.
+          schema:
+            type: boolean
+            default: true
         - name: environment_type
           in: query
           required: false
@@ -1077,15 +1123,6 @@ paths:
           schema:
             type: boolean
             default: false
-        - name: registry_verify_tls
-          in: query
-          required: false
-          description: >
-            Verify TLS certificates of registry from where images are
-            pulled from.
-          schema:
-            type: boolean
-            default: true
         - name: force
           in: query
           required: false
