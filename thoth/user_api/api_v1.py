@@ -47,6 +47,7 @@ from thoth.user_api.payload_filter import PayloadProcess
 from thoth.messaging import MessageBase
 from thoth.messaging import AdviserTriggerMessage
 from thoth.messaging import KebechetTriggerMessage
+from thoth.messaging import BuildlogTriggerMessage
 from thoth.messaging import PackageExtractTriggerMessage
 from thoth.messaging import ProvenanceCheckerTriggerMessage
 from thoth.messaging import QebHwtTriggerMessage
@@ -685,15 +686,17 @@ def post_buildlog_analyze(log_info: dict, force: bool = False):
             return {"analysis_id": cache_record.pop("analysis_id"), "cached": True, "parameters": parameters}, 202
         except CacheMiss:
             pass
-    # Maybe need to utilize the status code of buildlog storage
-    stored_log_details, status = post_buildlog(log_info=log_info)
-    parameters.update(stored_log_details)
-    parameters.pop("log_info", None)
-    response, status_code = _do_schedule(parameters, _OPENSHIFT.schedule_build_report)  # NOTE: this func doesn't exist
-    if status_code == 202:
+
+    adapter = BuildLogsStore()
+    adapter.connect()
+    document_id = adapter.store_document(log_info)
+    parameters["job_id"] = document_id
+    response, status = _send_schedule_message(parameters, BuildlogTriggerMessage)
+
+    if status == 202:
         cache.store_document_record(cached_document_id, {"analysis_id": response["analysis_id"]})
 
-    return response, status_code
+    return response, status
 
 
 def list_buildlog_analyze(page: int = 0):
@@ -877,11 +880,6 @@ def _get_status(node_name: str, analysis_id: str, namespace: str) -> typing.Tupl
     else:
         result.update({"status": status})
         return result, 200
-
-
-def _do_schedule(parameters: dict, runner: typing.Callable, **runner_kwargs):
-    """Schedule the given job - a generic method for running any analyzer, solver, ..."""
-    return {"analysis_id": runner(**parameters, **runner_kwargs), "parameters": parameters, "cached": False}, 202
 
 
 def _send_schedule_message(message_contents: dict, message_type: MessageBase):
