@@ -49,7 +49,7 @@ def get_image_metadata(
     image_name: str, *, registry_user: str = None, registry_password: str = None, verify_tls: bool = True
 ) -> dict:
     """Get metadata for the given image and image repository."""
-    cmd = f"skopeo inspect "
+    cmd = "skopeo inspect "
     if registry_user and registry_password:
         # TODO: make sure registry_user and registry_password get escaped.
         cmd += f"--creds={registry_user}:{registry_password} "

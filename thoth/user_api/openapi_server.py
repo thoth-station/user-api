@@ -58,7 +58,7 @@ __service_version__ = (
 )
 
 
-_LOGGER.info(f"This is User API v%s", __service_version__)
+_LOGGER.info(f"This is User API v{__service_version__}")
 _LOGGER.debug("DEBUG mode is enabled!")
 
 _THOTH_API_HTTPS = bool(int(os.getenv("THOTH_API_HTTPS", 1)))
