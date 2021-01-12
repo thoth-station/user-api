@@ -652,7 +652,6 @@ def post_build(
         "buildlog_parser_id": None if buildlog_analysis_id else OpenShift.generate_id("buildlog-parser"),
         "origin": origin,
         "debug": debug,
-        "force": force,
         "job_id": None,  # Unused.
     }
 
