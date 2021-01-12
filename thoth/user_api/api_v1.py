@@ -652,7 +652,7 @@ def post_build(
         "buildlog_parser_id": None if buildlog_analysis_id else OpenShift.generate_id("buildlog-parser"),
         "origin": origin,
         "debug": debug,
-        "job_id": None,  # Unused.
+        "job_id": OpenShift.generate_id("build-analysis"),
     }
 
     cache = AnalysesCacheStore()
