@@ -1750,10 +1750,6 @@ components:
               type: string
               description: >
                 An id of submitted analysis for checking its status and its results.
-            parameters:
-              type: object
-              description: >
-                Parameters echoed back to user (with default parameters if omitted).
             cached:
               type: boolean
               description: >
@@ -1766,15 +1762,11 @@ components:
               type: string
               description: >
                 An id of submitted analysis for checking its status and its results.
-            parameters:
-              type: object
-              description: >
-                Parameters echoed back to user (with default parameters if omitted).
             cached:
               type: boolean
               description: >
                 If set to true the given analysis was picked from cache.
-        build_log_analysis:
+        buildlog_analysis:
           type: object
           description: Response for a submitted analysis.
           properties:
@@ -1782,18 +1774,17 @@ components:
               type: string
               description: >
                 An id of submitted analysis for checking its status and its results.
-            parameters:
-              type: object
-              description: >
-                Parameters echoed back to user (with default parameters if omitted).
             cached:
               type: boolean
               description: >
                 If set to true the given analysis was picked from cache.
+        buildlog_document_id:
+          type: string
+          description: Document identifier for the stored build log.
       required:
         - base_image_analysis
         - output_image_analysis
-        - build_log_analysis
+        - buildlog_analysis
     AnalysisResponse:
       type: object
       description: Response for a submitted analysis.
