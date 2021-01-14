@@ -1145,62 +1145,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/BuildAnalysisResponseError"
 
-  /buildlog-analyze:
-    get:
-      tags: ["Buildlogs"]
-      x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: list_buildlog_analyze
-      summary: Retrieve a list of document ids for build analyzer results.
-      parameters:
-        - $ref: "#/components/parameters/page"
-      responses:
-        "200":
-          description: A list of build analyzer results available.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AnalysisListingResponse"
-        "400":
-          description: On invalid request.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AnalysisResponseError"
-
-  /buildlog-analyze/{analysis_id}:
-    get:
-      tags: ["Buildlogs"]
-      x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: get_buildlog_analyze
-      summary: Retrieve a build analyzer result.
-      parameters:
-        - $ref: "#/components/parameters/analysis_id"
-      responses:
-        "200":
-          description: Build Analyzer result retrieved.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AnalysisResultResponse"
-        "202":
-          description: Results are not ready yet.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AnalysisStatusResponse"
-        "400":
-          description: On invalid request.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AnalysisResponseError"
-        "404":
-          description: The given document does not exist.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AnalysisResponseError"
-
   /python/platform:
     get:
       tags: [PythonPackages]

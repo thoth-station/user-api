@@ -30,7 +30,6 @@ from thoth.storages import AdvisersResultsStore
 from thoth.storages import AnalysisResultsStore
 from thoth.storages import BuildLogsStore
 from thoth.storages import BuildLogsAnalysesCacheStore
-from thoth.storages import BuildLogsAnalysisResultsStore
 from thoth.storages import ProvenanceResultsStore
 from thoth.storages import AnalysesCacheStore
 from thoth.storages import AdvisersCacheStore
@@ -818,21 +817,6 @@ def _store_build_log(
     adapter.connect()
     document_id = adapter.store_document(build_log)
     return document_id, buildlog_analysis_id
-
-
-def list_buildlog_analyze(page: int = 0):
-    """Retrieve list of build log analysis result."""
-    return _do_listing(BuildLogsAnalysisResultsStore, page)
-
-
-def get_buildlog_analyze(analysis_id: str):
-    """Retrieve build log analysis result."""
-    return _get_document(
-        BuildLogsAnalysisResultsStore,
-        analysis_id,
-        name_prefix="build-analyze-",
-        namespace=Configuration.THOTH_BACKEND_NAMESPACE,
-    )
 
 
 def get_buildlog(document_id: str):
