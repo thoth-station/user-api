@@ -2096,3 +2096,26 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :pushpin: Automatic update of dependency thoth-storages from 0.26.0 to 0.26.1 (#1142)
 * :pushpin: Automatic update of dependency thoth-storages from 0.26.0 to 0.26.1 (#1141)
 * :pushpin: Automatic update of dependency requests from 2.24.0 to 2.25.0 (#1140)
+
+## Release 0.10.0 (2021-01-14T16:43:50)
+### Features
+* Trigger buildlog analysis workflow (#1171)
+* Add Kebechet update template (#1178)
+* :arrow_up: Automatic update of dependencies by kebechet. (#1177)
+* dd Kebechet info template (#1179)
+* Adjust response schema of build analysis endpoint (#1176)
+* Do not propagate message topic in responses (#1168)
+* :arrow_up: Automatic update of dependencies by kebechet. (#1173)
+* :arrow_up: Automatic update of dependencies by kebechet. (#1170)
+* Bump black version
+* :arrow_up: Automatic update of dependencies by kebechet. (#1166)
+* bump python version (#1165)
+* :arrow_up: Automatic update of dependencies by kebechet. (#1162)
+* :arrow_up: Automatic update of dependencies by kebechet. (#1156)
+* get workflow node status (#1144)
+### Bug Fixes
+* re-locking pipfile lock for typing extension fix (#1175)
+* pre-commit fixes for the user-api (#1174)
+### Improvements
+* removed bissenbay, thanks for your contributions!
+* gitignore and pre-commit updates (#1115)
