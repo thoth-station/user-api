@@ -47,6 +47,7 @@ from thoth.user_api.payload_filter import PayloadProcess
 from thoth.messaging import MessageBase
 from thoth.messaging import AdviserTriggerMessage
 from thoth.messaging import KebechetTriggerMessage
+from thoth.messaging import BuildAnalysisTriggerMessage
 from thoth.messaging import PackageExtractTriggerMessage
 from thoth.messaging import ProvenanceCheckerTriggerMessage
 from thoth.messaging import QebHwtTriggerMessage
@@ -609,91 +610,214 @@ def list_software_environments(page: int = 0):
 
 
 def post_build(
-    build_detail: dict,
+    build_detail: typing.Dict[str, typing.Any],
+    *,
+    base_registry_password: typing.Optional[str] = None,
+    base_registry_user: typing.Optional[str] = None,
+    base_registry_verify_tls: bool = True,
+    output_registry_password: typing.Optional[str] = None,
+    output_registry_user: typing.Optional[str] = None,
+    output_registry_verify_tls: bool = True,
     debug: bool = False,
-    registry_user: str = None,
-    registry_password: str = None,
-    environment_type: str = None,
-    origin: str = None,
-    registry_verify_tls: bool = True,
+    environment_type: typing.Optional[str] = None,
     force: bool = False,
-):
+    origin: typing.Optional[str] = None,
+) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
     """Run analysis on a build."""
-    response: dict = {"base_image_analysis": {}, "output_image_analysis": {}, "build_log_analysis": {}}
-    status = 202
-    if build_detail.get("output_image"):
-        # Run image analysis
-        output_image_analyze_response, output_image_analyze_status = post_analyze(
-            image=build_detail["output_image"],
-            debug=debug,
-            registry_user=registry_user,
-            registry_password=registry_password,
-            environment_type=environment_type,
-            origin=origin,
-            verify_tls=registry_verify_tls,
-            force=force,
-        )
-        response["output_image_analysis"] = output_image_analyze_response
-        if output_image_analyze_status != 202:
-            return response, output_image_analyze_status
+    output_image = build_detail.get("output_image")
+    base_image = build_detail.get("base_image")
+    build_log = build_detail.get("build_log")
 
-    if build_detail.get("base_image"):
-        # Run base image analysis
-        base_image_analyze_response, base_image_analyze_status = post_analyze(
-            image=build_detail["base_image"],
-            debug=debug,
-            environment_type=environment_type,
-            origin=origin,
-            verify_tls=registry_verify_tls,
-            force=force,
-        )
-        response["base_image_analysis"] = base_image_analyze_response
-        if base_image_analyze_status != 202:
-            return response, base_image_analyze_status
+    if not output_image and not base_image and not build_log:
+        return {"error": "No base, output nor build log provided"}, 400
 
-    if build_detail.get("build_log"):
-        # attach image analysis details to build log
-        build_detail["output_image_analysis_id"] = response.get("output_image_analysis", {}).get("analysis_id")
-        build_detail["base_image_analysis_id"] = response.get("base_image_analysis", {}).get("analysis_id")
+    buildlog_analysis_id = None
+    buildlog_document_id = None
+    if build_log:
+        buildlog_document_id, buildlog_analysis_id = _store_build_log(build_log, force=force)
 
-        # Run build log analysis
-        buildlog_analyze_response, buildlog_analyze_status = post_buildlog_analyze(log_info=build_detail, force=force)
-        response["build_log_analysis"] = buildlog_analyze_response
-        if buildlog_analyze_status != 202:
-            return response, buildlog_analyze_status
+    message_parameters = {
+        "base_image_analysis_id": None,  # Assigned below.
+        "base_image": base_image,
+        "base_registry_password": base_registry_password,
+        "base_registry_user": base_registry_user,
+        "base_registry_verify_tls": base_registry_verify_tls,
+        "output_image_analysis_id": None,  # Assigned below.
+        "output_image": output_image,
+        "output_registry_password": output_registry_password,
+        "output_registry_user": output_registry_user,
+        "output_registry_verify_tls": output_registry_verify_tls,
+        "environment_type": environment_type,
+        "buildlog_document_id": buildlog_document_id,
+        "buildlog_parser_id": None if buildlog_analysis_id else OpenShift.generate_id("buildlog-parser"),
+        "origin": origin,
+        "debug": debug,
+        "job_id": OpenShift.generate_id("build-analysis"),
+    }
 
-    if (
-        not build_detail.get("output_image")
-        and not build_detail.get("base_image")
-        and not build_detail.get("build_log")
-    ):
-        return {"error": "Bad Request! No information provided"}, 400
-
-    return response, status
-
-
-def post_buildlog_analyze(log_info: dict, force: bool = False):
-    """Run an analyzer on the given build log."""
-    parameters = locals()
-    cache = BuildLogsAnalysesCacheStore()
+    cache = AnalysesCacheStore()
     cache.connect()
-    cached_document_id = _compute_digest_params(parameters)
-    force = parameters.pop("force", False)
+
+    # Handle the base container image used during the build process.
+    base_image_analysis = None
+    base_image_analysis_id = None
+    base_cached_document_id = None
+    base_image_analysis_cached = False
+    if base_image:
+        base_image_info = {
+            "image": base_image,
+            "registry_user": base_registry_user,
+            "registry_password": base_registry_password,
+            "verify_tls": base_registry_verify_tls,
+        }
+        metadata_req = _do_get_image_metadata(**base_image_info)
+
+        if metadata_req[1] != 200:
+            # There was an error extracting metadata, tuple holds dictionary with error report and HTTP status code.
+            return metadata_req
+
+        base_image_metadata = metadata_req[0]
+        # We compute digest of parameters so we do not reveal any authentication specific info.
+        parameters_digest = _compute_digest_params(base_image)
+        base_cached_document_id = base_image_metadata["digest"] + "+" + parameters_digest
+
+        base_image_analysis_id = OpenShift.generate_id("package-extract")
+        if not force:
+            try:
+                base_image_analysis_id = cache.retrieve_document_record(base_cached_document_id).pop("analysis_id")
+                base_image_analysis_cached = True
+            except CacheMiss:
+                pass
+
+        base_image_analysis = {
+            "analysis_id": base_image_analysis_id,
+            "cached": base_image_analysis_cached,
+            "parameters": {
+                "base_image": base_image,
+                # "registry_password": base_registry_password,
+                # "registry_user": base_registry_user,
+                "registry_verify_tls": base_registry_verify_tls,
+            },
+        }
+
+        analysis_by_digest_store = AnalysisByDigest()
+        analysis_by_digest_store.connect()
+        analysis_by_digest_store.store_document(base_image_metadata["digest"], base_image_analysis)
+
+    # Handle output ("resulting") container image used during the build process.
+    output_image_analysis = None
+    output_image_analysis_id = None
+    output_cached_document_id = None
+    output_image_analysis_cached = False
+    if output_image:
+        output_image_info = {
+            "image": output_image,
+            "registry_user": output_registry_user,
+            "registry_password": output_registry_password,
+            "verify_tls": output_registry_verify_tls,
+        }
+        metadata_req = _do_get_image_metadata(**output_image_info)
+
+        if metadata_req[1] != 200:
+            # There was an error extracting metadata, tuple holds dictionary with error report and HTTP status code.
+            return metadata_req
+
+        output_image_metadata = metadata_req[0]
+        # We compute digest of parameters so we do not reveal any authentication specific info.
+        parameters_digest = _compute_digest_params(output_image)
+        output_cached_document_id = output_image_metadata["digest"] + "+" + parameters_digest
+
+        output_image_analysis_id = OpenShift.generate_id("package-extract")
+        if not force:
+            try:
+                output_image_analysis_id = cache.retrieve_document_record(output_cached_document_id).pop("analysis_id")
+                output_image_analysis_cached = True
+            except CacheMiss:
+                pass
+
+        output_image_analysis = {
+            "analysis_id": output_image_analysis_id,
+            "cached": output_image_analysis_cached,
+            "parameters": {
+                "output_image": output_image,
+                # "registry_password": output_registry_password,
+                # "registry_user": output_registry_user,
+                "registry_verify_tls": output_registry_verify_tls,
+            },
+        }
+
+        analysis_by_digest_store = AnalysisByDigest()
+        analysis_by_digest_store.connect()
+        analysis_by_digest_store.store_document(output_image_metadata["digest"], output_image_analysis)
+
+    message_parameters["base_image_analysis_id"] = base_image_analysis_id if not base_image_analysis_cached else None
+    message_parameters["output_image_analysis_id"] = (
+        output_image_analysis_id if not output_image_analysis_cached else None
+    )
+
+    if build_log:
+        pass
+
+    response, status = _send_schedule_message(message_parameters, BuildAnalysisTriggerMessage)
+    if status != 202:
+        # We do not return response directly as it holds data flattened and to make sure secrets are propagated back.
+        return response, status
+
+    # Store all the ids to caches once the message is sent so subsequent calls work as expected.
+
+    if base_cached_document_id:
+        cache.store_document_record(base_cached_document_id, {"analysis_id": base_image_analysis_id})
+
+    if output_cached_document_id:
+        cache.store_document_record(output_cached_document_id, {"analysis_id": output_image_analysis_id})
+
+    if build_log and not buildlog_analysis_id:
+        buildlogs_cache = BuildLogsAnalysesCacheStore()
+        buildlogs_cache.connect()
+        cached_document_id = _compute_digest_params(build_log)
+        buildlogs_cache.store_document_record(
+            cached_document_id, {"analysis_id": message_parameters["buildlog_parser_id"]}
+        )
+
+    if base_image_analysis or output_image_analysis:
+        store = AnalysisResultsStore()
+        store.connect()
+        if base_image_analysis_id:
+            store.store_request(base_image_analysis_id, base_image_analysis)
+        if output_image_analysis:
+            store.store_request(output_image_analysis_id, output_image_analysis)
+
+    return {
+        "base_image_analysis": base_image_analysis,
+        "output_image_analysis": output_image_analysis,
+        "buildlog_analysis": {
+            "analysis_id": buildlog_analysis_id or message_parameters["buildlog_parser_id"],
+            "cached": buildlog_analysis_id is not None,
+        },
+        "buildlog_document_id": buildlog_document_id,
+    }, 202
+
+
+def _store_build_log(
+    build_log: typing.Dict[str, typing.Any], force: bool = False
+) -> typing.Tuple[str, typing.Optional[str]]:
+    """Store the given build log, use cached entry if available."""
+    buildlog_analysis_id = None
     if not force:
+        cache = BuildLogsAnalysesCacheStore()
+        cache.connect()
+        cached_document_id = _compute_digest_params(build_log)
+
         try:
             cache_record = cache.retrieve_document_record(cached_document_id)
-            return {"analysis_id": cache_record.pop("analysis_id"), "cached": True, "parameters": parameters}, 202
+            buildlog_analysis_id = cache_record.pop("analysis_id")
         except CacheMiss:
             pass
-    # Maybe need to utilize the status code of buildlog storage
-    stored_log_details, status = post_buildlog(log_info=log_info)
-    parameters.update(stored_log_details)
-    parameters.pop("log_info", None)
-    response, status_code = _do_schedule(parameters, _OPENSHIFT.schedule_build_report)  # NOTE: this func doesn't exist
-    if status_code == 202:
-        cache.store_document_record(cached_document_id, {"analysis_id": response["analysis_id"]})
 
-    return response, status_code
+    adapter = BuildLogsStore()
+    adapter.connect()
+    document_id = adapter.store_document(build_log)
+    return document_id, buildlog_analysis_id
 
 
 def list_buildlog_analyze(page: int = 0):
@@ -709,15 +833,6 @@ def get_buildlog_analyze(analysis_id: str):
         name_prefix="build-analyze-",
         namespace=Configuration.THOTH_BACKEND_NAMESPACE,
     )
-
-
-def post_buildlog(log_info: dict):
-    """Store the given build log."""
-    adapter = BuildLogsStore()
-    adapter.connect()
-    document_id = adapter.store_document(log_info)
-
-    return {"document_id": document_id}, 202
 
 
 def get_buildlog(document_id: str):
@@ -886,11 +1001,6 @@ def _get_status(node_name: str, analysis_id: str, namespace: str) -> typing.Tupl
     else:
         result.update({"status": status})
         return result, 200
-
-
-def _do_schedule(parameters: dict, runner: typing.Callable, **runner_kwargs):
-    """Schedule the given job - a generic method for running any analyzer, solver, ..."""
-    return {"analysis_id": runner(**parameters, **runner_kwargs), "parameters": parameters, "cached": False}, 202
 
 
 def _send_schedule_message(message_contents: dict, message_type: MessageBase):
