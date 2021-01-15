@@ -981,7 +981,8 @@ def _send_schedule_message(message_contents: dict, message_type: MessageBase):
     message_contents["service_version"] = SERVICE_VERSION
     message_contents["component_name"] = COMPONENT_NAME
     message = message_type.MessageContents(**message_contents)
-    p.produce(message_type().topic_name, value=message.dumps())
+    import attr
+    p.produce(message_type().topic_name, value=attr.asdict(message))
     if "job_id" in message_contents:
         return (
             {
