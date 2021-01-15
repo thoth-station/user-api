@@ -43,6 +43,8 @@ from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.python import Project
 from thoth.python.exceptions import ThothPythonException
 from thoth.user_api.payload_filter import PayloadProcess
+
+import thoth.messaging.producer as producer
 from thoth.messaging import MessageBase
 from thoth.messaging import AdviserTriggerMessage
 from thoth.messaging import KebechetTriggerMessage
@@ -50,8 +52,6 @@ from thoth.messaging import BuildAnalysisTriggerMessage
 from thoth.messaging import PackageExtractTriggerMessage
 from thoth.messaging import ProvenanceCheckerTriggerMessage
 from thoth.messaging import QebHwtTriggerMessage
-
-from confluent_kafka import Producer
 
 from .configuration import Configuration
 from .image import get_image_metadata
@@ -68,18 +68,8 @@ PAGINATION_SIZE = 100
 _LOGGER = logging.getLogger(__name__)
 _OPENSHIFT = OpenShift()
 
-config_topic = MessageBase()
 
-if config_topic.protocol == "SSL":
-    p = Producer(
-        {
-            "bootstrap.servers": config_topic.bootstrap_server,
-            "ssl.ca.location": Configuration.KAFKA_CAFILE,
-            "security.protocol": config_topic.protocol,
-        }
-    )
-else:
-    p = Producer({"bootstrap.servers": config_topic.bootstrap_server})
+p = producer.create_producer()
 
 
 def _compute_digest_params(parameters: dict):
@@ -991,7 +981,7 @@ def _send_schedule_message(message_contents: dict, message_type: MessageBase):
     message_contents["service_version"] = SERVICE_VERSION
     message_contents["component_name"] = COMPONENT_NAME
     message = message_type.MessageContents(**message_contents)
-    p.produce(message_type().topic_name, value=message.dumps())
+    producer.publish_to_topic(p, message_type(), message)
     if "job_id" in message_contents:
         return (
             {
