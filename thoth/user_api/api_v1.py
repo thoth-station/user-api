@@ -982,7 +982,8 @@ def _send_schedule_message(message_contents: dict, message_type: MessageBase):
     message_contents["component_name"] = COMPONENT_NAME
     message = message_type.MessageContents(**message_contents)
     import attr
-    p.produce(message_type().topic_name, value=attr.asdict(message))
+    import json
+    p.produce(message_type().topic_name, value=json.dumps(attr.asdict(message)))
     if "job_id" in message_contents:
         return (
             {
