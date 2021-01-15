@@ -50,6 +50,7 @@ from thoth.messaging import BuildAnalysisTriggerMessage
 from thoth.messaging import PackageExtractTriggerMessage
 from thoth.messaging import ProvenanceCheckerTriggerMessage
 from thoth.messaging import QebHwtTriggerMessage
+from thoth.messaging.config import kafka_config_from_env
 
 from confluent_kafka import Producer
 
@@ -68,18 +69,7 @@ PAGINATION_SIZE = 100
 _LOGGER = logging.getLogger(__name__)
 _OPENSHIFT = OpenShift()
 
-config_topic = MessageBase()
-
-if config_topic.protocol == "SSL":
-    p = Producer(
-        {
-            "bootstrap.servers": config_topic.bootstrap_server,
-            "ssl.ca.location": Configuration.KAFKA_CAFILE,
-            "security.protocol": config_topic.protocol,
-        }
-    )
-else:
-    p = Producer({"bootstrap.servers": config_topic.bootstrap_server})
+p = Producer(kafka_config_from_env())
 
 
 def _compute_digest_params(parameters: dict):
