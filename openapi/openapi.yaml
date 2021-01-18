@@ -1442,16 +1442,14 @@ components:
           nullable: true
           description: >
             Name of base image used by the s2i build.
-          example: >
-            registry.centos.org/centos/python-36-centos7
+          example: quay.io/thoth-station/s2i-thoth-ubi8-py38
         output_image:
           type: string
           nullable: true
           description: >
             Name of output image - can also specify remote registry to pull
             image from.
-          example: >
-            registry.centos.org/centos/python-36-centos7
+          example: quay.io/thoth-station/s2i-thoth-ubi8-py38
         build_log:
           type: object
           description: >
