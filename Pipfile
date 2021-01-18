@@ -22,7 +22,7 @@ flask-cors = "*"
 aiocontextvars = "*"
 sentry-sdk = {extras = ["flask"],version = "*"}
 confluent-kafka = "*"
-thoth-messaging = "==0.7.13"
+thoth-messaging = "*"
 
 [pipenv]
 allow_prereleases = false
