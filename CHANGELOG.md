@@ -2119,3 +2119,9 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 ### Improvements
 * removed bissenbay, thanks for your contributions!
 * gitignore and pre-commit updates (#1115)
+
+## Release 0.11.0 (2021-01-18T07:01:53)
+### Features
+* update to latest messaging (#1195)
+* Remove legacy build analysis result endpoints (#1187)
+* :arrow_up: Automatic update of dependencies by kebechet. (#1184)
