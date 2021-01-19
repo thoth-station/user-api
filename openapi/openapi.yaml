@@ -1704,6 +1704,7 @@ components:
         base_image_analysis:
           type: object
           description: Response for a submitted analysis.
+          nullable: true
           properties:
             analysis_id:
               type: string
@@ -1716,6 +1717,7 @@ components:
         output_image_analysis:
           type: object
           description: Response for a submitted analysis.
+          nullable: true
           properties:
             analysis_id:
               type: string
@@ -1728,6 +1730,7 @@ components:
         buildlog_analysis:
           type: object
           description: Response for a submitted analysis.
+          nullable: true
           properties:
             analysis_id:
               type: string
@@ -1740,10 +1743,6 @@ components:
         buildlog_document_id:
           type: string
           description: Document identifier for the stored build log.
-      required:
-        - base_image_analysis
-        - output_image_analysis
-        - buildlog_analysis
     AnalysisResponse:
       type: object
       description: Response for a submitted analysis.
