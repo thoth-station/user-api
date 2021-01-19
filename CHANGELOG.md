@@ -2125,3 +2125,8 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * update to latest messaging (#1195)
 * Remove legacy build analysis result endpoints (#1187)
 * :arrow_up: Automatic update of dependencies by kebechet. (#1184)
+
+## Release 0.11.1 (2021-01-19T16:35:47)
+### Features
+* Allow nullable responses in post-build endpoint (#1199)
+* Fix new lines in the example input (#1198)
