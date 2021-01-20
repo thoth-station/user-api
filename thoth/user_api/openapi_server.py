@@ -130,11 +130,13 @@ schema_revision_metric = metrics.gauge(
     },
 )
 
+
 @application.before_first_request
 @schema_revision_metric
 def before_first_request_callback():
     """Register callback, runs before first request to this service."""
     _LOGGER.info("Running once before first request to expose metric.")
+
 
 @application.before_request
 def before_request_callback():
