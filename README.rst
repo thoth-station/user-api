@@ -11,7 +11,7 @@ Thoth User-facing API
 Thoth Deployment
 ================
 
-You can fine Thoth's deployment at `khemenu.thoth-station.ninja
+You can find Thoth's deployment at `khemenu.thoth-station.ninja
 <https://khemenu.thoth-station.ninja/>`__.
 
 Talking to API
