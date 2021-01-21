@@ -121,20 +121,18 @@ class _GraphDatabaseWrapper:
 GRAPH = _GraphDatabaseWrapper()
 
 # custom metric to expose head revision from thoth-storages library
-schema_revision_metric = metrics.gauge(
+schema_revision_metric = metrics.info(
     "thoth_database_schema_revision_script",
     "Thoth database schema revision from script",
-    labels={
-        "component": "user-api",
-        "revision": GraphDatabase().get_script_alembic_version_head(),
-    },
+    component="user-api",  # label
+    revision=GRAPH.get_script_alembic_version_head(),  # label
 )
 
 
 @application.before_first_request
-@schema_revision_metric
 def before_first_request_callback():
     """Register callback, runs before first request to this service."""
+    schema_revision_metric.set(1)
     _LOGGER.info("Running once before first request to expose metric.")
 
 
