@@ -1591,6 +1591,7 @@ components:
     RuntimeEnvironment:
       type: object
       description: Runtime environment description, see Thamos configuration for more info.
+      additionalProperties: true
       properties:
         hardware:
           type: object
@@ -1609,14 +1610,39 @@ components:
           example: "9.0"
           description: Nvidia CUDA version which the application uses.
           nullable: true
+        openblas_version:
+          type: string
+          example: "0.3.13"
+          description: OpenBLAS version used, if any.
+          nullable: true
+        openmpi_version:
+          type: string
+          example: "4.1"
+          description: Open MPI version used, if any.
+          nullable: true
+        cudnn_version:
+          type: string
+          example: "8"
+          description: NVIDIA cuDNN version used, if any.
+          nullable: true
+        mkl_version:
+          type: string
+          example: "2021.1.1"
+          description: Intel® Math Kernel Library version used, if any.
+          nullable: true
         platform:
           type: string
           example: "linux-x86_64"
           description: Platform used - corresponds to sysconfig.get_platform() call.
           nullable: true
+        base_image:
+          type: string
+          example: "https://quay.io/repository/thoth-station/s2i-thoth-ubi8-py38:v0.23.1"
+          description: A base container image used to run the application.
+          nullable: true
         name:
           type: string
-          example: "fedora:29-prod"
+          example: "ubi:8-prod"
           description: User defined name of the runtime environment.
         ipython:
           type: object
