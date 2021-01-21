@@ -2137,3 +2137,9 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :sparkles: add kind/ labels to feature and bug template (#1205)
 * :arrow_up: Automatic update of dependencies by kebechet. (#1204)
 * :arrow_up: Automatic update of dependencies by kebechet. (#1201)
+
+## Release 0.13.0 (2021-01-21T17:15:54)
+### Features
+* Set 1 by default when the revision is up (#1215)
+* Extend configuration to capture versions of other libraries (#1212)
+* :arrow_up: Automatic update of dependencies by kebechet. (#1213)
