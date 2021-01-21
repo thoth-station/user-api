@@ -2130,3 +2130,10 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 ### Features
 * Allow nullable responses in post-build endpoint (#1199)
 * Fix new lines in the example input (#1198)
+
+## Release 0.12.0 (2021-01-20T18:21:15)
+### Features
+* Expose schema metric (#1206)
+* :sparkles: add kind/ labels to feature and bug template (#1205)
+* :arrow_up: Automatic update of dependencies by kebechet. (#1204)
+* :arrow_up: Automatic update of dependencies by kebechet. (#1201)
