@@ -2143,3 +2143,7 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Set 1 by default when the revision is up (#1215)
 * Extend configuration to capture versions of other libraries (#1212)
 * :arrow_up: Automatic update of dependencies by kebechet. (#1213)
+
+## Release 0.13.1 (2021-01-26T08:54:22)
+### Features
+* Standardize metric for schema check (#1218)
