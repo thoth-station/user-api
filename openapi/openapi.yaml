@@ -853,6 +853,20 @@ paths:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
 
+  /s2i/python:
+    get:
+      tags: [s2i]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: list_s2i_python
+      summary: Get available S2I base container images for Python applications.
+      responses:
+        "200":
+          description: A list of available Python S2I.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/S2IPythonResponse"
+
   /advise/python/{analysis_id}/log:
     get:
       tags: [Advise]
@@ -2022,6 +2036,43 @@ components:
         parameters:
           type: object
           description: Parameters echoed back to user for debugging.
+
+    S2IPythonResponse:
+      type: object
+      required:
+        - s2i
+      properties:
+        s2i:
+          type: array
+          items:
+            type: object
+            required:
+              - thoth_s2i
+              - thoth_s2i_name
+              - thoth_s2i_version
+              - analysis_id
+            properties:
+              thoth_s2i:
+                type: string
+                description: Full qualifier of Thoth's s2i.
+                nullable: false
+                example: quay.io/thoth-station/s2i-thoth-ubi8-py38:v1.0.0
+              thoth_s2i_image_name:
+                type: string
+                description: Name of the Thoth s2i.
+                nullable: false
+                example: quay.io/thoth-station/s2i-thoth-ubi8-py38
+              thoth_s2i_image_version:
+                type: string
+                description: Version of the Thoth s2i.
+                nullable: false
+                example: "1.0.0"
+              analysis_id:
+                type: string
+                description: Container image analysis id.
+                nullable: false
+                example: package-extract-foo
+
     AnalysisLogResponse:
       type: object
       required:
