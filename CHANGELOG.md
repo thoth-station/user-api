@@ -2147,3 +2147,13 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 ## Release 0.13.1 (2021-01-26T08:54:22)
 ### Features
 * Standardize metric for schema check (#1218)
+
+## Release 0.14.0 (2021-02-01T20:33:53)
+### Features
+* Introduce endpoints for listing available Thoth s2i bae container images
+* :arrow_up: Automatic update of dependencies by kebechet. (#1227)
+* Add missing title to Kebechet update template (#1226)
+* :arrow_up: Automatic update of dependencies by kebechet. (#1222)
+* :arrow_up: Automatic update of dependencies by kebechet. (#1220)
+### Bug Fixes
+* Report an error if the given S2I container image analysis was not done (#1229)
