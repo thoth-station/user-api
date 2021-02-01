@@ -165,6 +165,28 @@ def get_analyze(analysis_id: str):
     )
 
 
+def list_s2i_python() -> typing.Dict[str, typing.List[typing.Dict[str, str]]]:
+    """List all available Python s2i."""
+    from .openapi_server import GRAPH
+
+    entries = []
+    for thoth_s2i_image_name, thoth_s2i_image_version in GRAPH.get_thoth_s2i_all(is_external=False):
+        analyses = GRAPH.get_thoth_s2i_package_extract_analysis_document_id_all(
+            thoth_s2i_image_name, thoth_s2i_image_version, is_external=False
+        )
+
+        entries.append(
+            {
+                "thoth_s2i_image_name": thoth_s2i_image_name,
+                "thoth_s2i_image_version": thoth_s2i_image_version,
+                "thoth_s2i": f"{thoth_s2i_image_name}:v{thoth_s2i_image_version}",
+                "analysis_id": analyses[-1],  # Show only the last, the most recent, one.
+            }
+        )
+
+    return {"s2i": entries}
+
+
 def get_analyze_by_hash(image_hash: str):
     """Get image analysis by hash of the analyzed image."""
     parameters = locals()
