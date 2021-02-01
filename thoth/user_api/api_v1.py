@@ -175,6 +175,15 @@ def list_s2i_python() -> typing.Dict[str, typing.List[typing.Dict[str, str]]]:
             thoth_s2i_image_name, thoth_s2i_image_version, is_external=False
         )
 
+        if not analyses:
+            _LOGGER.error(
+                "Thoth s2i image %r in version %r was not analyzed, please schedule container image "
+                "analyses to make it available to users",
+                thoth_s2i_image_name,
+                thoth_s2i_image_version,
+            )
+            continue
+
         entries.append(
             {
                 "thoth_s2i_image_name": thoth_s2i_image_name,
