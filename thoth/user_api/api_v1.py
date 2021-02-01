@@ -423,16 +423,6 @@ def get_advise_python_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, 
     return _get_status("advise", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
 
 
-def list_runtime_environments():
-    """List available runtime environments."""
-    environments = []
-    for solver_name in _OPENSHIFT.get_solver_names():
-        solver_info = _OPENSHIFT.parse_python_solver_name(solver_name)
-        environments.append(solver_info)
-
-    return {"runtime_environments": environments, "parameters": {}}
-
-
 def list_python_package_indexes():
     """List registered Python package indexes in the graph database."""
     from .openapi_server import GRAPH
