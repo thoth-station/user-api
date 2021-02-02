@@ -2157,3 +2157,10 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :arrow_up: Automatic update of dependencies by kebechet. (#1220)
 ### Bug Fixes
 * Report an error if the given S2I container image analysis was not done (#1229)
+
+## Release 0.15.0 (2021-02-02T07:24:01)
+### Features
+* Unify endpoint response with the remaining endpoints
+* Remove legacy runtime environment endpoint
+* Remove handlers of obsolete endpoints
+* Remove obsolete endpoints
