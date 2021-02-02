@@ -2302,11 +2302,17 @@ components:
           type: string
           description: sha of the Pull Request's head commit.
     PythonPlatforms:
-      type: array
-      items:
-        type: string
-        description: Platform information.
-        example: linux-x86_64
+      type: object
+      description: A listing of available platforms.
+      required:
+        - s2i
+      properties:
+        s2i:
+          type: array
+          items:
+            type: string
+            description: Platform information.
+            example: linux-x86_64
     PythonPackageDependencies:
       type: array
       items:
