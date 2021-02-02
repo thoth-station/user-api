@@ -427,19 +427,8 @@ paths:
                     type: array
                     items:
                       type: object
+                      additionalProperties: true
                       description: Available hardware environment configurations.
-                      required:
-                        - cpu_cores
-                        - cpu_family
-                        - cpu_model
-                        - cpu_model_name
-                        - cpu_physical_cpus
-                        - cpu_vendor
-                        - gpu_cores
-                        - gpu_memory_size
-                        - gpu_model_name
-                        - gpu_vendor
-                        - ram_size
                       properties:
                         cpu_cores:
                           type: integer
