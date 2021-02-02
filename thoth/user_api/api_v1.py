@@ -430,11 +430,11 @@ def list_python_package_indexes():
     return GRAPH.get_python_package_index_all()
 
 
-def get_python_platform() -> typing.List[str]:
+def get_python_platform() -> typing.Dict[str, typing.List[str]]:
     """List available platforms for the Python ecosystem."""
     from .openapi_server import GRAPH
 
-    return GRAPH.get_python_package_version_platform_all()
+    return {"platform": GRAPH.get_python_package_version_platform_all()}
 
 
 def list_python_package_versions(
