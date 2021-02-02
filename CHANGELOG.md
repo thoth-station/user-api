@@ -2168,3 +2168,9 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 ## Release 0.16.0 (2021-02-02T08:33:33)
 ### Features
 * Remove software environment endpoint (#1236)
+
+## Release 0.17.0 (2021-02-02T11:23:14)
+### Features
+* Allow nullable entries in the hardware section
+### Improvements
+* Move hardware endoint under Hardware section and adjust nullables
