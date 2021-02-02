@@ -380,58 +380,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
 
-  /run-software-environment:
-    get:
-      tags: [Image Analysis]
-      x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: list_software_environments_for_run
-      summary: Retrieve a list of software environments analyzed for run.
-      parameters:
-        - name: page
-          in: query
-          required: false
-          description: Page offset in pagination.
-          schema:
-            type: integer
-            default: 0
-      responses:
-        "200":
-          description: A list of software environments for run.
-          content:
-            application/json:
-              schema:
-                # TODO: extend once we will need this.
-                type: object
-        "400":
-          description: On invalid request.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AnalysisResponseError"
-
-  /build-software-environment:
-    get:
-      tags: [Image Analysis]
-      x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: list_software_environments_for_build
-      summary: Retrieve a list of software environments analyzed for build.
-      parameters:
-        - $ref: "#/components/parameters/page"
-      responses:
-        "200":
-          description: A list of software environments for build.
-          content:
-            application/json:
-              schema:
-                # TODO: extend once we will need this.
-                type: object
-        "400":
-          description: On invalid request.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AnalysisResponseError"
-
   /python-package-index:
     get:
       tags: [PythonPackages]
@@ -445,55 +393,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageIndexes"
-
-  /runtime-environment:
-    get:
-      tags: [Info]
-      x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: list_runtime_environments
-      summary: Retrieve a list of supported runtime environments
-      responses:
-        "200":
-          description: A list of supported runtime environments.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - parameters
-                  - runtime_environments
-                properties:
-                  parameters:
-                    type: object
-                    description: Parameters echoed back to user.
-                  runtime_environments:
-                    type: array
-                    items:
-                      type: object
-                      description: Available runtime environment configurations.
-                      required:
-                        - os_name
-                        - os_version
-                        - python_version
-                      properties:
-                        os_name:
-                          type: string
-                          description: Name of the operating system which is supported.
-                          example: ubi
-                        os_version:
-                          type: string
-                          description: Version of the operating system which is supported.
-                          example: "8"
-                        python_version:
-                          type: string
-                          description: Supported Python version.
-                          example: "3.6"
-        "400":
-          description: On invalid request.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AnalysisResponseError"
 
   /hardware-environment:
     get:
@@ -671,54 +570,6 @@ paths:
                           example: "3.8"
         "400":
           description: On invalid request.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AnalysisResponseError"
-
-  /run-software-environment/analyses/{environment_name}:
-    get:
-      tags: [Image Analysis]
-      x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: list_software_environment_analyses_for_run
-      summary: List analyses for the given software environment for run.
-      parameters:
-        - $ref: "#/components/parameters/environment_name"
-      responses:
-        "200":
-          description: Listing of analyses for the given software environment for run.
-          content:
-            application/json:
-              schema:
-                # TODO: extend once we will need this.
-                type: object
-        "404":
-          description: >
-            The given software environment for run with the provided name was not found.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AnalysisResponseError"
-
-  /build-software-environment/analyses/{environment_name}:
-    get:
-      tags: [Image Analysis]
-      x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: list_software_environment_analyses_for_build
-      summary: List analyses for the given software environment for build.
-      parameters:
-        - $ref: "#/components/parameters/environment_name"
-      responses:
-        "200":
-          description: Listing of analyses for the given software environment for build.
-          content:
-            application/json:
-              schema:
-                # TODO: extend once we will need this.
-                type: object
-        "404":
-          description: >
-            The given software environment for build with the provided name was not found.
           content:
             application/json:
               schema:

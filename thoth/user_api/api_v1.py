@@ -423,68 +423,6 @@ def get_advise_python_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, 
     return _get_status("advise", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
 
 
-def list_runtime_environments():
-    """List available runtime environments."""
-    environments = []
-    for solver_name in _OPENSHIFT.get_solver_names():
-        solver_info = _OPENSHIFT.parse_python_solver_name(solver_name)
-        environments.append(solver_info)
-
-    return {"runtime_environments": environments, "parameters": {}}
-
-
-def list_software_environments_for_build(page: int = 0):
-    """List available software environments for build."""
-    parameters = locals()
-    from .openapi_server import GRAPH
-
-    result = list(sorted(set(GRAPH.get_build_software_environment_all(start_offset=page, count=PAGINATION_SIZE))))
-    return (
-        {"parameters": parameters, "results": result},
-        200,
-        {"page": page, "page_size": PAGINATION_SIZE, "results_count": len(result)},
-    )
-
-
-def list_software_environment_analyses_for_build(environment_name: str):
-    """List analyses for the given software environment for build."""
-    parameters = locals()
-    from .openapi_server import GRAPH
-
-    try:
-        result = GRAPH.get_build_software_environment_analyses_all(environment_name, convert_datetime=False)
-    except NotFoundError as exc:
-        return {"error": str(exc), "parameters": parameters}, 404
-
-    return {"analyses": result, "analyses_count": len(result), "parameters": parameters}, 200
-
-
-def list_software_environments_for_run(page: int = 0):
-    """List available software environments for run."""
-    parameters = locals()
-    from .openapi_server import GRAPH
-
-    result = list(sorted(set(GRAPH.get_run_software_environment_all(start_offset=page, count=PAGINATION_SIZE))))
-    return (
-        {"parameters": parameters, "results": result},
-        200,
-        {"page": page, "page_size": PAGINATION_SIZE, "results_count": len(result)},
-    )
-
-
-def list_software_environment_analyses_for_run(environment_name: str):
-    """Get analyses of given software environments for run."""
-    parameters = locals()
-    from .openapi_server import GRAPH
-
-    try:
-        result = GRAPH.get_run_software_environment_analyses_all(environment_name, convert_datetime=False)
-    except NotFoundError as exc:
-        return {"error": str(exc), "parameters": parameters}, 404
-
-    return {"analyses": result, "analyses_count": len(result), "parameters": parameters}, 200
-
-
 def list_python_package_indexes():
     """List registered Python package indexes in the graph database."""
     from .openapi_server import GRAPH
@@ -616,16 +554,6 @@ def list_hardware_environments(page: int = 0):
     return {
         "parameters": {"page": page},
         "hardware_environments": GRAPH.get_hardware_environments_all(is_external=False, start_offset=page),
-    }
-
-
-def list_software_environments(page: int = 0):
-    """List software environments in the graph database."""
-    from .openapi_server import GRAPH
-
-    return {
-        "parameters": {"page": page},
-        "software_environments": GRAPH.get_software_environments_all(is_external=False, start_offset=page),
     }
 
 
