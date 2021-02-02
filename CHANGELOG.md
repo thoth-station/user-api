@@ -2164,3 +2164,7 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Remove legacy runtime environment endpoint
 * Remove handlers of obsolete endpoints
 * Remove obsolete endpoints
+
+## Release 0.16.0 (2021-02-02T08:33:33)
+### Features
+* Remove software environment endpoint (#1236)
