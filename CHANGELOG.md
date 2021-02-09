@@ -2174,3 +2174,7 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Allow nullable entries in the hardware section
 ### Improvements
 * Move hardware endoint under Hardware section and adjust nullables
+
+## Release 0.18.0 (2021-02-09T11:01:16)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet (#1245)
