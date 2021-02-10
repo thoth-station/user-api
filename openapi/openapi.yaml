@@ -2073,9 +2073,9 @@ components:
       type: object
       description: A listing of available platforms.
       required:
-        - s2i
+        - platform
       properties:
-        s2i:
+        platform:
           type: array
           items:
             type: string
