@@ -75,7 +75,7 @@ app.add_api(
     arguments={"title": "User API"},
     resolver=RestyResolver(default_module_name="thoth.user_api.api_v1"),
     strict_validation=True,
-    validate_responses=False,
+    validate_responses=bool(int(os.getenv("THOTH_API_VALIDATE_RESPONSES", 0))),
 )
 
 
