@@ -1011,62 +1011,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/PythonPackageDependenciesError"
 
-  /python/packages/count:
-    get:
-      tags: [PythonPackages]
-      x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: get_python_package_versions_count
-      summary: >
-        Retrieve information from the Knowledge Graph with regards
-        to total number of Python packages.
-      parameters:
-        - name: name
-          in: query
-          required: false
-          description: Name of the Python Package.
-          schema:
-            type: string
-            nullable: true
-            default: null
-            example: "tensorflow"
-        - name: version
-          in: query
-          required: false
-          description: Version of the Python Package.
-          schema:
-            type: string
-            nullable: true
-            default: null
-            example: "2.0.0"
-        - name: index
-          in: query
-          required: false
-          description: Index url of the Python Package.
-          schema:
-            type: string
-            nullable: true
-            default: null
-            example: "https://pypi.org/simple"
-      responses:
-        "200":
-          description: The number of Python packages in Thoth Knowledge Graph.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PythonPackagesCountInfoResponse"
-        "400":
-          description: On invalid request.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PythonPackagesCountInfoResponseError"
-        "404":
-          description: The given record does not exist.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PythonPackagesCountInfoResponseError"
-
   /python/package/versions:
     get:
       tags: [PythonPackages]
@@ -1851,26 +1795,6 @@ components:
           type: string
           description: Analyzer logs printed to stdout/stderr as a plain text.
           nullable: true
-        parameters:
-          type: object
-          description: Parameters echoed back to user for debugging.
-    PythonPackagesCountInfoResponse:
-      type: object
-      required:
-        - count
-      properties:
-        count:
-          type: integer
-          description: Total number of Python packages.
-    PythonPackagesCountInfoResponseError:
-      type: object
-      required:
-        - error
-        - parameters
-      properties:
-        error:
-          type: string
-          description: Error information for user.
         parameters:
           type: object
           description: Parameters echoed back to user for debugging.
