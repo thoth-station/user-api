@@ -427,7 +427,7 @@ def list_python_package_indexes():
     """List registered Python package indexes in the graph database."""
     from .openapi_server import GRAPH
 
-    return GRAPH.get_python_package_index_all()
+    return {"indexes": GRAPH.get_python_package_index_all()}
 
 
 def get_python_platform() -> typing.Dict[str, typing.List[str]]:
@@ -544,7 +544,7 @@ def get_python_package_dependencies(
                         },
                         404,
                     )
-    return result, 200
+    return {"dependencies": result, "parameters": parameters}, 200
 
 
 def list_hardware_environments(page: int = 0):
@@ -822,7 +822,12 @@ def get_package_metadata(name: str, version: str, index: str):
     from .openapi_server import GRAPH
 
     try:
-        return GRAPH.get_python_package_version_metadata(package_name=name, package_version=version, index_url=index)
+        return {
+            "metadata": GRAPH.get_python_package_version_metadata(
+                package_name=name, package_version=version, index_url=index
+            ),
+            "parameters": parameters,
+        }
     except NotFoundError:
         return (
             {

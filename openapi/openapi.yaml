@@ -1516,29 +1516,34 @@ components:
         - parameters
         - cached
     PythonPackageIndexes:
-      type: array
+      type: object
       description: A listing of Python package indexes.
-      items:
-        type: object
-        description: A Python package index.
-        required:
-          - url
-          - warehouse_api_url
-          - verify_ssl
-        properties:
-          url:
-            type: string
-            description: URL to the Python simple repository as described in PEP 503.
-            example: http://pypi.org/simple
-          warehouse_api_url:
-            type: string
-            description: URL to the warehouse API.
-            example: https://pypi.org/pypi
-            nullable: true
-          verify_ssl:
-            type: boolean
-            description: Use secured connection to warehouse.
-            example: true
+      required:
+        - indexes
+      properties:
+        indexes:
+          type: array
+          items:
+            type: object
+            description: A Python package index.
+            required:
+              - url
+              - warehouse_api_url
+              - verify_ssl
+            properties:
+              url:
+                type: string
+                description: URL to the Python simple repository as described in PEP 503.
+                example: http://pypi.org/simple
+              warehouse_api_url:
+                type: string
+                description: URL to the warehouse API.
+                example: https://pypi.org/pypi
+                nullable: true
+              verify_ssl:
+                type: boolean
+                description: Use secured connection to warehouse.
+                example: true
     BuildAnalysisResponseError:
       type: object
       description: Error Response for a submitted build analysis.
@@ -1832,108 +1837,116 @@ components:
     PythonPackageMetadataResponse:
       type: object
       required:
-        - author
-        - author_email
-        - classifier
-        - download_url
-        - home_page
-        - keywords
-        - license
-        - maintainer
-        - maintainer_email
-        - metadata_version
-        - name
-        - platform
-        - requires_dist
-        - summary
-        - version
-        - requires_python
-        - description_content_type
-        - project_url
-        - provides_extra
+        - metadata
+        - parameters
       properties:
-        author:
-          type: string
-          nullable: true
-          description: A string containing the author’s name.
-        author_email:
-          type: string
-          nullable: true
-          description: A string containing the author’s e-mail address.
-        classifier:
-          type: string
-          nullable: true
-          description: Each entry is a string giving a single classification value for the distribution.
-        download_url:
-          type: string
-          nullable: true
-          description: A string containing the URL from which this version of the distribution can be downloaded.
-        home_page:
-          type: string
-          nullable: true
-          description: A string containing the URL for the distribution’s home page.
-        keywords:
-          type: string
-          nullable: true
-          description: >
-            A list of additional keywords to be used to assist
-            searching for the distribution in a larger catalog.
-        license:
-          type: string
-          nullable: true
-          description: Text indicating the license covering the distribution.
-        maintainer:
-          type: string
-          nullable: true
-          description: >
-            A string containing the maintainer’s name at a minimum;
-            additional contact information may be provided.
-        maintainer_email:
-          type: string
-          nullable: true
-          description: A string containing the maintainer’s e-mail address.
-        metadata_version:
-          type: string
-          nullable: true
-          description: Version of the file format.
-        name:
-          type: string
-          nullable: true
-          description: Name of the distribution.
-        platform:
-          type: string
-          nullable: true
-          description: A Platform specification describing an operating system supported by the distribution.
-        requires_dist:
-          type: string
-          nullable: true
-          description: >
-            Each entry contains a string naming some
-            other distutils project required by this distribution.
-        summary:
-          type: string
-          nullable: true
-          description: A one-line summary of what the distribution does.
-        version:
-          type: string
-          nullable: true
-          description: version of the distribution.
-        requires_python:
-          type: string
-          nullable: true
-          description: Python requirements for the distribution.
-        description_content_type:
-          type: string
-          nullable: true
-          description: Content-Type of description text.
-        project_url:
-          type: string
-          nullable: true
-          description: URL to project.
-        provides_extra:
-          type: string
-          nullable: true
-          description: Provided extra of the distribution.
+        parameters:
+          type: object
+        metadata:
+          type: object
+          required:
+            - author
+            - author_email
+            - classifier
+            - download_url
+            - home_page
+            - keywords
+            - license
+            - maintainer
+            - maintainer_email
+            - metadata_version
+            - name
+            - platform
+            - requires_dist
+            - summary
+            - version
+            - requires_python
+            - description_content_type
+            - project_url
+            - provides_extra
+          properties:
+            author:
+              type: string
+              nullable: true
+              description: A string containing the author’s name.
+            author_email:
+              type: string
+              nullable: true
+              description: A string containing the author’s e-mail address.
+            classifier:
+              type: string
+              nullable: true
+              description: Each entry is a string giving a single classification value for the distribution.
+            download_url:
+              type: string
+              nullable: true
+              description: A string containing the URL from which this version of the distribution can be downloaded.
+            home_page:
+              type: string
+              nullable: true
+              description: A string containing the URL for the distribution’s home page.
+            keywords:
+              type: string
+              nullable: true
+              description: >
+                A list of additional keywords to be used to assist
+                searching for the distribution in a larger catalog.
+            license:
+              type: string
+              nullable: true
+              description: Text indicating the license covering the distribution.
+            maintainer:
+              type: string
+              nullable: true
+              description: >
+                A string containing the maintainer’s name at a minimum;
+                additional contact information may be provided.
+            maintainer_email:
+              type: string
+              nullable: true
+              description: A string containing the maintainer’s e-mail address.
+            metadata_version:
+              type: string
+              nullable: true
+              description: Version of the file format.
+            name:
+              type: string
+              nullable: true
+              description: Name of the distribution.
+            platform:
+              type: string
+              nullable: true
+              description: A Platform specification describing an operating system supported by the distribution.
+            requires_dist:
+              type: string
+              nullable: true
+              description: >
+                Each entry contains a string naming some
+                other distutils project required by this distribution.
+            summary:
+              type: string
+              nullable: true
+              description: A one-line summary of what the distribution does.
+            version:
+              type: string
+              nullable: true
+              description: version of the distribution.
+            requires_python:
+              type: string
+              nullable: true
+              description: Python requirements for the distribution.
+            description_content_type:
+              type: string
+              nullable: true
+              description: Content-Type of description text.
+            project_url:
+              type: string
+              nullable: true
+              description: URL to project.
+            provides_extra:
+              type: string
+              nullable: true
+              description: Provided extra of the distribution.
     PythonPackageVersionsResponseError:
       type: object
       required:
@@ -2006,26 +2019,34 @@ components:
             description: Platform information.
             example: linux-x86_64
     PythonPackageDependencies:
-      type: array
-      items:
-        type: object
-        description: Dependency information.
-        required:
-          - environment_marker
-          - extra
-          - name
-          - version
-        properties:
-          environment_marker:
-            type: string
-            nullable: true
-          extra:
-            type: string
-            nullable: true
-          name:
-            type: string
-          version:
-            type: string
+      type: object
+      required:
+        - dependencies
+        - parameters
+      properties:
+        parameters:
+          type: object
+        dependencies:
+          type: array
+          items:
+            type: object
+            description: Dependency information.
+            required:
+              - environment_marker
+              - extra
+              - name
+              - version
+            properties:
+              environment_marker:
+                type: string
+                nullable: true
+              extra:
+                type: string
+                nullable: true
+              name:
+                type: string
+              version:
+                type: string
     PythonPackageDependenciesError:
       type: object
       required:
