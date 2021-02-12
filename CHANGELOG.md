@@ -2178,3 +2178,11 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 ## Release 0.18.0 (2021-02-09T11:01:16)
 ### Features
 * :arrow_up: Automatic update of dependencies by Kebechet (#1245)
+
+## Release 0.19.0 (2021-02-12T09:44:42)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet (#1256)
+* Unify responses of endpoints (#1255)
+* Provide an option to validate responses (#1254)
+* Remove endpoint exposing number of Python packages (#1251)
+* Fix platform response schema (#1250)
