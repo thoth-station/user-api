@@ -259,6 +259,7 @@ def post_provenance_python(application_stack: dict, origin: str = None, debug: b
             pass
 
     parameters["job_id"] = _OPENSHIFT.generate_id("provenance-checker")
+    parameters.pop("application_stack")  # Passed via Ceph.
     response, status = _send_schedule_message(parameters, ProvenanceCheckerTriggerMessage)
 
     if status == 202:
@@ -372,6 +373,10 @@ def post_advise_python(
     # Enum type is checked on thoth-common side to avoid serialization issue in user-api side when providing response
     parameters["source_type"] = source_type.upper() if source_type else None
     parameters["job_id"] = _OPENSHIFT.generate_id("adviser")
+    # Remove data passed via Ceph.
+    parameters.pop("application_stack")
+    parameters.pop("runtime_environment")
+    parameters.pop("library_usage")
     response, status = _send_schedule_message(parameters, AdviserTriggerMessage)
 
     if status == 202:
