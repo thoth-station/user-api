@@ -1312,7 +1312,6 @@ components:
             type: string
           enum:
             - pipenv
-            - requirements
           example: pipenv
     RuntimeEnvironment:
       type: object
