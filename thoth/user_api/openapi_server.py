@@ -27,7 +27,7 @@ from typing import List
 import connexion
 from connexion.resolver import RestyResolver
 
-from flask import redirect, jsonify, request
+from flask import redirect, jsonify, request, make_response, abort
 from flask_script import Manager
 from prometheus_flask_exporter import PrometheusMetrics
 from flask_cors import CORS
@@ -62,6 +62,7 @@ _LOGGER.info(f"This is User API v{__service_version__}")
 _LOGGER.debug("DEBUG mode is enabled!")
 
 _THOTH_API_HTTPS = bool(int(os.getenv("THOTH_API_HTTPS", 1)))
+_MAX_POST_CONTENT_LENGTH = int(os.getenv("THOTH_MAX_POST_CONTENT_LENGTH", 3 * 1024 * 1024))  # 3MiB by default.
 
 # Expose for uWSGI.
 app = connexion.FlaskApp(__name__, specification_dir=Configuration.SWAGGER_YAML_PATH, debug=True)
@@ -152,6 +153,11 @@ def before_request_callback():
             # have passed readiness probe with this check.
             _LOGGER.exception("Cannot determine database schema as database is not initialized: %s", str(exc))
             _API_GAUGE_METRIC.set(0)
+
+    if method == "POST":
+        if request.content_length is not None and request.content_length > _MAX_POST_CONTENT_LENGTH:
+            response = make_response(jsonify(error=f"Input exceeded {_MAX_POST_CONTENT_LENGTH} bytes allowed"), 400)
+            abort(response)
 
 
 @app.route("/")
