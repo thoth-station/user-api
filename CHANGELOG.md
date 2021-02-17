@@ -2186,3 +2186,10 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Provide an option to validate responses (#1254)
 * Remove endpoint exposing number of Python packages (#1251)
 * Fix platform response schema (#1250)
+
+## Release 0.19.1 (2021-02-17T14:24:17)
+### Features
+* Limit maximum content length that can be submitted via POST request (#1261)
+* :arrow_up: Automatic update of dependencies by Kebechet (#1263)
+* :arrow_up: Automatic update of dependencies by Kebechet (#1262)
+* Backend does not support requirements, serialization is done on client side (#1260)
