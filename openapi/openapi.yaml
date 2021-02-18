@@ -1724,6 +1724,7 @@ components:
         status:
           type: object
           description: Status information about the analysis run.
+          additionalProperties: true
           required:
             - finished_at
             - reason
