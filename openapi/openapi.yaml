@@ -1874,9 +1874,12 @@ components:
               nullable: true
               description: A string containing the author’s e-mail address.
             classifier:
-              type: string
-              nullable: true
-              description: Each entry is a string giving a single classification value for the distribution.
+              type: array
+              items:
+                type: string
+                nullable: true
+                description: Each entry is a string giving a single classification value for the distribution.
+                example: "Intended Audience :: Developers"
             download_url:
               type: string
               nullable: true
