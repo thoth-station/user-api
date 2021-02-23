@@ -18,6 +18,7 @@
 """Manipulation with images - routines for image checks and first inspections."""
 
 import logging
+import shlex
 
 from thoth.analyzer import run_command
 
@@ -52,8 +53,8 @@ def get_image_metadata(
     """Get metadata for the given image and image repository."""
     cmd = "skopeo inspect "
     if registry_user and registry_password:
-        # TODO: make sure registry_user and registry_password get escaped.
-        cmd += f"--creds={registry_user}:{registry_password} "
+        credentials = shlex.quote(f"{registry_user}:{registry_password})")
+        cmd += f"--creds {credentials}"
     elif (registry_user and not registry_password) or (not registry_user and registry_password):
         raise ImageBadRequestError(
             "Both parameters registry_user and registry_password have to be supplied for registry authentication"
