@@ -2193,3 +2193,12 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :arrow_up: Automatic update of dependencies by Kebechet (#1263)
 * :arrow_up: Automatic update of dependencies by Kebechet (#1262)
 * Backend does not support requirements, serialization is done on client side (#1260)
+
+## Release 0.19.2 (2021-02-23T16:13:39)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet (#1268)
+* Allow additional properties in status response (#1267)
+* Fix openapi schema discovered by schema validation (#1266)
+### Bug Fixes
+* Correctly fix credentials quoting
