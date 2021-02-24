@@ -2202,3 +2202,9 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Fix openapi schema discovered by schema validation (#1266)
 ### Bug Fixes
 * Correctly fix credentials quoting
+
+## Release 0.19.3 (2021-02-24T13:28:16)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet
+* Package platform is an array
