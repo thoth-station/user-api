@@ -1082,10 +1082,10 @@
         },
         "thoth-python": {
             "hashes": [
-                "sha256:7a190512e8aec2a64e34c1d3d19960236f8c60ebb5b670d35c59e936af2f85d7"
+                "sha256:116ae7e5501e6df58be0f06ee62de6c830b980aeeb14724b0ea4d6712ce3279e"
             ],
             "index": "pypi",
-            "version": "==0.15.1"
+            "version": "==0.15.2"
         },
         "thoth-ssdeep": {
             "hashes": [
