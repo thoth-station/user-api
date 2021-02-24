@@ -1917,9 +1917,11 @@ components:
               nullable: true
               description: Name of the distribution.
             platform:
-              type: string
+              type: array
               nullable: true
-              description: A Platform specification describing an operating system supported by the distribution.
+              items:
+                type: string
+                description: A Platform specification describing an operating system supported by the distribution.
             requires_dist:
               type: string
               nullable: true
