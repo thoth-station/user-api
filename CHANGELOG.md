@@ -2208,3 +2208,7 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :arrow_up: Automatic update of dependencies by Kebechet
 * :arrow_up: Automatic update of dependencies by Kebechet
 * Package platform is an array
+
+## Release 0.19.4 (2021-02-25T13:22:52)
+### Features
+* Fix naming in Thoth s2i endpoint
