@@ -374,10 +374,11 @@ def post_advise_python(
     parameters["source_type"] = source_type.upper() if source_type else None
     parameters["job_id"] = _OPENSHIFT.generate_id("adviser")
     # Remove data passed via Ceph.
-    parameters.pop("application_stack")
-    parameters.pop("runtime_environment")
-    parameters.pop("library_usage")
-    response, status = _send_schedule_message(parameters, AdviserTriggerMessage)
+    message = dict(parameters)
+    message.pop("application_stack")
+    message.pop("runtime_environment")
+    message.pop("library_usage")
+    response, status = _send_schedule_message(message, AdviserTriggerMessage)
 
     if status == 202:
         adviser_cache.store_document_record(
