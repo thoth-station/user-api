@@ -2221,3 +2221,7 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 ### Features
 * :arrow_up: Automatic update of dependencies by Kebechet
 * Manual dependency update
+
+## Release 0.20.2 (2021-02-25T22:04:57)
+### Features
+* Fix message content (#1308)
