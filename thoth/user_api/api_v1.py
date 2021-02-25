@@ -259,8 +259,9 @@ def post_provenance_python(application_stack: dict, origin: str = None, debug: b
             pass
 
     parameters["job_id"] = _OPENSHIFT.generate_id("provenance-checker")
-    parameters.pop("application_stack")  # Passed via Ceph.
-    response, status = _send_schedule_message(parameters, ProvenanceCheckerTriggerMessage)
+    message = dict(parameters)
+    message.pop("application_stack")  # Passed via Ceph.
+    response, status = _send_schedule_message(message, ProvenanceCheckerTriggerMessage)
 
     if status == 202:
         cache.store_document_record(
