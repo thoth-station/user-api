@@ -2212,3 +2212,7 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 ## Release 0.19.4 (2021-02-25T13:22:52)
 ### Features
 * Fix naming in Thoth s2i endpoint
+
+## Release 0.20.0 (2021-02-25T18:34:36)
+### Features
+* Adjust message passing for data passed via Ceph (#1259)
