@@ -2216,3 +2216,8 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 ## Release 0.20.0 (2021-02-25T18:34:36)
 ### Features
 * Adjust message passing for data passed via Ceph (#1259)
+
+## Release 0.20.1 (2021-02-25T19:54:11)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet
+* Manual dependency update
