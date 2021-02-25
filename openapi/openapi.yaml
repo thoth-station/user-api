@@ -1765,8 +1765,8 @@ components:
             type: object
             required:
               - thoth_s2i
-              - thoth_s2i_name
-              - thoth_s2i_version
+              - thoth_s2i_image_name
+              - thoth_s2i_image_version
               - analysis_id
             properties:
               thoth_s2i:
