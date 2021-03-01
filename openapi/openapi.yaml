@@ -1922,11 +1922,13 @@ components:
                 type: string
                 description: A Platform specification describing an operating system supported by the distribution.
             requires_dist:
-              type: string
+              type: array
               nullable: true
-              description: >
-                Each entry contains a string naming some
-                other distutils project required by this distribution.
+              items:
+                type: string
+                description: >
+                  Each entry contains a string naming some
+                  other distutils project required by this distribution.
             summary:
               type: string
               nullable: true
