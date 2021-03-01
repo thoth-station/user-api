@@ -2225,3 +2225,7 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 ## Release 0.20.2 (2021-02-25T22:04:57)
 ### Features
 * Fix message content (#1308)
+
+## Release 0.20.3 (2021-03-01T20:50:05)
+### Features
+* Fix schema for requires_dist in Python package metadata
