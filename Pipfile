@@ -23,6 +23,7 @@ aiocontextvars = "*"
 sentry-sdk = {extras = ["flask"],version = "*"}
 confluent-kafka = "*"
 thoth-messaging = "*"
+openshift = "==0.11.0"
 
 [pipenv]
 allow_prereleases = false
