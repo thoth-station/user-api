@@ -327,6 +327,10 @@ def post_advise_python(
     parameters.pop("input")
     force = parameters.pop("force", False)
 
+    if parameters["library_usage"]:  # Sort library usage to hit cache properly.
+        for key, value in (parameters["library_usage"].get("report") or {}).items():
+            parameters["library_usage"]["report"][key] = sorted(value)
+
     try:
         project = Project.from_strings(
             parameters["application_stack"]["requirements"],
