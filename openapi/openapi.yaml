@@ -621,6 +621,19 @@ paths:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
 
+  /container-images:
+    get:
+      tags: [Container Images]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: list_container_images
+      summary: Get analyzed container images.
+      responses:
+        "200":
+          description: A list of analyzed container images.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContainerImagesResponse"
   /s2i/python:
     get:
       tags: [s2i]
@@ -1752,6 +1765,78 @@ components:
         parameters:
           type: object
           description: Parameters echoed back to user for debugging.
+
+    ContainerImagesResponse:
+      type: object
+      required:
+        - container_images
+        - parameters
+      properties:
+        container_images:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+            required:
+              - environment_name
+              - python_version
+              - env_image_name
+              - env_image_tag
+              - image_sha
+              - os_name
+              - os_version
+              - thoth_s2i_image_name
+              - thoth_s2i_image_version
+              - cuda_version
+              - environment_type
+            properties:
+              environment_name:
+                type: string
+                nullable: true
+              python_version:
+                type: string
+                nullable: true
+                example: '3.8'
+              env_image_name:
+                type: string
+                example: 's2i-minimal-notebook'
+              env_image_tag:
+                type: string
+                example: 'v1.2.3'
+              image_sha:
+                type: string
+              os_name:
+                type: string
+                example: 'rhel'
+              os_version:
+                type: string
+                example: '8'
+              thoth_s2i_image_name:
+                type: string
+                example: 'quay.io/thoth-station/s2i-thoth-ubi8-py38'
+                nullable: true
+              thoth_s2i_image_version:
+                type: string
+                example: 'v1.0.0'
+              cuda_version:
+                type: string
+                nullable: true
+                example: '9.0'
+              environment_type:
+                type: string
+                example: RUNTIME
+                enum:
+                  - BUILDTIME
+                  - RUNTIME
+        parameters:
+          type: object
+          required:
+            - page
+          properties:
+            page:
+              type: integer
+              example: 0
+              description: Page offset in the pagination.
 
     S2IPythonResponse:
       type: object
