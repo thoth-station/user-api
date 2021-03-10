@@ -196,6 +196,18 @@ def list_s2i_python() -> typing.Dict[str, typing.List[typing.Dict[str, str]]]:
     return {"s2i": entries}
 
 
+def list_container_images(page: int = 0) -> typing.Dict[str, typing.List[typing.Dict[str, str]]]:
+    """List registered container images."""
+    from .openapi_server import GRAPH
+
+    entries = []
+    for item in GRAPH.get_software_environments_all(is_external=False, start_offset=page):
+        if item.get("env_image_name") and item.get("env_image_tag"):
+            entries.append(item)
+
+    return {"container_images": entries, "parameters": {"page": page}}
+
+
 def get_analyze_by_hash(image_hash: str):
     """Get image analysis by hash of the analyzed image."""
     parameters = locals()
