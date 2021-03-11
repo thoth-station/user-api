@@ -2229,3 +2229,14 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 ## Release 0.20.3 (2021-03-01T20:50:05)
 ### Features
 * Fix schema for requires_dist in Python package metadata
+
+## Release 0.21.0 (2021-03-10T10:56:45)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet
+* Introduced endpoint for container images
+* :arrow_up: Automatic update of dependencies by Kebechet (#1326)
+* :arrow_up: Automatic update of dependencies by Kebechet (#1322)
+* Sort library usage to properly hit cache on user-api on advise (#1325)
+* Update OWNERS
+### Improvements
+* :sparkles: reconfgured CI/CD to use prow and aicoe-ci (#1323)
