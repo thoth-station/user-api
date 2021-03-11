@@ -612,6 +612,19 @@ paths:
           required: false
           schema:
             type: object
+            properties:
+              message_justification:
+                type: int
+                required: false
+              package_name:
+                type: str
+                required: false
+              package_version:
+                type: str
+                required: false
+              package_index:
+                type: str
+                required: false
             additionalProperties: true
           description: Dict containing kebechet specific metadata for justification.
       responses:
