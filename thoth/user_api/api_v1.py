@@ -196,7 +196,7 @@ def list_s2i_python() -> typing.Dict[str, typing.List[typing.Dict[str, str]]]:
     return {"s2i": entries}
 
 
-def list_container_images(page: int = 0) -> typing.Dict[str, typing.List[typing.Dict[str, str]]]:
+def list_container_images(page: int = 0) -> typing.Dict[str, typing.Any]:
     """List registered container images."""
     from .openapi_server import GRAPH
 
