@@ -21,6 +21,7 @@
 import os
 import sys
 import logging
+import traceback
 from datetime import datetime
 from typing import List
 
@@ -62,6 +63,7 @@ _LOGGER.info(f"This is User API v{__service_version__}")
 _LOGGER.debug("DEBUG mode is enabled!")
 
 _THOTH_API_HTTPS = bool(int(os.getenv("THOTH_API_HTTPS", 1)))
+_REPORT_EXCEPTIONS = bool(int(os.getenv("THOTH_API_REPORT_EXCEPTIONS", 0)))
 _MAX_POST_CONTENT_LENGTH = int(os.getenv("THOTH_MAX_POST_CONTENT_LENGTH", 3 * 1024 * 1024))  # 3MiB by default.
 
 # Expose for uWSGI.
@@ -215,6 +217,23 @@ def page_not_found(exc):
 @metrics.do_not_track()
 def internal_server_error(exc):
     """Adjust 500 page to be consistent with errors reported back from API."""
+    if _REPORT_EXCEPTIONS:
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        return jsonify(
+            {
+                "error": "Internal server error occurred",
+                "details": {
+                    "type": exc.__class__.__name__,
+                    "datetime": datetime2datetime_str(datetime.utcnow()),
+                    "exception": {
+                        "cause": exc.__cause__,
+                        "context": exc.__context__,
+                        "traceback": traceback.format_exception(exc_type, exc_value, exc_traceback),
+                        "args": list(exc.args),
+                    },
+                },
+            }
+        )
     # Provide some additional information so we can easily find exceptions in logs (time and exception type).
     # Later we should remove exception type (for security reasons).
     return (
