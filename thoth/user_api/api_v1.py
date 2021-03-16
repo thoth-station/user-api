@@ -239,7 +239,15 @@ def get_analyze_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing
     return _get_status("extract-packages", analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
-def post_provenance_python(application_stack: dict, origin: str = None, debug: bool = False, force: bool = False):
+def post_provenance_python(
+    application_stack: dict,
+    origin: str = None,
+    debug: bool = False,
+    force: bool = False,
+    kebechet_metadata: typing.Dict[str, typing.Any] = None,
+    justification: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
+    stack_info: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
+):
     """Check provenance for the given application stack."""
     parameters = locals()
     from .openapi_server import GRAPH
@@ -323,6 +331,8 @@ def post_advise_python(
     github_installation_id: typing.Optional[int] = None,
     github_base_repo_url: typing.Optional[str] = None,
     kebechet_metadata: typing.Optional[dict] = None,
+    justification: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
+    stack_info: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
 ):
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
