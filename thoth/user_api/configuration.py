@@ -34,6 +34,7 @@ class Configuration:
     THOTH_BACKEND_NAMESPACE = os.environ["THOTH_BACKEND_NAMESPACE"]
     THOTH_DEPLOYMENT_NAME = os.environ["THOTH_DEPLOYMENT_NAME"]
     THOTH_HOST = os.environ["THOTH_HOST"]
+    INTERNAL_SECRET = os.getenv("THOTH_INTERNAL_API_SECRET", "secret101")
     # Give cache 3 hours by default.
     THOTH_CACHE_EXPIRATION = int(os.getenv("THOTH_CACHE_EXPIRATION", timedelta(hours=3).total_seconds()))
 

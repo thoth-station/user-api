@@ -239,9 +239,27 @@ def get_analyze_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing
     return _get_status("extract-packages", analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
-def post_provenance_python(application_stack: dict, origin: str = None, debug: bool = False, force: bool = False):
+def post_provenance_python(
+    application_stack: dict,
+    debug: bool = False,
+    force: bool = False,
+    origin: str = None,
+    # Must be set to set protected fields
+    internal_secret: typing.Optional[str] = None,
+    # Protected fields
+    kebechet_metadata: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    justification: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
+    stack_info: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
+):
     """Check provenance for the given application stack."""
+    protected_fields = ["origin"]
     parameters = locals()
+
+    if Configuration.INTERNAL_SECRET == internal_secret:
+        for k in protected_fields:
+            if parameters[k] is not None:
+                raise PermissionError("Attempted to set protected field without proper permissions.")
+
     from .openapi_server import GRAPH
 
     try:
@@ -313,11 +331,14 @@ def post_advise_python(
     recommendation_type: typing.Optional[str] = None,
     count: typing.Optional[int] = None,
     limit: typing.Optional[int] = None,
-    origin: typing.Optional[str] = None,
     source_type: typing.Optional[str] = None,
     debug: bool = False,
     force: bool = False,
     dev: bool = False,
+    origin: typing.Optional[str] = None,
+    # Must be set to set protected fields
+    internal_secret: typing.Optional[str] = None,
+    # These are protected fields, internal secret must match
     github_event_type: typing.Optional[str] = None,
     github_check_run_id: typing.Optional[int] = None,
     github_installation_id: typing.Optional[int] = None,
@@ -325,8 +346,21 @@ def post_advise_python(
     kebechet_metadata: typing.Optional[dict] = None,
 ):
     """Compute results for the given package or package stack using adviser."""
+    protected_fields = [
+        "origin",
+        "github_event_type",
+        "github_check_run_id",
+        "github_installation_id",
+        "github_base_repo_url",
+        "kebechet_metadata",
+    ]
     parameters = locals()
     parameters["application_stack"] = parameters["input"].pop("application_stack")
+
+    if Configuration.INTERNAL_SECRET == internal_secret:
+        for k in protected_fields:
+            if parameters[k] is not None:
+                raise PermissionError("Attempted to set protected field without proper permissions.")
 
     # Always try to parse runtime environment so that we have it available in JSON reports in a unified form.
     try:
