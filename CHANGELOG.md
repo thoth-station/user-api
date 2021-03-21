@@ -2240,3 +2240,12 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Update OWNERS
 ### Improvements
 * :sparkles: reconfgured CI/CD to use prow and aicoe-ci (#1323)
+
+## Release 0.22.0 (2021-03-21T20:52:33)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet (#1338)
+* add new params to be parallel to thoth-common (#1337)
+* adjust function type hint (#1333)
+* Report exceptions if configured
+* specify contents of kebechet metadata
+* add kebechet meta to post advise
