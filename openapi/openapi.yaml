@@ -2186,17 +2186,17 @@ components:
       type: object
       properties:
         message_justification:
-          type: int
-          required: false
+          type: integer
+          nullable: true
         package_name:
-          type: str
-          required: false
+          type: string
+          nullable: true
         package_version:
-          type: str
-          required: false
+          type: string
+          nullable: true
         package_index:
-          type: str
-          required: false
+          type: string
+          nullable: true
       additionalProperties: true
     StackInfo:
       type: array
