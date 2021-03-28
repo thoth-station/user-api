@@ -2249,3 +2249,9 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Report exceptions if configured
 * specify contents of kebechet metadata
 * add kebechet meta to post advise
+
+## Release 0.22.1 (2021-03-28T05:32:18)
+### Features
+* constrain thoth-messaging (#1346)
+* :arrow_up: Automatic update of dependencies by Kebechet (#1344)
+* python types in spec :facepalm: (#1343)
