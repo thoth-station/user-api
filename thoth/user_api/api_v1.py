@@ -354,8 +354,8 @@ def _set_metric_cache_hit_advise_python(source_type: str, cached: bool = False):
     service_cache_hit_rate = metrics.counter(
         "thoth_cache_hit_rate",
         "Thoth cache hit rate",
-        is_privileged=1 if source_type == "KEBECHET" else 0,
-        is_cached=1 if cached else 0,
+        is_privileged="True" if source_type == "KEBECHET" else "False",
+        is_cached="True" if cached else "False",
         service="advise_python",
         env=Configuration.THOTH_DEPLOYMENT_NAME,
     )
