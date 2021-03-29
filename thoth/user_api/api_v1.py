@@ -43,6 +43,7 @@ from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.python import Project
 from thoth.python.exceptions import ThothPythonException
 from thoth.user_api.payload_filter import PayloadProcess
+from thoth.user_api.openapi_server import metrics
 
 import thoth.messaging.producer as producer
 from thoth.messaging import MessageBase
@@ -348,6 +349,19 @@ def get_provenance_python_status(analysis_id: str) -> typing.Tuple[typing.Dict[s
     return _get_status("provenance-check", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
 
 
+# custom metric to expose cache hit rates for advise python endpoint
+def _set_metric_cache_hit_advise_python(source_type: str, cached: bool = False):
+    service_cache_hit_rate = metrics.counter(
+        "thoth_cache_hit_rate",
+        "Thoth cache hit rate",
+        is_privileged=1 if source_type == "KEBECHET" else 0,
+        is_cached=1 if cached else 0,
+        service="advise_python",
+        env=Configuration.THOTH_DEPLOYMENT_NAME,
+    )
+    return service_cache_hit_rate.inc()
+
+
 def post_advise_python(
     input: dict,
     recommendation_type: typing.Optional[str] = None,
@@ -452,7 +466,10 @@ def post_advise_python(
         )
 
     if not force:
+
         try:
+            _set_metric_cache_hit_advise_python(source_type=source_type.upper() if source_type else "None", cached=True)
+
             cache_record = adviser_cache.retrieve_document_record(cached_document_id)
             if cache_record["timestamp"] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
                 return {"analysis_id": cache_record.pop("analysis_id"), "cached": True, "parameters": parameters}, 202
@@ -461,6 +478,11 @@ def post_advise_python(
 
     # Enum type is checked on thoth-common side to avoid serialization issue in user-api side when providing response
     parameters["source_type"] = source_type.upper() if source_type else None
+
+    _set_metric_cache_hit_advise_python(
+        source_type=parameters["source_type"],
+    )
+
     parameters["job_id"] = _OPENSHIFT.generate_id("adviser")
     # Remove data passed via Ceph.
     message = dict(**parameters, authenticated=authenticated)
@@ -893,7 +915,7 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
         return
 
     payload["webhook_payload"] = webhook_payload
-    payload["job_id"] = _OPENSHIFT.generate_id("kebechet-job")
+    payload["job_id"] = _OPENSHIFT.generate_id("kebechet-job")  # type: ignore
     return _send_schedule_message(payload, KebechetTriggerMessage)
 
 
