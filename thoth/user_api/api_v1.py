@@ -244,15 +244,15 @@ def post_provenance_python(
     debug: bool = False,
     force: bool = False,
     origin: str = None,
+    justification: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
+    stack_info: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
     # Must be set to set protected fields
     token: typing.Optional[str] = None,
     # Protected fields
     kebechet_metadata: typing.Optional[typing.Dict[str, typing.Any]] = None,
-    justification: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
-    stack_info: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
 ):
     """Check provenance for the given application stack."""
-    protected_fields = ["origin"]
+    protected_fields = ["kebechet_metadata"]
     parameters = locals()
 
     if Configuration.API_TOKEN == token:
@@ -337,6 +337,8 @@ def post_advise_python(
     force: bool = False,
     dev: bool = False,
     origin: typing.Optional[str] = None,
+    justification: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
+    stack_info: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
     # Must be set to set protected fields
     token: typing.Optional[str] = None,
     # These are protected fields, internal secret must match
@@ -348,7 +350,6 @@ def post_advise_python(
 ):
     """Compute results for the given package or package stack using adviser."""
     protected_fields = [
-        "origin",
         "github_event_type",
         "github_check_run_id",
         "github_installation_id",
