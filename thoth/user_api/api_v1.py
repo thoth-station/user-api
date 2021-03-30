@@ -245,7 +245,7 @@ def post_provenance_python(
     force: bool = False,
     origin: str = None,
     # Must be set to set protected fields
-    internal_secret: typing.Optional[str] = None,
+    token: typing.Optional[str] = None,
     # Protected fields
     kebechet_metadata: typing.Optional[typing.Dict[str, typing.Any]] = None,
     justification: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
@@ -255,10 +255,11 @@ def post_provenance_python(
     protected_fields = ["origin"]
     parameters = locals()
 
-    if Configuration.INTERNAL_SECRET == internal_secret:
+    if Configuration.API_TOKEN == token:
         for k in protected_fields:
             if parameters[k] is not None:
-                raise PermissionError("Attempted to set protected field without proper permissions.")
+                response = {"error": "Attempted to set protected field without proper permissions."}
+                return response, 401
 
     from .openapi_server import GRAPH
 
@@ -337,7 +338,7 @@ def post_advise_python(
     dev: bool = False,
     origin: typing.Optional[str] = None,
     # Must be set to set protected fields
-    internal_secret: typing.Optional[str] = None,
+    token: typing.Optional[str] = None,
     # These are protected fields, internal secret must match
     github_event_type: typing.Optional[str] = None,
     github_check_run_id: typing.Optional[int] = None,
@@ -357,10 +358,11 @@ def post_advise_python(
     parameters = locals()
     parameters["application_stack"] = parameters["input"].pop("application_stack")
 
-    if Configuration.INTERNAL_SECRET == internal_secret:
+    if Configuration.API_TOKEN == token:
         for k in protected_fields:
             if parameters[k] is not None:
-                raise PermissionError("Attempted to set protected field without proper permissions.")
+                response = {"error": "Attempted to set protected field without proper permissions."}
+                return response, 401
 
     # Always try to parse runtime environment so that we have it available in JSON reports in a unified form.
     try:

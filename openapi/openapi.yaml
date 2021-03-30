@@ -271,6 +271,12 @@ paths:
             default: false
           description: >
             Do not use cached results, always run provenance checks.
+        - name: token
+          in: query
+          required: false
+          schema:
+            type: string
+          description: API token for sending priviledged requests.
       responses:
         "202":
           description: The provided files will be checked for provenance.
@@ -627,6 +633,12 @@ paths:
                 required: false
             additionalProperties: true
           description: Dict containing kebechet specific metadata for justification.
+        - name: token
+          in: query
+          required: false
+          schema:
+            type: string
+          description: API token for sending priviledged requests.
       responses:
         "202":
           description: The adviser is scheduled.
