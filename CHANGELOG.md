@@ -2255,3 +2255,17 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * constrain thoth-messaging (#1346)
 * :arrow_up: Automatic update of dependencies by Kebechet (#1344)
 * python types in spec :facepalm: (#1343)
+
+## Release 0.23.0 (2021-03-31T22:41:57)
+### Features
+* Store information even for unauthenticated requests
+* conditionally include params in hash computation
+* Update thoth-messaging to v0.13.0 (#1361)
+* :arrow_up: Automatic update of dependencies by Kebechet (#1357)
+* Add missing else branch
+* Always pop token from parameters
+* Pass authenticated parameters to messages
+* Inform if bad token is supplied
+* Instantiate protected field listing once
+* protect fields for post provenance and advise (#1336)
+* :arrow_up: Automatic update of dependencies by Kebechet (#1352)
