@@ -263,7 +263,7 @@ def post_provenance_python(
 
     force = parameters.pop("force", False)
     cached_document_id = _compute_digest_params(
-        dict(**project.to_dict(), origin=origin, whitelisted_sources=parameters["whitelisted_sources"], debug=debug)
+        dict(**project.to_dict(), whitelisted_sources=parameters["whitelisted_sources"], debug=debug)
     )
 
     timestamp_now = int(time.mktime(datetime.datetime.utcnow().timetuple()))
@@ -379,7 +379,6 @@ def post_advise_python(
             limit=parameters["limit"],
             library_usage=parameters["library_usage"],
             recommendation_type=recommendation_type,
-            origin=origin,
             source_type=source_type.upper() if source_type else None,
             dev=dev,
             debug=parameters["debug"],
