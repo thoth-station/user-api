@@ -265,10 +265,13 @@ def post_provenance_python(
     """Check provenance for the given application stack."""
     parameters = locals()
 
+    authenticated = False
     if token is not None:
         if Configuration.API_TOKEN != token:
             return {"error": "Bad token supplied"}, 401
 
+        authenticated = True
+        parameters.pop("token")
         for k in _PROVENANCE_CHECK_PROTECTED_FIELDS:
             if parameters[k] is not None:
                 return {"error": f"Parameter {k!r} requires token to be set to perform authenticated request"}, 401
@@ -302,7 +305,7 @@ def post_provenance_python(
             pass
 
     parameters["job_id"] = _OPENSHIFT.generate_id("provenance-checker")
-    message = dict(parameters)
+    message = dict(**parameters, authenticated=authenticated)
     message.pop("application_stack")  # Passed via Ceph.
     response, status = _send_schedule_message(message, ProvenanceCheckerTriggerMessage)
 
@@ -364,10 +367,13 @@ def post_advise_python(
     parameters = locals()
     parameters["application_stack"] = parameters["input"].pop("application_stack")
 
+    authenticated = False
     if token is not None:
         if Configuration.API_TOKEN != token:
             return {"error": "Bad token supplied"}, 401
 
+        authenticated = True
+        parameters.pop("token")
         for k in _ADVISE_PROTECTED_FIELDS:
             if parameters[k] is not None:
                 return {"error": f"Parameter {k!r} requires token to be set to perform authenticated request"}, 401
@@ -437,7 +443,7 @@ def post_advise_python(
     parameters["source_type"] = source_type.upper() if source_type else None
     parameters["job_id"] = _OPENSHIFT.generate_id("adviser")
     # Remove data passed via Ceph.
-    message = dict(parameters)
+    message = dict(**parameters, authenticated=authenticated)
     message.pop("application_stack")
     message.pop("runtime_environment")
     message.pop("library_usage")
