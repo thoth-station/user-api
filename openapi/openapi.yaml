@@ -271,6 +271,12 @@ paths:
             default: false
           description: >
             Do not use cached results, always run provenance checks.
+        - name: token
+          in: query
+          required: false
+          schema:
+            type: string
+          description: API token for sending priviledged requests.
         - name: kebechet_metadata
           in: query
           required: false
@@ -629,6 +635,12 @@ paths:
           schema:
             $ref: '#/components/schemas/KebechetMetadata'
           description: Dict containing kebechet specific metadata for justification.
+        - name: token
+          in: query
+          required: false
+          schema:
+            type: string
+          description: API token for sending priviledged requests.
         - name: justification
           in: query
           required: false
