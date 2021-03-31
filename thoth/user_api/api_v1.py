@@ -272,6 +272,7 @@ def post_provenance_python(
             return {"error": "Bad token supplied"}, 401
 
         authenticated = True
+    else:
         for k in _PROVENANCE_CHECK_PROTECTED_FIELDS:
             if parameters[k] is not None:
                 return {"error": f"Parameter {k!r} requires token to be set to perform authenticated request"}, 401
@@ -374,6 +375,7 @@ def post_advise_python(
             return {"error": "Bad token supplied"}, 401
 
         authenticated = True
+    else:
         for k in _ADVISE_PROTECTED_FIELDS:
             if parameters[k] is not None:
                 return {"error": f"Parameter {k!r} requires token to be set to perform authenticated request"}, 401
