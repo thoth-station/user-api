@@ -323,10 +323,6 @@ def post_provenance_python(
         # Store the request for traceability.
         store = ProvenanceResultsStore()
         store.connect()
-        if not authenticated:
-            remove_list = ["origin"]
-            for k in remove_list:
-                parameters.pop(k)
         store.store_request(parameters["job_id"], parameters)
 
     return response, status
@@ -481,10 +477,6 @@ def post_advise_python(
         # Store the request for traceability.
         store = AdvisersResultsStore()
         store.connect()
-        if not authenticated:
-            remove_list = ["origin", "source_type"]
-            for k in remove_list:
-                parameters.pop(k)
         store.store_request(parameters["job_id"], parameters)
 
     return response, status
