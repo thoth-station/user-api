@@ -330,12 +330,16 @@ def post_provenance_python(
 
 def get_provenance_python(analysis_id: str):
     """Retrieve a provenance check result."""
-    return _get_document(
+    result, status_code = _get_document(
         ProvenanceResultsStore,
         analysis_id,
         name_prefix="provenance-checker-",
         namespace=Configuration.THOTH_BACKEND_NAMESPACE,
     )
+    if status_code == 200:
+        # Drop any metadata associated with the request (such as origin, GitHub application info, ...)
+        result["metadata"]["arguments"]["thoth-adviser"].pop("metadata", None)
+    return result, status_code
 
 
 def get_provenance_python_log(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
@@ -489,9 +493,13 @@ def list_advise_python(page: int = 0):
 
 def get_advise_python(analysis_id):
     """Retrieve the given recommendation based on its id."""
-    return _get_document(
+    result, status_code = _get_document(
         AdvisersResultsStore, analysis_id, name_prefix="adviser-", namespace=Configuration.THOTH_BACKEND_NAMESPACE
     )
+    if status_code == 200:
+        # Drop any metadata associated with the request (such as origin, GitHub application info, ...)
+        result["metadata"]["arguments"]["thoth-adviser"].pop("metadata", None)
+    return result, status_code
 
 
 def get_advise_python_log(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
