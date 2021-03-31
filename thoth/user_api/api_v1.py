@@ -68,6 +68,17 @@ PAGINATION_SIZE = 100
 _LOGGER = logging.getLogger(__name__)
 _OPENSHIFT = OpenShift()
 
+_ADVISE_PROTECTED_FIELDS = frozenset(
+    {
+        "github_event_type",
+        "github_check_run_id",
+        "github_installation_id",
+        "github_base_repo_url",
+        "kebechet_metadata",
+    }
+)
+
+_PROVENANCE_CHECK_PROTECTED_FIELDS = frozenset({"kebechet_metadata"})
 
 p = producer.create_producer()
 
@@ -252,14 +263,19 @@ def post_provenance_python(
     kebechet_metadata: typing.Optional[typing.Dict[str, typing.Any]] = None,
 ):
     """Check provenance for the given application stack."""
-    protected_fields = ["kebechet_metadata"]
     parameters = locals()
+    token = parameters.pop("token", None)
 
-    if Configuration.API_TOKEN == token:
-        for k in protected_fields:
+    authenticated = False
+    if token is not None:
+        if Configuration.API_TOKEN != token:
+            return {"error": "Bad token supplied"}, 401
+
+        authenticated = True
+    else:
+        for k in _PROVENANCE_CHECK_PROTECTED_FIELDS:
             if parameters[k] is not None:
-                response = {"error": "Attempted to set protected field without proper permissions."}
-                return response, 401
+                return {"error": f"Parameter {k!r} requires token to be set to perform authenticated request"}, 401
 
     from .openapi_server import GRAPH
 
@@ -273,9 +289,14 @@ def post_provenance_python(
     parameters["whitelisted_sources"] = list(GRAPH.get_python_package_index_urls_all())
 
     force = parameters.pop("force", False)
-    cached_document_id = _compute_digest_params(
-        dict(**project.to_dict(), origin=origin, whitelisted_sources=parameters["whitelisted_sources"], debug=debug)
-    )
+    if authenticated:
+        cached_document_id = _compute_digest_params(
+            dict(**project.to_dict(), origin=origin, whitelisted_sources=parameters["whitelisted_sources"], debug=debug)
+        )
+    else:
+        cached_document_id = _compute_digest_params(
+            dict(**project.to_dict(), whitelisted_sources=parameters["whitelisted_sources"], debug=debug)
+        )
 
     timestamp_now = int(time.mktime(datetime.datetime.utcnow().timetuple()))
     cache = ProvenanceCacheStore()
@@ -290,7 +311,7 @@ def post_provenance_python(
             pass
 
     parameters["job_id"] = _OPENSHIFT.generate_id("provenance-checker")
-    message = dict(parameters)
+    message = dict(**parameters, authenticated=authenticated)
     message.pop("application_stack")  # Passed via Ceph.
     response, status = _send_schedule_message(message, ProvenanceCheckerTriggerMessage)
 
@@ -349,21 +370,20 @@ def post_advise_python(
     kebechet_metadata: typing.Optional[dict] = None,
 ):
     """Compute results for the given package or package stack using adviser."""
-    protected_fields = [
-        "github_event_type",
-        "github_check_run_id",
-        "github_installation_id",
-        "github_base_repo_url",
-        "kebechet_metadata",
-    ]
     parameters = locals()
     parameters["application_stack"] = parameters["input"].pop("application_stack")
+    token = parameters.pop("token", None)
 
-    if Configuration.API_TOKEN == token:
-        for k in protected_fields:
+    authenticated = False
+    if token is not None:
+        if Configuration.API_TOKEN != token:
+            return {"error": "Bad token supplied"}, 401
+
+        authenticated = True
+    else:
+        for k in _ADVISE_PROTECTED_FIELDS:
             if parameters[k] is not None:
-                response = {"error": "Attempted to set protected field without proper permissions."}
-                return response, 401
+                return {"error": f"Parameter {k!r} requires token to be set to perform authenticated request"}, 401
 
     # Always try to parse runtime environment so that we have it available in JSON reports in a unified form.
     try:
@@ -399,24 +419,37 @@ def post_advise_python(
     adviser_cache.connect()
 
     timestamp_now = int(time.mktime(datetime.datetime.utcnow().timetuple()))
-    cached_document_id = _compute_digest_params(
-        dict(
-            **project.to_dict(),
-            count=parameters["count"],
-            limit=parameters["limit"],
-            library_usage=parameters["library_usage"],
-            recommendation_type=recommendation_type,
-            origin=origin,
-            source_type=source_type.upper() if source_type else None,
-            dev=dev,
-            debug=parameters["debug"],
-            github_event_type=parameters["github_event_type"],
-            github_check_run_id=parameters["github_check_run_id"],
-            github_installation_id=parameters["github_installation_id"],
-            github_base_repo_url=parameters["github_base_repo_url"],
-            kebechet_metadata=parameters["kebechet_metadata"],
+    if authenticated:
+        cached_document_id = _compute_digest_params(
+            dict(
+                **project.to_dict(),
+                count=parameters["count"],
+                limit=parameters["limit"],
+                library_usage=parameters["library_usage"],
+                recommendation_type=recommendation_type,
+                origin=origin,
+                source_type=source_type.upper() if source_type else None,
+                dev=dev,
+                debug=parameters["debug"],
+                github_event_type=parameters["github_event_type"],
+                github_check_run_id=parameters["github_check_run_id"],
+                github_installation_id=parameters["github_installation_id"],
+                github_base_repo_url=parameters["github_base_repo_url"],
+                kebechet_metadata=parameters["kebechet_metadata"],
+            )
         )
-    )
+    else:
+        cached_document_id = _compute_digest_params(
+            dict(
+                **project.to_dict(),
+                count=parameters["count"],
+                limit=parameters["limit"],
+                library_usage=parameters["library_usage"],
+                recommendation_type=recommendation_type,
+                dev=dev,
+                debug=parameters["debug"],
+            )
+        )
 
     if not force:
         try:
@@ -430,7 +463,7 @@ def post_advise_python(
     parameters["source_type"] = source_type.upper() if source_type else None
     parameters["job_id"] = _OPENSHIFT.generate_id("adviser")
     # Remove data passed via Ceph.
-    message = dict(parameters)
+    message = dict(**parameters, authenticated=authenticated)
     message.pop("application_stack")
     message.pop("runtime_environment")
     message.pop("library_usage")
