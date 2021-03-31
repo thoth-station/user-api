@@ -68,6 +68,17 @@ PAGINATION_SIZE = 100
 _LOGGER = logging.getLogger(__name__)
 _OPENSHIFT = OpenShift()
 
+_ADVISE_PROTECTED_FIELDS = frozenset(
+    {
+        "github_event_type",
+        "github_check_run_id",
+        "github_installation_id",
+        "github_base_repo_url",
+        "kebechet_metadata",
+    }
+)
+
+_PROVENANCE_CHECK_PROTECTED_FIELDS = frozenset({"kebechet_metadata"})
 
 p = producer.create_producer()
 
@@ -252,14 +263,12 @@ def post_provenance_python(
     kebechet_metadata: typing.Optional[typing.Dict[str, typing.Any]] = None,
 ):
     """Check provenance for the given application stack."""
-    protected_fields = ["kebechet_metadata"]
     parameters = locals()
 
     if Configuration.API_TOKEN == token:
-        for k in protected_fields:
+        for k in _PROVENANCE_CHECK_PROTECTED_FIELDS:
             if parameters[k] is not None:
-                response = {"error": "Attempted to set protected field without proper permissions."}
-                return response, 401
+                return {"error": f"Parameter {k!r} requires token to be set to perform authenticated request"}, 401
 
     from .openapi_server import GRAPH
 
@@ -349,21 +358,13 @@ def post_advise_python(
     kebechet_metadata: typing.Optional[dict] = None,
 ):
     """Compute results for the given package or package stack using adviser."""
-    protected_fields = [
-        "github_event_type",
-        "github_check_run_id",
-        "github_installation_id",
-        "github_base_repo_url",
-        "kebechet_metadata",
-    ]
     parameters = locals()
     parameters["application_stack"] = parameters["input"].pop("application_stack")
 
     if Configuration.API_TOKEN == token:
-        for k in protected_fields:
+        for k in _ADVISE_PROTECTED_FIELDS:
             if parameters[k] is not None:
-                response = {"error": "Attempted to set protected field without proper permissions."}
-                return response, 401
+                return {"error": f"Parameter {k!r} requires token to be set to perform authenticated request"}, 401
 
     # Always try to parse runtime environment so that we have it available in JSON reports in a unified form.
     try:
