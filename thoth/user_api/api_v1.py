@@ -289,9 +289,14 @@ def post_provenance_python(
     parameters["whitelisted_sources"] = list(GRAPH.get_python_package_index_urls_all())
 
     force = parameters.pop("force", False)
-    cached_document_id = _compute_digest_params(
-        dict(**project.to_dict(), origin=origin, whitelisted_sources=parameters["whitelisted_sources"], debug=debug)
-    )
+    if authenticated:
+        cached_document_id = _compute_digest_params(
+            dict(**project.to_dict(), origin=origin, whitelisted_sources=parameters["whitelisted_sources"], debug=debug)
+        )
+    else:
+        cached_document_id = _compute_digest_params(
+            dict(**project.to_dict(), whitelisted_sources=parameters["whitelisted_sources"], debug=debug)
+        )
 
     timestamp_now = int(time.mktime(datetime.datetime.utcnow().timetuple()))
     cache = ProvenanceCacheStore()
@@ -318,6 +323,10 @@ def post_provenance_python(
         # Store the request for traceability.
         store = ProvenanceResultsStore()
         store.connect()
+        if not authenticated:
+            remove_list = ["origin"]
+            for k in remove_list:
+                parameters.pop(k)
         store.store_request(parameters["job_id"], parameters)
 
     return response, status
@@ -414,24 +423,37 @@ def post_advise_python(
     adviser_cache.connect()
 
     timestamp_now = int(time.mktime(datetime.datetime.utcnow().timetuple()))
-    cached_document_id = _compute_digest_params(
-        dict(
-            **project.to_dict(),
-            count=parameters["count"],
-            limit=parameters["limit"],
-            library_usage=parameters["library_usage"],
-            recommendation_type=recommendation_type,
-            origin=origin,
-            source_type=source_type.upper() if source_type else None,
-            dev=dev,
-            debug=parameters["debug"],
-            github_event_type=parameters["github_event_type"],
-            github_check_run_id=parameters["github_check_run_id"],
-            github_installation_id=parameters["github_installation_id"],
-            github_base_repo_url=parameters["github_base_repo_url"],
-            kebechet_metadata=parameters["kebechet_metadata"],
+    if authenticated:
+        cached_document_id = _compute_digest_params(
+            dict(
+                **project.to_dict(),
+                count=parameters["count"],
+                limit=parameters["limit"],
+                library_usage=parameters["library_usage"],
+                recommendation_type=recommendation_type,
+                origin=origin,
+                source_type=source_type.upper() if source_type else None,
+                dev=dev,
+                debug=parameters["debug"],
+                github_event_type=parameters["github_event_type"],
+                github_check_run_id=parameters["github_check_run_id"],
+                github_installation_id=parameters["github_installation_id"],
+                github_base_repo_url=parameters["github_base_repo_url"],
+                kebechet_metadata=parameters["kebechet_metadata"],
+            )
         )
-    )
+    else:
+        cached_document_id = _compute_digest_params(
+            dict(
+                **project.to_dict(),
+                count=parameters["count"],
+                limit=parameters["limit"],
+                library_usage=parameters["library_usage"],
+                recommendation_type=recommendation_type,
+                dev=dev,
+                debug=parameters["debug"],
+            )
+        )
 
     if not force:
         try:
@@ -459,6 +481,10 @@ def post_advise_python(
         # Store the request for traceability.
         store = AdvisersResultsStore()
         store.connect()
+        if not authenticated:
+            remove_list = ["origin", "source_type"]
+            for k in remove_list:
+                parameters.pop(k)
         store.store_request(parameters["job_id"], parameters)
 
     return response, status
