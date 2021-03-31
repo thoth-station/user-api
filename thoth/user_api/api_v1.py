@@ -265,7 +265,10 @@ def post_provenance_python(
     """Check provenance for the given application stack."""
     parameters = locals()
 
-    if Configuration.API_TOKEN == token:
+    if token is not None:
+        if Configuration.API_TOKEN != token:
+            return {"error": "Bad token supplied"}, 401
+
         for k in _PROVENANCE_CHECK_PROTECTED_FIELDS:
             if parameters[k] is not None:
                 return {"error": f"Parameter {k!r} requires token to be set to perform authenticated request"}, 401
@@ -361,7 +364,10 @@ def post_advise_python(
     parameters = locals()
     parameters["application_stack"] = parameters["input"].pop("application_stack")
 
-    if Configuration.API_TOKEN == token:
+    if token is not None:
+        if Configuration.API_TOKEN != token:
+            return {"error": "Bad token supplied"}, 401
+
         for k in _ADVISE_PROTECTED_FIELDS:
             if parameters[k] is not None:
                 return {"error": f"Parameter {k!r} requires token to be set to perform authenticated request"}, 401
