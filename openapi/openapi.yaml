@@ -239,12 +239,12 @@ paths:
       summary: Check provenance of packages stated in an application stack.
       requestBody:
         required: true
-        description: Pipfile and Pipfile.lock as used by pipenv.
+        description: Input to be checked for provenance.
         content:
           application/json:
             schema:
-              x-body-name: application_stack
-              $ref: "#/components/schemas/PythonStack"
+              x-body-name: input
+              $ref: "#/components/schemas/ProvenanceInput"
       parameters:
         - name: origin
           in: query
@@ -276,23 +276,7 @@ paths:
           required: false
           schema:
             type: string
-          description: API token for sending priviledged requests.
-        - name: kebechet_metadata
-          in: query
-          required: false
-          schema:
-            $ref: '#/components/schemas/KebechetMetadata'
-          description: Dict containing kebechet specific metadata for justification.
-        - name: justification
-          in: query
-          required: false
-          schema:
-            $ref: '#/components/schemas/Justification'
-        - name: stack_info
-          in: query
-          required: false
-          schema:
-            $ref: '#/components/schemas/StackInfo'
+          description: API token for sending authenticated requests.
       responses:
         "202":
           description: The provided files will be checked for provenance.
@@ -629,28 +613,12 @@ paths:
           schema:
             type: string
           description: URL of the GitHub repository containing the Pull Request.
-        - name: kebechet_metadata
-          in: query
-          required: false
-          schema:
-            $ref: '#/components/schemas/KebechetMetadata'
-          description: Dict containing kebechet specific metadata for justification.
         - name: token
           in: query
           required: false
           schema:
             type: string
-          description: API token for sending priviledged requests.
-        - name: justification
-          in: query
-          required: false
-          schema:
-            $ref: '#/components/schemas/Justification'
-        - name: stack_info
-          in: query
-          required: false
-          schema:
-            $ref: '#/components/schemas/StackInfo'
+          description: API token for sending authenticated requests.
       responses:
         "202":
           description: The adviser is scheduled.
@@ -1430,6 +1398,19 @@ components:
           type: object
           description: >
             Additional information captured when recommendations were requested for Jupyter Notebook environments.
+    ProvenanceInput:
+      type: object
+      required:
+        - application_stack
+      properties:
+        application_stack:
+          $ref: "#/components/schemas/PythonStack"
+        kebechet_metadata:
+          $ref: "#/components/schemas/KebechetMetadata"
+        justification:
+          $ref: "#/components/schemas/Justification"
+        stack_info:
+          $ref: "#/components/schemas/StackInfo"
     AdviseInput:
       type: object
       required:
@@ -1450,6 +1431,12 @@ components:
               type: string
             report:
               type: object
+        kebechet_metadata:
+          $ref: "#/components/schemas/KebechetMetadata"
+        justification:
+          $ref: "#/components/schemas/Justification"
+        stack_info:
+          $ref: "#/components/schemas/StackInfo"
     ImageMetadataResponse:
       type: object
       description: Response information with image metadata.
@@ -2196,6 +2183,7 @@ components:
           description: Parameters echoed back to user for debugging.
     KebechetMetadata:
       type: object
+      description: Dict containing kebechet specific metadata for justification.
       properties:
         message_justification:
           type: integer
