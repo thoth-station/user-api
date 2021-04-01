@@ -113,26 +113,8 @@ _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED = metrics.counter(
     env=Configuration.THOTH_DEPLOYMENT_NAME,
 )
 
-_CACHE_HITS_METRICS = {
-    "adviser": {
-        "authenticated": _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED,
-        "unauthenticated": _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED,
-    },
-    "provenance-checker": {
-        "authenticated": _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED,
-        "unauthenticated": _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED,
-    },
-}
 
 p = producer.create_producer()
-
-
-def _set_metrics_service_cache_hit(service: str, authenticated: bool):
-    if service not in _CACHE_HITS_METRICS:
-        raise Exception("Metrics for cache hits are not registered for this service %r", service)
-
-    is_authenticated = "authenticated" if authenticated else "unauthenticated"
-    return _CACHE_HITS_METRICS[service][is_authenticated].inc()
 
 
 def _compute_digest_params(parameters: dict):
@@ -359,9 +341,12 @@ def post_provenance_python(
             cache_record = cache.retrieve_document_record(cached_document_id)
             if cache_record["timestamp"] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
                 try:
-                    _set_metrics_service_cache_hit(service="provenance-checker", authenticated=authenticated)
+                    if authenticated:
+                        _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED.inc()
+                    else:
+                        _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED.inc()
                 except Exception as metric_exc:
-                    _LOGGER.error("Failed to set metric for cache hits: %r", metric_exc)
+                    _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
 
                 return {"analysis_id": cache_record.pop("analysis_id"), "cached": True, "parameters": parameters}, 202
         except CacheMiss:
@@ -512,10 +497,14 @@ def post_advise_python(
         try:
             cache_record = adviser_cache.retrieve_document_record(cached_document_id)
             if cache_record["timestamp"] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
+
                 try:
-                    _set_metrics_service_cache_hit(service="adviser", authenticated=authenticated)
+                    if authenticated:
+                        _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED.inc()
+                    else:
+                        _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED.inc()
                 except Exception as metric_exc:
-                    _LOGGER.error("Failed to set metric for cache hits: %r", metric_exc)
+                    _LOGGER.error("Failed to set metric for adviser cache hits: %r", metric_exc)
 
                 return {"analysis_id": cache_record.pop("analysis_id"), "cached": True, "parameters": parameters}, 202
         except CacheMiss:
