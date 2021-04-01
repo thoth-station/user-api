@@ -43,10 +43,6 @@ from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.python import Project
 from thoth.python.exceptions import ThothPythonException
 from thoth.user_api.payload_filter import PayloadProcess
-from thoth.user_api.openapi_server import _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED
-from thoth.user_api.openapi_server import _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED
-from thoth.user_api.openapi_server import _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED
-from thoth.user_api.openapi_server import _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED
 
 import thoth.messaging.producer as producer
 from thoth.messaging import MessageBase
@@ -57,6 +53,7 @@ from thoth.messaging import PackageExtractTriggerMessage
 from thoth.messaging import ProvenanceCheckerTriggerMessage
 from thoth.messaging import QebHwtTriggerMessage
 
+from .openapi_server import metrics
 from .configuration import Configuration
 from .image import get_image_metadata
 from .exceptions import ImageError
@@ -83,6 +80,38 @@ _ADVISE_PROTECTED_FIELDS = frozenset(
 )
 
 _PROVENANCE_CHECK_PROTECTED_FIELDS = frozenset({"kebechet_metadata"})
+
+_METRIC_CACHE_HIT_ADVISER_AUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="True",
+    service="adviser",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
+_METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="False",
+    service="adviser",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
+_METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="True",
+    service="provenance-checker",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
+_METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="False",
+    service="provenance-checker",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
 
 p = producer.create_producer()
 
