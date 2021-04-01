@@ -999,15 +999,6 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
         return {"error": f"Requested result for analysis {analysis_id!r} was not found", "parameters": parameters}, 404
 
 
-def _get_workflow_status(parameters: dict, name_prefix: str, namespace: str):
-    """Get status for a argo workflow."""
-    workflow_id = parameters.get("analysis_id")
-    if workflow_id is None:
-        return {"error": "No workflow id provided", "parameters": parameters}, 400
-    if not workflow_id.startswith(name_prefix):
-        return {"error": "Wrong workflow id provided", "parameters": parameters}, 400
-
-
 def _get_status(node_name: str, analysis_id: str, namespace: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
     """Get status for a node in a workflow."""
     result: typing.Dict[str, typing.Any] = {"parameters": {"analysis_id": analysis_id}}
