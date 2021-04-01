@@ -81,7 +81,44 @@ _ADVISE_PROTECTED_FIELDS = frozenset(
 
 _PROVENANCE_CHECK_PROTECTED_FIELDS = frozenset({"kebechet_metadata"})
 
+# custom metric to expose cache hit rates for different service endpoints
+def _create_metrics_service_cache_hits(services: typing.List[str]):
+    service_request_cache_hit_rate = {}
+
+    for service in services:
+        service_request_cache_hit_rate[service] = {}
+        service_request_cache_hit_rate[service]["authenticated"] = metrics.counter(
+            "thoth_cache_hit_rate",
+            "Thoth cache hit rate",
+            is_authenticated="True",
+            service=service,
+            env=Configuration.THOTH_DEPLOYMENT_NAME,
+        )
+
+        service_request_cache_hit_rate[service]["unauthenticated"] = metrics.counter(
+            "thoth_cache_hit_rate",
+            "Thoth cache hit rate",
+            is_authenticated="False",
+            service=service,
+            env=Configuration.THOTH_DEPLOYMENT_NAME,
+        )
+
+    return service_request_cache_hit_rate
+
+_SERVICES_METRICS_CACHE_HITS = ["adviser", "provenance-checker"]
+
+_CACHE_HITS_METRICS = _create_metrics_service_cache_hits(services=_SERVICES_METRICS_CACHE_HITS)
+
+
 p = producer.create_producer()
+
+
+def _set_metrics_service_cache_hit(service: str, authenticated: bool):
+    if service not in _CACHE_HITS_METRICS:
+        raise Exception("Metrics for cache hits are not registered for this service %r", service)
+
+    is_authenticated = "authenticated" if authenticated else "unauthenticated"
+    return _CACHE_HITS_METRICS[service][is_authenticated].inc()
 
 
 def _compute_digest_params(parameters: dict):
@@ -307,6 +344,11 @@ def post_provenance_python(
         try:
             cache_record = cache.retrieve_document_record(cached_document_id)
             if cache_record["timestamp"] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
+                try:
+                    _set_metrics_service_cache_hit(service="provenance-checker", authenticated=authenticated)
+                except Exception as metric_exc:
+                    _LOGGER.warning("Failed to set metric for cache hits: %r", metric_exc)
+
                 return {"analysis_id": cache_record.pop("analysis_id"), "cached": True, "parameters": parameters}, 202
         except CacheMiss:
             pass
@@ -347,19 +389,6 @@ def get_provenance_python_log(analysis_id: str) -> typing.Tuple[typing.Dict[str,
 def get_provenance_python_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
     """Get status of a provenance check."""
     return _get_status("provenance-check", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
-
-
-# custom metric to expose cache hit rates for advise python endpoint
-def _set_metric_cache_hit_advise_python(source_type: str, cached: bool = False):
-    service_cache_hit_rate = metrics.counter(
-        "thoth_cache_hit_rate",
-        "Thoth cache hit rate",
-        is_privileged="True" if source_type == "KEBECHET" else "False",
-        is_cached="True" if cached else "False",
-        service="advise_python",
-        env=Configuration.THOTH_DEPLOYMENT_NAME,
-    )
-    return service_cache_hit_rate.inc()
 
 
 def post_advise_python(
@@ -466,23 +495,20 @@ def post_advise_python(
         )
 
     if not force:
-
         try:
-            _set_metric_cache_hit_advise_python(source_type=source_type.upper() if source_type else "None", cached=True)
-
             cache_record = adviser_cache.retrieve_document_record(cached_document_id)
             if cache_record["timestamp"] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
+                try:
+                    _set_metrics_service_cache_hit(service="adviser", authenticated=authenticated)
+                except Exception as metric_exc:
+                    _LOGGER.warning("Failed to set metric for cache hits: %r", metric_exc)
+
                 return {"analysis_id": cache_record.pop("analysis_id"), "cached": True, "parameters": parameters}, 202
         except CacheMiss:
             pass
 
     # Enum type is checked on thoth-common side to avoid serialization issue in user-api side when providing response
     parameters["source_type"] = source_type.upper() if source_type else None
-
-    _set_metric_cache_hit_advise_python(
-        source_type=parameters["source_type"],
-    )
-
     parameters["job_id"] = _OPENSHIFT.generate_id("adviser")
     # Remove data passed via Ceph.
     message = dict(**parameters, authenticated=authenticated)
