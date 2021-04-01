@@ -236,13 +236,11 @@ def api_liveness():
     """Report liveness for OpenShift readiness probe."""
     return _healthiness()
 
+
 @app.route("/api/v1/provenance/python")
 @app.after_request
-def expose_metrics(response):
-    """ 
-    This function will run after a request, as long as no exceptions occur.
-    It must take and return the same parameter - an instance of response_class.
-    """
+def expose_metrics_provenance(response):
+    """Run after a provenance request, as long as no exceptions occur."""
     try:
         if response["authenticated"]:
             _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED.inc()
@@ -255,11 +253,8 @@ def expose_metrics(response):
 
 @app.route("/api/v1/advise/python")
 @app.after_request
-def expose_metrics(response):
-    """ 
-    This function will run after a request, as long as no exceptions occur.
-    It must take and return the same parameter - an instance of response_class.
-    """
+def expose_metrics_advise(response):
+    """Run after a advise request, as long as no exceptions occur."""
     try:
         if response["authenticated"]:
             _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED.inc()

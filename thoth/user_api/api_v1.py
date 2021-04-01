@@ -53,7 +53,6 @@ from thoth.messaging import PackageExtractTriggerMessage
 from thoth.messaging import ProvenanceCheckerTriggerMessage
 from thoth.messaging import QebHwtTriggerMessage
 
-from .openapi_server import metrics
 from .configuration import Configuration
 from .image import get_image_metadata
 from .exceptions import ImageError
@@ -312,7 +311,7 @@ def post_provenance_python(
                     "analysis_id": cache_record.pop("analysis_id"),
                     "cached": True,
                     "authenticated": authenticated,
-                    "parameters": parameters
+                    "parameters": parameters,
                 }, 202
         except CacheMiss:
             pass
@@ -470,7 +469,7 @@ def post_advise_python(
                     "analysis_id": cache_record.pop("analysis_id"),
                     "cached": True,
                     "authenticated": authenticated,
-                    "parameters": parameters
+                    "parameters": parameters,
                 }, 202
         except CacheMiss:
             pass
