@@ -81,9 +81,10 @@ _ADVISE_PROTECTED_FIELDS = frozenset(
 
 _PROVENANCE_CHECK_PROTECTED_FIELDS = frozenset({"kebechet_metadata"})
 
+
 # custom metric to expose cache hit rates for different service endpoints
 def _create_metrics_service_cache_hits(services: typing.List[str]):
-    service_request_cache_hit_rate = {}
+    service_request_cache_hit_rate: typing.Dict[str, dict] = {}
 
     for service in services:
         service_request_cache_hit_rate[service] = {}
@@ -104,6 +105,7 @@ def _create_metrics_service_cache_hits(services: typing.List[str]):
         )
 
     return service_request_cache_hit_rate
+
 
 _SERVICES_METRICS_CACHE_HITS = ["adviser", "provenance-checker"]
 
