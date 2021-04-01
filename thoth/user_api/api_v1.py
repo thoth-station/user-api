@@ -81,36 +81,48 @@ _ADVISE_PROTECTED_FIELDS = frozenset(
 
 _PROVENANCE_CHECK_PROTECTED_FIELDS = frozenset({"kebechet_metadata"})
 
+_METRIC_CACHE_HIT_ADVISER_AUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="True",
+    service="adviser",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
 
-# custom metric to expose cache hit rates for different service endpoints
-def _create_metrics_service_cache_hits(services: typing.List[str]):
-    service_request_cache_hit_rate: typing.Dict[str, dict] = {}
+_METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="False",
+    service="adviser",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
 
-    for service in services:
-        service_request_cache_hit_rate[service] = {}
-        service_request_cache_hit_rate[service]["authenticated"] = metrics.counter(
-            "thoth_user_api_cache_hit_rate",
-            "Thoth User API cache hit rate",
-            is_authenticated="True",
-            service=service,
-            env=Configuration.THOTH_DEPLOYMENT_NAME,
-        )
+_METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="True",
+    service="provenance-checker",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
 
-        service_request_cache_hit_rate[service]["unauthenticated"] = metrics.counter(
-            "thoth_user_api_cache_hit_rate",
-            "Thoth User API cache hit rate",
-            is_authenticated="False",
-            service=service,
-            env=Configuration.THOTH_DEPLOYMENT_NAME,
-        )
+_METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="False",
+    service="provenance-checker",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
 
-    return service_request_cache_hit_rate
-
-
-_SERVICES_METRICS_CACHE_HITS = ["adviser", "provenance-checker"]
-
-_CACHE_HITS_METRICS = _create_metrics_service_cache_hits(services=_SERVICES_METRICS_CACHE_HITS)
-
+_CACHE_HITS_METRICS = {
+    "adviser": {
+        "authenticated": _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED,
+        "unauthenticated": _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED
+    },
+    "provenance-checker" : {
+        "authenticated": _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED,
+        "unauthenticated": _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED
+    }
+}
 
 p = producer.create_producer()
 
