@@ -104,6 +104,38 @@ application.secret_key = Configuration.APP_SECRET_KEY
 metrics.info("user_api_info", "User API info", version=__service_version__)
 _API_GAUGE_METRIC = metrics.info("user_api_schema_up2date", "User API schema up2date")
 
+_METRIC_CACHE_HIT_ADVISER_AUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="True",
+    service="adviser",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
+_METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="False",
+    service="adviser",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
+_METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="True",
+    service="provenance-checker",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
+_METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="False",
+    service="provenance-checker",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
 
 class _GraphDatabaseWrapper:
     """A wrapper for lazy graph database adapter handling."""
@@ -203,6 +235,39 @@ def api_readiness():
 def api_liveness():
     """Report liveness for OpenShift readiness probe."""
     return _healthiness()
+
+@app.route("/api/v1/provenance/python")
+@app.after_request
+def expose_metrics(response):
+    """ 
+    This function will run after a request, as long as no exceptions occur.
+    It must take and return the same parameter - an instance of response_class.
+    """
+    try:
+        if response["authenticated"]:
+            _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED.inc()
+        else:
+            _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED.inc()
+    except Exception as metric_exc:
+        _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
+    return response
+
+
+@app.route("/api/v1/advise/python")
+@app.after_request
+def expose_metrics(response):
+    """ 
+    This function will run after a request, as long as no exceptions occur.
+    It must take and return the same parameter - an instance of response_class.
+    """
+    try:
+        if response["authenticated"]:
+            _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED.inc()
+        else:
+            _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED.inc()
+    except Exception as metric_exc:
+        _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
+    return response
 
 
 @application.errorhandler(404)
