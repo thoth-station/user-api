@@ -281,7 +281,9 @@ def get_analyze_log(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.An
 
 def get_analyze_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
     """Get status of an image analysis."""
-    return _get_status("extract-packages", analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE)
+    return _get_status_with_queued(
+        AnalysisResultsStore, "extract-packages", analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE
+    )
 
 
 def post_provenance_python(
@@ -391,7 +393,9 @@ def get_provenance_python_log(analysis_id: str) -> typing.Tuple[typing.Dict[str,
 
 def get_provenance_python_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
     """Get status of a provenance check."""
-    return _get_status("provenance-check", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
+    return _get_status_with_queued(
+        ProvenanceResultsStore, "provenance-check", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE
+    )
 
 
 def post_advise_python(
@@ -574,7 +578,9 @@ def _get_log(node_name: str, analysis_id: str, namespace: str) -> typing.Tuple[t
 
 def get_advise_python_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
     """Get status of an adviser run."""
-    return _get_status("advise", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
+    return _get_status_with_queued(
+        AdvisersResultsStore, "advise", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE
+    )
 
 
 def list_python_package_indexes():
@@ -1008,6 +1014,16 @@ def _do_listing(adapter_class, page: int) -> tuple:
     )
 
 
+def _construct_status_queued(analysis_id: str) -> typing.Dict[str, typing.Any]:
+    """Construct a response for a queued analysis."""
+    status = {"finished_at": None, "reason": None, "started_at": None, "state": "pending"}
+    return {
+        "error": f"Analysis {analysis_id!r} is being queued and scheduled for processing",
+        "status": status,
+        "parameters": {"analysis_id": analysis_id},
+    }
+
+
 def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, namespace: str = None) -> tuple:
     """Perform actual document retrieval."""
     # Parameters to be reported back to a user of API.
@@ -1037,15 +1053,7 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
                     raise ValueError(f"Unreachable - unknown workflow state: {status}")
             except OpenShiftNotFound:
                 if adapter.request_exists(analysis_id):
-                    status = {"finished_at": None, "reason": None, "started_at": None, "state": "pending"}
-                    return (
-                        {
-                            "error": "Analysis is being queued and scheduled for processing",
-                            "status": status,
-                            "parameters": parameters,
-                        },
-                        202,
-                    )
+                    return _construct_status_queued(analysis_id), 202
 
         return {"error": f"Requested result for analysis {analysis_id!r} was not found", "parameters": parameters}, 404
 
@@ -1061,6 +1069,22 @@ def _get_status(node_name: str, analysis_id: str, namespace: str) -> typing.Tupl
     else:
         result.update({"status": status})
         return result, 200
+
+
+def _get_status_with_queued(
+    adapter: typing.Union[AdvisersResultsStore, ProvenanceResultsStore, AnalysisResultsStore],
+    node_name: str,
+    analysis_id: str,
+    namespace: str,
+) -> typing.Tuple[typing.Dict[str, typing.Any,], int]:
+    """Get status of an analysis, check queued requests as well."""
+    result, status_code = _get_status(node_name=node_name, analysis_id=analysis_id, namespace=namespace)
+    if status_code == 404:
+        adapter_instance = adapter()
+        adapter_instance.connect()
+        if adapter_instance.request_exists(analysis_id):
+            return _construct_status_queued(analysis_id), 200
+    return result, status_code
 
 
 def _send_schedule_message(message_contents: dict, message_type: MessageBase):
