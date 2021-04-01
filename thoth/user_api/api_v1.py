@@ -97,8 +97,8 @@ def _create_metrics_service_cache_hits(services: typing.List[str]):
         )
 
         service_request_cache_hit_rate[service]["unauthenticated"] = metrics.counter(
-            "thoth_cache_hit_rate",
-            "Thoth cache hit rate",
+            "thoth_user_api_cache_hit_rate",
+            "Thoth User API cache hit rate",
             is_authenticated="False",
             service=service,
             env=Configuration.THOTH_DEPLOYMENT_NAME,
