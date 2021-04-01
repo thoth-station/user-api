@@ -43,6 +43,7 @@ from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.python import Project
 from thoth.python.exceptions import ThothPythonException
 from thoth.user_api.payload_filter import PayloadProcess
+from thoth.user_api.openapi_server import metrics
 
 import thoth.messaging.producer as producer
 from thoth.messaging import MessageBase
@@ -79,6 +80,39 @@ _ADVISE_PROTECTED_FIELDS = frozenset(
 )
 
 _PROVENANCE_CHECK_PROTECTED_FIELDS = frozenset({"kebechet_metadata"})
+
+_METRIC_CACHE_HIT_ADVISER_AUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="True",
+    service="adviser",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
+_METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="False",
+    service="adviser",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
+_METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="True",
+    service="provenance-checker",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
+_METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="False",
+    service="provenance-checker",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
 
 p = producer.create_producer()
 
@@ -306,6 +340,14 @@ def post_provenance_python(
         try:
             cache_record = cache.retrieve_document_record(cached_document_id)
             if cache_record["timestamp"] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
+                try:
+                    if authenticated:
+                        _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED.inc()
+                    else:
+                        _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED.inc()
+                except Exception as metric_exc:
+                    _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
+
                 return {"analysis_id": cache_record.pop("analysis_id"), "cached": True, "parameters": parameters}, 202
         except CacheMiss:
             pass
@@ -459,6 +501,15 @@ def post_advise_python(
         try:
             cache_record = adviser_cache.retrieve_document_record(cached_document_id)
             if cache_record["timestamp"] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
+
+                try:
+                    if authenticated:
+                        _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED.inc()
+                    else:
+                        _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED.inc()
+                except Exception as metric_exc:
+                    _LOGGER.error("Failed to set metric for adviser cache hits: %r", metric_exc)
+
                 return {"analysis_id": cache_record.pop("analysis_id"), "cached": True, "parameters": parameters}, 202
         except CacheMiss:
             pass
@@ -901,7 +952,7 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
         return
 
     payload["webhook_payload"] = webhook_payload
-    payload["job_id"] = _OPENSHIFT.generate_id("kebechet-job")
+    payload["job_id"] = _OPENSHIFT.generate_id("kebechet-job")  # type: ignore
     return _send_schedule_message(payload, KebechetTriggerMessage)
 
 
