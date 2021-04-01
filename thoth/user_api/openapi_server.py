@@ -132,6 +132,38 @@ schema_revision_metric = metrics.info(
     env=Configuration.THOTH_DEPLOYMENT_NAME,
 )
 
+_METRIC_CACHE_HIT_ADVISER_AUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="True",
+    service="adviser",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
+_METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="False",
+    service="adviser",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
+_METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="True",
+    service="provenance-checker",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
+_METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED = metrics.counter(
+    "thoth_user_api_cache_hit_rate",
+    "Thoth User API cache hit rate",
+    is_authenticated="False",
+    service="provenance-checker",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
 
 @application.before_first_request
 def before_first_request_callback():
