@@ -116,12 +116,12 @@ _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED = metrics.counter(
 _CACHE_HITS_METRICS = {
     "adviser": {
         "authenticated": _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED,
-        "unauthenticated": _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED
+        "unauthenticated": _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED,
     },
-    "provenance-checker" : {
+    "provenance-checker": {
         "authenticated": _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED,
-        "unauthenticated": _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED
-    }
+        "unauthenticated": _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED,
+    },
 }
 
 p = producer.create_producer()
@@ -361,7 +361,7 @@ def post_provenance_python(
                 try:
                     _set_metrics_service_cache_hit(service="provenance-checker", authenticated=authenticated)
                 except Exception as metric_exc:
-                    _LOGGER.warning("Failed to set metric for cache hits: %r", metric_exc)
+                    _LOGGER.error("Failed to set metric for cache hits: %r", metric_exc)
 
                 return {"analysis_id": cache_record.pop("analysis_id"), "cached": True, "parameters": parameters}, 202
         except CacheMiss:
@@ -515,7 +515,7 @@ def post_advise_python(
                 try:
                     _set_metrics_service_cache_hit(service="adviser", authenticated=authenticated)
                 except Exception as metric_exc:
-                    _LOGGER.warning("Failed to set metric for cache hits: %r", metric_exc)
+                    _LOGGER.error("Failed to set metric for cache hits: %r", metric_exc)
 
                 return {"analysis_id": cache_record.pop("analysis_id"), "cached": True, "parameters": parameters}, 202
         except CacheMiss:
