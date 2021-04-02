@@ -239,29 +239,32 @@ def api_liveness():
 
 @app.route("/api/v1/provenance/python")
 @app.after_request
-def expose_metrics_provenance(response):
+def expose_cache_hit_metrics_provenance(response):
     """Run after a provenance request, as long as no exceptions occur."""
-    try:
-        if response["authenticated"]:
-            _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED.inc()
-        else:
-            _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED.inc()
-    except Exception as metric_exc:
-        _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
+    if response["cached"]:
+        try:
+            if response["authenticated"]:
+                _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED.inc()
+            else:
+                _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED.inc()
+        except Exception as metric_exc:
+            _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
+
     return response
 
 
 @app.route("/api/v1/advise/python")
 @app.after_request
-def expose_metrics_advise(response):
+def expose_cache_hit_metrics_advise(response):
     """Run after a advise request, as long as no exceptions occur."""
-    try:
-        if response["authenticated"]:
-            _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED.inc()
-        else:
-            _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED.inc()
-    except Exception as metric_exc:
-        _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
+    if response["cached"]:
+        try:
+            if response["authenticated"]:
+                _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED.inc()
+            else:
+                _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED.inc()
+        except Exception as metric_exc:
+            _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
     return response
 
 
