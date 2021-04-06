@@ -299,7 +299,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AnalysisResponse"
+                $ref: "#/components/schemas/AnalysisWithAuthenticationResponse"
         "400":
           description: On invalid request.
           content:
@@ -657,7 +657,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AnalysisResponse"
+                $ref: "#/components/schemas/AnalysisWithAuthenticationResponse"
         "400":
           description: On invalid request.
           content:
@@ -1550,6 +1550,31 @@ components:
         buildlog_document_id:
           type: string
           description: Document identifier for the stored build log.
+    AnalysisWithAuthenticationResponse:
+      type: object
+      description: Response for a submitted analysis.
+      properties:
+        analysis_id:
+          type: string
+          description: >
+            An id of submitted analysis for checking its status and its results.
+        parameters:
+          type: object
+          description: >
+            Parameters echoed back to user (with default parameters if omitted).
+        cached:
+          type: boolean
+          description: >
+            If set to true the given analysis was picked from cache.
+        authenticated:
+          type: boolean
+          description: >
+            If set to true the given analysis was authenticated.
+      required:
+        - analysis_id
+        - parameters
+        - cached
+        - authenticated
     AnalysisResponse:
       type: object
       description: Response for a submitted analysis.
