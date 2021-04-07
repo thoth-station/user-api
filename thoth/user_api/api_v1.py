@@ -254,19 +254,20 @@ def get_analyze_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing
 
 
 def post_provenance_python(
-    application_stack: dict,
+    input: dict,
     debug: bool = False,
     force: bool = False,
     origin: str = None,
-    justification: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
-    stack_info: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
-    # Must be set to set protected fields
     token: typing.Optional[str] = None,
-    # Protected fields
-    kebechet_metadata: typing.Optional[typing.Dict[str, typing.Any]] = None,
 ):
     """Check provenance for the given application stack."""
     parameters = locals()
+    # Translate request body parameters.
+    parameters["application_stack"] = parameters["input"].pop("application_stack", None)
+    parameters["justification"] = parameters["input"].pop("justification", None)
+    parameters["stack_info"] = parameters["input"].pop("stack_info", None)
+    parameters["kebechet_metadata"] = parameters["input"].pop("kebechet_metadata", None)
+
     token = parameters.pop("token", None)
 
     authenticated = False
@@ -283,7 +284,9 @@ def post_provenance_python(
     from .openapi_server import GRAPH
 
     try:
-        project = Project.from_strings(application_stack["requirements"], application_stack["requirements_lock"])
+        project = Project.from_strings(
+            parameters["application_stack"]["requirements"], parameters["application_stack"]["requirements_lock"]
+        )
     except ThothPythonException as exc:
         return {"parameters": parameters, "error": f"Invalid application stack supplied: {str(exc)}"}, 400
     except Exception:
@@ -372,11 +375,7 @@ def post_advise_python(
     force: bool = False,
     dev: bool = False,
     origin: typing.Optional[str] = None,
-    justification: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
-    stack_info: typing.Optional[typing.List[typing.Dict[str, typing.Any]]] = None,
-    # Must be set to set protected fields
     token: typing.Optional[str] = None,
-    # These are protected fields, internal secret must match
     github_event_type: typing.Optional[str] = None,
     github_check_run_id: typing.Optional[int] = None,
     github_installation_id: typing.Optional[int] = None,
@@ -385,7 +384,12 @@ def post_advise_python(
 ):
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
-    parameters["application_stack"] = parameters["input"].pop("application_stack")
+    # Translate request body parameters.
+    parameters["application_stack"] = parameters["input"].pop("application_stack", None)
+    parameters["justification"] = parameters["input"].pop("justification", None)
+    parameters["stack_info"] = parameters["input"].pop("stack_info", None)
+    parameters["kebechet_metadata"] = parameters["input"].pop("kebechet_metadata", None)
+
     token = parameters.pop("token", None)
 
     authenticated = False
