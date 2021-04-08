@@ -226,7 +226,7 @@ def api_liveness():
 
 
 @app.route("/api/v1/provenance/python")
-@app.after_request
+@application.after_request
 def expose_cache_hit_metrics_provenance(response):
     """Run after a provenance request, as long as no exceptions occur."""
     if response.status_code == 202 and response.data["cached"]:
@@ -242,7 +242,7 @@ def expose_cache_hit_metrics_provenance(response):
 
 
 @app.route("/api/v1/advise/python")
-@app.after_request
+@application.after_request
 def expose_cache_hit_metrics_advise(response):
     """Run after a advise request, as long as no exceptions occur."""
     if response.status_code == 202 and response.data["cached"]:
