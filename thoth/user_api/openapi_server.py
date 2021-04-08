@@ -105,27 +105,23 @@ metrics.info("user_api_info", "User API info", version=__service_version__)
 _API_GAUGE_METRIC = metrics.info("user_api_schema_up2date", "User API schema up2date")
 
 _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED = metrics.counter(
-    "thoth_user_api_cache_hit_rate",
-    "Thoth User API cache hit rate",
-    labels={"is_authenticated": "True", "service": "adviser", "env": Configuration.THOTH_DEPLOYMENT_NAME},
+    "thoth_user_api_adviser_authenticated_cache_hit_rate",
+    "Thoth User API Adviser Authenticated cache hit rate",
 )
 
 _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED = metrics.counter(
-    "thoth_user_api_cache_hit_rate",
-    "Thoth User API cache hit rate",
-    labels={"is_authenticated": "False", "service": "adviser", "env": Configuration.THOTH_DEPLOYMENT_NAME},
+    "thoth_user_api_adviser_unauthenticated_cache_hit_rate",
+    "Thoth User API Adviser Unauthenticated cache hit rate",
 )
 
 _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED = metrics.counter(
-    "thoth_user_api_cache_hit_rate",
-    "Thoth User API cache hit rate",
-    labels={"is_authenticated": "True", "service": "provenance-checker", "env": Configuration.THOTH_DEPLOYMENT_NAME},
+    "thoth_user_api_provenance_checker_authenticated_cache_hit_rate",
+    "Thoth User API Provenance Checker Authenticated cache hit rate",
 )
 
 _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED = metrics.counter(
-    "thoth_user_api_cache_hit_rate",
-    "Thoth User API cache hit rate",
-    labels={"is_authenticated": "False", "service": "provenance-checker", "env": Configuration.THOTH_DEPLOYMENT_NAME},
+    "thoth_user_api_provenance_checker_unauthenticated_cache_hit_rate",
+    "Thoth User API Provenance Checker Unauthenticated cache hit rate",
 )
 
 
