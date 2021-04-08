@@ -230,7 +230,7 @@ def api_liveness():
 @application.after_request
 def expose_cache_hit_metrics_provenance(response):
     """Run after a provenance request, as long as no exceptions occur."""
-    data = json.loads(response.text)
+    data = json.loads(response.get_data())
     if response.status_code == 202 and data["cached"]:
         try:
             if data["authenticated"]:
@@ -247,7 +247,7 @@ def expose_cache_hit_metrics_provenance(response):
 @application.after_request
 def expose_cache_hit_metrics_advise(response):
     """Run after a advise request, as long as no exceptions occur."""
-    data = json.loads(response.text)
+    data = json.loads(response.get_data())
     if response.status_code == 202 and data["cached"]:
         try:
             if data["authenticated"]:
