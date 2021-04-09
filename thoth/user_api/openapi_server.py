@@ -235,6 +235,9 @@ def expose_cache_hit_metrics(response):
     if response.status_code == 202:
         data = response.get_json()
 
+        if "analysis_id" not in data:
+            return response
+
         if "adviser" in data["analysis_id"]:
             if data["cached"]:
                 try:
