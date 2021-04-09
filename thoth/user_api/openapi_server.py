@@ -44,6 +44,7 @@ from thoth.storages import GraphDatabase
 from thoth.storages.exceptions import DatabaseNotInitialized
 from thoth.user_api import __version__
 from thoth.user_api.configuration import Configuration
+from thoth.user_api.metrics import MetricsValues
 
 
 # Configure global application logging using Thoth's init_logging.
@@ -103,6 +104,7 @@ application.secret_key = Configuration.APP_SECRET_KEY
 metrics.info("user_api_info", "User API info", version=__service_version__)
 _API_GAUGE_METRIC = metrics.info("user_api_schema_up2date", "User API schema up2date")
 
+metrics_values = MetricsValues()
 metrics_cache_hit_adviser_authenticated = metrics.info(
     "thoth_user_api_adviser_authenticated_cache_hit_rate",
     "Thoth User API Adviser Authenticated cache hit rate",
@@ -233,14 +235,14 @@ def expose_cache_hit_metrics_provenance(response):
         if data["cached"]:
             try:
                 if data["authenticated"]:
-                    Configuration.METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED += 1
+                    metrics_values.update_provenance_checker_cache_hit_metric(is_auth=True)
                     metrics_cache_hit_provenance_checker_authenticated.set(
-                        Configuration.METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED
+                        metrics_values.metric_cache_hit_provenance_checker_auth
                     )
                 else:
-                    Configuration.METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED += 1
+                    metrics_values.update_provenance_checker_cache_hit_metric()
                     metrics_cache_hit_provenance_checker_unauthenticated.set(
-                        Configuration.METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED
+                        metrics_values.metric_cache_hit_provenance_checker_unauth
                     )
             except Exception as metric_exc:
                 _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
@@ -257,13 +259,11 @@ def expose_cache_hit_metrics_advise(response):
         if data["cached"]:
             try:
                 if data["authenticated"]:
-                    Configuration.METRIC_CACHE_HIT_ADVISER_AUTHENTICATED += 1
-                    metrics_cache_hit_adviser_authenticated.set(Configuration.METRIC_CACHE_HIT_ADVISER_AUTHENTICATED)
+                    metrics_values.update_adviser_cache_hit_metric(is_auth=True)
+                    metrics_values.metric_cache_hit_adviser_auth
                 else:
-                    Configuration.METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED += 1
-                    metrics_cache_hit_adviser_unauthenticated.set(
-                        Configuration.METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED
-                    )
+                    metrics_values.update_adviser_cache_hit_metric()
+                    metrics_cache_hit_adviser_unauthenticated.set(metrics_values.metric_cache_hit_adviser_unauth)
             except Exception as metric_exc:
                 _LOGGER.error("Failed to set metric for adviser cache hits: %r", metric_exc)
     return response
