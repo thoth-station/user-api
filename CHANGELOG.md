@@ -2269,3 +2269,22 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Instantiate protected field listing once
 * protect fields for post provenance and advise (#1336)
 * :arrow_up: Automatic update of dependencies by Kebechet (#1352)
+
+## Release 0.24.0 (2021-04-09T14:41:05)
+### Features
+* Check if analysis_id is present (#1378)
+* remove input for post_provenance (#1377)
+* :arrow_up: Automatic update of dependencies by Kebechet (#1376)
+* Generalize _send_schedule_message method to consider authentication (#1372)
+* Do cache hit only for accepted requests (#1373)
+* :arrow_up: Automatic update of dependencies by Kebechet (#1374)
+* Do not provide objects as query parameters (#1365)
+* :arrow_up: Automatic update of dependencies by Kebechet (#1371)
+* Move metrics creation (#1369)
+* Provide information about queued analyses on status endpoints (#1368)
+* Introduce cache hit metric (#1350)
+### Bug Fixes
+* Manipulate with cache metrics only if not force was supplied (#1379)
+* Drop any metadata associated with the request when providing results (#1363)
+### Improvements
+* Remove unused function (#1366)
