@@ -103,23 +103,21 @@ application.secret_key = Configuration.APP_SECRET_KEY
 metrics.info("user_api_info", "User API info", version=__service_version__)
 _API_GAUGE_METRIC = metrics.info("user_api_schema_up2date", "User API schema up2date")
 
-_METRIC_CACHE_HIT_ADVISER_AUTHENTICATED = 0
 metrics_cache_hit_adviser_authenticated = metrics.info(
     "thoth_user_api_adviser_authenticated_cache_hit_rate",
     "Thoth User API Adviser Authenticated cache hit rate",
 )
-_METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED = 0
+
 metrics_cache_hit_adviser_unauthenticated = metrics.info(
     "thoth_user_api_adviser_unauthenticated_cache_hit_rate",
     "Thoth User API Adviser Unauthenticated cache hit rate",
 )
-_METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED = 0
 
 metrics_cache_hit_provenance_checker_authenticated = metrics.info(
     "thoth_user_api_provenance_checker_authenticated_cache_hit_rate",
     "Thoth User API Provenance Checker Authenticated cache hit rate",
 )
-_METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED = 0
+
 metrics_cache_hit_provenance_checker_unauthenticated = metrics.info(
     "thoth_user_api_provenance_checker_unauthenticated_cache_hit_rate",
     "Thoth User API Provenance Checker Unauthenticated cache hit rate",
@@ -235,11 +233,15 @@ def expose_cache_hit_metrics_provenance(response):
         if data["cached"]:
             try:
                 if data["authenticated"]:
-                    _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED += 1
-                    metrics_cache_hit_provenance_checker_authenticated.set(_METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED)
+                    Configuration.METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED += 1
+                    metrics_cache_hit_provenance_checker_authenticated.set(
+                        Configuration.METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED
+                    )
                 else:
-                    _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED += 1
-                    metrics_cache_hit_provenance_checker_unauthenticated.set(_METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED)
+                    Configuration.METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED += 1
+                    metrics_cache_hit_provenance_checker_unauthenticated.set(
+                        Configuration.METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED
+                    )
             except Exception as metric_exc:
                 _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
 
@@ -255,11 +257,13 @@ def expose_cache_hit_metrics_advise(response):
         if data["cached"]:
             try:
                 if data["authenticated"]:
-                    _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED += 1
-                    metrics_cache_hit_adviser_authenticated.set(_METRIC_CACHE_HIT_ADVISER_AUTHENTICATED)
+                    Configuration.METRIC_CACHE_HIT_ADVISER_AUTHENTICATED += 1
+                    metrics_cache_hit_adviser_authenticated.set(Configuration.METRIC_CACHE_HIT_ADVISER_AUTHENTICATED)
                 else:
-                    _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED += 1
-                    metrics_cache_hit_adviser_unauthenticated.set(_METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED)
+                    Configuration.METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED += 1
+                    metrics_cache_hit_adviser_unauthenticated.set(
+                        Configuration.METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED
+                    )
             except Exception as metric_exc:
                 _LOGGER.error("Failed to set metric for adviser cache hits: %r", metric_exc)
     return response
