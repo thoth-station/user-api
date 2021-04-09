@@ -228,13 +228,13 @@ def api_liveness():
     """Report liveness for OpenShift readiness probe."""
     return _healthiness()
 
-
 @app.route("/api/v1/provenance/python")
 @application.after_request
 def expose_cache_hit_metrics_provenance(response):
     """Run after a provenance request, as long as no exceptions occur."""
     if response.status_code == 202:
         data = response.get_json()
+        _LOGGER.info("accessed provenance checker")
         if data["cached"]:
             try:
                 if data["authenticated"]:
@@ -259,11 +259,12 @@ def expose_cache_hit_metrics_advise(response):
     """Run after a advise request, as long as no exceptions occur."""
     if response.status_code == 202:
         data = response.get_json()
+        _LOGGER.info("accessed adviser")
         if data["cached"]:
             try:
                 if data["authenticated"]:
                     metrics_values.update_adviser_cache_hit_metric(is_auth=True)
-                    metrics_values.metric_cache_hit_adviser_auth
+                    metrics_cache_hit_adviser_authenticated.set(metrics_values.metric_cache_hit_adviser_auth)
                 else:
                     metrics_values.update_adviser_cache_hit_metric()
                     metrics_cache_hit_adviser_unauthenticated.set(metrics_values.metric_cache_hit_adviser_unauth)

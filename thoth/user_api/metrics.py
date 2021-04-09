@@ -36,14 +36,12 @@ class MetricsValues(object):
         """Update adviser cache hit metric values."""
         if is_auth:
             self.metric_cache_hit_adviser_auth += 1
-            return
-
-        self.metric_cache_hit_adviser_unauth += 1
+        else:
+            self.metric_cache_hit_adviser_unauth += 1
 
     def update_provenance_checker_cache_hit_metric(self, is_auth: bool = False):
         """Update provenance checker cache hit metric values."""
         if is_auth:
             self.metric_cache_hit_provenance_checker_auth += 1
-            return
-
-        self.metric_cache_hit_provenance_checker_unauth += 1
+        else:
+            self.metric_cache_hit_provenance_checker_unauth += 1
