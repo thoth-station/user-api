@@ -20,6 +20,7 @@
 
 import os
 import sys
+import json
 import logging
 import traceback
 from datetime import datetime
@@ -230,9 +231,10 @@ def api_liveness():
 def expose_cache_hit_metrics_provenance(response):
     """Run after a provenance request, as long as no exceptions occur."""
     if response.status_code == 202:
-        if response.data["cached"]:
+        data = response.get_json()
+        if data["cached"]:
             try:
-                if response.data["authenticated"]:
+                if data["authenticated"]:
                     _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED.inc()
                 else:
                     _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED.inc()
@@ -247,9 +249,11 @@ def expose_cache_hit_metrics_provenance(response):
 def expose_cache_hit_metrics_advise(response):
     """Run after a advise request, as long as no exceptions occur."""
     if response.status_code == 202:
-        if response.data["cached"]:
+        data = response.get_json()
+        _LOGGER.info(data)
+        if data["cached"]:
             try:
-                if response.data["authenticated"]:
+                if data["authenticated"]:
                     _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED.inc()
                 else:
                     _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED.inc()
