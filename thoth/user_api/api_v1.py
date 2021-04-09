@@ -294,6 +294,7 @@ def post_provenance_python(
 
     parameters["whitelisted_sources"] = list(GRAPH.get_python_package_index_urls_all())
 
+    parameters.pop("input")
     force = parameters.pop("force", False)
     if authenticated:
         cached_document_id = _compute_digest_params(
