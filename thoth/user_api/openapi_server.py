@@ -44,6 +44,7 @@ from thoth.storages import GraphDatabase
 from thoth.storages.exceptions import DatabaseNotInitialized
 from thoth.user_api import __version__
 from thoth.user_api.configuration import Configuration
+from thoth.user_api.metrics import MetricsValues
 
 
 # Configure global application logging using Thoth's init_logging.
@@ -81,7 +82,6 @@ app.add_api(
     validate_responses=bool(int(os.getenv("THOTH_API_VALIDATE_RESPONSES", 0))),
 )
 
-
 application = app.app
 
 # create metrics and manager
@@ -104,37 +104,29 @@ application.secret_key = Configuration.APP_SECRET_KEY
 metrics.info("user_api_info", "User API info", version=__service_version__)
 _API_GAUGE_METRIC = metrics.info("user_api_schema_up2date", "User API schema up2date")
 
-_METRIC_CACHE_HIT_ADVISER_AUTHENTICATED = metrics.counter(
-    "thoth_user_api_cache_hit_rate",
-    "Thoth User API cache hit rate",
-    is_authenticated="True",
-    service="adviser",
-    env=Configuration.THOTH_DEPLOYMENT_NAME,
-)
+metrics_values = MetricsValues()
 
-_METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED = metrics.counter(
-    "thoth_user_api_cache_hit_rate",
-    "Thoth User API cache hit rate",
-    is_authenticated="False",
-    service="adviser",
-    env=Configuration.THOTH_DEPLOYMENT_NAME,
+# Set initial values.
+metrics_cache_hit_adviser_authenticated = metrics.info(
+    "thoth_user_api_adviser_authenticated_cache_hit_rate",
+    "Thoth User API Adviser Authenticated cache hit rate",
 )
-
-_METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED = metrics.counter(
-    "thoth_user_api_cache_hit_rate",
-    "Thoth User API cache hit rate",
-    is_authenticated="True",
-    service="provenance-checker",
-    env=Configuration.THOTH_DEPLOYMENT_NAME,
+metrics_cache_hit_adviser_authenticated.set(metrics_values.metric_cache_hit_adviser_auth)
+metrics_cache_hit_adviser_unauthenticated = metrics.info(
+    "thoth_user_api_adviser_unauthenticated_cache_hit_rate",
+    "Thoth User API Adviser Unauthenticated cache hit rate",
 )
-
-_METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED = metrics.counter(
-    "thoth_user_api_cache_hit_rate",
-    "Thoth User API cache hit rate",
-    is_authenticated="False",
-    service="provenance-checker",
-    env=Configuration.THOTH_DEPLOYMENT_NAME,
+metrics_cache_hit_adviser_unauthenticated.set(metrics_values.metric_cache_hit_adviser_unauth)
+metrics_cache_hit_provenance_checker_authenticated = metrics.info(
+    "thoth_user_api_provenance_checker_authenticated_cache_hit_rate",
+    "Thoth User API Provenance Checker Authenticated cache hit rate",
 )
+metrics_cache_hit_provenance_checker_authenticated.set(metrics_values.metric_cache_hit_provenance_checker_auth)
+metrics_cache_hit_provenance_checker_unauthenticated = metrics.info(
+    "thoth_user_api_provenance_checker_unauthenticated_cache_hit_rate",
+    "Thoth User API Provenance Checker Unauthenticated cache hit rate",
+)
+metrics_cache_hit_provenance_checker_unauthenticated.set(metrics_values.metric_cache_hit_provenance_checker_unauth)
 
 
 class _GraphDatabaseWrapper:
@@ -237,34 +229,40 @@ def api_liveness():
     return _healthiness()
 
 
-@app.route("/api/v1/provenance/python")
-@app.after_request
-def expose_cache_hit_metrics_provenance(response):
+@application.after_request
+def expose_cache_hit_metrics(response):
     """Run after a provenance request, as long as no exceptions occur."""
-    if response.status_code == 202 and response.data["cached"]:
-        try:
-            if response.data["authenticated"]:
-                _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED.inc()
-            else:
-                _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED.inc()
-        except Exception as metric_exc:
-            _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
+    if response.status_code == 202:
+        data = response.get_json()
 
-    return response
+        if "adviser" in data["analysis_id"]:
+            if data["cached"]:
+                try:
+                    if data["authenticated"]:
+                        metrics_values.update_adviser_cache_hit_metric(is_auth=True)
+                        metrics_cache_hit_adviser_authenticated.set(metrics_values.metric_cache_hit_adviser_auth)
+                    else:
+                        metrics_values.update_adviser_cache_hit_metric()
+                        metrics_cache_hit_adviser_unauthenticated.set(metrics_values.metric_cache_hit_adviser_unauth)
+                except Exception as metric_exc:
+                    _LOGGER.error("Failed to set metric for adviser cache hits: %r", metric_exc)
 
+        if "provenance-checker" in data["analysis_id"]:
+            if data["cached"]:
+                try:
+                    if data["authenticated"]:
+                        metrics_values.update_provenance_checker_cache_hit_metric(is_auth=True)
+                        metrics_cache_hit_provenance_checker_authenticated.set(
+                            metrics_values.metric_cache_hit_provenance_checker_auth
+                        )
+                    else:
+                        metrics_values.update_provenance_checker_cache_hit_metric()
+                        metrics_cache_hit_provenance_checker_unauthenticated.set(
+                            metrics_values.metric_cache_hit_provenance_checker_unauth
+                        )
+                except Exception as metric_exc:
+                    _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
 
-@app.route("/api/v1/advise/python")
-@app.after_request
-def expose_cache_hit_metrics_advise(response):
-    """Run after a advise request, as long as no exceptions occur."""
-    if response.status_code == 202 and response.data["cached"]:
-        try:
-            if response.data["authenticated"]:
-                _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED.inc()
-            else:
-                _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED.inc()
-        except Exception as metric_exc:
-            _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
     return response
 
 

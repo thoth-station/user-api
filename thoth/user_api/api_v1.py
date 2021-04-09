@@ -324,7 +324,9 @@ def post_provenance_python(
     parameters["job_id"] = _OPENSHIFT.generate_id("provenance-checker")
     message = dict(**parameters, authenticated=authenticated)
     message.pop("application_stack")  # Passed via Ceph.
-    response, status = _send_schedule_message(message, ProvenanceCheckerTriggerMessage)
+    response, status = _send_schedule_message(
+        message, ProvenanceCheckerTriggerMessage, with_authentication=True, authenticated=authenticated
+    )
 
     if status == 202:
         cache.store_document_record(
@@ -490,7 +492,9 @@ def post_advise_python(
     message.pop("application_stack")
     message.pop("runtime_environment")
     message.pop("library_usage")
-    response, status = _send_schedule_message(message, AdviserTriggerMessage)
+    response, status = _send_schedule_message(
+        message, AdviserTriggerMessage, with_authentication=True, authenticated=authenticated
+    )
 
     if status == 202:
         adviser_cache.store_document_record(
@@ -1051,12 +1055,26 @@ def _get_status_with_queued(
     return result, status_code
 
 
-def _send_schedule_message(message_contents: dict, message_type: MessageBase):
+def _send_schedule_message(
+    message_contents: dict, message_type: MessageBase, with_authentication: bool = False, authenticated: bool = False
+):
     message_contents["service_version"] = SERVICE_VERSION
     message_contents["component_name"] = COMPONENT_NAME
     message = message_type.MessageContents(**message_contents)
     producer.publish_to_topic(p, message_type(), message)
     if "job_id" in message_contents:
+
+        if with_authentication:
+            return (
+                {
+                    "analysis_id": message_contents["job_id"],
+                    "cached": False,
+                    "authenticated": authenticated,
+                    "parameters": message_contents,
+                },
+                202,
+            )
+
         return (
             {
                 "analysis_id": message_contents["job_id"],
