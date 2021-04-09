@@ -235,7 +235,7 @@ def expose_cache_hit_metrics(response):
     if response.status_code == 202:
         data = response.get_json()
 
-        if "adviser" in data['analysis_id']:
+        if "adviser" in data["analysis_id"]:
             if data["cached"]:
                 try:
                     if data["authenticated"]:
@@ -247,7 +247,7 @@ def expose_cache_hit_metrics(response):
                 except Exception as metric_exc:
                     _LOGGER.error("Failed to set metric for adviser cache hits: %r", metric_exc)
 
-        if "provenance-checker" in data['analysis_id']:
+        if "provenance-checker" in data["analysis_id"]:
             if data["cached"]:
                 try:
                     if data["authenticated"]:
