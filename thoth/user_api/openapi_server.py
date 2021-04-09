@@ -22,7 +22,6 @@ import os
 import sys
 import logging
 import traceback
-import json
 from datetime import datetime
 from typing import List
 
@@ -230,15 +229,15 @@ def api_liveness():
 @application.after_request
 def expose_cache_hit_metrics_provenance(response):
     """Run after a provenance request, as long as no exceptions occur."""
-    data = json.loads(response.get_data())
-    if response.status_code == 202 and data["cached"]:
-        try:
-            if data["authenticated"]:
-                _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED.inc()
-            else:
-                _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED.inc()
-        except Exception as metric_exc:
-            _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
+    if response.status_code == 202:
+        if response.data["cached"]:
+            try:
+                if response.data["authenticated"]:
+                    _METRIC_CACHE_HIT_PROVENANCE_CHECKER_AUTHENTICATED.inc()
+                else:
+                    _METRIC_CACHE_HIT_PROVENANCE_CHECKER_UNHAUTHENTICATED.inc()
+            except Exception as metric_exc:
+                _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
 
     return response
 
@@ -247,15 +246,15 @@ def expose_cache_hit_metrics_provenance(response):
 @application.after_request
 def expose_cache_hit_metrics_advise(response):
     """Run after a advise request, as long as no exceptions occur."""
-    data = json.loads(response.get_data())
-    if response.status_code == 202 and data["cached"]:
-        try:
-            if data["authenticated"]:
-                _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED.inc()
-            else:
-                _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED.inc()
-        except Exception as metric_exc:
-            _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
+    if response.status_code == 202:
+        if response.data["cached"]:
+            try:
+                if response.data["authenticated"]:
+                    _METRIC_CACHE_HIT_ADVISER_AUTHENTICATED.inc()
+                else:
+                    _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED.inc()
+            except Exception as metric_exc:
+                _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
     return response
 
 
