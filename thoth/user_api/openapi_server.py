@@ -105,25 +105,28 @@ metrics.info("user_api_info", "User API info", version=__service_version__)
 _API_GAUGE_METRIC = metrics.info("user_api_schema_up2date", "User API schema up2date")
 
 metrics_values = MetricsValues()
+
+# Set initial values.
 metrics_cache_hit_adviser_authenticated = metrics.info(
     "thoth_user_api_adviser_authenticated_cache_hit_rate",
     "Thoth User API Adviser Authenticated cache hit rate",
 )
-
+metrics_cache_hit_adviser_authenticated.set(metrics_values.metric_cache_hit_adviser_auth)
 metrics_cache_hit_adviser_unauthenticated = metrics.info(
     "thoth_user_api_adviser_unauthenticated_cache_hit_rate",
     "Thoth User API Adviser Unauthenticated cache hit rate",
 )
-
+metrics_cache_hit_adviser_unauthenticated.set(metrics_values.metric_cache_hit_adviser_unauth)
 metrics_cache_hit_provenance_checker_authenticated = metrics.info(
     "thoth_user_api_provenance_checker_authenticated_cache_hit_rate",
     "Thoth User API Provenance Checker Authenticated cache hit rate",
 )
-
+metrics_cache_hit_provenance_checker_authenticated.set(metrics_values.metric_cache_hit_provenance_checker_auth)
 metrics_cache_hit_provenance_checker_unauthenticated = metrics.info(
     "thoth_user_api_provenance_checker_unauthenticated_cache_hit_rate",
     "Thoth User API Provenance Checker Unauthenticated cache hit rate",
 )
+metrics_cache_hit_provenance_checker_unauthenticated.set(metrics_values.metric_cache_hit_provenance_checker_unauth)
 
 
 class _GraphDatabaseWrapper:
