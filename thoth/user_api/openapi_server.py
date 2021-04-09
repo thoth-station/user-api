@@ -20,7 +20,6 @@
 
 import os
 import sys
-import json
 import logging
 import traceback
 from datetime import datetime
@@ -250,7 +249,6 @@ def expose_cache_hit_metrics_advise(response):
     """Run after a advise request, as long as no exceptions occur."""
     if response.status_code == 202:
         data = response.get_json()
-        _LOGGER.info(data)
         if data["cached"]:
             try:
                 if data["authenticated"]:
@@ -258,7 +256,7 @@ def expose_cache_hit_metrics_advise(response):
                 else:
                     _METRIC_CACHE_HIT_ADVISER_UNHAUTHENTICATED.inc()
             except Exception as metric_exc:
-                _LOGGER.error("Failed to set metric for provenance cache hits: %r", metric_exc)
+                _LOGGER.error("Failed to set metric for adviser cache hits: %r", metric_exc)
     return response
 
 
