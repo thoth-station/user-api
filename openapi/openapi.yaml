@@ -284,6 +284,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisWithAuthenticationResponse"
+        "401":
+          description: Unauthorized request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisUnauthorizedError"
         "400":
           description: On invalid request.
           content:
@@ -626,6 +632,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisWithAuthenticationResponse"
+        "401":
+          description: Unauthorized request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisUnauthorizedError"
         "400":
           description: On invalid request.
           content:
@@ -1646,6 +1658,14 @@ components:
         - base_image_analysis
         - output_image_analysis
         - build_log_analysis
+    AnalysisUnauthorizedError:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Unauthorized error information.
     AnalysisResponseError:
       type: object
       required:
