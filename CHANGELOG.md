@@ -2293,3 +2293,7 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 ### Features
 * :arrow_up: Automatic update of dependencies by Kebechet (#1383)
 * Add unauthorized reponse schema (#1382)
+
+## Release 0.24.2 (2021-04-13T20:59:46)
+### Features
+* Remove check on force (#1386)
