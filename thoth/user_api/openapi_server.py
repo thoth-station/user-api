@@ -239,7 +239,7 @@ def expose_cache_hit_metrics(response):
             return response
 
         if data["analysis_id"].startswith("adviser-"):
-            if data["cached"] and not data["parameters"]["force"]:
+            if data["cached"]:
                 try:
                     if data["authenticated"]:
                         metrics_values.update_adviser_cache_hit_metric(is_auth=True)
@@ -250,7 +250,7 @@ def expose_cache_hit_metrics(response):
                 except Exception as metric_exc:
                     _LOGGER.error("Failed to set metric for adviser cache hits: %r", metric_exc)
         elif data["analysis_id"].startswith("provenance-checker-"):
-            if data["cached"] and not data["parameters"]["force"]:
+            if data["cached"]:
                 try:
                     if data["authenticated"]:
                         metrics_values.update_provenance_checker_cache_hit_metric(is_auth=True)
