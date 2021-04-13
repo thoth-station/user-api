@@ -2288,3 +2288,8 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Drop any metadata associated with the request when providing results (#1363)
 ### Improvements
 * Remove unused function (#1366)
+
+## Release 0.24.1 (2021-04-13T09:26:07)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet (#1383)
+* Add unauthorized reponse schema (#1382)
