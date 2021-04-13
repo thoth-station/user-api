@@ -383,7 +383,6 @@ def post_advise_python(
     github_check_run_id: typing.Optional[int] = None,
     github_installation_id: typing.Optional[int] = None,
     github_base_repo_url: typing.Optional[str] = None,
-    kebechet_metadata: typing.Optional[dict] = None,
 ):
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
