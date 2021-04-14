@@ -2297,3 +2297,7 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 ## Release 0.24.2 (2021-04-13T20:59:46)
 ### Features
 * Remove check on force (#1386)
+
+## Release 0.24.3 (2021-04-14T13:47:01)
+### Features
+* Kebechet metadata is no longer query parameter (#1390)
