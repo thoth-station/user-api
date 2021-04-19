@@ -1294,8 +1294,8 @@ components:
     PythonStack:
       type: object
       required:
-        - "requirements"
-        - "requirements_lock"
+        - requirements
+        - requirements_lock
       properties:
         requirements:
           type: string
@@ -1430,6 +1430,11 @@ components:
       properties:
         application_stack:
           $ref: "#/components/schemas/PythonStack"
+        constraints:
+          type: string
+          description: Constraints to apply during the resolution.
+          example: 'flask>=1.0'
+          nullable: true
         runtime_environment:
           $ref: "#/components/schemas/RuntimeEnvironment"
         library_usage:
