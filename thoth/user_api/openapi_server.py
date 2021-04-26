@@ -282,20 +282,23 @@ def internal_server_error(exc):
     """Adjust 500 page to be consistent with errors reported back from API."""
     if _REPORT_EXCEPTIONS:
         exc_type, exc_value, exc_traceback = sys.exc_info()
-        return jsonify(
-            {
-                "error": "Internal server error occurred",
-                "details": {
-                    "type": exc.__class__.__name__,
-                    "datetime": datetime2datetime_str(datetime.utcnow()),
-                    "exception": {
-                        "cause": exc.__cause__,
-                        "context": exc.__context__,
-                        "traceback": traceback.format_exception(exc_type, exc_value, exc_traceback),
-                        "args": list(exc.args),
+        return (
+            jsonify(
+                {
+                    "error": "Internal server error occurred",
+                    "details": {
+                        "type": exc.__class__.__name__,
+                        "datetime": datetime2datetime_str(datetime.utcnow()),
+                        "exception": {
+                            "cause": exc.__cause__,
+                            "context": exc.__context__,
+                            "traceback": traceback.format_exception(exc_type, exc_value, exc_traceback),
+                            "args": list(exc.args),
+                        },
                     },
-                },
-            }
+                }
+            ),
+            500,
         )
     # Provide some additional information so we can easily find exceptions in logs (time and exception type).
     # Later we should remove exception type (for security reasons).
