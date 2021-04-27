@@ -41,6 +41,7 @@ from thoth.common import OpenShift
 from thoth.common import RuntimeEnvironment
 from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.python import Project
+from thoth.python import Constraints
 from thoth.python.exceptions import ThothPythonException
 from thoth.user_api.payload_filter import PayloadProcess
 
@@ -413,6 +414,11 @@ def post_advise_python(
     except Exception as exc:
         return {"parameters": parameters, "error": f"Failed to parse runtime environment: {str(exc)}"}
 
+    try:
+        constraints = Constraints.from_string(parameters["input"].pop("constraints", None) or "")
+    except Exception as exc:
+        return {"parameters": parameters, "error": f"Invalid constraints supplied: {str(exc)}"}, 400
+
     parameters["library_usage"] = parameters["input"].pop("library_usage", None)
     parameters.pop("input")
     force = parameters.pop("force", False)
@@ -426,6 +432,7 @@ def post_advise_python(
             parameters["application_stack"]["requirements"],
             parameters["application_stack"].get("requirements_lock"),
             runtime_environment=RuntimeEnvironment.from_dict(parameters["runtime_environment"]),
+            constraints=constraints,
         )
     except ThothPythonException as exc:
         return {"parameters": parameters, "error": f"Invalid application stack supplied: {str(exc)}"}, 400
@@ -486,12 +493,14 @@ def post_advise_python(
 
     # Enum type is checked on thoth-common side to avoid serialization issue in user-api side when providing response
     parameters["source_type"] = source_type.upper() if source_type else None
+    parameters["constraints"] = constraints.to_dict()
     parameters["job_id"] = _OPENSHIFT.generate_id("adviser")
     # Remove data passed via Ceph.
     message = dict(**parameters, authenticated=authenticated)
     message.pop("application_stack")
     message.pop("runtime_environment")
     message.pop("library_usage")
+    message.pop("constraints")
     response, status = _send_schedule_message(
         message, AdviserTriggerMessage, with_authentication=True, authenticated=authenticated
     )
