@@ -1,7 +1,7 @@
 ---
 repos:
   - repo: git://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.1.9
+    rev: v1.1.10
     hooks:
       - id: remove-tabs
 
@@ -23,7 +23,7 @@ repos:
       - id: debug-statements
 
   - repo: git://github.com/pycqa/pydocstyle.git
-    rev: 5.1.1
+    rev: 6.0.0
     hooks:
       - id: pydocstyle
 
@@ -43,14 +43,15 @@ repos:
         args: [--ignore-missing-imports]
 
   - repo: https://github.com/psf/black
-    rev: 20.8b1
+    rev: 21.4b0
     hooks:
       - id: black
 
   - repo: https://gitlab.com/PyCQA/flake8
-    rev: '3.8.4'
+    rev: "3.9.1"
     hooks:
       - id: flake8
-        additional_dependencies: ['pep8-naming']
+        additional_dependencies: ["pep8-naming"]
         # Ignore all format-related checks as Black takes care of those.
-        args: ['--ignore', 'E2,W5', '--select', 'E,W,F,N', '--max-line-length=120']
+        args:
+          ["--ignore", "E2,W5", "--select", "E,W,F,N", "--max-line-length=120"]
