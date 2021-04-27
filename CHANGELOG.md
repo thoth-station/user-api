@@ -2301,3 +2301,11 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 ## Release 0.24.3 (2021-04-14T13:47:01)
 ### Features
 * Kebechet metadata is no longer query parameter (#1390)
+
+## Release 0.24.4 (2021-04-27T11:05:49)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet
+* Remove unused dev dependencies (#1396)
+* :arrow_up: Automatic update of dependencies by Kebechet (#1395)
+### Improvements
+* Remove old comment (#1394)
