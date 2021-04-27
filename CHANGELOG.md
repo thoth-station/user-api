@@ -2309,3 +2309,10 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :arrow_up: Automatic update of dependencies by Kebechet (#1395)
 ### Improvements
 * Remove old comment (#1394)
+
+## Release 0.25.0 (2021-04-27T20:34:29)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet
+* Accept constraints on advise endpoint
+### Bug Fixes
+* Fix internal error HTTP status code when exception reporting is on
