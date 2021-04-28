@@ -149,7 +149,7 @@ GRAPH = _GraphDatabaseWrapper()
 
 # custom metric to expose head revision from thoth-storages library
 schema_revision_metric = metrics.info(
-    "thoth_database_schema_revision_info",
+    "thoth_database_schema_revision_script",
     "Thoth database schema revision from script",
     component="user-api",  # label
     revision=GRAPH.get_script_alembic_version_head(),  # label
