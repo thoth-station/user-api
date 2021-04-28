@@ -1,6 +1,6 @@
 [project]
-name = "TODO"
-description = "TODO"
+name = "user-api"
+description = "Thoth's user-api"
 readme = "README.rst"
 requires-python = ">=3.8"
 license = {file = "LICENSE"}
