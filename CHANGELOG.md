@@ -2316,3 +2316,7 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Accept constraints on advise endpoint
 ### Bug Fixes
 * Fix internal error HTTP status code when exception reporting is on
+
+## Release 0.25.1 (2021-04-28T11:24:29)
+### Bug Fixes
+* metric fix (#1408)
