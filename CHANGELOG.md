@@ -2320,3 +2320,12 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 ## Release 0.25.1 (2021-04-28T11:24:29)
 ### Bug Fixes
 * metric fix (#1408)
+
+## Release 0.25.2 (2021-06-02T19:59:43)
+### Features
+* Fix module not found error for flask._compat
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet (#1418)
+* :hatched_chick: update the prow resource limits (#1417)
+* :arrow_up: Automatic update of dependencies by Kebechet (#1415)
+* :arrow_up: Automatic update of dependencies by Kebechet (#1412)
