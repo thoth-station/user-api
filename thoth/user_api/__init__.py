@@ -1,4 +1,4 @@
 """Thoth User API."""
 
 __name__ = "thoth-user-api"
-__version__ = "0.25.1"
+__version__ = "0.25.2"
