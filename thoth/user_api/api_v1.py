@@ -26,23 +26,24 @@ import datetime
 import time
 import connexion
 
-from thoth.storages import AdvisersResultsStore
-from thoth.storages import AnalysisResultsStore
-from thoth.storages import BuildLogsStore
-from thoth.storages import BuildLogsAnalysesCacheStore
-from thoth.storages import ProvenanceResultsStore
-from thoth.storages import AnalysesCacheStore
-from thoth.storages import AdvisersCacheStore
-from thoth.storages import ProvenanceCacheStore
-from thoth.storages import AnalysisByDigest
-from thoth.storages.exceptions import CacheMiss
-from thoth.storages.exceptions import NotFoundError
+from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.common import OpenShift
 from thoth.common import RuntimeEnvironment
-from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
-from thoth.python import Project
-from thoth.python import Constraints
 from thoth.python.exceptions import ThothPythonException
+from thoth.python import Constraints
+from thoth.python import Project
+from thoth.storages.exceptions import CacheMiss
+from thoth.storages.exceptions import NotFoundError
+from thoth.storages import AdvisersCacheStore
+from thoth.storages import AdvisersResultsStore
+from thoth.storages import AnalysesCacheStore
+from thoth.storages import AnalysisByDigest
+from thoth.storages import AnalysisResultsStore
+from thoth.storages import BuildLogsAnalysesCacheStore
+from thoth.storages import BuildLogsStore
+from thoth.storages import ProvenanceCacheStore
+from thoth.storages import ProvenanceResultsStore
+from thoth.storages import WorkflowLogsStore
 from thoth.user_api.payload_filter import PayloadProcess
 
 import thoth.messaging.producer as producer
@@ -544,10 +545,17 @@ def _get_log(node_name: str, analysis_id: str, namespace: str) -> typing.Tuple[t
     result: typing.Dict[str, typing.Any] = {"parameters": {"analysis_id": analysis_id}}
     try:
         log = _OPENSHIFT.get_workflow_node_log(node_name, analysis_id, namespace)
-    except OpenShiftNotFound as exc:
-        _LOGGER.exception(f"Log for {analysis_id} were not found: {str(exc)}")
-        result.update({"error": f"Log for analysis {analysis_id} was not found or it has not started yet"})
-        return result, 404
+    except OpenShiftNotFound:
+        logs = WorkflowLogsStore()
+        logs.connect()
+        try:
+            log = logs.get_log(analysis_id)
+        except NotFoundError:
+            result.update({"error": f"Log for analysis {analysis_id} was not found or it has not started yet"})
+            return result, 404
+        else:
+            result.update({"log": log})
+            return result, 200
     else:
         result.update({"log": log})
         return result, 200
