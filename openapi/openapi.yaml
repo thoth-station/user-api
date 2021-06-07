@@ -1437,6 +1437,10 @@ components:
           nullable: true
         runtime_environment:
           $ref: "#/components/schemas/RuntimeEnvironment"
+        labels:
+          type: object
+          description: Labels used to label the request.
+          nullable: true
         library_usage:
           type: object
           description: Static analysis of libraries used within user's project.
