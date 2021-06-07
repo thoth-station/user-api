@@ -393,6 +393,7 @@ def post_advise_python(
     parameters["justification"] = parameters["input"].pop("justification", None)
     parameters["stack_info"] = parameters["input"].pop("stack_info", None)
     parameters["kebechet_metadata"] = parameters["input"].pop("kebechet_metadata", None)
+    parameters["labels"] = parameters["input"].pop("labels", None)
 
     token = parameters.pop("token", None)
 
@@ -464,6 +465,7 @@ def post_advise_python(
                 github_installation_id=parameters["github_installation_id"],
                 github_base_repo_url=parameters["github_base_repo_url"],
                 kebechet_metadata=parameters["kebechet_metadata"],
+                labels=parameters["labels"],
             )
         )
     else:
@@ -476,6 +478,7 @@ def post_advise_python(
                 recommendation_type=recommendation_type,
                 dev=dev,
                 debug=parameters["debug"],
+                labels=parameters["labels"],
             )
         )
 
@@ -501,6 +504,7 @@ def post_advise_python(
     message.pop("application_stack")
     message.pop("runtime_environment")
     message.pop("library_usage")
+    message.pop("labels")
     message.pop("constraints")
     response, status = _send_schedule_message(
         message, AdviserTriggerMessage, with_authentication=True, authenticated=authenticated
