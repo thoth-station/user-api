@@ -2329,3 +2329,9 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :hatched_chick: update the prow resource limits (#1417)
 * :arrow_up: Automatic update of dependencies by Kebechet (#1415)
 * :arrow_up: Automatic update of dependencies by Kebechet (#1412)
+
+## Release 0.26.0 (2021-06-07T13:42:33)
+### Features
+* Obtain logs from Ceph as Argo Workflows places them there
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet
