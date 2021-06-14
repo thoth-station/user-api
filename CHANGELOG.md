@@ -2335,3 +2335,9 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * Obtain logs from Ceph as Argo Workflows places them there
 * :arrow_up: Automatic update of dependencies by Kebechet
 * :arrow_up: Automatic update of dependencies by Kebechet
+
+## Release 0.26.1 (2021-06-14T20:01:42)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: updated labels of issue templates
+* Introduce labels on advise endpoint
