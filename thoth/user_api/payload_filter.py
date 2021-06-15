@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # thoth-user-api
-# Copyright(C) 2020 Sai Sankar Gochhayat
+# Copyright(C) 2020 - 2021 Sai Sankar Gochhayat
 #
 # This program is free software: you can redistribute it and / or modify
 # it under the terms of the GNU General Public License as published by
