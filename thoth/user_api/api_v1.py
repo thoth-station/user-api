@@ -48,12 +48,12 @@ from thoth.user_api.payload_filter import PayloadProcess
 
 import thoth.messaging.producer as producer
 from thoth.messaging import MessageBase
-from thoth.messaging import AdviserTriggerMessage
-from thoth.messaging import KebechetTriggerMessage
-from thoth.messaging import BuildAnalysisTriggerMessage
-from thoth.messaging import PackageExtractTriggerMessage
-from thoth.messaging import ProvenanceCheckerTriggerMessage
-from thoth.messaging import QebHwtTriggerMessage
+from thoth.messaging import adviser_trigger_message
+from thoth.messaging import kebechet_trigger_message
+from thoth.messaging import build_analysis_trigger_message
+from thoth.messaging import package_extract_trigger_message
+from thoth.messaging import provenance_checker_trigger_message
+from thoth.messaging import qebhwt_trigger_message
 
 from .configuration import Configuration
 from .image import get_image_metadata
@@ -71,13 +71,7 @@ _LOGGER = logging.getLogger(__name__)
 _OPENSHIFT = OpenShift()
 
 _ADVISE_PROTECTED_FIELDS = frozenset(
-    {
-        "github_event_type",
-        "github_check_run_id",
-        "github_installation_id",
-        "github_base_repo_url",
-        "kebechet_metadata",
-    }
+    {"github_event_type", "github_check_run_id", "github_installation_id", "github_base_repo_url", "kebechet_metadata",}
 )
 
 _PROVENANCE_CHECK_PROTECTED_FIELDS = frozenset({"kebechet_metadata"})
@@ -256,11 +250,7 @@ def get_analyze_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing
 
 
 def post_provenance_python(
-    input: dict,
-    debug: bool = False,
-    force: bool = False,
-    origin: str = None,
-    token: typing.Optional[str] = None,
+    input: dict, debug: bool = False, force: bool = False, origin: str = None, token: typing.Optional[str] = None,
 ):
     """Check provenance for the given application stack."""
     parameters = locals()
@@ -315,12 +305,15 @@ def post_provenance_python(
         try:
             cache_record = cache.retrieve_document_record(cached_document_id)
             if cache_record["timestamp"] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
-                return {
-                    "analysis_id": cache_record.pop("analysis_id"),
-                    "cached": True,
-                    "authenticated": authenticated,
-                    "parameters": parameters,
-                }, 202
+                return (
+                    {
+                        "analysis_id": cache_record.pop("analysis_id"),
+                        "cached": True,
+                        "authenticated": authenticated,
+                        "parameters": parameters,
+                    },
+                    202,
+                )
         except CacheMiss:
             pass
 
@@ -486,12 +479,15 @@ def post_advise_python(
         try:
             cache_record = adviser_cache.retrieve_document_record(cached_document_id)
             if cache_record["timestamp"] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
-                return {
-                    "analysis_id": cache_record.pop("analysis_id"),
-                    "cached": True,
-                    "authenticated": authenticated,
-                    "parameters": parameters,
-                }, 202
+                return (
+                    {
+                        "analysis_id": cache_record.pop("analysis_id"),
+                        "cached": True,
+                        "authenticated": authenticated,
+                        "parameters": parameters,
+                    },
+                    202,
+                )
         except CacheMiss:
             pass
 
@@ -586,10 +582,7 @@ def get_python_platform() -> typing.Dict[str, typing.List[str]]:
     return {"platform": GRAPH.get_python_package_version_platform_all()}
 
 
-def list_python_package_versions(
-    name: str,
-    page: int = 0,
-) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+def list_python_package_versions(name: str, page: int = 0,) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
     """Get information about versions available."""
     parameters = locals()
 
@@ -597,10 +590,7 @@ def list_python_package_versions(
 
     try:
         query_result = GRAPH.get_python_package_versions_all(
-            package_name=name,
-            distinct=True,
-            is_missing=False,
-            start_offset=page,
+            package_name=name, distinct=True, is_missing=False, start_offset=page,
         )
     except NotFoundError:
         return {"error": f"Package {name!r} not found", "parameters": parameters}, 404
@@ -623,10 +613,7 @@ def get_python_package_dependencies(
     from .openapi_server import GRAPH
 
     if (os_name is None and os_version is not None) or (os_name is not None and os_version is None):
-        return {
-            "error": "Operating system is not fully specified",
-            "parameters": parameters,
-        }, 400
+        return {"error": "Operating system is not fully specified", "parameters": parameters,}, 400
 
     if marker_evaluation_result is not None and (os_name is None or os_version is None or python_version is None):
         return (
@@ -663,12 +650,7 @@ def get_python_package_dependencies(
     for extra, entries in query_result.items():
         for entry in entries:
             result.append(
-                {
-                    "name": entry[0],
-                    "version": entry[1],
-                    "extra": extra,
-                    "environment_marker": None,
-                }
+                {"name": entry[0], "version": entry[1], "extra": extra, "environment_marker": None,}
             )
 
             if os_name is not None and os_version is not None and python_version is not None:
@@ -884,15 +866,18 @@ def post_build(
         if output_image_analysis:
             store.store_request(output_image_analysis_id, output_image_analysis)
 
-    return {
-        "base_image_analysis": base_image_analysis,
-        "output_image_analysis": output_image_analysis,
-        "buildlog_analysis": {
-            "analysis_id": buildlog_analysis_id or message_parameters["buildlog_parser_id"],
-            "cached": buildlog_analysis_id is not None,
+    return (
+        {
+            "base_image_analysis": base_image_analysis,
+            "output_image_analysis": output_image_analysis,
+            "buildlog_analysis": {
+                "analysis_id": buildlog_analysis_id or message_parameters["buildlog_parser_id"],
+                "cached": buildlog_analysis_id is not None,
+            },
+            "buildlog_document_id": buildlog_document_id,
         },
-        "buildlog_document_id": buildlog_document_id,
-    }, 202
+        202,
+    )
 
 
 def _store_build_log(
@@ -951,9 +936,7 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     return _send_schedule_message(payload, KebechetTriggerMessage)
 
 
-def schedule_qebhwt_advise(
-    input: typing.Dict[str, typing.Any],
-):
+def schedule_qebhwt_advise(input: typing.Dict[str, typing.Any],):
     """Schedule Thamos Advise for GitHub App."""
     input["host"] = Configuration.THOTH_HOST
     input["job_id"] = _OPENSHIFT.generate_id("qeb-hwt")
@@ -1094,11 +1077,7 @@ def _send_schedule_message(
             )
 
         return (
-            {
-                "analysis_id": message_contents["job_id"],
-                "parameters": message_contents,
-                "cached": False,
-            },
+            {"analysis_id": message_contents["job_id"], "parameters": message_contents, "cached": False,},
             202,
         )
 
