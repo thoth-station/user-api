@@ -48,12 +48,21 @@ from thoth.user_api.payload_filter import PayloadProcess
 
 import thoth.messaging.producer as producer
 from thoth.messaging import MessageBase
-from thoth.messaging import AdviserTriggerMessage
-from thoth.messaging import KebechetTriggerMessage
-from thoth.messaging import BuildAnalysisTriggerMessage
-from thoth.messaging import PackageExtractTriggerMessage
-from thoth.messaging import ProvenanceCheckerTriggerMessage
-from thoth.messaging import QebHwtTriggerMessage
+from thoth.messaging import BaseMessageContents
+from thoth.messaging import (
+    adviser_trigger_message,
+    kebechet_trigger_message,
+    build_analysis_trigger_message,
+    package_extract_trigger_message,
+    provenance_checker_trigger_message,
+    qebhwt_trigger_message,
+)
+from thoth.messaging.adviser_trigger import MessageContents as AdviserTriggerContent
+from thoth.messaging.kebechet_trigger import MessageContents as KebechetTriggerContent
+from thoth.messaging.build_analysis_trigger import MessageContents as BuildAnalysisTriggerContent
+from thoth.messaging.package_extract_trigger import MessageContents as PackageExtractTriggerContent
+from thoth.messaging.provenance_checker_trigger import MessageContents as ProvenanceCheckerTriggerContent
+from thoth.messaging.qebhwt_trigger import MessageContents as QebHwtTriggerContent
 
 from .configuration import Configuration
 from .image import get_image_metadata
@@ -139,7 +148,9 @@ def post_analyze(
             pass
 
     parameters["job_id"] = _OPENSHIFT.generate_id("package-extract")
-    response, status_code = _send_schedule_message(parameters, PackageExtractTriggerMessage)
+    response, status_code = _send_schedule_message(
+        parameters, package_extract_trigger_message, PackageExtractTriggerContent
+    )
     analysis_by_digest_store = AnalysisByDigest()
     analysis_by_digest_store.connect()
     analysis_by_digest_store.store_document(metadata["digest"], response)
@@ -328,7 +339,11 @@ def post_provenance_python(
     message = dict(**parameters, authenticated=authenticated)
     message.pop("application_stack")  # Passed via Ceph.
     response, status = _send_schedule_message(
-        message, ProvenanceCheckerTriggerMessage, with_authentication=True, authenticated=authenticated
+        message,
+        provenance_checker_trigger_message,
+        ProvenanceCheckerTriggerContent,
+        with_authentication=True,
+        authenticated=authenticated,
     )
 
     if status == 202:
@@ -507,7 +522,7 @@ def post_advise_python(
     message.pop("labels")
     message.pop("constraints")
     response, status = _send_schedule_message(
-        message, AdviserTriggerMessage, with_authentication=True, authenticated=authenticated
+        message, adviser_trigger_message, AdviserTriggerContent, with_authentication=True, authenticated=authenticated
     )
 
     if status == 202:
@@ -855,7 +870,9 @@ def post_build(
     if build_log:
         pass
 
-    response, status = _send_schedule_message(message_parameters, BuildAnalysisTriggerMessage)
+    response, status = _send_schedule_message(
+        message_parameters, build_analysis_trigger_message, BuildAnalysisTriggerContent
+    )
     if status != 202:
         # We do not return response directly as it holds data flattened and to make sure secrets are propagated back.
         return response, status
@@ -948,7 +965,7 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
 
     payload["webhook_payload"] = webhook_payload
     payload["job_id"] = _OPENSHIFT.generate_id("kebechet-job")  # type: ignore
-    return _send_schedule_message(payload, KebechetTriggerMessage)
+    return _send_schedule_message(payload, kebechet_trigger_message, KebechetTriggerContent)
 
 
 def schedule_qebhwt_advise(
@@ -957,7 +974,7 @@ def schedule_qebhwt_advise(
     """Schedule Thamos Advise for GitHub App."""
     input["host"] = Configuration.THOTH_HOST
     input["job_id"] = _OPENSHIFT.generate_id("qeb-hwt")
-    return _send_schedule_message(input, QebHwtTriggerMessage)
+    return _send_schedule_message(input, qebhwt_trigger_message, QebHwtTriggerContent)
 
 
 def list_buildlogs(page: int = 0):
@@ -1074,12 +1091,16 @@ def _get_status_with_queued(
 
 
 def _send_schedule_message(
-    message_contents: dict, message_type: MessageBase, with_authentication: bool = False, authenticated: bool = False
+    message_contents: dict,
+    message_type: MessageBase,
+    content: typing.Type[BaseMessageContents],
+    with_authentication: bool = False,
+    authenticated: bool = False,
 ):
     message_contents["service_version"] = SERVICE_VERSION
     message_contents["component_name"] = COMPONENT_NAME
-    message = message_type.MessageContents(**message_contents)
-    producer.publish_to_topic(p, message_type(), message)
+    message = content(**message_contents)
+    producer.publish_to_topic(p, message_type, message)
     if "job_id" in message_contents:
 
         if with_authentication:
