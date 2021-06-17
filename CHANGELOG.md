@@ -2341,3 +2341,10 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :arrow_up: Automatic update of dependencies by Kebechet
 * :arrow_up: updated labels of issue templates
 * Introduce labels on advise endpoint
+
+## Release 0.26.2 (2021-06-17T20:51:09)
+### Features
+* update to pydantic calling convention for messaging
+* add priority/critical-urgent label to all bot related issue templates
+* :arrow_up: Automatic update of dependencies by Kebechet
+* Adjust copyright in headers
