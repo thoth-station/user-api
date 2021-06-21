@@ -1131,11 +1131,11 @@
         },
         "thoth-common": {
             "hashes": [
-                "sha256:61208804215c7bd703f062f80212a55e58c600f384de32c442fac19a90402020",
-                "sha256:af8c2379d66591e08d1bc19c5415045a39daf13b0fedcf1d6338a193a8c9135b"
+                "sha256:4bcefb14c3a2cbf315edcc029b48ce0c5db60ed274ae6e5fe2b5d530b0491321",
+                "sha256:ff0fd009cac961666507a61d67a6ae49b721a3cab4e799e68675a9218e60df06"
             ],
             "index": "pypi",
-            "version": "==0.29.1"
+            "version": "==0.30.0"
         },
         "thoth-messaging": {
             "hashes": [
@@ -1164,11 +1164,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:1d2ef58b68ffdf8acf04503ff07c724f8c58976b9b76936526d3fc8a8f4dc774",
-                "sha256:5d5af23ff98494aac169dd5389861f409d29d823cb8e8c5e93b2cacf84aab9db"
+                "sha256:e5b167f160ef7731791137d80fc86e5bc47c7303f8b529899c5a4d8129e597de",
+                "sha256:ea2ba48d6097e5f2b9039f4d1012562b98b186459abc5f0d06adfe92a763e359"
             ],
             "index": "pypi",
-            "version": "==0.47.0"
+            "version": "==0.48.0"
         },
         "toml": {
             "hashes": [
