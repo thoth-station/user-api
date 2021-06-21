@@ -1,12 +1,17 @@
 Thoth User-facing API
 ---------------------
 
+.. image:: https://img.shields.io/github/v/tag/thoth-station/user-api?style=plastic
+  :target: https://github.com/thoth-station/user-api/releases
+  :alt: GitHub tag (latest by date)
+
+.. image:: https://quay.io/repository/thoth-station/user-api/status
+  :target: https://quay.io/repository/thoth-station/user-api?tab=tags
+  :alt: Quay - Build
+
 .. image:: https://api.codacy.com/project/badge/Grade/d8f62cde59b84854ac425d148570f1ab
    :alt: Codacy Badge
    :target: https://app.codacy.com/app/thoth-station/user-api?utm_source=github.com&utm_medium=referral&utm_content=thoth-station/user-api&utm_campaign=Badge_Grade_Dashboard
-
-.. image:: https://zuul-ci.org/gated.svg
-   :alt: Zuul gated
 
 Thoth Deployment
 ================
