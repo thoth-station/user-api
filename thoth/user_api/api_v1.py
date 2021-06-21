@@ -1099,8 +1099,8 @@ def _send_schedule_message(
 ):
     message_contents["service_version"] = SERVICE_VERSION
     message_contents["component_name"] = COMPONENT_NAME
-    message = content(**message_contents)
-    producer.publish_to_topic(p, message_type, message)
+    # message = content(**message_contents)
+    producer.publish_to_topic(p, message_type, message_contents, validate=False)
     if "job_id" in message_contents:
 
         if with_authentication:
