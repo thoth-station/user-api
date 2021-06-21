@@ -2348,3 +2348,9 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * add priority/critical-urgent label to all bot related issue templates
 * :arrow_up: Automatic update of dependencies by Kebechet
 * Adjust copyright in headers
+
+## Release 0.26.3 (2021-06-21T16:37:10)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet
