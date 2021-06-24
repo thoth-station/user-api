@@ -1423,6 +1423,8 @@ components:
           $ref: "#/components/schemas/Justification"
         stack_info:
           $ref: "#/components/schemas/StackInfo"
+        package_update_info:
+          $ref: "#/components/schemas/PackageUpdateInfo"
     AdviseInput:
       type: object
       required:
@@ -2284,6 +2286,20 @@ components:
           link:
             type: string
         additionalProperties: true
+    PackageUpdateInfo:
+      type: object
+      description: Object containing info about what package is being updated by the adviser run.
+      required:
+        - package_name
+        - package_version
+        - index_url
+      properties:
+        package_name:
+          type: string
+        package_version:
+          type: string
+        index_url:
+          type: string
 
 
   headers:

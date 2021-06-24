@@ -86,6 +86,7 @@ _ADVISE_PROTECTED_FIELDS = frozenset(
         "github_installation_id",
         "github_base_repo_url",
         "kebechet_metadata",
+        "package_update_info",
     }
 )
 
@@ -409,6 +410,7 @@ def post_advise_python(
     parameters["stack_info"] = parameters["input"].pop("stack_info", None)
     parameters["kebechet_metadata"] = parameters["input"].pop("kebechet_metadata", None)
     parameters["labels"] = parameters["input"].pop("labels", None)
+    parameters["package_update_info"] = parameters["input"].pop("package_update_info", None)
 
     token = parameters.pop("token", None)
 
@@ -481,6 +483,7 @@ def post_advise_python(
                 github_base_repo_url=parameters["github_base_repo_url"],
                 kebechet_metadata=parameters["kebechet_metadata"],
                 labels=parameters["labels"],
+                package_update_info=parameters["package_update_info"],
             )
         )
     else:
