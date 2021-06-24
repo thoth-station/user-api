@@ -326,12 +326,15 @@ def post_provenance_python(
         try:
             cache_record = cache.retrieve_document_record(cached_document_id)
             if cache_record["timestamp"] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
-                return {
-                    "analysis_id": cache_record.pop("analysis_id"),
-                    "cached": True,
-                    "authenticated": authenticated,
-                    "parameters": parameters,
-                }, 202
+                return (
+                    {
+                        "analysis_id": cache_record.pop("analysis_id"),
+                        "cached": True,
+                        "authenticated": authenticated,
+                        "parameters": parameters,
+                    },
+                    202,
+                )
         except CacheMiss:
             pass
 
@@ -501,12 +504,15 @@ def post_advise_python(
         try:
             cache_record = adviser_cache.retrieve_document_record(cached_document_id)
             if cache_record["timestamp"] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
-                return {
-                    "analysis_id": cache_record.pop("analysis_id"),
-                    "cached": True,
-                    "authenticated": authenticated,
-                    "parameters": parameters,
-                }, 202
+                return (
+                    {
+                        "analysis_id": cache_record.pop("analysis_id"),
+                        "cached": True,
+                        "authenticated": authenticated,
+                        "parameters": parameters,
+                    },
+                    202,
+                )
         except CacheMiss:
             pass
 
@@ -901,15 +907,18 @@ def post_build(
         if output_image_analysis:
             store.store_request(output_image_analysis_id, output_image_analysis)
 
-    return {
-        "base_image_analysis": base_image_analysis,
-        "output_image_analysis": output_image_analysis,
-        "buildlog_analysis": {
-            "analysis_id": buildlog_analysis_id or message_parameters["buildlog_parser_id"],
-            "cached": buildlog_analysis_id is not None,
+    return (
+        {
+            "base_image_analysis": base_image_analysis,
+            "output_image_analysis": output_image_analysis,
+            "buildlog_analysis": {
+                "analysis_id": buildlog_analysis_id or message_parameters["buildlog_parser_id"],
+                "cached": buildlog_analysis_id is not None,
+            },
+            "buildlog_document_id": buildlog_document_id,
         },
-        "buildlog_document_id": buildlog_document_id,
-    }, 202
+        202,
+    )
 
 
 def _store_build_log(
@@ -1101,6 +1110,7 @@ def _send_schedule_message(
     message_contents["component_name"] = COMPONENT_NAME
     message = content(**message_contents)
     producer.publish_to_topic(p, message_type, message)
+    p.flush()
     if "job_id" in message_contents:
 
         if with_authentication:
