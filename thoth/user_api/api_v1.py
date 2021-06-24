@@ -90,9 +90,6 @@ _ADVISE_PROTECTED_FIELDS = frozenset(
 _PROVENANCE_CHECK_PROTECTED_FIELDS = frozenset({"kebechet_metadata"})
 
 
-p = producer.create_producer()
-
-
 def _compute_digest_params(parameters: dict):
     """Compute digest on parameters passed."""
     return hashlib.sha256(json.dumps(parameters, sort_keys=True).encode()).hexdigest()
@@ -1095,11 +1092,12 @@ def _send_schedule_message(
     with_authentication: bool = False,
     authenticated: bool = False,
 ):
+    from .openapi_server import PRODUCER
+
     message_contents["service_version"] = SERVICE_VERSION
     message_contents["component_name"] = COMPONENT_NAME
     message = content(**message_contents)
-    producer.publish_to_topic(p, message_type, message)
-    p.flush()
+    producer.publish_to_topic(PRODUCER, message_type, message)
     if "job_id" in message_contents:
 
         if with_authentication:
