@@ -559,7 +559,6 @@ paths:
             A flag marking what Thoth integration is requesting adviser:
               - cli: Thamos CLI.
               - s2i: OpenShift's S2I (Source-to-Image) build.
-              - github_app: Qeb-Hwt GitHub App.
               - kebechet: Kebechet Bot.
               - jupyter_notebook: Jupyter Notebook (nb-requirements).
           schema:
@@ -822,34 +821,6 @@ paths:
           description: Invalid
         "501":
           description: Functionality not supported
-
-  /qeb-hwt:
-    post:
-      tags: [GitHub]
-      x-openapi-router-controller: thoth.user_api.api_v1
-      operationId: schedule_qebhwt_advise
-      summary: Schedule Thamos advise for GitHub App.
-      requestBody:
-        required: true
-        description: Thamos advise inputs.
-        content:
-          application/json:
-            schema:
-              x-body-name: input
-              $ref: "#/components/schemas/QebHwtThamosAdviseInput"
-      responses:
-        "202":
-          description: Successful response with analyzer id.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AnalysisResponse"
-        "400":
-          description: On invalid request.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AnalysisResponseError"
 
   /build-analysis:
     post:
@@ -2150,38 +2121,6 @@ components:
     KebechetWebhookInput:
       type: object
       description: Webhook payload from Github event.
-    QebHwtThamosAdviseInput:
-      type: object
-      required:
-        - github_event_type
-        - github_check_run_id
-        - github_installation_id
-        - github_base_repo_url
-        - github_head_repo_url
-        - origin
-        - revision
-      properties:
-        github_event_type:
-          type: string
-          description: Type of GitHub event.
-        github_check_run_id:
-          type: integer
-          description: ID of the check-run that shall carry the thamos advise.
-        github_installation_id:
-          type: integer
-          description: GitHub App Installation ID.
-        github_base_repo_url:
-          type: string
-          description: URL of the GitHub repository containing the Pull Request.
-        github_head_repo_url:
-          type: string
-          description: URL of the Pull Request's head commit.
-        origin:
-          type: string
-          description: Origin of the repo where the Pull Request was opened.
-        revision:
-          type: string
-          description: sha of the Pull Request's head commit.
     PythonPlatforms:
       type: object
       description: A listing of available platforms.
