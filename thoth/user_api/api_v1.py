@@ -55,14 +55,12 @@ from thoth.messaging import (
     build_analysis_trigger_message,
     package_extract_trigger_message,
     provenance_checker_trigger_message,
-    qebhwt_trigger_message,
 )
 from thoth.messaging.adviser_trigger import MessageContents as AdviserTriggerContent
 from thoth.messaging.kebechet_trigger import MessageContents as KebechetTriggerContent
 from thoth.messaging.build_analysis_trigger import MessageContents as BuildAnalysisTriggerContent
 from thoth.messaging.package_extract_trigger import MessageContents as PackageExtractTriggerContent
 from thoth.messaging.provenance_checker_trigger import MessageContents as ProvenanceCheckerTriggerContent
-from thoth.messaging.qebhwt_trigger import MessageContents as QebHwtTriggerContent
 
 from .configuration import Configuration
 from .image import get_image_metadata
@@ -975,15 +973,6 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     payload["webhook_payload"] = webhook_payload
     payload["job_id"] = _OPENSHIFT.generate_id("kebechet-job")  # type: ignore
     return _send_schedule_message(payload, kebechet_trigger_message, KebechetTriggerContent)
-
-
-def schedule_qebhwt_advise(
-    input: typing.Dict[str, typing.Any],
-):
-    """Schedule Thamos Advise for GitHub App."""
-    input["host"] = Configuration.THOTH_HOST
-    input["job_id"] = _OPENSHIFT.generate_id("qeb-hwt")
-    return _send_schedule_message(input, qebhwt_trigger_message, QebHwtTriggerContent)
 
 
 def list_buildlogs(page: int = 0):
