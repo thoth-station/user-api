@@ -594,30 +594,6 @@ paths:
             default: false
           description: >
             Do not use cached results, always run adviser.
-        - name: github_event_type
-          in: query
-          required: false
-          schema:
-            type: string
-          description: GitHub's event type.
-        - name: github_check_run_id
-          in: query
-          required: false
-          schema:
-            type: integer
-          description: GitHub's event id.
-        - name: github_installation_id
-          in: query
-          required: false
-          schema:
-            type: integer
-          description: GitHub's installation id.
-        - name: github_base_repo_url
-          in: query
-          required: false
-          schema:
-            type: string
-          description: URL of the GitHub repository containing the Pull Request.
         - name: token
           in: query
           required: false

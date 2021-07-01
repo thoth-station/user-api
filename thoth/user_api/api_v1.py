@@ -79,10 +79,6 @@ _OPENSHIFT = OpenShift()
 
 _ADVISE_PROTECTED_FIELDS = frozenset(
     {
-        "github_event_type",
-        "github_check_run_id",
-        "github_installation_id",
-        "github_base_repo_url",
         "kebechet_metadata",
     }
 )
@@ -397,10 +393,6 @@ def post_advise_python(
     dev: bool = False,
     origin: typing.Optional[str] = None,
     token: typing.Optional[str] = None,
-    github_event_type: typing.Optional[str] = None,
-    github_check_run_id: typing.Optional[int] = None,
-    github_installation_id: typing.Optional[int] = None,
-    github_base_repo_url: typing.Optional[str] = None,
 ):
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
@@ -476,10 +468,6 @@ def post_advise_python(
                 source_type=source_type.upper() if source_type else None,
                 dev=dev,
                 debug=parameters["debug"],
-                github_event_type=parameters["github_event_type"],
-                github_check_run_id=parameters["github_check_run_id"],
-                github_installation_id=parameters["github_installation_id"],
-                github_base_repo_url=parameters["github_base_repo_url"],
                 kebechet_metadata=parameters["kebechet_metadata"],
                 labels=parameters["labels"],
             )
