@@ -2360,3 +2360,9 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :arrow_up: Automatic update of dependencies by Kebechet
 * :game_die: flush all pending messages
 * :medal_sports: set badges for easy access to content
+
+## Release 0.26.5 (2021-07-02T06:46:51)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet
+* Remove qeb-hwt endpoint
