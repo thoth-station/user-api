@@ -67,8 +67,8 @@ from .image import get_image_metadata
 from .exceptions import ImageError
 from .exceptions import ImageBadRequestError
 from .exceptions import ImageManifestUnknownError
-from .exceptions import ImageAuthenticationRequired
-from .exceptions import ImageInvalidCredentials
+from .exceptions import ImageAuthenticationRequiredError
+from .exceptions import ImageInvalidCredentialsError
 from . import __version__ as SERVICE_VERSION  # noqa
 from . import __name__ as COMPONENT_NAME  # noqa
 
@@ -1127,13 +1127,13 @@ def _do_get_image_metadata(
     except ImageBadRequestError as exc:
         status_code = 400
         error_str = str(exc)
-    except ImageInvalidCredentials as exc:
+    except ImageInvalidCredentialsError as exc:
         status_code = 403
         error_str = str(exc)
     except ImageManifestUnknownError as exc:
         status_code = 400
         error_str = str(exc)
-    except ImageAuthenticationRequired as exc:
+    except ImageAuthenticationRequiredError as exc:
         status_code = 401
         error_str = str(exc)
     except ImageError as exc:

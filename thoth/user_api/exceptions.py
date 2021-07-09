@@ -18,15 +18,15 @@
 """Exceptions raised in the whole user-api implementation."""
 
 
-class UserApiException(Exception):
+class UserApiExceptionError(Exception):
     """A base class for user API exceptions."""
 
 
-class NotFoundException(UserApiException):
+class NotFoundExceptionnError(UserApiExceptionError):
     """An exception raised if the requested resource could not be found."""
 
 
-class ImageError(UserApiException):
+class ImageError(UserApiExceptionError):
     """An exception raised if inspection of the given image was not successful."""
 
 
@@ -38,9 +38,9 @@ class ImageManifestUnknownError(ImageError):
     """An exception raised if manifest of the given image is not known."""
 
 
-class ImageAuthenticationRequired(ImageError):
+class ImageAuthenticationRequiredError(ImageError):
     """An exception raised if there is a need to authenticate against registry to inspect the given image."""
 
 
-class ImageInvalidCredentials(ImageError):
+class ImageInvalidCredentialsError(ImageError):
     """An exception raised if the given username/password provided to access the image is invalid."""
