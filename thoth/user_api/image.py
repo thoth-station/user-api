@@ -22,11 +22,11 @@ import shlex
 
 from thoth.analyzer import run_command
 
-from .exceptions import ImageInvalidCredentials
+from .exceptions import ImageInvalidCredentialsError
 from .exceptions import ImageError
 from .exceptions import ImageBadRequestError
 from .exceptions import ImageManifestUnknownError
-from .exceptions import ImageAuthenticationRequired
+from .exceptions import ImageAuthenticationRequiredError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -76,13 +76,15 @@ def get_image_metadata(
     if "manifest unknown" in result.stderr:
         raise ImageManifestUnknownError("Unknown manifest for the given image")
     elif "unauthorized: authentication required" in result.stderr:
-        raise ImageAuthenticationRequired("There is required authentication in order to pull image and image details")
+        raise ImageAuthenticationRequiredError(
+            "There is required authentication in order to pull image and image details"
+        )
     elif "x509: certificate signed by unknown authority" in result.stderr:
-        raise ImageAuthenticationRequired(
+        raise ImageAuthenticationRequiredError(
             "There was an error with x509 certification check: certificate signed by unknown authority"
         )
     elif "unable to retrieve auth token: invalid username/password" in result.stderr:
-        raise ImageInvalidCredentials(
+        raise ImageInvalidCredentialsError(
             "There was an error accessing the image as the username/password provided was invalid"
         )
 
