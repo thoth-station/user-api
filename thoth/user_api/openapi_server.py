@@ -37,6 +37,7 @@ from flask_cors import CORS
 from thoth.common import __version__ as __common__version__
 from thoth.common import datetime2datetime_str
 from thoth.common import init_logging
+from thoth.common import Openshift
 from thoth.storages import __version__ as __storages__version__
 from thoth.python import __version__ as __python__version__
 from thoth.messaging import __version__ as __messaging__version__
@@ -156,11 +157,21 @@ schema_revision_metric = metrics.info(
     env=Configuration.THOTH_DEPLOYMENT_NAME,
 )
 
+# custom metric to expose cache expiration configuration
+user_api_cache_expiration_configuration = metrics.info(
+    "user_api_cache_expiration_configuration",
+    "Thoth User API cache exporation configuration",
+    component="user-api",  # label
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
 
 @application.before_first_request
 def before_first_request_callback():
     """Register callback, runs before first request to this service."""
     schema_revision_metric.set(1)
+    openshift = Openshift()
+    cache_expiration_time = openshift.get_cache_expiration_configuration()  #[s]
+    user_api_cache_expiration_configuration.set(cache_expiration_time)
     _LOGGER.info("Running once before first request to expose metric.")
 
 
