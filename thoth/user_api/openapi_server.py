@@ -156,11 +156,19 @@ schema_revision_metric = metrics.info(
     env=Configuration.THOTH_DEPLOYMENT_NAME,
 )
 
+# custom metric to expose cache expiration configuration
+user_api_cache_expiration_configuration = metrics.info(
+    "user_api_cache_expiration_configuration",
+    "Thoth User API cache exporation configuration",
+    env=Configuration.THOTH_DEPLOYMENT_NAME,
+)
+
 
 @application.before_first_request
 def before_first_request_callback():
     """Register callback, runs before first request to this service."""
     schema_revision_metric.set(1)
+    user_api_cache_expiration_configuration.set(Configuration.THOTH_CACHE_EXPIRATION)  # [s]
     _LOGGER.info("Running once before first request to expose metric.")
 
 
