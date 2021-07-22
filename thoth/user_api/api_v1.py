@@ -29,7 +29,7 @@ import connexion
 from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
 from thoth.common import OpenShift
 from thoth.common import RuntimeEnvironment
-from thoth.python.exceptions import ThothPythonException
+from thoth.python.exceptions import ThothPythonExceptionError
 from thoth.python import Constraints
 from thoth.python import Project
 from thoth.storages.exceptions import CacheMiss
@@ -294,7 +294,7 @@ def post_provenance_python(
         project = Project.from_strings(
             parameters["application_stack"]["requirements"], parameters["application_stack"]["requirements_lock"]
         )
-    except ThothPythonException as exc:
+    except ThothPythonExceptionError as exc:
         return {"parameters": parameters, "error": f"Invalid application stack supplied: {str(exc)}"}, 400
     except Exception:
         return {"parameters": parameters, "error": "Invalid application stack supplied"}, 400
@@ -444,7 +444,7 @@ def post_advise_python(
             runtime_environment=RuntimeEnvironment.from_dict(parameters["runtime_environment"]),
             constraints=constraints,
         )
-    except ThothPythonException as exc:
+    except ThothPythonExceptionError as exc:
         return {"parameters": parameters, "error": f"Invalid application stack supplied: {str(exc)}"}, 400
     except Exception:
         return {"parameters": parameters, "error": "Invalid application stack supplied"}, 400
