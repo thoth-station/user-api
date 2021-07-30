@@ -40,6 +40,7 @@ from thoth.common import init_logging
 from thoth.storages import __version__ as __storages__version__
 from thoth.python import __version__ as __python__version__
 from thoth.messaging import __version__ as __messaging__version__
+import thoth.messaging.producer as producer
 from thoth.storages import GraphDatabase
 from thoth.storages.exceptions import DatabaseNotInitialized
 from thoth.user_api import __version__
@@ -146,6 +147,9 @@ class _GraphDatabaseWrapper:
 # reuse connection pooling from one instance. Any call to this wrapper has to be done after the wsgi fork
 # (hence the wrapper logic).
 GRAPH = _GraphDatabaseWrapper()
+
+# similarly to DB we create one confluent-kafka-python producer
+PRODUCER = producer.create_producer()
 
 # custom metric to expose head revision from thoth-storages library
 schema_revision_metric = metrics.info(
