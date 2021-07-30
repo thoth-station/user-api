@@ -2366,3 +2366,18 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * :arrow_up: Automatic update of dependencies by Kebechet
 * :arrow_up: Automatic update of dependencies by Kebechet
 * Remove qeb-hwt endpoint
+
+## Release 0.26.6 (2021-07-30T10:08:37)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet
+* :arrow_up: Automatic update of dependencies by Kebechet
+* Fix import statement
+* Use directly env var
+* Expose cache expiration configuration
+* Make pre-commit happy
+* initialize producer in similar way to database
+### Improvements
+* minor CI/CD config updates :arrow_up:
+### Other
+* remove github app parameters
