@@ -26,7 +26,7 @@ import datetime
 import time
 import connexion
 
-from thoth.common.exceptions import NotFoundException as OpenShiftNotFound
+from thoth.common.exceptions import NotFoundExceptionError as OpenShiftNotFound
 from thoth.common import OpenShift
 from thoth.common import RuntimeEnvironment
 from thoth.python.exceptions import ThothPythonExceptionError
