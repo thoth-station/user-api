@@ -2381,3 +2381,7 @@ Set resource limits of BuildConfig and Deployment to reasonable values, this wil
 * minor CI/CD config updates :arrow_up:
 ### Other
 * remove github app parameters
+
+## Release 0.26.7 (2021-08-02T06:17:22)
+### Bug Fixes
+* :fire: fix the exception name from thoth.common
