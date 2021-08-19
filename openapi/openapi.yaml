@@ -1080,6 +1080,35 @@ paths:
               schema:
                 $ref: "#/components/schemas/PythonPackageMetadataResponseError"
 
+  /python/get-imported-packages:
+    get:
+      tags: [PythonPackages]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: get_imported_packages
+      summary: List imported packages' correct names.
+      parameters:
+        - name: name
+          in: query
+          required: true
+          description: >
+            Names of the Python Packages for the given import package name.
+          schema:
+            type: string
+            default: "tensorflow"
+      responses:
+        "200":
+          description: Listing of available Python packages names.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonPackageNameResponse"
+        "404":
+          description: The given record does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonPackageNameResponseError"
+
 components:
   parameters:
     image:
@@ -2070,6 +2099,21 @@ components:
               type: string
               nullable: true
               description: Provided extra of the distribution.
+
+    PythonPackageNameResponse:
+      type: object
+      required:
+        - package_names
+        - parameters
+      properties:
+        package_names:
+          type: array
+          items:
+            type: string
+            description: Names of the python packages.
+        parameters:
+          type: object
+
     PythonPackageVersionsResponseError:
       type: object
       required:
@@ -2083,6 +2127,18 @@ components:
           type: object
           description: Parameters echoed back to user for debugging.
     PythonPackageMetadataResponseError:
+      type: object
+      required:
+        - error
+        - parameters
+      properties:
+        error:
+          type: string
+          description: Error information for user.
+        parameters:
+          type: object
+          description: Parameters echoed back to user for debugging.
+    PythonPackageNameResponseError:
       type: object
       required:
         - error
