@@ -1080,12 +1080,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/PythonPackageMetadataResponseError"
 
-  /python/get-package-from-imports:
+  /python/imports:
     get:
       tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_package_from_imported_packages
-      summary: List imported packages' correct names.
+      summary: List imported packages' names.
       parameters:
         - name: import_name
           in: query
@@ -1094,7 +1094,7 @@ paths:
             Names of the Python Packages for the given import package name.
           schema:
             type: string
-            default: "tensorflow"
+            default: "sklearn.cluster.MiniBatchKMeans"
       responses:
         "200":
           description: Listing of available Python packages names.
