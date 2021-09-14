@@ -1139,3 +1139,23 @@ def _do_get_image_metadata(
         error_str = str(exc)
 
     return {"error": error_str, "parameters": locals()}, status_code
+
+
+def get_package_from_imported_packages(import_name: str):
+    """Retrieve Python package name for the given import package name."""
+    parameters = locals()
+    from .openapi_server import GRAPH
+
+    try:
+        return {
+            "package_names": GRAPH.get_python_package_version_import_packages_all(import_name=import_name),
+            "parameters": parameters,
+        }
+    except NotFoundError:
+        return (
+            {
+                "error": f"No package name records for package {import_name!r} in database",
+                "parameters": parameters,
+            },
+            404,
+        )
