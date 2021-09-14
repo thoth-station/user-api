@@ -1,5 +1,14 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.27.0 (2021-09-14T21:01:43)
+### Features
+* Add harshad as a maintainer
+* Update of the dependencies
+* Add endpoint for getting correct Package name for given import name
+### Improvements
+* Change method name and defaults
+* Correct functions and variables names
+
 ## [0.4.0] - 2018-Jun-26 - goern
 
 ### Added
