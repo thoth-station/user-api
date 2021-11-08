@@ -1,5 +1,10 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.27.2 (2021-11-08T12:19:35)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+
 ## Release 0.27.1 (2021-09-27T20:05:37)
 ### Features
 * :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
