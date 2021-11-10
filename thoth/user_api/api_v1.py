@@ -181,44 +181,15 @@ def get_analyze(analysis_id: str):
     )
 
 
-def list_s2i_python() -> typing.Dict[str, typing.List[typing.Dict[str, str]]]:
-    """List all available Python s2i."""
-    from .openapi_server import GRAPH
-
-    entries = []
-    for thoth_s2i_image_name, thoth_s2i_image_version in GRAPH.get_thoth_s2i_all(is_external=False):
-        analyses = GRAPH.get_thoth_s2i_package_extract_analysis_document_id_all(
-            thoth_s2i_image_name, thoth_s2i_image_version, is_external=False
-        )
-
-        if not analyses:
-            _LOGGER.error(
-                "Thoth s2i image %r in version %r was not analyzed, please schedule container image "
-                "analyses to make it available to users",
-                thoth_s2i_image_name,
-                thoth_s2i_image_version,
-            )
-            continue
-
-        entries.append(
-            {
-                "thoth_s2i_image_name": thoth_s2i_image_name,
-                "thoth_s2i_image_version": thoth_s2i_image_version,
-                "thoth_s2i": f"{thoth_s2i_image_name}:v{thoth_s2i_image_version}",
-                "analysis_id": analyses[-1],  # Show only the last, the most recent, one.
-            }
-        )
-
-    return {"s2i": entries}
-
-
-def list_container_images(page: int = 0) -> typing.Dict[str, typing.Any]:
-    """List registered container images."""
+def list_thoth_container_images(page: int = 0) -> typing.Dict[str, typing.Any]:
+    """List registered Thoth container images."""
     from .openapi_server import GRAPH
 
     entries = []
     for item in GRAPH.get_software_environments_all(is_external=False, start_offset=page):
         if item.get("env_image_name") and item.get("env_image_tag"):
+            item["thoth_image_name"] = item.pop("thoth_s2i_image_name", None)
+            item["thoth_image_version"] = item.pop("thoth_s2i_image_version", None)
             entries.append(item)
 
     return {"container_images": entries, "parameters": {"page": page}}
