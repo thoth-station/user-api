@@ -700,16 +700,6 @@ def get_python_package_dependencies(
     return {"dependencies": result, "parameters": parameters}, 200
 
 
-def list_hardware_environments(page: int = 0):
-    """List hardware environments in the graph database."""
-    from .openapi_server import GRAPH
-
-    return {
-        "parameters": {"page": page},
-        "hardware_environments": GRAPH.get_hardware_environments_all(is_external=False, start_offset=page),
-    }
-
-
 def post_build(
     build_detail: typing.Dict[str, typing.Any],
     *,
