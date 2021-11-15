@@ -987,13 +987,13 @@ paths:
       tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_package_from_imported_packages
-      summary: List imported packages' names.
+      summary: List imported packages' (name, version, index).
       parameters:
         - name: import_name
           in: query
           required: true
           description: >
-            Names of the Python Packages for the given import package name.
+            Names of the Python Packages (name, version, index) for the given import package name.
           schema:
             type: string
             default: "sklearn.cluster.MiniBatchKMeans"
@@ -2011,8 +2011,27 @@ components:
         package_names:
           type: array
           items:
-            type: string
-            description: Names of the python packages.
+            type: object
+            required:
+              - package_name
+              - package_version
+              - index_url
+            properties:
+              package_name:
+                type: string
+                nullable: false
+                description: Name of the package.
+                example: scikit-learn
+              package_version:
+                type: string
+                nullable: false
+                description: Version of the package.
+                example: "1.0.1"
+              index_url:
+                type: string
+                nullable: false
+                description: Source index URL of the package.
+                example: "https://pypi.org/simple"
         parameters:
           type: object
 
