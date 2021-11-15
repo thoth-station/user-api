@@ -1,5 +1,12 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.28.0 (2021-11-15T10:50:21)
+### Features
+* Adjust output type for /python/imports
+* updating to https routes for pre-commit
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Drop hardware endpoint
+
 ## Release 0.27.2 (2021-11-08T12:19:35)
 ### Features
 * :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
