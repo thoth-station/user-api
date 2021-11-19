@@ -1,5 +1,13 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.28.1 (2021-11-19T09:15:49)
+### Features
+* Use distinct in import name endpoint
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Update base image
+* Drop /s2i/python endpoint and promote container images endpoint
+
 ## Release 0.28.0 (2021-11-15T10:50:21)
 ### Features
 * Adjust output type for /python/imports
