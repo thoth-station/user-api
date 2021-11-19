@@ -1109,7 +1109,9 @@ def get_package_from_imported_packages(import_name: str):
 
     try:
         return {
-            "package_names": GRAPH.get_python_package_version_import_packages_all(import_name=import_name),
+            "package_names": GRAPH.get_python_package_version_import_packages_all(
+                import_name=import_name, distinct=True
+            ),
             "parameters": parameters,
         }
     except NotFoundError:
