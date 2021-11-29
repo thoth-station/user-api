@@ -69,12 +69,14 @@ from thoth.messaging import (
     build_analysis_trigger_message,
     package_extract_trigger_message,
     provenance_checker_trigger_message,
+    thoth_repo_init_message,
 )
 from thoth.messaging.adviser_trigger import MessageContents as AdviserTriggerContent
 from thoth.messaging.kebechet_trigger import MessageContents as KebechetTriggerContent
 from thoth.messaging.build_analysis_trigger import MessageContents as BuildAnalysisTriggerContent
 from thoth.messaging.package_extract_trigger import MessageContents as PackageExtractTriggerContent
 from thoth.messaging.provenance_checker_trigger import MessageContents as ProvenanceCheckerTriggerContent
+from thoth.messaging.thoth_repo_init import MessageContents as ThothRepoInitContent
 
 from .configuration import Configuration
 from .image import get_image_metadata
@@ -1110,6 +1112,27 @@ def schedule_kebechet_webhook(body: Dict[str, Any]) -> Tuple[Dict[str, Any], int
     return _send_schedule_message(payload, kebechet_trigger_message, KebechetTriggerContent)
 
 
+def initialize_repo(body: Dict[str, str]):
+    """Schedule thoth init repo workflow, which creates a PR on the passed repository."""
+    valid_github_domains = ["github.com", "www.github.com"]
+    project_url = body["project_url"].strip("/")  # remove trailing f-slash if present
+    try:
+        url_obj = url_parse.urlparse(project_url)
+    except ValueError:
+        return {"error": "Error processing project_url"}, 400
+    if len(url_obj.path[1:].split("/")) != 2:
+        return {"error": "project_url path does not have a length of 2"}, 400
+    elif url_obj.netloc not in valid_github_domains:
+        return {"error": "project url is not from github.com"}, 400
+
+    message_parameters = {
+        "project_url": project_url,
+        "job_id": _OPENSHIFT.generate_id("thoth-repo-init"),
+    }
+
+    return _send_schedule_message(message_parameters, thoth_repo_init_message, ThothRepoInitContent)
+
+
 def get_python_package_version_metadata(
     name: str, version: str, index: str, os_name: str, os_version: str, python_version: str
 ) -> Tuple[Dict[str, Any], int]:
@@ -1325,7 +1348,7 @@ def _send_schedule_message(
             202,
         )
 
-    raise ValueError(f"job_id was not set for message sent to {message_type().topic_name}")
+    raise ValueError(f"job_id was not set for message sent to {message_type.topic_name}")
 
 
 def _do_get_image_metadata(
