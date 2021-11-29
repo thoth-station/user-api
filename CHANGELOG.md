@@ -1,5 +1,10 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.28.2 (2021-11-29T13:40:56)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Show an example with a matching import
+
 ## Release 0.28.1 (2021-11-19T09:15:49)
 ### Features
 * Use distinct in import name endpoint
