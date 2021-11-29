@@ -990,7 +990,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PythonPackageNameResponse"
+                $ref: "#/components/schemas/PythonPackageNameImportResponse"
         "404":
           description: The given record does not exist.
           content:
@@ -1953,7 +1953,7 @@ components:
               nullable: true
               description: Provided extra of the distribution.
 
-    PythonPackageNameResponse:
+    PythonPackageNameImportResponse:
       type: object
       required:
         - package_names
@@ -1967,6 +1967,7 @@ components:
               - package_name
               - package_version
               - index_url
+              - import
             properties:
               package_name:
                 type: string
@@ -1983,6 +1984,11 @@ components:
                 nullable: false
                 description: Source index URL of the package.
                 example: "https://pypi.org/simple"
+              import:
+                type: string
+                nullable: false
+                description: A module import matching the given criteria.
+                example: sklearn.neural_network
         parameters:
           type: object
 
