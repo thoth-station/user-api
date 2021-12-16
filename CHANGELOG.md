@@ -1,5 +1,9 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.29.1 (2021-12-16T12:29:00)
+### Features
+* Fix return type for listing environments
+
 ## Release 0.29.0 (2021-12-16T10:33:21)
 ### Features
 * :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
