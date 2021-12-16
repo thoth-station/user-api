@@ -814,6 +814,20 @@ paths:
               schema:
                 $ref: "#/components/schemas/PythonPlatforms"
 
+  /python/environment:
+    get:
+      tags: [Environments]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: list_python_environments
+      summary: Get environments available for Python resolutions.
+      responses:
+        "200":
+          description: The number of Python packages in Thoth Knowledge Graph.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonEnvironments"
+
   /python/package/dependencies:
     get:
       tags: [PythonPackages]
@@ -2043,6 +2057,33 @@ components:
             type: string
             description: Platform information.
             example: linux-x86_64
+    PythonEnvironments:
+      type: object
+      description: A listing of available environments.
+      required:
+        - environment
+      properties:
+        environment:
+          type: array
+          items:
+            type: object
+            required:
+              - os_name
+              - os_version
+              - python_version
+            properties:
+              os_name:
+                type: string
+                description: Operating system name.
+                example: rhel
+              os_version:
+                type: string
+                description: Operating system version.
+                example: '9'
+              python_version:
+                type: string
+                description: Python version.
+                example: '3.9'
     PythonPackageDependencies:
       type: object
       required:
