@@ -1124,10 +1124,10 @@ def get_package_from_imported_packages(import_name: str):
         )
 
 
-def list_python_environments() -> typing.List[typing.Dict[str, str]]:
+def list_python_environments() -> typing.Dict[str, typing.List[typing.Dict[str, str]]]:
     """Get environments available based on solvers installed."""
     result = []
     for solver in _OPENSHIFT.get_solver_names():
         result.append(_OPENSHIFT.parse_python_solver_name(solver))
 
-    return result
+    return {"environment": result}
