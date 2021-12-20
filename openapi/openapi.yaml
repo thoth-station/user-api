@@ -528,6 +528,40 @@ paths:
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: list_thoth_container_images
       summary: List available Thoth container images.
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Page offset in pagination.
+          schema:
+            type: integer
+            default: 0
+        - name: os_name
+          in: query
+          required: false
+          description: Name of operating system to consider.
+          schema:
+            type: string
+        - name: os_version
+          in: query
+          description: Version of operating system to consider.
+          schema:
+            type: string
+        - name: python_version
+          in: query
+          description: Version of Python interpreter provided.
+          schema:
+            type: string
+        - name: cuda_version
+          in: query
+          description: Filter based on CUDA version available.
+          schema:
+            type: string
+        - name: image_name
+          in: query
+          description: Filter based on image name.
+          schema:
+            type: string
       responses:
         "200":
           description: A list of available Thoth container images.

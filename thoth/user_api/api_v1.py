@@ -181,18 +181,36 @@ def get_analyze(analysis_id: str):
     )
 
 
-def list_thoth_container_images(page: int = 0) -> typing.Dict[str, typing.Any]:
+def list_thoth_container_images(
+    page: int = 0,
+    os_name: typing.Optional[str] = None,
+    os_version: typing.Optional[str] = None,
+    python_version: typing.Optional[str] = None,
+    cuda_version: typing.Optional[str] = None,
+    image_name: typing.Optional[str] = None,
+) -> typing.Dict[str, typing.Any]:
     """List registered Thoth container images."""
     from .openapi_server import GRAPH
 
     entries = []
-    for item in GRAPH.get_software_environments_all(is_external=False, start_offset=page):
+    for item in GRAPH.get_software_environments_all(
+        is_external=False,
+        start_offset=page,
+        os_name=os_name,
+        os_version=os_version,
+        python_version=python_version,
+        cuda_version=cuda_version,
+        image_name=image_name,
+    ):
         if item.get("env_image_name") and item.get("env_image_tag"):
             item["thoth_image_name"] = item.pop("thoth_s2i_image_name", None)
             item["thoth_image_version"] = item.pop("thoth_s2i_image_version", None)
             entries.append(item)
 
-    return {"container_images": entries, "parameters": {"page": page}}
+    return {
+        "container_images": entries,
+        "parameters": {"page": page, "os_name": os_name, "os_version": os_version, "python_version": python_version},
+    }
 
 
 def get_analyze_by_hash(image_hash: str):
