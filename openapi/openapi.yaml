@@ -933,6 +933,46 @@ paths:
               schema:
                 $ref: "#/components/schemas/PythonPackageVersionsResponseError"
 
+  /python/package/versions/{os_name}/{os_version}/{python_version}:
+    get:
+      tags: [PythonPackages]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: list_python_package_versions_env
+      summary: List Python versions available for the given environment.
+      parameters:
+        - name: page
+          in: query
+          required: true
+          description: Page offset in pagination.
+          schema:
+            type: integer
+            default: 0
+        - name: os_name
+          in: path
+          required: true
+          description: Name of operating system to consider.
+          schema:
+            type: string
+        - name: os_version
+          in: path
+          required: true
+          description: Version of operating system to consider.
+          schema:
+            type: string
+        - name: python_version
+          in: path
+          required: true
+          description: Version of Python interpreter.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Listing of available Python versions.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonPackageVersionsResponse"
+
   /python/package/metadata:
     get:
       tags: [PythonPackages]

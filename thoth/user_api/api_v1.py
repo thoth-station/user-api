@@ -1131,3 +1131,25 @@ def list_python_environments() -> typing.Dict[str, typing.List[typing.Dict[str, 
         result.append(_OPENSHIFT.parse_python_solver_name(solver))
 
     return {"environment": result}
+
+
+def list_python_package_versions_env(
+    page: int, os_name: str, os_version: str, python_version: str
+) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+    """Get available Python package versions for the given environment."""
+    parameters = locals()
+    from .openapi_server import GRAPH
+
+    query_result = GRAPH.get_solved_python_package_versions_all(
+        start_offset=page,
+        os_name=os_name,
+        os_version=os_version,
+        python_version=python_version,
+        distinct=True,
+        is_missing=False,
+    )
+
+    return {
+        "versions": [{"package_name": i[0], "package_version": i[1], "index_url": i[2]} for i in query_result],
+        "parameters": parameters,
+    }, 200
