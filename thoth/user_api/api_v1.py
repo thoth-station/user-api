@@ -564,6 +564,9 @@ def get_python_platform() -> typing.Dict[str, typing.List[str]]:
 def list_python_package_versions(
     name: str,
     page: int = 0,
+    os_name: typing.Optional[str] = None,
+    os_version: typing.Optional[str] = None,
+    python_version: typing.Optional[str] = None,
 ) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
     """Get information about versions available."""
     parameters = locals()
@@ -571,11 +574,14 @@ def list_python_package_versions(
     from .openapi_server import GRAPH
 
     try:
-        query_result = GRAPH.get_python_package_versions_all(
+        query_result = GRAPH.get_solved_python_package_versions_all(
             package_name=name,
             distinct=True,
             is_missing=False,
             start_offset=page,
+            os_name=os_name,
+            os_version=os_version,
+            python_version=python_version,
         )
     except NotFoundError:
         return {"error": f"Package {name!r} not found", "parameters": parameters}, 404
