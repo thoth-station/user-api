@@ -1,5 +1,19 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.30.0 (2021-12-21T21:09:33)
+### Features
+* Environment is not mandatory when querying Python package versions
+* Provide an endpoint for listing environments used to solve a package
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Add my username to reviewers
+* Parametrize obtaining container images
+* List solved Python package versions
+* List available Python versions for environments
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Extend parameters provided by list containers endpoint
+### Bug Fixes
+* Fix a bug in openapi schema
+
 ## Release 0.29.1 (2021-12-16T12:29:00)
 ### Features
 * Fix return type for listing environments
