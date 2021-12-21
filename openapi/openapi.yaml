@@ -1952,7 +1952,7 @@ components:
       required:
         - environments
       properties:
-        versions:
+        environments:
           type: array
           items:
             type: object
