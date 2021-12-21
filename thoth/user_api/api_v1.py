@@ -571,7 +571,7 @@ def list_python_package_versions(
     from .openapi_server import GRAPH
 
     try:
-        query_result = GRAPH.get_python_package_versions_all(
+        query_result = GRAPH.get_solved_python_package_versions_all(
             package_name=name,
             distinct=True,
             is_missing=False,
