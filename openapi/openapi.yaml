@@ -1753,6 +1753,8 @@ components:
               - thoth_image_version
               - cuda_version
               - environment_type
+              - package_extract_document_id
+              - datetime
             properties:
               environment_name:
                 type: string
@@ -1792,6 +1794,10 @@ components:
                 enum:
                   - BUILDTIME
                   - RUNTIME
+              package_extract_document_id:
+                type: string
+              datetime:
+                type: string
         parameters:
           type: object
           required:
