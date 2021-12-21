@@ -985,6 +985,49 @@ paths:
               schema:
                 $ref: "#/components/schemas/PythonPackageVersionsResponseError"
 
+  /python/package/version/environments:
+    get:
+      tags: [PythonPackages]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: list_python_package_version_environments
+      summary: List environments used to solve the given Python package.
+      parameters:
+        - name: name
+          in: query
+          required: true
+          description: Name of the Python package.
+          schema:
+            type: string
+            default: flask
+        - name: version
+          in: query
+          required: true
+          description: Version of the Python package.
+          schema:
+            type: string
+            default: "2.0.2"
+        - name: index
+          in: query
+          required: true
+          description: Index url of the Python package.
+          schema:
+            type: string
+            default: "https://pypi.org/simple"
+        - name: page
+          in: query
+          required: false
+          description: Page offset in pagination.
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Listing of environments used to solve the given Python package.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonPackageVersionEnvironmentsResponse"
+
   /python/package/metadata:
     get:
       tags: [PythonPackages]
@@ -1903,6 +1946,33 @@ components:
                 nullable: false
                 description: Source index URL of the package.
                 example: "https://pypi.org/simple"
+
+    PythonPackageVersionEnvironmentsResponse:
+      type: object
+      required:
+        - environments
+      properties:
+        versions:
+          type: array
+          items:
+            type: object
+            required:
+              - os_name
+              - os_version
+              - python_version
+            properties:
+              os_name:
+                type: string
+                description: Operating system name.
+                example: rhel
+              os_version:
+                type: string
+                description: Operating system version.
+                example: '9'
+              python_version:
+                type: string
+                description: Python version.
+                example: '3.9'
 
     PythonPackageMetadataResponse:
       type: object

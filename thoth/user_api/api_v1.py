@@ -607,6 +607,24 @@ def list_python_package_versions(
     return {"versions": [{"package_name": i[0], "package_version": i[1], "index_url": i[2]} for i in query_result]}, 200
 
 
+def list_python_package_version_environments(
+    page: int,
+    name: str,
+    version: str,
+    index: str,
+) -> typing.Dict[str, typing.Any]:
+    """List environments for which the given package was solved."""
+    parameters = locals()
+
+    from .openapi_server import GRAPH
+
+    query_result = GRAPH.get_solved_python_package_version_environments_all(
+        name, version, index, start_offset=page, distinct=True
+    )
+
+    return {"environments": query_result}
+
+
 def get_python_package_dependencies(
     name: str,
     version: str,
