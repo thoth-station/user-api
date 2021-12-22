@@ -583,6 +583,29 @@ def get_python_platform() -> typing.Dict[str, typing.List[str]]:
     return {"platform": GRAPH.get_python_package_version_platform_all()}
 
 
+def list_python_packages(
+    page: int = 0,
+    os_name: typing.Optional[str] = None,
+    os_version: typing.Optional[str] = None,
+    python_version: typing.Optional[str] = None,
+) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+    """Get listing of solved package names."""
+    parameters = locals()
+
+    from .openapi_server import GRAPH
+
+    query_result = GRAPH.get_python_package_version_names_all(
+        sort=True,
+        distinct=True,
+        start_offset=page,
+        os_name=os_name,
+        os_version=os_version,
+        python_version=python_version,
+    )
+
+    return {"packages": [{"package_name": i} for i in query_result]}, 200
+
+
 def list_python_package_versions(
     name: str,
     page: int = 0,

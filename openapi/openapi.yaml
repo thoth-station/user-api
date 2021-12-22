@@ -932,6 +932,46 @@ paths:
               schema:
                 $ref: "#/components/schemas/PythonPackageDependenciesError"
 
+  /python/package:
+    get:
+      tags: [PythonPackages]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: list_python_packages
+      summary: List Python packages.
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Page offset in pagination.
+          schema:
+            type: integer
+            default: 0
+        - name: os_name
+          in: query
+          required: false
+          description: Name of operating system to consider.
+          schema:
+            type: string
+        - name: os_version
+          in: query
+          required: false
+          description: Version of operating system to consider.
+          schema:
+            type: string
+        - name: python_version
+          in: query
+          required: false
+          description: Version of Python interpreter.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Listing of available Python packages.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonPackagesResponse"
+
   /python/package/versions:
     get:
       tags: [PythonPackages]
@@ -1916,6 +1956,24 @@ components:
         parameters:
           type: object
           description: Parameters echoed back to user for debugging.
+
+    PythonPackagesResponse:
+      type: object
+      required:
+        - packages
+      properties:
+        packages:
+          type: array
+          items:
+            type: object
+            required:
+              - package_name
+            properties:
+              package_name:
+                type: string
+                nullable: false
+                description: Name of the package.
+                example: flask
 
     PythonPackageVersionsResponse:
       type: object
