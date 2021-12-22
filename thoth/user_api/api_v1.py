@@ -29,9 +29,12 @@ import connexion
 from thoth.common.exceptions import NotFoundExceptionError as OpenShiftNotFound
 from thoth.common import OpenShift
 from thoth.common import RuntimeEnvironment
+from thoth.common import map_os_name
+from thoth.common import normalize_os_version
 from thoth.python.exceptions import ThothPythonExceptionError
 from thoth.python import Constraints
 from thoth.python import Project
+from thoth.python import PackageVersion
 from thoth.storages.exceptions import CacheMiss
 from thoth.storages.exceptions import NotFoundError
 from thoth.storages import AdvisersCacheStore
@@ -44,6 +47,7 @@ from thoth.storages import BuildLogsStore
 from thoth.storages import ProvenanceCacheStore
 from thoth.storages import ProvenanceResultsStore
 from thoth.storages import WorkflowLogsStore
+from thoth.storages import SolverResultsStore
 from thoth.user_api.payload_filter import PayloadProcess
 
 import thoth.messaging.producer as producer
@@ -993,6 +997,82 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
 def list_buildlogs(page: int = 0):
     """List available build logs."""
     return _do_listing(BuildLogsStore, page)
+
+
+def get_python_package_version_metadata(
+    name: str, version: str, index: str, os_name: str, os_version: str, python_version: str
+) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+    """Obtain metadata for the given package."""
+    name = PackageVersion.normalize_python_package_name(name)
+    version = PackageVersion.normalize_python_package_version(version)
+    os_name = map_os_name(os_name) or os_name  # "or" to keep typing happy
+    os_version = normalize_os_version(os_name, os_version) or os_version  # "or" to keep typing happy
+
+    parameters = locals()
+    from .openapi_server import GRAPH
+
+    solver_documents = GRAPH.get_solver_document_id_all(
+        name, version, index, os_name=os_name, os_version=os_version, python_version=python_version, sort=True
+    )
+    if not solver_documents:
+        return {"parameters": parameters, "error": "No records found for the given request"}, 404
+
+    solver_store = SolverResultsStore()
+    solver_store.connect()
+    solver_document = solver_store.retrieve_document(solver_documents[0])
+    solver_name = "-".join(solver_document["metadata"]["document_id"].split("-")[:4])
+    solver = OpenShift.parse_python_solver_name(solver_name)
+
+    for solver_entry in solver_document["result"]["tree"]:
+        if (
+            solver_entry["package_name"] == name
+            and solver_entry["package_version"] == version
+            and solver_entry["index_url"] == index
+        ):
+            break
+    else:
+        # This should not happen as data synced to the database should be based on the sovler document content.
+        return {"parameters": parameters, "error": "Internal error, please contact administrator"}, 500
+
+    package_name = solver_entry["package_name"]
+    package_version = solver_entry["package_version"]
+    index_url = solver_entry["index_url"]
+
+    deps = {}
+    for dependency_entry in solver_entry["dependencies"]:
+        dependency_name = dependency_entry.pop("normalized_package_name")
+        dependency_entry.pop("package_name", None)
+        dependency_entry.pop("resolved_versions", None)
+
+        dependency_entry["versions"] = []
+        deps[dependency_name] = dependency_entry
+
+    dependency_info = GRAPH.get_depends_on(
+        name,
+        version,
+        index,
+        os_name=solver["os_name"],
+        os_version=solver["os_version"],
+        python_version=solver["python_version"],
+        extras=None,
+        marker_evaluation_result=None,
+        is_missing=None,
+    )
+
+    for extra, dependencies in dependency_info.items():
+        for dependency_name, dependency_version in dependencies:
+            deps[dependency_name].setdefault("versions", []).append(dependency_version)
+
+    for dependency_info in deps.values():
+        dependency_info["versions"].sort(key=lambda v: PackageVersion.parse_semantic_version(v), reverse=False)
+
+    solver_entry["dependencies"] = deps
+
+    # Remove entries that should not be exposed.
+    solver_entry.pop("package_version_requested", None)
+    solver_entry.pop("sha256", None)
+
+    return {"metadata": solver_entry, "parameters": parameters}, 200
 
 
 def get_package_metadata(name: str, version: str, index: str):

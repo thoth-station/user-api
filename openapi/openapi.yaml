@@ -1068,9 +1068,67 @@ paths:
               schema:
                 $ref: "#/components/schemas/PythonPackageVersionEnvironmentsResponse"
 
+  /python/package/version/metadata:
+    get:
+      tags: [PythonPackages]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: get_python_package_version_metadata
+      summary: Get metadata for the given package.
+      parameters:
+        - name: name
+          in: query
+          required: true
+          description: Name of the Python Package.
+          schema:
+            type: string
+        - name: version
+          in: query
+          required: true
+          description: Version of the Python package.
+          schema:
+            type: string
+        - name: index
+          in: query
+          required: true
+          description: Index URL for the Python package.
+          schema:
+            type: string
+        - name: os_name
+          in: query
+          required: true
+          description: Name of operating system to consider.
+          schema:
+            type: string
+        - name: os_version
+          in: query
+          required: true
+          description: Version of operating system to consider.
+          schema:
+            type: string
+        - name: python_version
+          in: query
+          required: true
+          description: Version of Python interpreter.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Metadata information for the given Python package version.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonPackageVersionMetadataResponse"
+        "404":
+          description: No record found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PythonPackageVersionMetadataResponseError"
+
   /python/package/metadata:
     get:
       tags: [PythonPackages]
+      deprecated: true
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_package_metadata
       summary: >
@@ -2031,6 +2089,30 @@ components:
                 type: string
                 description: Python version.
                 example: '3.9'
+
+    PythonPackageVersionMetadataResponse:
+      type: object
+      required:
+        - metadata
+        - parameters
+      properties:
+        parameters:
+          type: object
+        metadata:
+          type: object
+
+    PythonPackageVersionMetadataResponseError:
+      type: object
+      required:
+        - error
+        - parameters
+      properties:
+        error:
+          type: string
+          description: Error information for user.
+        parameters:
+          type: object
+          description: Parameters echoed back to user for debugging.
 
     PythonPackageMetadataResponse:
       type: object
