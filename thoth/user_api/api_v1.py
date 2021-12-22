@@ -203,9 +203,13 @@ def list_thoth_container_images(
         image_name=image_name,
     ):
         if item.get("env_image_name") and item.get("env_image_tag"):
+            item["thoth_image_name"] = item.pop("env_image_name", None)
+            item["thoth_image_version"] = item.pop("env_image_tag", None)
+        else:
             item["thoth_image_name"] = item.pop("thoth_s2i_image_name", None)
             item["thoth_image_version"] = item.pop("thoth_s2i_image_version", None)
-            entries.append(item)
+
+        entries.append(item)
 
     return {
         "container_images": entries,
