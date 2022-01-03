@@ -23,6 +23,7 @@ import json
 import datetime
 import time
 import connexion
+import os
 from typing import Any
 from typing import Dict
 from typing import List
@@ -82,7 +83,7 @@ from . import __version__ as SERVICE_VERSION  # noqa
 from . import __name__ as COMPONENT_NAME  # noqa
 
 
-PAGINATION_SIZE = 100
+PAGINATION_SIZE = int(os.getenv("THOTH_USER_API_PAGE_SIZE", 100))
 _LOGGER = logging.getLogger(__name__)
 _OPENSHIFT = OpenShift()
 
@@ -192,14 +193,15 @@ def list_thoth_container_images(
     python_version: Optional[str] = None,
     cuda_version: Optional[str] = None,
     image_name: Optional[str] = None,
-) -> Dict[str, Any]:
+) -> Tuple[Dict[str, Any], int, Dict[str, Any]]:
     """List registered Thoth container images."""
     from .openapi_server import GRAPH
 
     entries = []
     for item in GRAPH.get_software_environments_all(
         is_external=False,
-        start_offset=page,
+        start_offset=page * PAGINATION_SIZE,
+        count=PAGINATION_SIZE,
         os_name=os_name,
         os_version=os_version,
         python_version=python_version,
@@ -215,10 +217,19 @@ def list_thoth_container_images(
 
         entries.append(item)
 
-    return {
-        "container_images": entries,
-        "parameters": {"page": page, "os_name": os_name, "os_version": os_version, "python_version": python_version},
-    }
+    return (
+        {
+            "container_images": entries,
+            "parameters": {
+                "page": page,
+                "os_name": os_name,
+                "os_version": os_version,
+                "python_version": python_version,
+            },
+        },
+        200,
+        {"page": page, "per_page": PAGINATION_SIZE, "page_count": None},  # TODO: page_count
+    )
 
 
 def get_analyze_by_hash(image_hash: str) -> Tuple[Dict[str, Any], int]:
@@ -587,7 +598,7 @@ def list_python_packages(
     os_name: Optional[str] = None,
     os_version: Optional[str] = None,
     python_version: Optional[str] = None,
-) -> Tuple[Dict[str, Any], int]:
+) -> Tuple[Dict[str, Any], int, Dict[str, Any]]:
     """Get listing of solved package names."""
     parameters = locals()
 
@@ -596,13 +607,18 @@ def list_python_packages(
     query_result = GRAPH.get_python_package_version_names_all(
         sort=True,
         distinct=True,
-        start_offset=page,
+        start_offset=page * PAGINATION_SIZE,
+        count=PAGINATION_SIZE,
         os_name=os_name,
         os_version=os_version,
         python_version=python_version,
     )
 
-    return {"packages": [{"package_name": i} for i in query_result]}, 200
+    return (
+        {"packages": [{"package_name": i} for i in query_result]},
+        200,
+        {"page": page, "per_page": PAGINATION_SIZE, "page_count": None},  # TODO: page count
+    )
 
 
 def list_python_package_versions(
@@ -611,7 +627,7 @@ def list_python_package_versions(
     os_name: Optional[str] = None,
     os_version: Optional[str] = None,
     python_version: Optional[str] = None,
-) -> Tuple[Dict[str, Any], int]:
+) -> Tuple[Dict[str, Any], int, Dict[str, Any]]:
     """Get information about versions available."""
     parameters = locals()
 
@@ -622,15 +638,20 @@ def list_python_package_versions(
             package_name=name,
             distinct=True,
             is_missing=False,
-            start_offset=page,
+            start_offset=page * PAGINATION_SIZE,
+            count=PAGINATION_SIZE,
             os_name=os_name,
             os_version=os_version,
             python_version=python_version,
         )
     except NotFoundError:
-        return {"error": f"Package {name!r} not found", "parameters": parameters}, 404
+        return {"error": f"Package {name!r} not found", "parameters": parameters}, 404, {}
 
-    return {"versions": [{"package_name": i[0], "package_version": i[1], "index_url": i[2]} for i in query_result]}, 200
+    return (
+        {"versions": [{"package_name": i[0], "package_version": i[1], "index_url": i[2]} for i in query_result]},
+        200,
+        {"page": page, "per_page": PAGINATION_SIZE, "page_count": None},  # TODO: page_count
+    )
 
 
 def list_python_package_version_environments(
@@ -638,17 +659,21 @@ def list_python_package_version_environments(
     name: str,
     version: str,
     index: str,
-) -> Tuple[Dict[str, Any], int]:
+) -> Tuple[Dict[str, Any], int, Dict[str, Any]]:
     """List environments for which the given package was solved."""
     parameters = locals()
 
     from .openapi_server import GRAPH
 
     query_result = GRAPH.get_solved_python_package_version_environments_all(
-        name, version, index, start_offset=page, distinct=True
+        name, version, index, start_offset=page, count=PAGINATION_SIZE, distinct=True
     )
 
-    return {"environments": query_result}, 200
+    return (
+        {"environments": query_result},
+        200,
+        {"page": page, "per_page": PAGINATION_SIZE, "page_count": None},
+    )  # TODO: page_count
 
 
 def get_python_package_dependencies(
