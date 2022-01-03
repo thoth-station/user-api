@@ -228,7 +228,18 @@ def list_thoth_container_images(
             },
         },
         200,
-        {"page": page, "per_page": PAGINATION_SIZE, "page_count": None},  # TODO: page_count
+        {
+            "page": page,
+            "per_page": PAGINATION_SIZE,
+            "page_count": GRAPH.get_software_environments_count_all(
+                is_external=False,
+                os_name=os_name,
+                os_version=os_version,
+                python_version=python_version,
+                cuda_version=cuda_version,
+                image_name=image_name,
+            ),
+        },
     )
 
 
@@ -617,7 +628,16 @@ def list_python_packages(
     return (
         {"packages": [{"package_name": i} for i in query_result]},
         200,
-        {"page": page, "per_page": PAGINATION_SIZE, "page_count": None},  # TODO: page count
+        {
+            "page": page,
+            "per_page": PAGINATION_SIZE,
+            "page_count": GRAPH.get_python_package_versions_count_all(
+                os_name=os_name,
+                os_version=os_version,
+                python_version=python_version,
+                distinct=True,
+            ),
+        },
     )
 
 
@@ -650,30 +670,41 @@ def list_python_package_versions(
     return (
         {"versions": [{"package_name": i[0], "package_version": i[1], "index_url": i[2]} for i in query_result]},
         200,
-        {"page": page, "per_page": PAGINATION_SIZE, "page_count": None},  # TODO: page_count
+        {
+            "page": page,
+            "per_page": PAGINATION_SIZE,
+            "page_count": GRAPH.get_solved_python_package_versions_count_all(
+                package_name=name,
+                distinct=True,
+                is_missing=False,
+                os_name=os_name,
+                os_version=os_version,
+                python_version=python_version,
+            ),
+        },
     )
 
 
 def list_python_package_version_environments(
-    page: int,
     name: str,
     version: str,
     index: str,
-) -> Tuple[Dict[str, Any], int, Dict[str, Any]]:
+) -> Tuple[Dict[str, Any], int]:
     """List environments for which the given package was solved."""
     parameters = locals()
 
     from .openapi_server import GRAPH
 
     query_result = GRAPH.get_solved_python_package_version_environments_all(
-        name, version, index, start_offset=page, count=PAGINATION_SIZE, distinct=True
+        name,
+        version,
+        index,
+        start_offset=0,
+        count=None,  # The number of results queried will be low.
+        distinct=True,
     )
 
-    return (
-        {"environments": query_result},
-        200,
-        {"page": page, "per_page": PAGINATION_SIZE, "page_count": None},
-    )  # TODO: page_count
+    return {"environments": query_result}, 200
 
 
 def get_python_package_dependencies(
