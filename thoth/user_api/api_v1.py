@@ -19,11 +19,17 @@
 
 import hashlib
 import logging
-import typing
 import json
 import datetime
 import time
 import connexion
+from typing import Any
+from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Tuple
+from typing import Type
+from typing import Union
 
 from thoth.common.exceptions import NotFoundExceptionError as OpenShiftNotFound
 from thoth.common import OpenShift
@@ -89,7 +95,7 @@ _ADVISE_PROTECTED_FIELDS = frozenset(
 _PROVENANCE_CHECK_PROTECTED_FIELDS = frozenset({"kebechet_metadata"})
 
 
-def _compute_digest_params(parameters: dict):
+def _compute_digest_params(parameters: Dict[Any, Any]) -> str:
     """Compute digest on parameters passed."""
     return hashlib.sha256(json.dumps(parameters, sort_keys=True).encode()).hexdigest()
 
@@ -97,13 +103,13 @@ def _compute_digest_params(parameters: dict):
 def post_analyze(
     image: str,
     debug: bool = False,
-    registry_user: str = None,
-    registry_password: str = None,
-    environment_type: str = None,
-    origin: str = None,
+    registry_user: Optional[str] = None,
+    registry_password: Optional[str] = None,
+    environment_type: Optional[str] = None,
+    origin: Optional[str] = None,
     verify_tls: bool = True,
     force: bool = False,
-):
+) -> Tuple[Dict[str, Any], int]:
     """Run an analyzer in a restricted namespace."""
     parameters = locals()
     force = parameters.pop("force", None)
@@ -161,15 +167,15 @@ def post_analyze(
 
 
 def post_image_metadata(
-    image: str, registry_user: str = None, registry_password: str = None, verify_tls: bool = True
-) -> tuple:
+    image: str, registry_user: Optional[str] = None, registry_password: Optional[str] = None, verify_tls: bool = True
+) -> Tuple[Dict[str, Any], int]:
     """Get image metadata."""
     return _do_get_image_metadata(
         image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
     )
 
 
-def get_analyze(analysis_id: str):
+def get_analyze(analysis_id: str) -> Tuple[Dict[str, Any], int]:
     """Retrieve image analyzer result."""
     return _get_document(
         AnalysisResultsStore,
@@ -181,12 +187,12 @@ def get_analyze(analysis_id: str):
 
 def list_thoth_container_images(
     page: int = 0,
-    os_name: typing.Optional[str] = None,
-    os_version: typing.Optional[str] = None,
-    python_version: typing.Optional[str] = None,
-    cuda_version: typing.Optional[str] = None,
-    image_name: typing.Optional[str] = None,
-) -> typing.Dict[str, typing.Any]:
+    os_name: Optional[str] = None,
+    os_version: Optional[str] = None,
+    python_version: Optional[str] = None,
+    cuda_version: Optional[str] = None,
+    image_name: Optional[str] = None,
+) -> Dict[str, Any]:
     """List registered Thoth container images."""
     from .openapi_server import GRAPH
 
@@ -215,7 +221,7 @@ def list_thoth_container_images(
     }
 
 
-def get_analyze_by_hash(image_hash: str):
+def get_analyze_by_hash(image_hash: str) -> Tuple[Dict[str, Any], int]:
     """Get image analysis by hash of the analyzed image."""
     parameters = locals()
 
@@ -236,12 +242,12 @@ def get_analyze_by_hash(image_hash: str):
     return get_analyze(analysis_info["analysis_id"])
 
 
-def get_analyze_log(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+def get_analyze_log(analysis_id: str) -> Tuple[Dict[str, Any], int]:
     """Get image analysis log."""
     return _get_log("extract-packages", analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE)
 
 
-def get_analyze_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+def get_analyze_status(analysis_id: str) -> Tuple[Dict[str, Any], int]:
     """Get status of an image analysis."""
     return _get_status_with_queued(
         AnalysisResultsStore, "extract-packages", analysis_id, namespace=Configuration.THOTH_MIDDLETIER_NAMESPACE
@@ -249,12 +255,12 @@ def get_analyze_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing
 
 
 def post_provenance_python(
-    input: dict,
+    input: Dict[str, Any],
     debug: bool = False,
     force: bool = False,
-    origin: str = None,
-    token: typing.Optional[str] = None,
-):
+    origin: Optional[str] = None,
+    token: Optional[str] = None,
+) -> Tuple[Dict[str, Any], int]:
     """Check provenance for the given application stack."""
     parameters = locals()
     # Translate request body parameters.
@@ -344,7 +350,7 @@ def post_provenance_python(
     return response, status
 
 
-def get_provenance_python(analysis_id: str):
+def get_provenance_python(analysis_id: str) -> Tuple[Dict[str, Any], int]:
     """Retrieve a provenance check result."""
     result, status_code = _get_document(
         ProvenanceResultsStore,
@@ -358,12 +364,12 @@ def get_provenance_python(analysis_id: str):
     return result, status_code
 
 
-def get_provenance_python_log(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+def get_provenance_python_log(analysis_id: str) -> Tuple[Dict[str, Any], int]:
     """Get provenance-checker logs."""
     return _get_log("provenance-check", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
 
 
-def get_provenance_python_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+def get_provenance_python_status(analysis_id: str) -> Tuple[Dict[str, Any], int]:
     """Get status of a provenance check."""
     return _get_status_with_queued(
         ProvenanceResultsStore, "provenance-check", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE
@@ -371,17 +377,17 @@ def get_provenance_python_status(analysis_id: str) -> typing.Tuple[typing.Dict[s
 
 
 def post_advise_python(
-    input: dict,
-    recommendation_type: typing.Optional[str] = None,
-    count: typing.Optional[int] = None,
-    limit: typing.Optional[int] = None,
-    source_type: typing.Optional[str] = None,
+    input: Dict[str, Any],
+    recommendation_type: Optional[str] = None,
+    count: Optional[int] = None,
+    limit: Optional[int] = None,
+    source_type: Optional[str] = None,
     debug: bool = False,
     force: bool = False,
     dev: bool = False,
-    origin: typing.Optional[str] = None,
-    token: typing.Optional[str] = None,
-):
+    origin: Optional[str] = None,
+    token: Optional[str] = None,
+) -> Tuple[Dict[str, Any], int]:
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
     # Translate request body parameters.
@@ -410,7 +416,7 @@ def post_advise_python(
             parameters["input"].pop("runtime_environment", {})
         ).to_dict()
     except Exception as exc:
-        return {"parameters": parameters, "error": f"Failed to parse runtime environment: {str(exc)}"}
+        return {"parameters": parameters, "error": f"Failed to parse runtime environment: {str(exc)}"}, 400
 
     try:
         constraints = Constraints.from_string(parameters["input"].pop("constraints", None) or "")
@@ -518,7 +524,7 @@ def post_advise_python(
     return response, status
 
 
-def get_advise_python(analysis_id):
+def get_advise_python(analysis_id: str) -> Tuple[Dict[str, Any], int]:
     """Retrieve the given recommendation based on its id."""
     result, status_code = _get_document(
         AdvisersResultsStore, analysis_id, name_prefix="adviser-", namespace=Configuration.THOTH_BACKEND_NAMESPACE
@@ -529,14 +535,14 @@ def get_advise_python(analysis_id):
     return result, status_code
 
 
-def get_advise_python_log(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+def get_advise_python_log(analysis_id: str) -> Tuple[Dict[str, Any], int]:
     """Get adviser log."""
     return _get_log("advise", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE)
 
 
-def _get_log(node_name: str, analysis_id: str, namespace: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+def _get_log(node_name: str, analysis_id: str, namespace: str) -> Tuple[Dict[str, Any], int]:
     """Get log for a node in a workflow."""
-    result: typing.Dict[str, typing.Any] = {"parameters": {"analysis_id": analysis_id}}
+    result: Dict[str, Any] = {"parameters": {"analysis_id": analysis_id}}
     try:
         log = _OPENSHIFT.get_workflow_node_log(node_name, analysis_id, namespace)
     except OpenShiftNotFound:
@@ -555,33 +561,33 @@ def _get_log(node_name: str, analysis_id: str, namespace: str) -> typing.Tuple[t
         return result, 200
 
 
-def get_advise_python_status(analysis_id: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+def get_advise_python_status(analysis_id: str) -> Tuple[Dict[str, Any], int]:
     """Get status of an adviser run."""
     return _get_status_with_queued(
         AdvisersResultsStore, "advise", analysis_id, namespace=Configuration.THOTH_BACKEND_NAMESPACE
     )
 
 
-def list_python_package_indexes():
+def list_python_package_indexes() -> Tuple[Dict[str, Any], int]:
     """List registered Python package indexes in the graph database."""
     from .openapi_server import GRAPH
 
-    return {"indexes": GRAPH.get_python_package_index_all()}
+    return {"indexes": GRAPH.get_python_package_index_all()}, 200
 
 
-def get_python_platform() -> typing.Dict[str, typing.List[str]]:
+def get_python_platform() -> Tuple[Dict[str, List[str]], int]:
     """List available platforms for the Python ecosystem."""
     from .openapi_server import GRAPH
 
-    return {"platform": GRAPH.get_python_package_version_platform_all()}
+    return {"platform": GRAPH.get_python_package_version_platform_all()}, 200
 
 
 def list_python_packages(
     page: int = 0,
-    os_name: typing.Optional[str] = None,
-    os_version: typing.Optional[str] = None,
-    python_version: typing.Optional[str] = None,
-) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+    os_name: Optional[str] = None,
+    os_version: Optional[str] = None,
+    python_version: Optional[str] = None,
+) -> Tuple[Dict[str, Any], int]:
     """Get listing of solved package names."""
     parameters = locals()
 
@@ -602,10 +608,10 @@ def list_python_packages(
 def list_python_package_versions(
     name: str,
     page: int = 0,
-    os_name: typing.Optional[str] = None,
-    os_version: typing.Optional[str] = None,
-    python_version: typing.Optional[str] = None,
-) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+    os_name: Optional[str] = None,
+    os_version: Optional[str] = None,
+    python_version: Optional[str] = None,
+) -> Tuple[Dict[str, Any], int]:
     """Get information about versions available."""
     parameters = locals()
 
@@ -632,7 +638,7 @@ def list_python_package_version_environments(
     name: str,
     version: str,
     index: str,
-) -> typing.Dict[str, typing.Any]:
+) -> Tuple[Dict[str, Any], int]:
     """List environments for which the given package was solved."""
     parameters = locals()
 
@@ -642,18 +648,18 @@ def list_python_package_version_environments(
         name, version, index, start_offset=page, distinct=True
     )
 
-    return {"environments": query_result}
+    return {"environments": query_result}, 200
 
 
 def get_python_package_dependencies(
     name: str,
     version: str,
     index: str,
-    os_name: typing.Optional[str] = None,
-    os_version: typing.Optional[str] = None,
-    python_version: typing.Optional[str] = None,
-    marker_evaluation_result: typing.Optional[bool] = None,
-) -> typing.Tuple[typing.Any, int]:
+    os_name: Optional[str] = None,
+    os_version: Optional[str] = None,
+    python_version: Optional[str] = None,
+    marker_evaluation_result: Optional[bool] = None,
+) -> Tuple[Dict[str, Any], int]:
     """Get dependencies for the given Python package."""
     parameters = locals()
 
@@ -734,19 +740,19 @@ def get_python_package_dependencies(
 
 
 def post_build(
-    build_detail: typing.Dict[str, typing.Any],
+    build_detail: Dict[str, Any],
     *,
-    base_registry_password: typing.Optional[str] = None,
-    base_registry_user: typing.Optional[str] = None,
+    base_registry_password: Optional[str] = None,
+    base_registry_user: Optional[str] = None,
     base_registry_verify_tls: bool = True,
-    output_registry_password: typing.Optional[str] = None,
-    output_registry_user: typing.Optional[str] = None,
+    output_registry_password: Optional[str] = None,
+    output_registry_user: Optional[str] = None,
     output_registry_verify_tls: bool = True,
     debug: bool = False,
-    environment_type: typing.Optional[str] = None,
+    environment_type: Optional[str] = None,
     force: bool = False,
-    origin: typing.Optional[str] = None,
-) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+    origin: Optional[str] = None,
+) -> Tuple[Dict[str, Any], int]:
     """Run analysis on a build."""
     output_image = build_detail.get("output_image")
     base_image = build_detail.get("base_image")
@@ -927,9 +933,7 @@ def post_build(
     )
 
 
-def _store_build_log(
-    build_log: typing.Dict[str, typing.Any], force: bool = False
-) -> typing.Tuple[str, typing.Optional[str]]:
+def _store_build_log(build_log: Dict[str, Any], force: bool = False) -> Tuple[str, Optional[str]]:
     """Store the given build log, use cached entry if available."""
     buildlog_analysis_id = None
     if not force:
@@ -949,12 +953,12 @@ def _store_build_log(
     return document_id, buildlog_analysis_id
 
 
-def get_buildlog(document_id: str):
+def get_buildlog(document_id: str) -> Tuple[Dict[str, Any], int]:
     """Retrieve the given buildlog."""
     return _get_document(BuildLogsStore, document_id)
 
 
-def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
+def schedule_kebechet_webhook(body: Dict[str, Any]) -> Tuple[Dict[str, Any], int]:
     """Schedule Kebechet run-webhook on Openshift using Argo Workflow."""
     payload, webhook_payload = {}, {}
     headers = connexion.request.headers
@@ -976,7 +980,8 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     preprocess_payload = PayloadProcess().process(webhook_payload=webhook_payload)
     # Not schedule workload if pre-processed payload is None.
     if preprocess_payload is None:
-        return
+        # No action made - eg. ignored payload or invalid payload.
+        return {}, 200
 
     payload["webhook_payload"] = webhook_payload
     payload["job_id"] = _OPENSHIFT.generate_id("kebechet-job")  # type: ignore
@@ -985,7 +990,7 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
 
 def get_python_package_version_metadata(
     name: str, version: str, index: str, os_name: str, os_version: str, python_version: str
-) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+) -> Tuple[Dict[str, Any], int]:
     """Obtain metadata for the given package."""
     name = PackageVersion.normalize_python_package_name(name)
     version = PackageVersion.normalize_python_package_version(version)
@@ -1059,7 +1064,7 @@ def get_python_package_version_metadata(
     return {"metadata": solver_entry, "parameters": parameters}, 200
 
 
-def get_package_metadata(name: str, version: str, index: str):
+def get_package_metadata(name: str, version: str, index: str) -> Tuple[Dict[str, Any], int]:
     """Retrieve metadata for the given package version."""
     parameters = locals()
     from .openapi_server import GRAPH
@@ -1070,7 +1075,7 @@ def get_package_metadata(name: str, version: str, index: str):
                 package_name=name, package_version=version, index_url=index
             ),
             "parameters": parameters,
-        }
+        }, 200
     except NotFoundError:
         return (
             {
@@ -1081,7 +1086,7 @@ def get_package_metadata(name: str, version: str, index: str):
         )
 
 
-def _construct_status_queued(analysis_id: str) -> typing.Dict[str, typing.Any]:
+def _construct_status_queued(analysis_id: str) -> Dict[str, Any]:
     """Construct a response for a queued analysis."""
     status = {"finished_at": None, "reason": None, "started_at": None, "state": "pending"}
     return {
@@ -1091,7 +1096,9 @@ def _construct_status_queued(analysis_id: str) -> typing.Dict[str, typing.Any]:
     }
 
 
-def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, namespace: str = None) -> tuple:
+def _get_document(
+    adapter_class, analysis_id: str, name_prefix: Optional[str] = None, namespace: Optional[str] = None
+) -> Tuple[Dict[str, Any], int]:
     """Perform actual document retrieval."""
     # Parameters to be reported back to a user of API.
     parameters = {"analysis_id": analysis_id}
@@ -1125,9 +1132,9 @@ def _get_document(adapter_class, analysis_id: str, name_prefix: str = None, name
         return {"error": f"Requested result for analysis {analysis_id!r} was not found", "parameters": parameters}, 404
 
 
-def _get_status(node_name: str, analysis_id: str, namespace: str) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
+def _get_status(node_name: str, analysis_id: str, namespace: str) -> Tuple[Dict[str, Any], int]:
     """Get status for a node in a workflow."""
-    result: typing.Dict[str, typing.Any] = {"parameters": {"analysis_id": analysis_id}}
+    result: Dict[str, Any] = {"parameters": {"analysis_id": analysis_id}}
     try:
         status = _OPENSHIFT.get_workflow_node_status(node_name, analysis_id, namespace)
     except OpenShiftNotFound:
@@ -1139,11 +1146,11 @@ def _get_status(node_name: str, analysis_id: str, namespace: str) -> typing.Tupl
 
 
 def _get_status_with_queued(
-    adapter: typing.Union[AdvisersResultsStore, ProvenanceResultsStore, AnalysisResultsStore],
+    adapter: Union[AdvisersResultsStore, ProvenanceResultsStore, AnalysisResultsStore],
     node_name: str,
     analysis_id: str,
     namespace: str,
-) -> typing.Tuple[typing.Dict[str, typing.Any,], int]:
+) -> Tuple[Dict[str, Any,], int]:
     """Get status of an analysis, check queued requests as well."""
     result, status_code = _get_status(node_name=node_name, analysis_id=analysis_id, namespace=namespace)
     if status_code == 404:
@@ -1155,12 +1162,12 @@ def _get_status_with_queued(
 
 
 def _send_schedule_message(
-    message_contents: dict,
+    message_contents: Dict[str, Any],
     message_type: MessageBase,
-    content: typing.Type[BaseMessageContents],
+    content: Type[BaseMessageContents],
     with_authentication: bool = False,
     authenticated: bool = False,
-):
+) -> Tuple[Dict[str, Any], int]:
     from .openapi_server import PRODUCER
 
     message_contents["service_version"] = SERVICE_VERSION
@@ -1193,8 +1200,8 @@ def _send_schedule_message(
 
 
 def _do_get_image_metadata(
-    image: str, registry_user: str = None, registry_password: str = None, verify_tls: bool = True
-) -> typing.Tuple[dict, int]:
+    image: str, registry_user: Optional[str] = None, registry_password: Optional[str] = None, verify_tls: bool = True
+) -> Tuple[Dict[str, Any], int]:
     """Wrap function call with additional checks."""
     try:
         return (
@@ -1222,7 +1229,7 @@ def _do_get_image_metadata(
     return {"error": error_str, "parameters": locals()}, status_code
 
 
-def get_package_from_imported_packages(import_name: str):
+def get_package_from_imported_packages(import_name: str) -> Tuple[Dict[str, Any], int]:
     """Retrieve Python package name for the given import package name."""
     parameters = locals()
     from .openapi_server import GRAPH
@@ -1233,7 +1240,7 @@ def get_package_from_imported_packages(import_name: str):
                 import_name=import_name, distinct=True
             ),
             "parameters": parameters,
-        }
+        }, 200
     except NotFoundError:
         return (
             {
@@ -1244,7 +1251,7 @@ def get_package_from_imported_packages(import_name: str):
         )
 
 
-def list_python_environments() -> typing.Dict[str, typing.List[typing.Dict[str, str]]]:
+def list_python_environments() -> Dict[str, List[Dict[str, str]]]:
     """Get environments available based on solvers installed."""
     result = []
     for solver in _OPENSHIFT.get_solver_names():
