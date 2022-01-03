@@ -1075,28 +1075,6 @@ def get_python_package_version_metadata(
     return {"metadata": solver_entry, "parameters": parameters}, 200
 
 
-def get_package_metadata(name: str, version: str, index: str):
-    """Retrieve metadata for the given package version."""
-    parameters = locals()
-    from .openapi_server import GRAPH
-
-    try:
-        return {
-            "metadata": GRAPH.get_python_package_version_metadata(
-                package_name=name, package_version=version, index_url=index
-            ),
-            "parameters": parameters,
-        }
-    except NotFoundError:
-        return (
-            {
-                "error": f"No metadata records for package {name!r} in version {version!r} from index {index!r} found",
-                "parameters": parameters,
-            },
-            404,
-        )
-
-
 def _do_listing(adapter_class, page: int) -> tuple:
     """Perform actual listing of documents available."""
     adapter = adapter_class()
