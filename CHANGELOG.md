@@ -1,5 +1,12 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.31.0 (2022-01-03T14:48:35)
+### Features
+* Introduce endpoint for obtaining Python package metadata
+* List available Python packages
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Fix listing of images
+
 ## Release 0.30.0 (2021-12-21T21:09:33)
 ### Features
 * Environment is not mandatory when querying Python package versions
