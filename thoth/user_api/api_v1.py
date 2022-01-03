@@ -18,7 +18,6 @@
 """Implementation of API v1."""
 
 import hashlib
-from itertools import islice
 import logging
 import typing
 import json
@@ -168,11 +167,6 @@ def post_image_metadata(
     return _do_get_image_metadata(
         image, registry_user=registry_user, registry_password=registry_password, verify_tls=verify_tls
     )
-
-
-def list_analyze(page: int = 0):
-    """Retrieve image analyzer result."""
-    return _do_listing(AnalysisResultsStore, page)
 
 
 def get_analyze(analysis_id: str):
@@ -522,11 +516,6 @@ def post_advise_python(
         store.store_request(parameters["job_id"], parameters)
 
     return response, status
-
-
-def list_advise_python(page: int = 0):
-    """List available runtime environments."""
-    return _do_listing(AdvisersResultsStore, page)
 
 
 def get_advise_python(analysis_id):
@@ -994,11 +983,6 @@ def schedule_kebechet_webhook(body: typing.Dict[str, typing.Any]):
     return _send_schedule_message(payload, kebechet_trigger_message, KebechetTriggerContent)
 
 
-def list_buildlogs(page: int = 0):
-    """List available build logs."""
-    return _do_listing(BuildLogsStore, page)
-
-
 def get_python_package_version_metadata(
     name: str, version: str, index: str, os_name: str, os_version: str, python_version: str
 ) -> typing.Tuple[typing.Dict[str, typing.Any], int]:
@@ -1095,19 +1079,6 @@ def get_package_metadata(name: str, version: str, index: str):
             },
             404,
         )
-
-
-def _do_listing(adapter_class, page: int) -> tuple:
-    """Perform actual listing of documents available."""
-    adapter = adapter_class()
-    adapter.connect()
-    result = adapter.get_document_listing()
-    results = list(islice(result, page * PAGINATION_SIZE, page * PAGINATION_SIZE + PAGINATION_SIZE))
-    return (
-        {"results": results, "parameters": {"page": page}},
-        200,
-        {"page": page, "page_size": PAGINATION_SIZE, "results_count": len(results)},
-    )
 
 
 def _construct_status_queued(analysis_id: str) -> typing.Dict[str, typing.Any]:
