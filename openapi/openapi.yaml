@@ -536,7 +536,6 @@ paths:
           schema:
             type: integer
             default: 0
-            minimum: 0
         - name: per_page
           in: query
           required: false
@@ -954,7 +953,6 @@ paths:
           schema:
             type: integer
             default: 0
-            minimum: 0
         - name: per_page
           in: query
           required: false
@@ -1009,7 +1007,6 @@ paths:
           schema:
             type: integer
             default: 0
-            minimum: 0
         - name: per_page
           in: query
           required: false
@@ -1275,7 +1272,6 @@ components:
       schema:
         type: integer
         default: 0
-        minimum: 0
     per_page:
       name: per_page
       in: query

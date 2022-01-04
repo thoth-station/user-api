@@ -122,6 +122,15 @@ def _compute_prev_next_page(page: int, page_count: int) -> Tuple[Optional[str], 
     return prev_page, next_page
 
 
+def _compute_offset(*, page: int, page_count: int, per_page: int) -> int:
+    """Compute offset respecting negative indexing."""
+    if page < 0:
+        page = (-page - 1) % page_count
+        return (page_count - page - 1) * per_page
+    else:
+        return page * per_page
+
+
 def post_analyze(
     image: str,
     debug: bool = False,
@@ -222,10 +231,22 @@ def list_thoth_container_images(
 
     from .openapi_server import GRAPH
 
+    entries_count = GRAPH.get_software_environments_count_all(
+        is_external=False,
+        os_name=os_name,
+        os_version=os_version,
+        python_version=python_version,
+        cuda_version=cuda_version,
+        image_name=image_name,
+    )
+
+    page_count = ceil(entries_count / per_page)
+    start_offset = _compute_offset(page=page, page_count=page_count, per_page=per_page)
+
     entries = []
     for item in GRAPH.get_software_environments_all(
         is_external=False,
-        start_offset=page * per_page,
+        start_offset=start_offset,
         count=per_page,
         os_name=os_name,
         os_version=os_version,
@@ -241,18 +262,6 @@ def list_thoth_container_images(
             item["thoth_image_version"] = item.pop("thoth_s2i_image_version", None)
 
         entries.append(item)
-
-    page_count = ceil(
-        GRAPH.get_software_environments_count_all(
-            is_external=False,
-            os_name=os_name,
-            os_version=os_version,
-            python_version=python_version,
-            cuda_version=cuda_version,
-            image_name=image_name,
-        )
-        / per_page
-    )
 
     prev_page, next_page = _compute_prev_next_page(page, per_page)
     return (
@@ -645,24 +654,24 @@ def list_python_packages(
 
     from .openapi_server import GRAPH
 
+    entries_count = GRAPH.get_python_package_versions_count_all(
+        os_name=os_name,
+        os_version=os_version,
+        python_version=python_version,
+        distinct=True,
+    )
+
+    page_count = ceil(entries_count / per_page)
+    start_offset = _compute_offset(page=page, page_count=page_count, per_page=per_page)
+
     query_result = GRAPH.get_python_package_version_names_all(
         sort=True,
         distinct=True,
-        start_offset=page * per_page,
+        start_offset=start_offset,
         count=per_page,
         os_name=os_name,
         os_version=os_version,
         python_version=python_version,
-    )
-
-    page_count = ceil(
-        GRAPH.get_python_package_versions_count_all(
-            os_name=os_name,
-            os_version=os_version,
-            python_version=python_version,
-            distinct=True,
-        )
-        / per_page
     )
 
     prev_page, next_page = _compute_prev_next_page(page, page_count)
@@ -672,7 +681,7 @@ def list_python_packages(
         {
             "page": page,
             "per_page": per_page,
-            "page_count": per_page,
+            "page_count": page_count,
             "next": next_page,
             "prev": prev_page,
         },
@@ -693,12 +702,24 @@ def list_python_package_versions(
 
     from .openapi_server import GRAPH
 
+    entries_count = GRAPH.get_solved_python_package_versions_count_all(
+        package_name=name,
+        distinct=True,
+        is_missing=False,
+        os_name=os_name,
+        os_version=os_version,
+        python_version=python_version,
+    )
+
+    page_count = ceil(entries_count / per_page)
+    start_offset = _compute_offset(page=page, per_page=per_page, page_count=page_count)
+
     try:
         query_result = GRAPH.get_solved_python_package_versions_all(
             package_name=name,
             distinct=True,
             is_missing=False,
-            start_offset=page * per_page,
+            start_offset=start_offset,
             count=per_page,
             os_name=os_name,
             os_version=os_version,
@@ -706,18 +727,6 @@ def list_python_package_versions(
         )
     except NotFoundError:
         return {"error": f"Package {name!r} not found", "parameters": parameters}, 404, {}
-
-    page_count = ceil(
-        GRAPH.get_solved_python_package_versions_count_all(
-            package_name=name,
-            distinct=True,
-            is_missing=False,
-            os_name=os_name,
-            os_version=os_version,
-            python_version=python_version,
-        )
-        / per_page
-    )
 
     prev_page, next_page = _compute_prev_next_page(page, page_count)
     return (
