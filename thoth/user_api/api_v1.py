@@ -124,6 +124,9 @@ def _compute_prev_next_page(page: int, page_count: int) -> Tuple[Optional[str], 
 
 def _compute_offset(*, page: int, page_count: int, per_page: int) -> int:
     """Compute offset respecting negative indexing."""
+    if page_count == 0:
+        return 0
+
     if page < 0:
         page = (-page - 1) % page_count
         return (page_count - page - 1) * per_page
@@ -274,6 +277,7 @@ def list_thoth_container_images(
             "page": page,
             "per_page": per_page,
             "page_count": page_count,
+            "entries_count": entries_count,
             "next": next_page,
             "prev": prev_page,
         },
@@ -682,6 +686,7 @@ def list_python_packages(
             "page": page,
             "per_page": per_page,
             "page_count": page_count,
+            "entries_count": entries_count,
             "next": next_page,
             "prev": prev_page,
         },
@@ -739,6 +744,7 @@ def list_python_package_versions(
             "page": page,
             "per_page": per_page,
             "page_count": page_count,
+            "entries_count": entries_count,
             "next": next_page,
             "prev": prev_page,
         },
