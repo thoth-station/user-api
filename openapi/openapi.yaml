@@ -1958,18 +1958,23 @@ components:
                 example: '3.8'
               env_image_name:
                 type: string
+                nullable: true
                 example: 's2i-minimal-notebook'
               env_image_tag:
                 type: string
+                nullable: true
                 example: 'v1.2.3'
               image_sha:
                 type: string
+                nullable: true
               os_name:
                 type: string
                 example: 'rhel'
+                nullable: true
               os_version:
                 type: string
                 example: '8'
+                nullable: true
               thoth_image_name:
                 type: string
                 example: 'quay.io/thoth-station/s2i-thoth-ubi8-py38'
@@ -1977,6 +1982,7 @@ components:
               thoth_image_version:
                 type: string
                 example: 'v1.0.0'
+                nullable: true
               cuda_version:
                 type: string
                 nullable: true
