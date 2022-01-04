@@ -193,19 +193,19 @@
         },
         "boto3": {
             "hashes": [
-                "sha256:9c13f5c8fadf29088fac5feab849399169b6e8438c3b9a2310abdb7e5013ab65",
-                "sha256:e8787a7f7c212d5b469dd8b998560c1b8e63badad5ceefb8331f4580386af044"
+                "sha256:1def3b3b0414915e20a543ea5f0f6dfb8fdab20819d5a7c2ce107937668d1085",
+                "sha256:9364b6310891e4ce478d8379ce114de3ede46e53beb1012cda07121e969ced5a"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==1.20.26"
+            "version": "==1.20.27"
         },
         "botocore": {
             "hashes": [
-                "sha256:0a933e3af6ecf79666beb2dfcb52a60f8ad1fee7df507f2a9202fe26fe569483",
-                "sha256:298f4d4e29504f65f73e8f78084f830af45cec49087d7d8fcf09481e243b26ec"
+                "sha256:8dca8fb66c47b8be9a5c9d29cc4dcf0a4d28289df8cbe1a6d3df431c1f2400d6",
+                "sha256:fac6515997a7e86216a280ae57f6a80b3560ed5fb157c84e87a9341936773437"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==1.23.26"
+            "version": "==1.23.27"
         },
         "cachetools": {
             "hashes": [
@@ -1466,11 +1466,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:26d618e26cd909e7653a6452965af206ffd30be704d235cce7329ecad64d9f52",
-                "sha256:c2c1e2b6e25269eb04d6ac6d679a7b4a2bfc16a2e6bf4c821dc28ac502cc4ae6"
+                "sha256:3843dc811c78e69fbadde87a1e1fee51a88e96b04d71398400d4f5a9bed7b48f",
+                "sha256:4495a49cd68a42eb5d40211a64ef1d96ddcb5f96d30ba4f0ddca3db369d5a81e"
             ],
             "index": "pypi",
-            "version": "==0.63.0"
+            "version": "==0.64.0"
         },
         "toml": {
             "hashes": [
