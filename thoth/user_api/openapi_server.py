@@ -163,7 +163,7 @@ schema_revision_metric = metrics.info(
 # custom metric to expose cache expiration configuration
 user_api_cache_expiration_configuration = metrics.info(
     "user_api_cache_expiration_configuration",
-    "Thoth User API cache exporation configuration",
+    "Thoth User API cache expiration configuration",
     env=Configuration.THOTH_DEPLOYMENT_NAME,
 )
 

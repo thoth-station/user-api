@@ -17,13 +17,15 @@
 
 """Implementation of API v1."""
 
-import hashlib
-import logging
-import json
-import datetime
-import time
 import connexion
+import datetime
+import hashlib
+import json
+import logging
 import os
+import time
+from urllib import parse as url_parse
+from math import ceil
 from typing import Any
 from typing import Dict
 from typing import List
@@ -31,6 +33,8 @@ from typing import Optional
 from typing import Tuple
 from typing import Type
 from typing import Union
+
+from flask import request
 
 from thoth.common.exceptions import NotFoundExceptionError as OpenShiftNotFound
 from thoth.common import OpenShift
@@ -83,7 +87,9 @@ from . import __version__ as SERVICE_VERSION  # noqa
 from . import __name__ as COMPONENT_NAME  # noqa
 
 
-PAGINATION_SIZE = int(os.getenv("THOTH_USER_API_PAGE_SIZE", 100))
+PAGINATION_SIZE_MAX = int(os.getenv("THOTH_USER_API_PAGE_SIZE_MAX", 100))
+PAGINATION_SIZE_DEFAULT = int(os.getenv("THOTH_USER_API_PAGE_SIZE_DEFAULT", 25))
+
 _LOGGER = logging.getLogger(__name__)
 _OPENSHIFT = OpenShift()
 
@@ -99,6 +105,21 @@ _PROVENANCE_CHECK_PROTECTED_FIELDS = frozenset({"kebechet_metadata"})
 def _compute_digest_params(parameters: Dict[Any, Any]) -> str:
     """Compute digest on parameters passed."""
     return hashlib.sha256(json.dumps(parameters, sort_keys=True).encode()).hexdigest()
+
+
+def _compute_prev_next_page(page: int, page_count: int) -> Tuple[Optional[str], Optional[str]]:
+    """Compute next and prev returned in headers for paginated endpoints."""
+    next_page, prev_page = None, None
+    if page != 0:
+        prev_parameters = dict(request.args)
+        prev_parameters["page"] = min(page - 1, page_count - 1)
+        prev_page = f"{request.path}?{url_parse.urlencode(prev_parameters)}"
+    if page < page_count - 1:
+        next_parameters = dict(request.args)
+        next_parameters["page"] = min(page + 1, page_count - 1)
+        next_page = f"{request.path}?{url_parse.urlencode(next_parameters)}"
+
+    return prev_page, next_page
 
 
 def post_analyze(
@@ -188,6 +209,7 @@ def get_analyze(analysis_id: str) -> Tuple[Dict[str, Any], int]:
 
 def list_thoth_container_images(
     page: int = 0,
+    per_page: int = PAGINATION_SIZE_DEFAULT,
     os_name: Optional[str] = None,
     os_version: Optional[str] = None,
     python_version: Optional[str] = None,
@@ -195,13 +217,16 @@ def list_thoth_container_images(
     image_name: Optional[str] = None,
 ) -> Tuple[Dict[str, Any], int, Dict[str, Any]]:
     """List registered Thoth container images."""
+    per_page = min(per_page, PAGINATION_SIZE_MAX)
+    parameters = locals()
+
     from .openapi_server import GRAPH
 
     entries = []
     for item in GRAPH.get_software_environments_all(
         is_external=False,
-        start_offset=page * PAGINATION_SIZE,
-        count=PAGINATION_SIZE,
+        start_offset=page * per_page,
+        count=per_page,
         os_name=os_name,
         os_version=os_version,
         python_version=python_version,
@@ -217,28 +242,31 @@ def list_thoth_container_images(
 
         entries.append(item)
 
+    page_count = ceil(
+        GRAPH.get_software_environments_count_all(
+            is_external=False,
+            os_name=os_name,
+            os_version=os_version,
+            python_version=python_version,
+            cuda_version=cuda_version,
+            image_name=image_name,
+        )
+        / per_page
+    )
+
+    prev_page, next_page = _compute_prev_next_page(page, per_page)
     return (
         {
             "container_images": entries,
-            "parameters": {
-                "page": page,
-                "os_name": os_name,
-                "os_version": os_version,
-                "python_version": python_version,
-            },
+            "parameters": parameters,
         },
         200,
         {
             "page": page,
-            "per_page": PAGINATION_SIZE,
-            "page_count": GRAPH.get_software_environments_count_all(
-                is_external=False,
-                os_name=os_name,
-                os_version=os_version,
-                python_version=python_version,
-                cuda_version=cuda_version,
-                image_name=image_name,
-            ),
+            "per_page": per_page,
+            "page_count": page_count,
+            "next": next_page,
+            "prev": prev_page,
         },
     )
 
@@ -606,11 +634,13 @@ def get_python_platform() -> Tuple[Dict[str, List[str]], int]:
 
 def list_python_packages(
     page: int = 0,
+    per_page: int = PAGINATION_SIZE_DEFAULT,
     os_name: Optional[str] = None,
     os_version: Optional[str] = None,
     python_version: Optional[str] = None,
 ) -> Tuple[Dict[str, Any], int, Dict[str, Any]]:
     """Get listing of solved package names."""
+    per_page = min(per_page, PAGINATION_SIZE_MAX)
     parameters = locals()
 
     from .openapi_server import GRAPH
@@ -618,25 +648,33 @@ def list_python_packages(
     query_result = GRAPH.get_python_package_version_names_all(
         sort=True,
         distinct=True,
-        start_offset=page * PAGINATION_SIZE,
-        count=PAGINATION_SIZE,
+        start_offset=page * per_page,
+        count=per_page,
         os_name=os_name,
         os_version=os_version,
         python_version=python_version,
     )
 
+    page_count = ceil(
+        GRAPH.get_python_package_versions_count_all(
+            os_name=os_name,
+            os_version=os_version,
+            python_version=python_version,
+            distinct=True,
+        )
+        / per_page
+    )
+
+    prev_page, next_page = _compute_prev_next_page(page, page_count)
     return (
-        {"packages": [{"package_name": i} for i in query_result]},
+        {"packages": [{"package_name": i} for i in query_result], "parameters": parameters},
         200,
         {
             "page": page,
-            "per_page": PAGINATION_SIZE,
-            "page_count": GRAPH.get_python_package_versions_count_all(
-                os_name=os_name,
-                os_version=os_version,
-                python_version=python_version,
-                distinct=True,
-            ),
+            "per_page": per_page,
+            "page_count": per_page,
+            "next": next_page,
+            "prev": prev_page,
         },
     )
 
@@ -644,11 +682,13 @@ def list_python_packages(
 def list_python_package_versions(
     name: str,
     page: int = 0,
+    per_page: int = PAGINATION_SIZE_DEFAULT,
     os_name: Optional[str] = None,
     os_version: Optional[str] = None,
     python_version: Optional[str] = None,
 ) -> Tuple[Dict[str, Any], int, Dict[str, Any]]:
     """Get information about versions available."""
+    per_page = min(per_page, PAGINATION_SIZE_MAX)
     parameters = locals()
 
     from .openapi_server import GRAPH
@@ -658,8 +698,8 @@ def list_python_package_versions(
             package_name=name,
             distinct=True,
             is_missing=False,
-            start_offset=page * PAGINATION_SIZE,
-            count=PAGINATION_SIZE,
+            start_offset=page * per_page,
+            count=per_page,
             os_name=os_name,
             os_version=os_version,
             python_version=python_version,
@@ -667,20 +707,31 @@ def list_python_package_versions(
     except NotFoundError:
         return {"error": f"Package {name!r} not found", "parameters": parameters}, 404, {}
 
+    page_count = ceil(
+        GRAPH.get_solved_python_package_versions_count_all(
+            package_name=name,
+            distinct=True,
+            is_missing=False,
+            os_name=os_name,
+            os_version=os_version,
+            python_version=python_version,
+        )
+        / per_page
+    )
+
+    prev_page, next_page = _compute_prev_next_page(page, page_count)
     return (
-        {"versions": [{"package_name": i[0], "package_version": i[1], "index_url": i[2]} for i in query_result]},
+        {
+            "versions": [{"package_name": i[0], "package_version": i[1], "index_url": i[2]} for i in query_result],
+            "parameters": parameters,
+        },
         200,
         {
             "page": page,
-            "per_page": PAGINATION_SIZE,
-            "page_count": GRAPH.get_solved_python_package_versions_count_all(
-                package_name=name,
-                distinct=True,
-                is_missing=False,
-                os_name=os_name,
-                os_version=os_version,
-                python_version=python_version,
-            ),
+            "per_page": per_page,
+            "page_count": page_count,
+            "next": next_page,
+            "prev": prev_page,
         },
     )
 
@@ -1076,7 +1127,14 @@ def get_python_package_version_metadata(
         ):
             break
     else:
-        # This should not happen as data synced to the database should be based on the sovler document content.
+        # This should not happen as data synced to the database should be based on the solver document content.
+        _LOGGER.error(
+            "Solver document %r has no records for %r in version %r from %r",
+            solver_documents[0],
+            name,
+            version,
+            index,
+        )
         return {"parameters": parameters, "error": "Internal error, please contact administrator"}, 500
 
     package_name = solver_entry["package_name"]
