@@ -658,7 +658,7 @@ def list_python_packages(
 
     from .openapi_server import GRAPH
 
-    entries_count = GRAPH.get_python_package_versions_count_all(
+    entries_count = GRAPH.get_python_package_version_names_count_all(
         os_name=os_name,
         os_version=os_version,
         python_version=python_version,
