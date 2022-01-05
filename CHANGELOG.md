@@ -1,5 +1,24 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.32.0 (2022-01-05T14:47:59)
+### Features
+* Implement negative indexing
+* Allow users to submit per_page
+* Provide page count information in HTTP headers
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Some of the items in /container-images response can be nullable
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+### Improvements
+* Use the correct method for obtaning the number of Python package names
+* Avoid division by zero and show entries count
+* Implement prev and next in paginated responses
+* Pagination fixes and improvements
+* Fix typing for endpoint methods
+* Remove Ceph listing methods no longer used
+
 ## Release 0.31.0 (2022-01-03T14:48:35)
 ### Features
 * Introduce endpoint for obtaining Python package metadata
