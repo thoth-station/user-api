@@ -66,3 +66,9 @@ repos:
         # Ignore all format-related checks as Black takes care of those.
         args:
           ["--ignore", "E2,W5", "--select", "E,W,F,N", "--max-line-length=120"]
+
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.26.3
+    hooks:
+    - id: yamllint
+      args: [-c=.yamllint]
