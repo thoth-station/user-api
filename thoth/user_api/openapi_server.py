@@ -207,7 +207,7 @@ def base_url():
 
 
 def _list_registered_paths() -> List[str]:
-    """List available paths registerd to this service."""
+    """List available paths registered to this service."""
     paths = []
     for rule in application.url_map.iter_rules():
         rule = str(rule)
