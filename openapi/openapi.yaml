@@ -1,716 +1,774 @@
-openapi: "3.0.0"
+openapi: 3.0.0
 info:
   title: Thoth User API
-  version: "0.6.0-dev"
+  version: 0.7.0-dev
 servers:
-  - url: "/api/v1"
+- url: /api/v1
 paths:
   /image/metadata:
     post:
-      tags: ["Image Analysis"]
+      tags: [Image Analysis]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: post_image_metadata
       summary: Get metadata for the given image
       parameters:
-        - $ref: "#/components/parameters/image"
-        - $ref: "#/components/parameters/registry_user"
-        - $ref: "#/components/parameters/registry_password"
-        - $ref: "#/components/parameters/verify_tls"
+      - $ref: "#/components/parameters/image"
+      - $ref: "#/components/parameters/registry_user"
+      - $ref: "#/components/parameters/registry_password"
+      - $ref: "#/components/parameters/verify_tls"
       responses:
         "200":
-          description: Information about the given image.
+          description: Information about the given image
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ImageMetadataResponse"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
         "403":
-          description: If user is not authorized to pull image.
+          description: If the user or anonymous is not authorized to pull image
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
   /analyze:
     post:
-      tags: ["Image Analysis"]
+      tags: [Image Analysis]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: post_analyze
-      summary: Analyze the given image asynchronously.
+      summary: Analyze the given image asynchronously
       parameters:
-        - $ref: "#/components/parameters/image"
-        - $ref: "#/components/parameters/registry_user"
-        - $ref: "#/components/parameters/registry_password"
-        - name: environment_type
-          in: query
-          required: false
-          description: >
-            Type of environment (runtime or buildtime) which is being analyzed.
-          schema:
-            type: string
-            enum:
-              - buildtime
-              - runtime
-            default: runtime
-        - name: origin
-          in: query
-          required: false
-          description: >
-            A remote where the image is being used. This is used for tracking as well as
-            for automated reporting when results are available.
-          schema:
-            type: string
-        - name: debug
-          in: query
-          required: false
-          description: >
-            Run the given analyzer in a verbose mode so developers can debug
-            analyzer.
-          schema:
-            type: boolean
-            default: false
-        - $ref: "#/components/parameters/verify_tls"
-        - name: force
-          in: query
-          required: false
-          schema:
-            type: boolean
-            default: false
-          description: >
-            Do not use cached results, always run analysis.
+      - $ref: "#/components/parameters/image"
+      - $ref: "#/components/parameters/registry_user"
+      - $ref: "#/components/parameters/registry_password"
+      - $ref: "#/components/parameters/environment_type"
+      - $ref: "#/components/parameters/origin"
+      - $ref: "#/components/parameters/debug"
+      - $ref: "#/components/parameters/verify_tls"
+      - $ref: "#/components/parameters/force"
       responses:
         "202":
-          description: Successful response with analyzer id.
+          description: Successful response with an analyzer identifier
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponse"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
   /analyze/{analysis_id}:
     get:
-      tags: ["Image Analysis"]
+      tags: [Image Analysis]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_analyze
-      summary: Retrieve an analyzer result.
+      summary: Retrieve an analyzer result
       parameters:
-        - name: analysis_id
-          in: path
-          required: true
-          description: Id of analysis that results should be retrieved.
-          schema:
-            type: string
+      - $ref: "#/components/parameters/analysis_id"
       responses:
         "200":
-          description: Analyzer result retrieved.
+          description: Analyzer result retrieved
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResultResponse"
         "202":
-          description: Results are not ready yet.
+          description: Results are not ready yet
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisStatusResponse"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
         "404":
-          description: The given document does not exist.
+          description: The given document does not exist
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
   /analyze/by-hash/{image_hash}:
     get:
-      tags: ["Image Analysis"]
+      tags: [Image Analysis]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_analyze_by_hash
-      summary: Retrieve an analyzer result.
+      summary: Retrieve an analyzer result
       parameters:
-        - name: image_hash
-          in: path
-          required: true
-          description: Image hash for identifying image (including hash type, now supported only "sha256").
-          schema:
-            type: string
+      - $ref: "#/components/parameters/image_hash"
       responses:
         "200":
-          description: Analyzer result retrieved.
+          description: Analyzer result retrieved
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResultResponse"
         "202":
-          description: Results are not ready yet.
+          description: Results are not ready yet
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisStatusResponse"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
         "404":
-          description: The given document does not exist.
+          description: The given document does not exist
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
   /analyze/{analysis_id}/log:
     get:
-      tags: ["Image Analysis"]
+      tags: [Image Analysis]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_analyze_log
-      summary: Show logs of an analysis.
+      summary: Show logs of an analysis
       parameters:
-        - $ref: "#/components/parameters/analysis_id"
+      - $ref: "#/components/parameters/analysis_id"
       responses:
         "200":
-          description: Successful response.
+          description: A container image analysis log
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisLogResponse"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
         "404":
-          description: The given image analysis log does not exist.
+          description: The given image analysis log does not exist
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
   /analyze/{analysis_id}/status:
     get:
-      tags: ["Image Analysis"]
+      tags: [Image Analysis]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_analyze_status
-      summary: Show analysis status.
+      summary: Show an analysis status
       parameters:
-        - $ref: "#/components/parameters/analysis_id"
+      - $ref: "#/components/parameters/analysis_id"
       responses:
         "200":
-          description: Successful response.
+          description: Status for the given container image analysis
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisStatusResponse"
         "404":
-          description: No analysis with the given id found.
+          description: No analysis with the given identifier found
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
   /provenance/python:
     post:
       tags: [Provenance]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: post_provenance_python
-      summary: Check provenance of packages stated in an application stack.
+      summary: Check provenance of packages stated in an application stack
       requestBody:
         required: true
-        description: Input to be checked for provenance.
+        description: Input to be checked for provenance
         content:
           application/json:
             schema:
               x-body-name: input
               $ref: "#/components/schemas/ProvenanceInput"
       parameters:
-        - name: origin
-          in: query
-          required: false
-          description: >
-            A repository where the application stack is used. This is used for tracking as well as
-            for automated reporting when results are available.
-          schema:
-            type: string
-        - name: debug
-          in: query
-          required: false
-          description: >
-            Run the provenance checker in a verbose mode so developers
-            can debug it.
-          schema:
-            type: boolean
-            default: false
-        - name: force
-          in: query
-          required: false
-          schema:
-            type: boolean
-            default: false
-          description: >
-            Do not use cached results, always run provenance checks.
-        - name: token
-          in: query
-          required: false
-          schema:
-            type: string
-          description: API token for sending authenticated requests.
+      - $ref: "#/components/parameters/origin_py"
+      - $ref: "#/components/parameters/debug"
+      - $ref: "#/components/parameters/force"
+      - $ref: "#/components/parameters/token"
       responses:
         "202":
-          description: The provided files will be checked for provenance.
+          description: The provided files will be checked for provenance
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisWithAuthenticationResponse"
         "401":
-          description: Unauthorized request.
+          description: Unauthorized request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisUnauthorizedError"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
   /provenance/python/{analysis_id}:
     get:
       tags: [Provenance]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_provenance_python
-      summary: Retrieve a provenance check result.
+      summary: Retrieve a provenance check result
       parameters:
-        - $ref: "#/components/parameters/analysis_id"
+      - $ref: "#/components/parameters/analysis_id"
       responses:
         "200":
-          description: Provenance report retrieved.
+          description: Provenance report retrieved
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AnalysisResultResponse"
+                $ref: "#/components/schemas/ProvenanceResultResponse"
         "202":
-          description: Results are not ready yet.
+          description: Results are not ready yet
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisStatusResponse"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
         "404":
-          description: The given document does not exist.
+          description: The given document does not exist
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
   /provenance/python/{analysis_id}/log:
     get:
       tags: [Provenance]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_provenance_python_log
-      summary: Show logs of a provenance checks.
+      summary: Show logs of a provenance check
       parameters:
-        - $ref: "#/components/parameters/analysis_id"
+      - $ref: "#/components/parameters/analysis_id"
       responses:
         "200":
-          description: Successful response.
+          description: A provenance check log
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisLogResponse"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
         "404":
-          description: The given image analysis log does not exist.
+          description: The given image analysis log does not exist
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
   /provenance/python/{analysis_id}/status:
     get:
       tags: [Provenance]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_provenance_python_status
-      summary: Show status of a provenance check.
+      summary: Show status of a provenance check
       parameters:
-        - name: analysis_id
-          in: path
-          required: true
-          description: An id of requested provenance check.
-          schema:
-            type: string
+      - $ref: "#/components/parameters/analysis_id"
       responses:
         "200":
-          description: Successful response.
+          description: Status for the given provenance checker
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisStatusResponse"
         "404":
-          description: No analysis with the given id found.
+          description: No analysis with the given identifier found
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
   /python-package-index:
     get:
       tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: list_python_package_indexes
-      summary: List registered Python package indexes.
+      summary: List registered Python package indexes
       responses:
         "200":
-          description: Listing of available Python package indexes.
+          description: Listing of available Python package indexes
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageIndexes"
-
   /advise/python:
     post:
       tags: [Advise]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: post_advise_python
-      summary: Get advise for Python ecosystem.
+      summary: Get an advise for a Python application
       requestBody:
         required: true
-        description: Specification of Python application stack with runtime specific information.
+        description: Specification of Python application stack with runtime specific information
         content:
           application/json:
             schema:
               x-body-name: input
               $ref: "#/components/schemas/AdviseInput"
       parameters:
-        - name: recommendation_type
-          in: query
-          description: Recommendation type.
-          required: true
-          schema:
-            type: string
-            enum:
-              - stable
-              - testing
-              - latest
-              - performance
-              - security
-            default: stable
-        - name: count
-          in: query
-          description: Number of software stacks that should be returned.
-          schema:
-            type: integer
-          required: false
-        - name: limit
-          in: query
-          description: Limit number of software stacks scored.
-          schema:
-            type: integer
-          required: false
-        - name: origin
-          in: query
-          required: false
-          description: >
-            A repository where the application stack is used. This is used for tracking as well as
-            for automated reporting when results are available.
-          schema:
-            type: string
-        - name: source_type
-          in: query
-          required: false
-          description: >
-            A flag marking what Thoth integration is requesting adviser:
-              - cli: Thamos CLI.
-              - s2i: OpenShift's S2I (Source-to-Image) build.
-              - kebechet: Kebechet Bot.
-              - jupyter_notebook: Jupyter Notebook (nb-requirements).
-          schema:
-            type: string
-            nullable: true
-            enum:
-              - cli
-              - s2i
-              - github_app
-              - kebechet
-              - jupyter_notebook
-        - name: dev
-          in: query
-          required: false
-          description: >
-            Consider or do not consider development dependencies when resolving stacks.
-          schema:
-            type: boolean
-            default: false
-        - name: debug
-          in: query
-          required: false
-          description: >
-            Run the given adviser in a verbose mode so developers can debug it.
-          schema:
-            type: boolean
-            default: false
-        - name: force
-          in: query
-          required: false
-          schema:
-            type: boolean
-            default: false
-          description: >
-            Do not use cached results, always run adviser.
-        - name: token
-          in: query
-          required: false
-          schema:
-            type: string
-          description: API token for sending authenticated requests.
+      - $ref: "#/components/parameters/recommendation_type"
+      - $ref: "#/components/parameters/count"
+      - $ref: "#/components/parameters/limit"
+      - $ref: "#/components/parameters/origin_py"
+      - $ref: "#/components/parameters/source_type"
+      - $ref: "#/components/parameters/dev"
+      - $ref: "#/components/parameters/debug"
+      - $ref: "#/components/parameters/force"
+      - $ref: "#/components/parameters/token"
       responses:
         "202":
-          description: The adviser is scheduled.
+          description: The adviser is scheduled
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisWithAuthenticationResponse"
         "401":
-          description: Unauthorized request.
+          description: Unauthorized request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisUnauthorizedError"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
   /container-images:
     get:
       tags: [Container Images]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: list_thoth_container_images
-      summary: List available Thoth container images.
+      summary: List available Thoth container images
       parameters:
-        - name: page
-          in: query
-          required: false
-          description: Page offset in pagination.
-          schema:
-            type: integer
-            default: 0
-        - name: per_page
-          in: query
-          required: false
-          description: Number of items returned per page.
-          schema:
-            type: integer
-            minimum: 1
-        - name: os_name
-          in: query
-          required: false
-          description: Name of operating system to consider.
-          schema:
-            type: string
-        - name: os_version
-          in: query
-          description: Version of operating system to consider.
-          schema:
-            type: string
-        - name: python_version
-          in: query
-          description: Version of Python interpreter provided.
-          schema:
-            type: string
-        - name: cuda_version
-          in: query
-          description: Filter based on CUDA version available.
-          schema:
-            type: string
-        - name: image_name
-          in: query
-          description: Filter based on image name.
-          schema:
-            type: string
+      - $ref: "#/components/parameters/page"
+      - $ref: "#/components/parameters/per_page"
+      - $ref: "#/components/parameters/os_name"
+      - $ref: "#/components/parameters/os_version"
+      - $ref: "#/components/parameters/python_version"
+      - $ref: "#/components/parameters/cuda_version"
+      - $ref: "#/components/parameters/image_name"
       responses:
         "200":
-          description: A list of available Thoth container images.
+          description: A list of available Thoth container images
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
+            page:
+              $ref: "#/components/headers/page"
+            per_page:
+              $ref: "#/components/headers/per_page"
+            page_count:
+              $ref: "#/components/headers/page_count"
+            entries_count:
+              $ref: "#/components/headers/entries_count"
+            next:
+              $ref: "#/components/headers/next"
+            prev:
+              $ref: "#/components/headers/prev"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ContainerImagesResponse"
-
+        "400":
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContainerImagesResponseError"
   /advise/python/{analysis_id}/log:
     get:
       tags: [Advise]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_advise_python_log
-      summary: Retrieve a adviser run log.
+      summary: Retrieve an adviser run log
       parameters:
-        - name: analysis_id
-          in: path
-          required: true
-          description: An id of analysis for which log should be retrieved.
-          schema:
-            type: string
+      - $ref: "#/components/parameters/analysis_id"
       responses:
         "200":
-          description: Retrieved adviser log.
+          description: An adviser log
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisLogResponse"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
         "404":
-          description: The given adviser log does not exist.
+          description: The given adviser log does not exist
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
   /advise/python/{analysis_id}/status:
     get:
       tags: [Advise]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_advise_python_status
-      summary: Show status of an adviser computing recommendations.
+      summary: Show status of an adviser computing recommendations
       parameters:
-        - name: analysis_id
-          in: path
-          required: true
-          description: An id of requested adviser run.
-          schema:
-            type: string
+      - $ref: "#/components/parameters/analysis_id"
       responses:
         "200":
-          description: Successful response.
+          description: An adviser status
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisStatusResponse"
         "404":
-          description: No analysis with the given id found.
+          description: No analysis with the given identifier found
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
   /advise/python/{analysis_id}:
     get:
       tags: [Advise]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_advise_python
-      summary: Get computed adviser result based on its id.
+      summary: Get computed adviser result based on its identifier
       parameters:
-        - name: analysis_id
-          in: path
-          required: true
-          description: Advise id returned on advise request.
-          schema:
-            type: string
+      - $ref: "#/components/parameters/analysis_id"
       responses:
         "200":
           description: >
-            Computed pinned down stack with information based on
-            requested requirements advise.
+            Computed pinned down stack for the given Python application
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AnalysisResultResponse"
+                $ref: "#/components/schemas/AdviserResultResponse"
         "202":
-          description: Results are not ready yet.
+          description: Results are not ready yet
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisStatusResponse"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
         "404":
-          description: The given advise does not exist.
+          description: The given advise does not exist
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/AnalysisResponseError"
-
   /buildlog/{document_id}:
     get:
       tags: [Buildlogs]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_buildlog
-      summary: Retrieve the given build log.
+      summary: Retrieve the given build log
       parameters:
-        - name: document_id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: Build log to be retrieved.
+      - $ref: "#/components/parameters/document_id"
       responses:
         "200":
-          description: Successful response.
+          description: Relevant build log document
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
         "404":
-          description: The given build log does not exist.
-
+          description: The given build log does not exist
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
   /kebechet-webhook:
     post:
       tags: [Kebechet]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: schedule_kebechet_webhook
-      summary: Schedule kebechet instance from webhook
+      deprecated: true
+      summary: >-
+        Schedule kebechet instance from webhook, this endpoint is not intended for users
       requestBody:
         required: true
         description: Body of a git service webhook
@@ -719,426 +777,294 @@ paths:
             schema:
               x-body-name: body
               $ref: "#/components/schemas/KebechetWebhookInput"
-              additionalProperties: true
       responses:
         "202":
           description: Accepted
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
         "400":
           description: Invalid
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
         "501":
           description: Functionality not supported
-
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
   /build-analysis:
     post:
       tags: [Build Analysis]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: post_build
-      summary: Analyze the given build imagestream and log.
+      summary: Analyze the given build imagestream and log
       requestBody:
         required: true
-        description: Fill up the Build details such as output imagestream, base imagestream, and build log.
+        description: Fill up the build details such as output imagestream, base imagestream, and build log
         content:
           application/json:
             schema:
               x-body-name: build_detail
               $ref: "#/components/schemas/Build"
       parameters:
-        - name: base_registry_user
-          in: query
-          required: false
-          description: >
-            Registry user to be used for pulling images from registry.
-          schema:
-            type: string
-        - name: base_registry_password
-          in: query
-          required: false
-          description: >
-            Registry password or token to be used for pulling images from
-            source registry.
-          schema:
-            type: string
-        - name: base_registry_verify_tls
-          in: query
-          required: false
-          description: >
-            Verify TLS certificates of registry from where images are
-            pulled from during the build.
-          schema:
-            type: boolean
-            default: true
-        - name: output_registry_user
-          in: query
-          required: false
-          description: >
-            Registry user to be used for pulling images from registry.
-          schema:
-            type: string
-        - name: output_registry_password
-          in: query
-          required: false
-          description: >
-            Registry password or token to be used for pulling images from
-            destination registry.
-          schema:
-            type: string
-        - name: output_registry_verify_tls
-          in: query
-          required: false
-          description: >
-            Verify TLS certificates of registry from where images are
-            pulled to during the build.
-          schema:
-            type: boolean
-            default: true
-        - name: environment_type
-          in: query
-          required: false
-          description: >
-            Type of environment (runtime or buildtime) which is being analyzed.
-          schema:
-            type: string
-            enum:
-              - buildtime
-              - runtime
-            default: runtime
-        - name: origin
-          in: query
-          required: false
-          description: >
-            A remote where the image is being used. This is used for tracking as well as
-            for automated reporting when results are available.
-          schema:
-            type: string
-        - name: debug
-          in: query
-          required: false
-          description: >
-            Run the given analyzer in a verbose mode so developers can debug
-            analyzer.
-          schema:
-            type: boolean
-            default: false
-        - name: force
-          in: query
-          required: false
-          schema:
-            type: boolean
-            default: false
-          description: >
-            Do not use cached results, always run analysis.
+      - $ref: "#/components/parameters/base_registry_user"
+      - $ref: "#/components/parameters/base_registry_password"
+      - $ref: "#/components/parameters/base_registry_verify_tls"
+      - $ref: "#/components/parameters/output_registry_user"
+      - $ref: "#/components/parameters/output_registry_password"
+      - $ref: "#/components/parameters/output_registry_verify_tls"
+      - $ref: "#/components/parameters/environment_type"
+      - $ref: "#/components/parameters/origin"
+      - $ref: "#/components/parameters/debug"
+      - $ref: "#/components/parameters/force"
       responses:
         "202":
-          description: Successful response with analyzer id.
+          description: Successful response with an analyzer identifier
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/BuildAnalysisResponse"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/BuildAnalysisResponseError"
-
   /python/platform:
     get:
       tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_python_platform
-      summary: Get supported platforms for Python ecosystem.
+      summary: Get supported platforms for the Python ecosystem
       responses:
         "200":
-          description: A list of platforms supported for Python ecosystem.
+          description: A list of platforms supported for the Python ecosystem
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPlatforms"
-
   /python/environment:
     get:
       tags: [Environments]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: list_python_environments
-      summary: Get environments available for Python resolutions.
+      summary: Get environments available for Python resolutions
       responses:
         "200":
-          description: The number of Python packages in Thoth Knowledge Graph.
+          description: Listing of available environments
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonEnvironments"
-
   /python/package/dependencies:
     get:
       tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_python_package_dependencies
       parameters:
-        - name: name
-          in: query
-          required: true
-          description: Name of the Python Package.
-          schema:
-            type: string
-            default: "tensorflow"
-        - name: version
-          in: query
-          required: true
-          description: Version of the Python Package.
-          schema:
-            type: string
-            default: "2.0.0"
-        - name: index
-          in: query
-          required: true
-          description: Index url of the Python Package.
-          schema:
-            type: string
-            default: "https://pypi.org/simple"
-        - name: os_name
-          in: query
-          required: false
-          description: Name of operating system to consider as environment where package is installed in.
-          schema:
-            type: string
-        - name: os_version
-          in: query
-          description: Version of operating system to consider as environment where package is installed in.
-          schema:
-            type: string
-        - name: python_version
-          in: query
-          description: Version of Python interpreter used to install the given package.
-          schema:
-            type: string
-        - name: marker_evaluation_result
-          in: query
-          description: >
-            Consider marker evaluation result for the given environment. If set to None, marker
-            evaluation result is not taken into account.
-          schema:
-            type: boolean
-            nullable: true
-            default: null
+      - $ref: "#/components/parameters/name"
+      - $ref: "#/components/parameters/version"
+      - $ref: "#/components/parameters/index"
+      - $ref: "#/components/parameters/os_name"
+      - $ref: "#/components/parameters/os_version"
+      - $ref: "#/components/parameters/python_version"
+      - $ref: "#/components/parameters/marker_evaluation_result"
       summary: >
         Get direct dependencies of Python libraries. If environment is provided,
         take into account environment markers that are evaluated during dependencies
-        installation. If environment is not provided, any environment is considered.
+        installation. If environment is not provided, any environment is considered
       responses:
         "200":
-          description: The number of Python packages in Thoth Knowledge Graph.
+          description: Dependencies for the given Python package
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageDependencies"
         "404":
-          description: The given record does not exist.
+          description: The given record does not exist
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageDependenciesError"
-
   /python/package:
     get:
       tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: list_python_packages
-      summary: List Python packages.
+      summary: List Python packages
       parameters:
-        - name: page
-          in: query
-          required: false
-          description: Page offset in pagination.
-          schema:
-            type: integer
-            default: 0
-        - name: per_page
-          in: query
-          required: false
-          description: Number of items returned per page.
-          schema:
-            type: integer
-            minimum: 1
-        - name: os_name
-          in: query
-          required: false
-          description: Name of operating system to consider.
-          schema:
-            type: string
-        - name: os_version
-          in: query
-          required: false
-          description: Version of operating system to consider.
-          schema:
-            type: string
-        - name: python_version
-          in: query
-          required: false
-          description: Version of Python interpreter.
-          schema:
-            type: string
+      - $ref: "#/components/parameters/page"
+      - $ref: "#/components/parameters/per_page"
+      - $ref: "#/components/parameters/os_name"
+      - $ref: "#/components/parameters/os_version"
+      - $ref: "#/components/parameters/python_version"
       responses:
         "200":
-          description: Listing of available Python packages.
+          description: Listing of available Python packages
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
+            page:
+              $ref: "#/components/headers/page"
+            per_page:
+              $ref: "#/components/headers/per_page"
+            page_count:
+              $ref: "#/components/headers/page_count"
+            entries_count:
+              $ref: "#/components/headers/entries_count"
+            next:
+              $ref: "#/components/headers/next"
+            prev:
+              $ref: "#/components/headers/prev"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackagesResponse"
-
   /python/package/versions:
     get:
       tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: list_python_package_versions
-      summary: List versions of the given Python package.
+      summary: List versions of the given Python package
       parameters:
-        - name: name
-          in: query
-          required: true
-          description: Name of the Python Package.
-          schema:
-            type: string
-            default: "tensorflow"
-        - name: page
-          in: query
-          required: false
-          description: Page offset in pagination.
-          schema:
-            type: integer
-            default: 0
-        - name: per_page
-          in: query
-          required: false
-          description: Number of items returned per page.
-          schema:
-            type: integer
-            minimum: 1
-        - name: os_name
-          in: query
-          required: false
-          description: Name of operating system to consider.
-          schema:
-            type: string
-        - name: os_version
-          in: query
-          required: false
-          description: Version of operating system to consider.
-          schema:
-            type: string
-        - name: python_version
-          in: query
-          required: false
-          description: Version of Python interpreter.
-          schema:
-            type: string
+      - $ref: "#/components/parameters/page"
+      - $ref: "#/components/parameters/per_page"
+      - $ref: "#/components/parameters/name"
+      - $ref: "#/components/parameters/os_name"
+      - $ref: "#/components/parameters/os_version"
+      - $ref: "#/components/parameters/python_version"
       responses:
         "200":
-          description: Listing of available Python versions.
+          description: Listing of available Python versions
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
+            page:
+              $ref: "#/components/headers/page"
+            per_page:
+              $ref: "#/components/headers/per_page"
+            page_count:
+              $ref: "#/components/headers/page_count"
+            entries_count:
+              $ref: "#/components/headers/entries_count"
+            next:
+              $ref: "#/components/headers/next"
+            prev:
+              $ref: "#/components/headers/prev"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageVersionsResponse"
         "404":
-          description: The given record does not exist.
+          description: The given record does not exist
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageVersionsResponseError"
-
   /python/package/version/environments:
     get:
       tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: list_python_package_version_environments
-      summary: List environments used to solve the given Python package.
+      summary: List environments used to solve the given Python package
       parameters:
-        - name: name
-          in: query
-          required: true
-          description: Name of the Python package.
-          schema:
-            type: string
-            default: flask
-        - name: version
-          in: query
-          required: true
-          description: Version of the Python package.
-          schema:
-            type: string
-            default: "2.0.2"
-        - name: index
-          in: query
-          required: true
-          description: Index url of the Python package.
-          schema:
-            type: string
-            default: "https://pypi.org/simple"
+      - $ref: "#/components/parameters/name"
+      - $ref: "#/components/parameters/version"
+      - $ref: "#/components/parameters/index"
       responses:
         "200":
-          description: Listing of environments used to solve the given Python package.
+          description: Listing of environments used to solve the given Python package
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageVersionEnvironmentsResponse"
-
   /python/package/version/metadata:
     get:
       tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_python_package_version_metadata
-      summary: Get metadata for the given package.
+      summary: Get metadata for the given package
       parameters:
-        - name: name
-          in: query
-          required: true
-          description: Name of the Python Package.
-          schema:
-            type: string
-        - name: version
-          in: query
-          required: true
-          description: Version of the Python package.
-          schema:
-            type: string
-        - name: index
-          in: query
-          required: true
-          description: Index URL for the Python package.
-          schema:
-            type: string
-        - name: os_name
-          in: query
-          required: true
-          description: Name of operating system to consider.
-          schema:
-            type: string
-        - name: os_version
-          in: query
-          required: true
-          description: Version of operating system to consider.
-          schema:
-            type: string
-        - name: python_version
-          in: query
-          required: true
-          description: Version of Python interpreter.
-          schema:
-            type: string
+      - $ref: "#/components/parameters/name"
+      - $ref: "#/components/parameters/version"
+      - $ref: "#/components/parameters/index"
+      - $ref: "#/components/parameters/os_name_required"
+      - $ref: "#/components/parameters/os_version_required"
+      - $ref: "#/components/parameters/python_version_required"
       responses:
         "200":
-          description: Metadata information for the given Python package version.
+          description: Metadata information for the given Python package version
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageVersionMetadataResponse"
         "404":
-          description: No record found.
+          description: No record found
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageVersionMetadataResponseError"
-
   /python/package/metadata:
     get:
       tags: [PythonPackages]
@@ -1147,78 +1073,76 @@ paths:
       operationId: get_package_metadata
       summary: >
         Retrieve metadata relative to a Python Package
-        from the Knowledge Graph.
+        from the Thoth's database
       parameters:
-        - name: name
-          in: query
-          required: true
-          description: Name of the Python Package.
-          schema:
-            type: string
-            default: "tensorflow"
-        - name: version
-          in: query
-          required: true
-          description: Version of the Python Package.
-          schema:
-            type: string
-            default: "2.0.0"
-        - name: index
-          in: query
-          required: true
-          description: Index url of the Python Package.
-          schema:
-            type: string
-            default: "https://pypi.org/simple"
+      - $ref: "#/components/parameters/name"
+      - $ref: "#/components/parameters/version"
+      - $ref: "#/components/parameters/index"
       responses:
         "200":
-          description: A dict with metadata relative to the Python Package requested.
+          description: A dict with metadata relative to the Python Package requested
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageMetadataResponse"
         "400":
-          description: On invalid request.
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageMetadataResponseError"
         "404":
-          description: The given record does not exist.
+          description: The given record does not exist
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageMetadataResponseError"
-
   /python/imports:
     get:
       tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_package_from_imported_packages
-      summary: List imported packages' (name, version, index).
+      summary: List imported packages' (name, version, index)
       parameters:
-        - name: import_name
-          in: query
-          required: true
-          description: >
-            Names of the Python Packages (name, version, index) for the given import package name.
-          schema:
-            type: string
-            default: "sklearn.cluster.MiniBatchKMeans"
+      - $ref: "#/components/parameters/import_name"
       responses:
         "200":
-          description: Listing of available Python packages names.
+          description: Listing of available Python package names
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageNameImportResponse"
         "404":
-          description: The given record does not exist.
+          description: The given record does not exist
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageNameResponseError"
-
 components:
   parameters:
     image:
@@ -1226,16 +1150,16 @@ components:
       in: query
       required: true
       description: >
-        Name of image - can also specify remote registry to pull
-        image from.
+        Name of an image - can also specify remote registry to pull image from
       schema:
         type: string
+        example: registry.access.redhat.com/ubi8/ubi-minimal:8.5-218
     registry_user:
       name: registry_user
       in: query
       required: false
       description: >
-        Registry user to be used for pulling images from registry.
+        Registry user to be used for pulling images from registry
       schema:
         type: string
     registry_password:
@@ -1244,7 +1168,7 @@ components:
       required: false
       description: >
         Registry password or token to be used for pulling images from
-        registry.
+        registry
       schema:
         type: string
     verify_tls:
@@ -1253,7 +1177,7 @@ components:
       required: false
       description: >
         Verify TLS certificates of registry from where images are
-        pulled from.
+        pulled from
       schema:
         type: boolean
         default: true
@@ -1261,35 +1185,357 @@ components:
       name: analysis_id
       in: path
       required: true
-      description: An id of requested analysis.
+      description: An identifier of the requested analysis
       schema:
         type: string
     page:
       name: page
       in: query
       required: false
-      description: Page offset in pagination.
+      description: Page offset in pagination
       schema:
         type: integer
         default: 0
+        example: 0
     per_page:
       name: per_page
       in: query
       required: false
-      description: Number of items returned per page.
+      description: Number of items returned per page
       schema:
         type: integer
         minimum: 1
+        default: 25
     environment_name:
       name: environment_name
       in: path
       required: true
       description: >
-        Software environment name for run for which analyses should be retrieved.
+        Software environment name for run for which analyses should be retrieved
       schema:
         format: path
         type: string
+    environment_type:
+      name: environment_type
+      in: query
+      required: false
+      description: >
+        Type of environment (runtime or buildtime) which is being analyzed
+      schema:
+        type: string
+        enum:
+        - buildtime
+        - runtime
+        default: runtime
+    origin:
+      name: origin
+      in: query
+      required: false
+      description: >
+        A remote where the image is being used
+      schema:
+        type: string
+    origin_py:
+      name: origin
+      in: query
+      required: false
+      description: >
+        A repository where the application stack is used
+      schema:
+        type: string
+        example: git@github.com:thoth-station/adviser.git
+    debug:
+      name: debug
+      in: query
+      required: false
+      description: >
+        Run the given analyzer in a verbose mode so developers can debug it
+      schema:
+        type: boolean
+        default: false
+    force:
+      name: force
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+      description: >
+        Do not use cached results, always run the analysis
+    image_hash:
+      name: image_hash
+      in: path
+      required: true
+      description: Image hash for identifying image (including hash type, now supported only "sha256")
+      schema:
+        type: string
+    token:
+      name: token
+      in: query
+      required: false
+      schema:
+        type: string
+      description: An API token for authenticated requests
+    recommendation_type:
+      name: recommendation_type
+      in: query
+      description: Recommendation type
+      required: true
+      schema:
+        type: string
+        enum:
+        - stable
+        - testing
+        - latest
+        - performance
+        - security
+        default: latest
+    count:
+      name: count
+      in: query
+      description: Number of software stacks that should be returned
+      schema:
+        type: integer
+      required: false
+    limit:
+      name: limit
+      in: query
+      description: Limit number of software stacks scored
+      schema:
+        type: integer
+      required: false
+    source_type:
+      name: source_type
+      in: query
+      required: false
+      description: >
+        A flag marking what Thoth integration is requesting adviser:
 
+        * cli: Thamos CLI
+
+        * s2i: OpenShift's S2I (Source-to-Image) build
+
+        * kebechet: Kebechet Bot
+
+        * jupyter_notebook: Jupyter Notebook using jupyterlab-requirements
+      schema:
+        type: string
+        nullable: true
+        enum:
+        - cli
+        - s2i
+        - github_app
+        - kebechet
+        - jupyter_notebook
+    dev:
+      name: dev
+      in: query
+      required: false
+      description: >
+        Consider or do not consider development dependencies when resolving stacks
+      schema:
+        type: boolean
+        default: false
+    os_name:
+      name: os_name
+      in: query
+      required: false
+      description: Name of the operating system to consider
+      schema:
+        type: string
+        example: ubi
+    os_version:
+      name: os_version
+      in: query
+      description: Version of the operating system to consider
+      schema:
+        type: string
+        example: "9"
+    python_version:
+      name: python_version
+      in: query
+      description: Version of Python interpreter provided
+      schema:
+        type: string
+        example: "3.9"
+    cuda_version:
+      name: cuda_version
+      in: query
+      description: Filter based on CUDA version available
+      schema:
+        type: string
+        example: "11.1"
+    image_name:
+      name: image_name
+      in: query
+      description: Filter based on the image name
+      schema:
+        type: string
+    document_id:
+      name: document_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Build log to be retrieved
+    base_registry_user:
+      name: base_registry_user
+      in: query
+      required: false
+      description: >
+        Registry user to be used for pulling images from registry
+      schema:
+        type: string
+    base_registry_password:
+      name: base_registry_password
+      in: query
+      required: false
+      description: >
+        Registry password or token to be used for pulling images from
+        source registry
+      schema:
+        type: string
+    base_registry_verify_tls:
+      name: base_registry_verify_tls
+      in: query
+      required: false
+      description: >
+        Verify TLS certificates of registry from where images are
+        pulled from during the build
+      schema:
+        type: boolean
+        default: true
+    output_registry_user:
+      name: output_registry_user
+      in: query
+      required: false
+      description: >
+        Registry user to be used for pulling images from registry
+      schema:
+        type: string
+    output_registry_password:
+      name: output_registry_password
+      in: query
+      required: false
+      description: >
+        Registry password or token to be used for pulling images from
+        destination registry
+      schema:
+        type: string
+    output_registry_verify_tls:
+      name: output_registry_verify_tls
+      in: query
+      required: false
+      description: >
+        Verify TLS certificates of registry from where images are
+        pulled to during the build
+      schema:
+        type: boolean
+        default: true
+    name:
+      name: name
+      in: query
+      required: true
+      description: Name of the Python Package
+      schema:
+        type: string
+        example: tensorflow
+    version:
+      name: version
+      in: query
+      required: true
+      description: Version of the Python Package
+      schema:
+        type: string
+        example: 2.8.0
+    index:
+      name: index
+      in: query
+      required: true
+      description: Index url of the Python Package
+      schema:
+        type: string
+        default: https://pypi.org/simple
+    os_name_required:
+      name: os_name
+      in: query
+      required: true
+      description: Name of operating system to consider as environment where package is installed in
+      schema:
+        type: string
+        example: ubi
+    os_version_required:
+      name: os_version
+      in: query
+      required: true
+      description: Version of operating system to consider as environment where package is installed in
+      schema:
+        type: string
+        example: "9"
+    python_version_required:
+      name: python_version
+      in: query
+      required: true
+      description: Version of Python interpreter used to install the given package
+      schema:
+        type: string
+        example: "3.9"
+    marker_evaluation_result:
+      name: marker_evaluation_result
+      in: query
+      description: >
+        Consider marker evaluation result for the given environment. If set to None, marker
+        evaluation result is not taken into account
+      schema:
+        type: boolean
+        nullable: true
+        default: null
+    import_name:
+      name: import_name
+      in: query
+      required: true
+      description: >
+        Names of the Python Packages (name, version, index) for the given import package name
+      schema:
+        type: string
+        example: sklearn.cluster.MiniBatchKMeans
+  headers:
+    x-thoth-version:
+      description: Thoth User API version identifier
+      schema:
+        type: string
+        example: 1.0.0
+    x-user-api-service-version:
+      description: Full Thoth User API version identifier used for debugging
+      schema:
+        type: string
+        example: 1.0.0+messaging.1.1.0.storages.1.2.0.common.1.3.0.python.1.4.0
+    page:
+      description: Current page
+      schema:
+        type: integer
+    per_page:
+      description: Page size
+      schema:
+        type: integer
+    page_count:
+      description: Number of pages
+      schema:
+        type: integer
+    entries_count:
+      description: Total number of entries
+      schema:
+        type: integer
+    next:
+      description: Next page in pagination, if any
+      schema:
+        type: string
+        nullable: true
+    prev:
+      description: Previous page in pagination, if any
+      schema:
+        type: string
+        nullable: true
   schemas:
     Build:
       type: object
@@ -1298,25 +1544,24 @@ components:
           type: string
           nullable: true
           description: >
-            Name of base image used by the s2i build.
-          example: quay.io/thoth-station/s2i-thoth-ubi8-py38
+            Name of base image used by the s2i build
+          example: quay.io/thoth-station/s2i-thoth-ubi8-py38:v0.32.3
         output_image:
           type: string
           nullable: true
           description: >
             Name of output image - can also specify remote registry to pull
-            image from.
+            image from
           example: quay.io/thoth-station/s2i-thoth-ubi8-py38
         build_log:
           type: object
-          description: >
-            A full build details along with the log.
+          description: A full build details along with the log
           properties:
             log:
               type: string
               nullable: true
-              description: >
-                A full build or installation log that was output during image build.
+              description: >-
+                A full build or installation log that was output during image build
               example: >
                 Collecting tensorflow
                 Downloading tensorflow-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (41.2MB)
@@ -1324,17 +1569,16 @@ components:
             apiversion:
               type: string
               nullable: true
-              description: >
-                BuildLog api version.
-              example: >
-                "apis/build.openshift.io/v1/namespaces/$NAMESPACE/builds HTTP/1.1"
+              description: >-
+                BuildLog api version
+              example: >-
+                apis/build.openshift.io/v1/namespaces/$NAMESPACE/builds HTTP/1.1
             kind:
               type: string
               nullable: true
               description: >
-                Type of log.
-              example: >
-                "BuildLog"
+                Type of the log
+              example: BuildLog
             metadata:
               type: string
               nullable: true
@@ -1345,56 +1589,18 @@ components:
                     ? buildlog.thoth-station.ninja/corresponding-build-configuration
                     : type: string
                       description: >
-                        Contains all particulars about the build log.
-                      example: >
-                        "apiVersion:build.openshift.io/v1"
-    Log:
-      type: object
-      required:
-        - "log"
-      properties:
-        log:
-          type: string
-          description: >
-            A full build or installation log that was output during image build.
-          example: >
-            Collecting tensorflow
-            Downloading tensorflow-1.4.1-cp36-cp36m-manylinux1_x86_64.whl (41.2MB)
-            Successfully installed tensorflow-1.4.1
-        apiversion:
-          type: string
-          description: >
-            BuildLog api version.
-          example: >
-            "apis/build.openshift.io/v1/namespaces/$NAMESPACE/builds HTTP/1.1"
-        kind:
-          type: string
-          description: >
-            Type of log.
-          example: >
-            "BuildLog"
-        metadata:
-          type: string
-          properties:
-            annotations:
-              type: string
-              properties:
-                buildlog.thoth-station.ninja/corresponding-build-configuration:
-                  type: string
-                  description: >
-                    Contains all particulars about the build log.
-                  example: >
-                    "apiVersion:build.openshift.io/v1"
+                        Contains all particulars about the build log
+                      example: apiVersion:build.openshift.io/v1
     PythonStack:
       type: object
       required:
-        - requirements
-        - requirements_lock
+      - requirements
+      - requirements_lock
       properties:
-        requirements:
+        requirements: &requirements_def
           type: string
           minLength: 1
-          description: Direct dependencies for the application stack.
+          description: Direct dependencies for the application stack
           example: |
             [[source]]
             url = "https://pypi.python.org/simple"
@@ -1405,10 +1611,11 @@ components:
             daiquiri = "*"
 
             [dev-packages]
-        requirements_lock:
+        requirements_lock: &requirements_lock_def
           type: string
-          description: Fully pinned down dependency stack.
-          example: '{
+          description: Fully pinned down dependency stack
+          example: >
+            {
             "_meta": {
             "hash": {
             "sha256": "fecd8a66514e1129f796d7a45a1f5b2f7733e3ae0ead487ca63752da680ab8e4"
@@ -1434,80 +1641,100 @@ components:
             }
             },
             "develop": {}
-            }'
+            }
         requirements_format:
           type: string
           description: >
-            Lockfile format - defaults to pipenv if not explicitly specified.
+            Lockfile format - defaults to pipenv if not explicitly specified
           items:
             type: string
           enum:
-            - pipenv
+          - pipenv
           example: pipenv
     RuntimeEnvironment:
       type: object
-      description: Runtime environment description, see Thamos configuration for more info.
-      additionalProperties: true
+      description: Runtime environment description, see Thamos configuration for more info
       properties:
         hardware:
           type: object
-          description: Hardware configuration used.
+          description: Hardware configuration used
+          nullable: true
+          properties:
+            cpu_model:
+              type: integer
+              nullable: true
+              example: 6
+            cpu_family:
+              type: integer
+              nullable: true
+              example: 142
+            gpu_model:
+              type: string
+              nullable: true
         operating_system:
           type: object
-          description: Operating system used.
-          nullable: true
+          description: Operating system used
+          required:
+          - name
+          - version
+          properties:
+            name:
+              type: string
+              example: rhel
+            version:
+              type: string
+              example: "8"
         python_version:
           type: string
           example: "3.6"
-          description: Python version on which the application runs on.
+          description: Python version on which the application runs on
           nullable: true
         cuda_version:
           type: string
-          example: "9.0"
-          description: Nvidia CUDA version which the application uses.
+          example: "11.1"
+          description: Nvidia CUDA version which the application uses
           nullable: true
         openblas_version:
           type: string
-          example: "0.3.13"
-          description: OpenBLAS version used, if any.
+          example: 0.3.13
+          description: OpenBLAS version used, if any
           nullable: true
         openmpi_version:
           type: string
           example: "4.1"
-          description: Open MPI version used, if any.
+          description: Open MPI version used, if any
           nullable: true
         cudnn_version:
           type: string
           example: "8"
-          description: NVIDIA cuDNN version used, if any.
+          description: NVIDIA cuDNN version used, if any
           nullable: true
         mkl_version:
           type: string
-          example: "2021.1.1"
-          description: Intel® Math Kernel Library version used, if any.
+          example: 2021.1.1
+          description: Intel® Math Kernel Library version used, if any
           nullable: true
         platform:
           type: string
-          example: "linux-x86_64"
-          description: Platform used - corresponds to sysconfig.get_platform() call.
+          items:
+            type: string
+          enum:
+          - linux-x86_64
+          description: Platform used - corresponds to sysconfig.get_platform() call
           nullable: true
         base_image:
           type: string
-          example: "https://quay.io/repository/thoth-station/s2i-thoth-ubi8-py38:v0.23.1"
-          description: A base container image used to run the application.
+          example: quay.io/thoth-station/s2i-thoth-ubi8-py38:v0.32.3
+          description: A base container image used to run the application
           nullable: true
         name:
           type: string
-          example: "ubi:8-prod"
-          description: User defined name of the runtime environment.
-        ipython:
-          type: object
-          description: >
-            Additional information captured when recommendations were requested for Jupyter Notebook environments.
+          example: ubi8-prod
+          description: User defined name of the runtime environment
     ProvenanceInput:
       type: object
       required:
-        - application_stack
+      - application_stack
       properties:
         application_stack:
           $ref: "#/components/schemas/PythonStack"
@@ -1520,716 +1747,1741 @@ components:
     AdviseInput:
       type: object
       required:
-        - application_stack
+      - application_stack
       properties:
         application_stack:
           $ref: "#/components/schemas/PythonStack"
         constraints:
           type: string
-          description: Constraints to apply during the resolution.
-          example: 'flask>=1.0'
+          description: Constraints to apply during the resolution
+          example: flask>=1.0
           nullable: true
         runtime_environment:
           $ref: "#/components/schemas/RuntimeEnvironment"
         labels:
           type: object
-          description: Labels used to label the request.
+          description: Labels used to label the request
           nullable: true
+          example:
+            label_key: label_value
         library_usage:
           type: object
-          description: Static analysis of libraries used within user's project.
+          description: Static analysis of libraries used within user's project
           required:
-            - version
-            - report
+          - version
+          - report
           properties:
             version:
               type: string
+              example: 0.2.0
             report:
               type: object
+              example:
+                app.py:
+                  flask: [flask.Flask]
         kebechet_metadata:
           $ref: "#/components/schemas/KebechetMetadata"
         justification:
           $ref: "#/components/schemas/Justification"
         stack_info:
           $ref: "#/components/schemas/StackInfo"
-    ImageMetadataResponse:
+    ImageMetadataResponse: &image_metadata_skopeo
       type: object
-      description: Response information with image metadata.
+      description: Response information with image metadata as extracted by Skopeo
       properties:
         name:
           type: string
-          description: Name of the image with optional tag.
-          example: "fedora"
+          description: Name of the image with optional tag
+          example: fedora
         tag:
           type: string
-          description: Tag of the image.
-          example: "latest"
+          description: Tag of the image
+          example: latest
         digest:
           type: string
-          description: Digest of the image.
+          description: Digest of the image
           example: sha256:cfd8f071bf8da7a466748f522406f7ae5908d002af1b1a1c0dcf893e183e5b32''
         repo_tags:
           type: array
           items:
             type: string
-            description: Tags available in the registry repository.
+            description: Tags available in the registry repository
         created:
           type: string
-          description: Image creation date and time.
+          description: Image creation date and time
           example: "2016-03-04T18:40:02.92155334Z"
         docker_version:
           type: string
-          description: Version of Docker.
-          example: "1.9.1"
+          description: Version of Docker
+          example: 1.9.1
         labels:
           type: object
-          description: Image labels.
+          description: Image labels
         architecture:
           type: string
-          description: Target architecture of image.
-          example: "amd64"
+          description: Target architecture of image
+          example: amd64
         os:
           type: string
-          description: "Operating system identifier."
+          description: Operating system identifier
         layers:
           type: array
           items:
             type: string
-            description: Digests of image layesrs.
+            description: Digests of image layers
       required:
-        - name
-        - digest
-        - repo_tags
-        - created
-        - docker_version
-        - labels
-        - architecture
-        - os
-        - layers
+      - architecture
+      - created
+      - digest
+      - docker_version
+      - labels
+      - layers
+      - name
+      - os
+      - repo_tags
     BuildAnalysisResponse:
       type: object
-      description: Response for a submitted build analysis.
+      description: Response for a submitted build analysis
       properties:
         base_image_analysis:
           type: object
-          description: Response for a submitted analysis.
+          description: Response for a submitted analysis
           nullable: true
           properties:
             analysis_id:
               type: string
               description: >
-                An id of submitted analysis for checking its status and its results.
+                An identifier of submitted analysis for checking its status and its results
+              example: package-extract-220106085109-984feaa8a3862285
             cached:
               type: boolean
               description: >
-                If set to true the given analysis was picked from cache.
+                If set to true the given analysis was picked from cache
         output_image_analysis:
           type: object
-          description: Response for a submitted analysis.
+          description: Response for a submitted analysis
           nullable: true
           properties:
             analysis_id:
               type: string
               description: >
-                An id of submitted analysis for checking its status and its results.
+                An identifier of submitted analysis for checking its status and its results
+              example: package-extract-220106085109-984feaa8a3862285
             cached:
               type: boolean
               description: >
-                If set to true the given analysis was picked from cache.
+                If set to true the given analysis was picked from cache
         buildlog_analysis:
           type: object
-          description: Response for a submitted analysis.
+          description: Response for a submitted analysis
           nullable: true
           properties:
             analysis_id:
               type: string
               description: >
-                An id of submitted analysis for checking its status and its results.
+                An identifier of submitted analysis for checking its status and its results
             cached:
               type: boolean
               description: >
-                If set to true the given analysis was picked from cache.
+                If set to true the given analysis was picked from cache
         buildlog_document_id:
           type: string
-          description: Document identifier for the stored build log.
+          description: Document identifier for the stored build log
     AnalysisWithAuthenticationResponse:
       type: object
-      description: Response for a submitted analysis.
+      description: Response for a submitted analysis
       properties:
         analysis_id:
           type: string
           description: >
-            An id of submitted analysis for checking its status and its results.
+            An id of submitted analysis for checking its status and its results
+          example: package-extract-220106085109-984feaa8a3862285
         parameters:
           type: object
           description: >
-            Parameters echoed back to user (with default parameters if omitted).
+            Parameters echoed back to user (with default parameters if omitted)
         cached:
           type: boolean
           description: >
-            If set to true the given analysis was picked from cache.
+            If set to true the given analysis was picked from cache
         authenticated:
           type: boolean
           description: >
-            If set to true the given analysis was authenticated.
+            If set to true the given analysis was authenticated
       required:
-        - analysis_id
-        - parameters
-        - cached
-        - authenticated
+      - analysis_id
+      - parameters
+      - cached
+      - authenticated
     AnalysisResponse:
       type: object
-      description: Response for a submitted analysis.
+      description: Response for a submitted analysis
       properties:
         analysis_id:
           type: string
           description: >
-            An id of submitted analysis for checking its status and its results.
+            An id of submitted analysis for checking its status and its results
+          example: package-extract-220106085109-984feaa8a3862285
         parameters:
           type: object
           description: >
-            Parameters echoed back to user (with default parameters if omitted).
+            Parameters echoed back to user (with default parameters if omitted)
         cached:
           type: boolean
           description: >
-            If set to true the given analysis was picked from cache.
+            If set to true the given analysis was picked from cache
       required:
-        - analysis_id
-        - parameters
-        - cached
+      - analysis_id
+      - parameters
+      - cached
     PythonPackageIndexes:
       type: object
-      description: A listing of Python package indexes.
+      description: A listing of Python package indexes
       required:
-        - indexes
+      - indexes
       properties:
         indexes:
           type: array
           items:
             type: object
-            description: A Python package index.
+            description: A Python package index
             required:
-              - url
-              - warehouse_api_url
-              - verify_ssl
+            - url
+            - warehouse_api_url
+            - verify_ssl
+            - only_if_packages_seen
             properties:
               url:
                 type: string
-                description: URL to the Python simple repository as described in PEP 503.
+                description: URL to the Python simple repository as described in PEP 503
                 example: http://pypi.org/simple
               warehouse_api_url:
                 type: string
-                description: URL to the warehouse API.
+                description: URL to the warehouse API
                 example: https://pypi.org/pypi
                 nullable: true
               verify_ssl:
                 type: boolean
-                description: Use secured connection to warehouse.
+                description: Use secured connection to warehouse
+                example: true
+              only_if_packages_seen:
+                type: boolean
+                description: >
+                  The backend is configured to monitor only releases of already seen packages
                 example: true
     BuildAnalysisResponseError:
       type: object
-      description: Error Response for a submitted build analysis.
+      description: Error response for a submitted build analysis
       properties:
         base_image_analysis:
           type: object
           properties:
             error:
               type: string
-              description: Error information for user.
+              description: Error information for users
+              example: Some error message reported back to users
             parameters:
               type: object
-              description: Parameters echoed back to user for debugging.
+              description: Parameters echoed back to user for debugging
         output_image_analysis:
           type: object
           properties:
             error:
               type: string
-              description: Error information for user.
+              description: Error information for user
+              example: Some error message reported back to users
             parameters:
               type: object
-              description: Parameters echoed back to user for debugging.
+              description: Parameters echoed back to user for debugging
         build_log_analysis:
           type: object
           properties:
             error:
               type: string
-              description: Error information for user.
+              description: Error information for user
+              example: Some error message reported back to users
             parameters:
               type: object
-              description: Parameters echoed back to user for debugging.
+              description: Parameters echoed back to user for debugging
       required:
-        - base_image_analysis
-        - output_image_analysis
-        - build_log_analysis
+      - base_image_analysis
+      - output_image_analysis
+      - build_log_analysis
     AnalysisUnauthorizedError:
       type: object
       required:
-        - error
+      - error
       properties:
         error:
           type: string
-          description: Unauthorized error information.
+          description: Unauthorized error information
+          example: Some error message reported back to users
     AnalysisResponseError:
       type: object
       required:
-        - error
-        - parameters
+      - error
+      - parameters
       properties:
         error:
           type: string
-          description: Error information for user.
+          description: Error information for user
+          example: Some error message reported back to users
         parameters:
           type: object
-          description: Parameters echoed back to user for debugging.
+          description: Parameters echoed back to user for debugging
     AnalysisResultResponse:
       type: object
-      description: Result of an analysis
+      description: Result of an avise
       required:
-        - metadata
-        - result
+      - metadata
+      - result
       properties:
         metadata:
           type: object
-          description: Metadata for analysis run.
+          description: Metadata for container image analysis run
           required:
-            - analyzer
-            - analyzer_version
-            - arguments
-            - datetime
-            - distribution
-            - hostname
-            - python
+          - analyzer
+          - analyzer_version
+          - arguments
+          - datetime
+          - distribution
+          - document_id
+          - duration
+          - hostname
+          - os_release
+          - python
+          - thoth_deployment_name
+          - timestamp
           properties:
             analyzer:
               type: string
-              description: Analyzer name which handled analysis.
+              description: >
+                Analyzer name which handled container image analysis
+              example: package-extract
             analyzer_version:
               type: string
-              description: Version of analyzer handling analysis.
+              description: >
+                Version of analyzer handling the container image analysis
+              example: v1.0.0
             arguments:
               type: object
-              description: Arguments passed to analyzer.
+              description: Arguments passed to the analyzer
             datetime:
               type: string
-              description: Date and time of analysis end in ISO format.
+              description: Date and time of analysis end in ISO format
+              example: 2021-02-23T09:29:45.254525
             distribution:
               type: object
               description: >
                 Information about environment in which the analysis
-                was performed.
+                was performed
               required:
-                - codename
-                - id
-                - like
-                - version
-                - version_parts
+              - codename
+              - id
+              - like
+              - version
+              - version_parts
               properties:
                 codename:
                   type: string
                   description: >
-                    Codename of environment in which the analysis was perfomed.
+                    Codename of environment in which the analysis was performed
+                  example: Ootpa
                 id:
                   type: string
                   description: >
                     Identifier of environment in which the analysis
-                    was perfomed.
+                    was performed
+                  example: rhel
                 like:
                   type: string
                   description: >
-                    Similar environments in comparision to environment in
-                    which the analysis was perfomed.
+                    Similar environments in comparison to environment in
+                    which the analysis was performed
+                  example: fedora
                 version:
                   type: string
-                  description: A string representation of environment version.
+                  description: A string representation of environment version
+                  example: "8.3"
                 version_parts:
                   type: object
                   description: >
-                    Parts of version identifier of the analysing environment.
+                    Parts of version identifier of the analysing environment
                   properties:
                     build_number:
                       type: string
+                      example: "1"
                     major:
                       type: string
+                      example: "8"
                     minor:
                       type: string
+                      example: "3"
                   required:
-                    - build_number
-                    - major
-                    - minor
+                  - build_number
+                  - major
+                  - minor
+            document_id:
+              type: string
+              description: A unique identifier of the document
+              example: package-extract-211022015031-eb53ce1939b6c12e
+            duration:
+              type: integer
+              description: >
+                Number of seconds for which the analyzer was running
             hostname:
               type: string
-              description: Pod name where the analysis was done.
+              description: Pod name where the analysis was done
+              example: package-extract-211022015031-eb53ce1939b6c12e-1359347945
+            os_release:
+              type: object
             python:
               type: object
               required:
-                - api_version
-                - implementation_name
-                - major
-                - minor
-                - micro
-                - releaselevel
-                - serial
+              - api_version
+              - implementation_name
+              - major
+              - minor
+              - micro
+              - releaselevel
+              - serial
               properties:
                 api_version:
                   type: integer
+                  example: 1013
                 implementation_name:
                   type: string
                   example: cpython
                 major:
                   type: integer
+                  example: 3
                 micro:
                   type: integer
+                  example: 3
                 minor:
                   type: integer
+                  example: 8
                 releaselevel:
                   type: string
                   example: final
                 serial:
                   type: integer
+                  example: 0
+            thoth_deployment_name:
+              type: string
+              description: Name of Thoth's deployment that computed results
+              example: ocp4-stage
+            timestamp:
+              type: integer
+              description: Timestamp when results were computed
+              example: 1634867650
         result:
           type: object
-          description: Actual result of an analysis run.
-    AnalysisListingResponse:
+          required:
+          - aicoe-ci
+          - cuda-version
+          - deb
+          - deb-dependencies
+          - image_size
+          - layers
+          - mercator
+          - operating-system
+          - python-files
+          - python-interpreters
+          - python-packages
+          - rpm
+          - rpm-dependencies
+          - skopeo-inspect
+          - system-symbols
+          properties:
+            aicoe-ci:
+              type: object
+              description: >
+                Information supplied by AICoE-CI during the image build
+              required:
+              - requirements
+              - requirements_lock
+              properties:
+                requirements:
+                  nullable: true
+                  <<: *requirements_def
+                requirements_lock:
+                  nullable: true
+                  <<: *requirements_lock_def
+            cuda-version:
+              type: object
+              description: >
+                Nvidia CUDA version detected - path is the key and CUDA version
+                is the object value
+            deb:
+              type: array
+              description: Debian packages detected (experimental)
+              items:
+                type: object
+                description: Debian package information
+                required:
+                - name
+                - version
+                - arch
+                properties:
+                  name:
+                    type: string
+                    description: Name of the Debian package
+                  version:
+                    type: string
+                    description: Version identifier of the Debian package
+                  arch:
+                    type: string
+                    description: Package architecture
+            deb-dependencies:
+              type: array
+              description: Dependencies of Debian packages detected
+              items:
+                type: object
+                description: Debian dependency information
+                required:
+                - name
+                - epoch
+                - version
+                - pre-depends
+                - depends
+                - replaces
+                properties:
+                  name:
+                    type: string
+                    description: Debian package name
+                  version:
+                    type: string
+                    description: Debian package version
+                  epoch:
+                    type: string
+                    description: Debian package epoch
+                  depends: &deb_dependency_item
+                    type: object
+                    required:
+                    - name
+                    - version
+                    properties:
+                      name:
+                        type: string
+                        description: Dependency name
+                      version:
+                        type: string
+                        description: Dependency version
+                  pre-depends:
+                    <<: *deb_dependency_item
+                  replaces:
+                    <<: *deb_dependency_item
+            image_size:
+              type: integer
+              description: Size of the container image in bytes
+              example: 393012461
+            layers:
+              type: array
+              description: >
+                Container image layers, sorted based on the layer precedence
+              items:
+                type: string
+                description: Container image layer SHA
+                example: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+            mercator:
+              type: object
+              description: Mercator (TM) output
+            operating-system:
+              type: object
+              description: Operating System information
+            python-files:
+              type: array
+              description: Python files detected in the container image
+              items:
+                type: object
+                description: Python files detected in the container image
+                required:
+                - filepath
+                - sha256
+                properties:
+                  filepath:
+                    type: string
+                    example: /opt/app-root/lib/python3.9/site-packages/micropipenv.py
+                  sha256:
+                    type: string
+                    description: SHA256 of the file
+                    example: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+            python-interpreters:
+              type: array
+              description: Python interpreters detected inside the container image
+              items:
+                type: object
+                required:
+                - link
+                - path
+                - version
+                properties:
+                  link:
+                    type: string
+                    example: /usr/bin/python3.9
+                    description: A dereferenced symlink (if any) to the Python interpreter
+                  path:
+                    type: string
+                    example: /usr/bin/python3.9
+                    description: A path to the Python interpreter executable
+                  version:
+                    type: string
+                    nullable: true
+                    example: 3.9.1
+                    description: Python interpreter version
+            python-packages:
+              type: array
+              description: Detected Python packages inside the container image
+              items:
+                type: object
+                required:
+                - location
+                - package_name
+                - package_version
+                properties:
+                  location:
+                    type: string
+                    example: /opt/app-root/lib/python3.9/site-packages
+                    description: A location where the Python package is installed
+                  package_name:
+                    type: string
+                    example: pip
+                    description: Python package name
+                  package_version:
+                    type: string
+                    example: 21.1.3
+                    description: Python package version
+            rpm:
+              type: array
+              description: >
+                A listing of container images found inside the analyzed container image
+              items:
+                type: string
+                description: An RPM package found in the container image
+                example: glibc-2.28-151.el8.x86_64
+            rpm-dependencies:
+              type: array
+              description: Information about RPM packages and their dependencies
+              items:
+                example:
+                  arch: noarch
+                  dependencies:
+                  - /bin/sh
+                  - /bin/sh
+                  - /usr/bin/python3.9
+                  - python(abi) = 3.9
+                  - python39
+                  - python39
+                  - python39
+                  - rpmlib(CompressedFileNames) <= 3.0.4-1
+                  - rpmlib(FileDigests) <= 4.6.0-1
+                  - rpmlib(PartialHardlinkSets) <= 4.0.4-1
+                  - rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+                  - rpmlib(PayloadIsXz) <= 5.2-1
+                  epoch: null,
+                  name: python39-setuptools
+                  package_identifier: python39-setuptools-50.3.2-3.module+el8.4.0+9822+20bf1249.noarch
+                  release: 3.module+el8.4.0+9822+20bf1249
+                  src: false,
+                  version": 50.3.2
+            skopeo-inspect:
+              <<: *image_metadata_skopeo
+            system-symbols:
+              type: object
+              description: >
+                Systems symbols detected - a path mapping to exported symbols available
+              example:
+                /usr/lib64/libz.so.1:
+                - ZLIB_1.2.3.5
+                - ZLIB_1.2.0.2
+                - ZLIB_1.2.2.3
+                - ZLIB_1.2.3.4
+                - ZLIB_1.2.2
+                - ZLIB_1.2.0
+                - ZLIB_1.2.5.1
+                - ZLIB_1.2.9
+                - ZLIB_1.2.7.1
+                - ZLIB_1.2.0.8
+                - ZLIB_1.2.5.2
+                - ZLIB_1.2.3.3
+                - ZLIB_1.2.2.4
+    ProvenanceResultResponse:
       type: object
-      description: Listing of available results.
+      description: Result of an avise
       required:
-        - result
-        - parameters
+      - metadata
+      - result
       properties:
-        result:
-          type: array
-          description: List of available analysis ids.
-          items:
-            type: string
-            description: Analysis id that is used as a document id.
-        parameters:
+        metadata:
           type: object
-          description: Parameters echoed back to user.
+          description: Metadata for container image analysis run
+          required:
+          - analyzer
+          - analyzer_version
+          - arguments
+          - datetime
+          - distribution
+          - document_id
+          - duration
+          - hostname
+          - os_release
+          - python
+          - thoth_deployment_name
+          - timestamp
+          properties:
+            analyzer:
+              type: string
+              description: >
+                Name of the component used to check provenance
+              example: provenance-checker
+            analyzer_version:
+              type: string
+              description: >
+                Version of the component used to check provenance
+              example: v1.0.0
+            arguments:
+              type: object
+              description: Arguments passed to the provenance checker
+            datetime:
+              type: string
+              description: Date and time of analysis end in ISO format
+              example: 2021-02-23T09:29:45.254525
+            distribution:
+              type: object
+              description: >
+                Information about environment in which provenance checker run
+              required:
+              - codename
+              - id
+              - like
+              - version
+              - version_parts
+              properties:
+                codename:
+                  type: string
+                  description: >
+                    Codename of environment in which the provenance check was run
+                  example: Ootpa
+                id:
+                  type: string
+                  description: >
+                    Identifier of environment in which the provenance check was run
+                  example: rhel
+                like:
+                  type: string
+                  description: >
+                    Similar environments in comparison to environment in
+                    which the provenance check was run
+                  example: fedora
+                version:
+                  type: string
+                  description: A string representation of environment version
+                  example: "8.3"
+                version_parts:
+                  type: object
+                  description: >
+                    Parts of version identifier of the environment
+                  properties:
+                    build_number:
+                      type: string
+                      example: "1"
+                    major:
+                      type: string
+                      example: "8"
+                    minor:
+                      type: string
+                      example: "3"
+                  required:
+                  - build_number
+                  - major
+                  - minor
+            document_id:
+              type: string
+              description: A unique identifier of the document
+              example: provenance-checker-211022015031-eb53ce1939b6c12e
+            duration:
+              type: integer
+              description: >
+                Number of seconds for which the provenance-checker was running
+            hostname:
+              type: string
+              description: Pod name where the provenance checks were done
+              example: provenance-checker-211022015031-eb53ce1939b6c12e-1359347945
+            os_release:
+              type: object
+            python:
+              type: object
+              required:
+              - api_version
+              - implementation_name
+              - major
+              - minor
+              - micro
+              - releaselevel
+              - serial
+              properties:
+                api_version:
+                  type: integer
+                  example: 1013
+                implementation_name:
+                  type: string
+                  example: cpython
+                major:
+                  type: integer
+                  example: 3
+                micro:
+                  type: integer
+                  example: 3
+                minor:
+                  type: integer
+                  example: 8
+                releaselevel:
+                  type: string
+                  example: final
+                serial:
+                  type: integer
+                  example: 0
+            thoth_deployment_name:
+              type: string
+              description: Name of Thoth's deployment that computed results
+              example: ocp4-stage
+            timestamp:
+              type: integer
+              description: Timestamp when results were computed
+              example: 1634867650
+        result:
+          type: object
+          description: Provenance check result
+          required:
+          - error
+          - error_msg
+          - input
+          - parameters
+          - report
+          properties:
+            error:
+              type: boolean
+              description: A flag set to true if an error was encountered
+              example: false
+            error_msg:
+              type: string
+              description: An error message reported to users
+              example: Failed to parse input
+              nullable: true
+            input:
+              type: object
+              nullable: true
+            parameters:
+              type: object
+              required:
+              - project
+              properties:
+                whitelisted_sources:
+                  type: array
+                  description: Python package indexes whitelisted
+                  items:
+                    type: string
+                    description: A Python Simple API repository URL
+                    example: https://pypi.org/simple
+                project: &project_def
+                  type: object
+                  required:
+                  - constraints
+                  - requirements
+                  - requirements_locked
+                  - runtime_environment
+                  properties:
+                    constraints:
+                      type: array
+                      items:
+                        type: object
+                        required:
+                        - name
+                        - version
+                        - markers
+                        properties:
+                          name:
+                            type: string
+                            example: flask
+                            description: Name of the package that was constrained
+                          version:
+                            type: string
+                            example: ~=2.0.0
+                            description: Version range specifier for the constrain
+                          markers:
+                            type: string
+                            description: An environment marker used with the version constrain
+                            example: python_version >= "3.8"
+                    requirements:
+                      <<: *requirements_def
+                    requirements_locked:
+                      <<: *requirements_lock_def
+                    runtime_environment:
+                      nullable: true
+                      $ref: "#/components/schemas/RuntimeEnvironment"
+            report:
+              type: array
+              description: A provenance check report
+              items:
+                type: object
+    AdviserResultResponse:
+      type: object
+      description: Result of a container image analysis
+      required:
+      - metadata
+      - result
+      properties:
+        metadata:
+          type: object
+          description: Metadata for analysis run
+          required:
+          - analyzer
+          - analyzer_version
+          - arguments
+          - datetime
+          - distribution
+          - document_id
+          - duration
+          - hostname
+          - os_release
+          - python
+          - thoth_deployment_name
+          - timestamp
+          properties:
+            analyzer:
+              type: string
+              description: Analyzer name which handled analysis
+              example: thoth-adviser
+            analyzer_version:
+              type: string
+              description: Version of analyzer handling analysis
+              example: v1.0.0
+            arguments:
+              type: object
+              description: Arguments passed to the analyzer
+            datetime:
+              type: string
+              description: Date and time of analysis end in ISO format
+              example: 2021-02-23T09:29:45.254525
+            distribution:
+              type: object
+              description: >
+                Information about environment in which the analysis
+                was performed
+              required:
+              - codename
+              - id
+              - like
+              - version
+              - version_parts
+              properties:
+                codename:
+                  type: string
+                  description: >
+                    Codename of environment in which the analysis was performed
+                  example: Ootpa
+                id:
+                  type: string
+                  description: >
+                    Identifier of environment in which the analysis
+                    was performed
+                  example: rhel
+                like:
+                  type: string
+                  description: >
+                    Similar environments in comparison to environment in
+                    which the analysis was performed
+                  example: fedora
+                version:
+                  type: string
+                  description: A string representation of environment version
+                  example: "8.3"
+                version_parts:
+                  type: object
+                  description: >
+                    Parts of version identifier of the analysing environment
+                  properties:
+                    build_number:
+                      type: string
+                      example: "1"
+                    major:
+                      type: string
+                      example: "8"
+                    minor:
+                      type: string
+                      example: "3"
+                  required:
+                  - build_number
+                  - major
+                  - minor
+            document_id:
+              type: string
+              description: A unique identifier of the document
+              example: adviser-211022015031-eb53ce1939b6c12e
+            duration:
+              type: integer
+              description: >
+                Number of seconds for which the analyzer was running
+            hostname:
+              type: string
+              description: Pod name where the analysis was done
+              example: adviser-211022015031-eb53ce1939b6c12e-1359347945
+            os_release:
+              type: object
+            python:
+              type: object
+              required:
+              - api_version
+              - implementation_name
+              - major
+              - minor
+              - micro
+              - releaselevel
+              - serial
+              properties:
+                api_version:
+                  type: integer
+                  example: 1013
+                implementation_name:
+                  type: string
+                  example: cpython
+                major:
+                  type: integer
+                  example: 3
+                micro:
+                  type: integer
+                  example: 3
+                minor:
+                  type: integer
+                  example: 8
+                releaselevel:
+                  type: string
+                  example: final
+                serial:
+                  type: integer
+                  example: 0
+            thoth_deployment_name:
+              type: string
+              description: Name of Thoth's deployment that computed results
+              example: ocp4-stage
+            timestamp:
+              type: integer
+              description: Timestamp when results were computed
+              example: 1634867650
+        result:
+          type: object
+          description: Actual result of an analysis run
+          required:
+          - error
+          - error_msg
+          - parameters
+          - report
+          properties:
+            error:
+              type: boolean
+              description: A flag indicating error during the advise
+              example: false
+            error_msg:
+              type: string
+              description: An error message describing the error encountered
+              example: Cannot satisfy direct dependency flask
+              nullable: true
+            parameters:
+              type: object
+              description: Parameters supplied on advise together with user inputs
+            report:
+              type: object
+              nullable: true
+              description: Report with results computed
+              required:
+              - stack_info
+              properties:
+                ERROR:
+                  type: string
+                  description: Error message describing advise failure
+                  example: No results were resolved,, see logs for more info
+                accepted_final_states_count:
+                  type: integer
+                  description: Number of resolved states that were accepted
+                  example: 1
+                discarded_final_states_count:
+                  type: integer
+                  description: Number of states that were discarded during the resolution
+                  example: 1
+                pipeline:
+                  type: object
+                  nullable: true
+                  description: >-
+                    Pipeline configuration used during the resolution process, available
+                    only on debug
+                  required:
+                  - boots
+                  - pseudonyms
+                  - sieves
+                  - steps
+                  - strides
+                  - wraps
+                  properties:
+                    boots:
+                      type: array
+                      description: >
+                        Boot pipeline unit types registered to the resolution process
+                      items: &unit_def
+                        type: object
+                        required:
+                        - name
+                        - configuration
+                        - unit_run
+                        properties:
+                          name:
+                            type: string
+                            example: SomeUnit
+                          configuration:
+                            type: object
+                          unit_run:
+                            type: boolean
+                            description: >
+                              Flag set to true if the pipeline unit was run during the
+                              resolution process
+                    pseudonyms:
+                      type: array
+                      description: >
+                        Pseudonym pipeline unit types registered to the resolution process
+                      items:
+                        <<: *unit_def
+                    sieves:
+                      type: array
+                      description: >
+                        Sieve pipeline unit types registered to the resolution process
+                      items:
+                        <<: *unit_def
+                    steps:
+                      type: array
+                      description: >
+                        Step pipeline unit types registered to the resolution process
+                      items:
+                        <<: *unit_def
+                    strides:
+                      type: array
+                      description: >
+                        Stride pipeline unit types registered to the resolution process
+                      items:
+                        <<: *unit_def
+                    wraps:
+                      type: array
+                      description: >
+                        Wrap pipeline unit types registered to the resolution process
+                      items:
+                        <<: *unit_def
+                products:
+                  type: array
+                  description: >
+                    Products computed in the deployment, always holds only one item
+                  items:
+                    type: object
+                    required:
+                    - advised_manifest_changes
+                    - advised_runtime_environment
+                    - dependency_graph
+                    - justification
+                    - project
+                    - score
+                    properties:
+                      advised_manifest_changes:
+                        type: array
+                        nullable: true
+                        description: Advised changes to manifest files
+                        items:
+                          type: object
+                          description: A change that was advised
+                      advised_runtime_environment:
+                        nullable: true
+                        $ref: "#/components/schemas/RuntimeEnvironment"
+                      dependency_graph:
+                        type: object
+                        description: Serialized dependency graph
+                        required:
+                        - edges
+                        - nodes
+                        properties:
+                          edges:
+                            type: array
+                            description: >
+                              Edge represented as a source-destination pair, representing
+                              indexes to the nodes listing
+                            items:
+                              type: array
+                              items:
+                                type: integer
+                          nodes:
+                            type: array
+                            description: >
+                              A listing of nodes (package names) in the dependency graph
+                            items:
+                              type: string
+                              example: flask
+                              description: >
+                                Package name representing a node in the dependency graph
+                      justification:
+                        $ref: "#/components/schemas/Justification"
+                      project:
+                        type: object
+                        required:
+                        - constraints
+                        - requirements
+                        - requirements_locked
+                        - runtime_environment
+                        properties:
+                          constraints:
+                            type: array
+                            items:
+                              type: object
+                              required:
+                              - name
+                              - version
+                              - markers
+                              properties:
+                                name:
+                                  type: string
+                                  example: flask
+                                  description: Name of the package that was constrained
+                                version:
+                                  type: string
+                                  example: ~=2.0.0
+                                  description: Version range specifier for the constrain
+                                markers:
+                                  type: string
+                                  description: An environment marker used with the version constrain
+                                  example: python_version >= "3.8"
+                          requirements:
+                            type: object
+                            description: >
+                              Requirements stating direct dependencies of the project, the format
+                              is compatible with Pipenv
+                            example:
+                              dev-packages: {}
+                              packages:
+                                numpy:
+                                  index: pypi
+                                  version: "*"
+                              requires:
+                                python_version: "3.9"
+                              source:
+                              - name: pypi
+                                url: https://pypi.org/simple
+                                verify_ssl: true
+                              thoth:
+                                allow_prereleases: {}
+                                disable_index_adjustment: false
+                          requirements_locked:
+                            type: object
+                            description: >
+                              A lock file stating all the dependencies pinned to a specific version
+                              togher with an explicit Python package index configuration
+                            example:
+                              _meta:
+                                hash:
+                                  sha256: f6dd619becbaf7a5c233150a889ef85fbfdf8aa260d182f0874e3234f06ad2b5
+                                pipfile-spec: 6
+                                requires:
+                                  python_version: "3.9"
+                                sources:
+                                - name: pypi
+                                  url: https://pypi.org/simple
+                                  verify_ssl: true
+                              default:
+                                numpy:
+                                  hashes:
+                                  - sha256:b1cca51512299841bf69add3b75361779962f9cee7d9ee3bb446d5982e925b69
+                                  - sha256:c9591886fc9cbe5532d5df85cb8e0cc3b44ba8ce4367bd4cf1b93dc19713da72
+                                  index: pypi-org-simple
+                                  version: ==1.3.0
+                          runtime_environment:
+                            nullable: true
+                            $ref: "#/components/schemas/RuntimeEnvironment"
+                      score:
+                        type: number
+                        format: float
+                        example: 0.25
+                        description: Score of the computed product
+                resolver_iterations:
+                  type: integer
+                  description: >
+                    Number of iterations done by the resolver to compute products
+                  example: 49945
+                stack_info:
+                  $ref: "#/components/schemas/StackInfo"
     AnalysisStatusResponse:
       type: object
-      description: Information about the current analysis status.
+      description: Information about the current analysis status
       required:
-        - parameters
-        - status
+      - parameters
+      - status
       properties:
         status:
           type: object
-          description: Status information about the analysis run.
-          additionalProperties: true
+          description: Status information about the analysis run
           required:
-            - finished_at
-            - reason
-            - started_at
-            - state
+          - finished_at
+          - reason
+          - started_at
+          - state
           properties:
             finished_at:
               type: string
               description: >
                 Datetime in ISO format informing about when the analysis
-                has finished.
+                has finished
               nullable: true
+              example: 2022-01-10T20:46:39Z
             reason:
               type: string
-              description: Reasoning on finished run.
+              description: Reasoning on finished run
               nullable: true
+              example: success
             started_at:
               type: string
               nullable: true
               description: >
                 Datetime in ISO format informing about when the analysis
-                has started.
+                has started
+              example: 2022-01-10T20:46:39Z
             state:
               type: string
-              example: running
+              example: success
         parameters:
           type: object
-          description: Parameters echoed back to user for debugging.
-
+          description: Parameters echoed back to user for debugging
     ContainerImagesResponse:
       type: object
       required:
-        - container_images
-        - parameters
+      - container_images
+      - parameters
       properties:
         container_images:
           type: array
           items:
             type: object
-            additionalProperties: true
             required:
-              - environment_name
-              - python_version
-              - env_image_name
-              - env_image_tag
-              - image_sha
-              - os_name
-              - os_version
-              - thoth_image_name
-              - thoth_image_version
-              - cuda_version
-              - environment_type
-              - package_extract_document_id
-              - datetime
+            - environment_name
+            - python_version
+            - env_image_name
+            - env_image_tag
+            - image_sha
+            - os_name
+            - os_version
+            - thoth_image_name
+            - thoth_image_version
+            - cuda_version
+            - environment_type
+            - package_extract_document_id
+            - datetime
             properties:
               environment_name:
                 type: string
                 nullable: true
+                example: quay.io/thoth-station/s2i-custom-notebook:v0.2.0
               python_version:
                 type: string
                 nullable: true
-                example: '3.8'
+                example: "3.8"
               env_image_name:
                 type: string
                 nullable: true
-                example: 's2i-minimal-notebook'
+                example: s2i-minimal-notebook
               env_image_tag:
                 type: string
                 nullable: true
-                example: 'v1.2.3'
+                example: v1.2.3
               image_sha:
                 type: string
                 nullable: true
+                example: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
               os_name:
                 type: string
-                example: 'rhel'
+                example: rhel
                 nullable: true
               os_version:
                 type: string
-                example: '8'
+                example: "8"
                 nullable: true
               thoth_image_name:
                 type: string
-                example: 'quay.io/thoth-station/s2i-thoth-ubi8-py38'
+                example: quay.io/thoth-station/s2i-thoth-ubi8-py38
                 nullable: true
               thoth_image_version:
                 type: string
-                example: 'v1.0.0'
+                example: v1.0.0
                 nullable: true
               cuda_version:
                 type: string
                 nullable: true
-                example: '9.0'
+                example: "11.1"
               environment_type:
                 type: string
                 example: RUNTIME
                 enum:
-                  - BUILDTIME
-                  - RUNTIME
+                - BUILDTIME
+                - RUNTIME
               package_extract_document_id:
                 type: string
+                example: package-extract-220106085109-984feaa8a3862285
               datetime:
                 type: string
+                example: 2021-02-23T09:29:45.254525
         parameters:
           type: object
           required:
-            - page
+          - page
           properties:
             page:
               type: integer
               example: 0
-              description: Page offset in the pagination.
-
+              description: Page offset in the pagination
+    ContainerImagesResponseError:
+      type: object
+      required:
+      - error
+      - parameters
+      properties:
+        error:
+          type: string
+          description: Error information for user
+          example: Some error message reported back to users
+        parameters:
+          type: object
+          description: Parameters echoed back to user for debugging
     AnalysisLogResponse:
       type: object
       required:
-        - log
-        - parameters
+      - log
+      - parameters
       properties:
         log:
           type: string
-          description: Analyzer logs printed to stdout/stderr as a plain text.
+          description: Analyzer logs printed to stdout/stderr as a plain text
           nullable: true
+          example: "Starting an analysis\nAnalyzer version is v1.0.0\n"
         parameters:
           type: object
-          description: Parameters echoed back to user for debugging.
-
+          description: Parameters echoed back to user for debugging
     PythonPackagesResponse:
       type: object
       required:
-        - packages
+      - packages
       properties:
         packages:
           type: array
           items:
             type: object
             required:
-              - package_name
+            - package_name
             properties:
               package_name:
                 type: string
                 nullable: false
-                description: Name of the package.
+                description: Name of the package
                 example: flask
-
     PythonPackageVersionsResponse:
       type: object
       required:
-        - versions
+      - versions
       properties:
         versions:
           type: array
           items:
             type: object
             required:
-              - package_name
-              - package_version
-              - index_url
+            - package_name
+            - package_version
+            - index_url
             properties:
               package_name:
                 type: string
                 nullable: false
-                description: Name of the package.
+                description: Name of the package
                 example: tensorflow
               package_version:
                 type: string
                 nullable: false
-                description: Version of the package.
-                example: "2.0.0"
+                description: Version of the package
+                example: 2.0.0
               index_url:
                 type: string
                 nullable: false
-                description: Source index URL of the package.
-                example: "https://pypi.org/simple"
-
+                description: Source index URL of the package
+                example: https://pypi.org/simple
     PythonPackageVersionEnvironmentsResponse:
       type: object
       required:
-        - environments
+      - environments
       properties:
         environments:
           type: array
           items:
             type: object
             required:
-              - os_name
-              - os_version
-              - python_version
+            - os_name
+            - os_version
+            - python_version
             properties:
               os_name:
                 type: string
-                description: Operating system name.
+                description: Operating system name
                 example: rhel
               os_version:
                 type: string
-                description: Operating system version.
-                example: '9'
+                description: Operating system version
+                example: "9"
               python_version:
                 type: string
-                description: Python version.
-                example: '3.9'
-
+                description: Python version
+                example: "3.9"
     PythonPackageVersionMetadataResponse:
       type: object
       required:
-        - metadata
-        - parameters
+      - metadata
+      - parameters
       properties:
         parameters:
           type: object
+          description: Parameters echoed back to user for debugging
         metadata:
           type: object
-
+          required:
+          - packages
+          - index_url
+          - package_name
+          - package_version
+          - dependencies
+          - importlib_metadata
+          properties:
+            packages:
+              type: array
+              description: Python packages (modules) the given package provides
+              items:
+                type: string
+                example: pandas.core.util
+            index_url:
+              type: string
+              description: Index URL from where the given package comes from
+              example: https://pypi.org/simple
+            package_name:
+              type: string
+              description: Name of the Python package
+              example: pandas
+            package_version:
+              type: string
+              description: Version of the Python package
+              example: 1.1.4
+            dependencies:
+              type: object
+              description: Dependency information
+              example:
+                hypothesis:
+                  extra:
+                  - test
+                  extras: []
+                  marker: extra == \"test\"
+                  marker_evaluated: python_version >= 0.0
+                  marker_evaluation_error: null
+                  marker_evaluation_result: true
+                  specifier: ">=3.58"
+                  versions:
+                  - 3.58.0
+                  - 3.58.1
+                  - 3.59.0
+                  - 3.59.1
+            importlib_metadata:
+              type: object
+              required:
+              - entry_points
+              - files
+              - metadata
+              - requires
+              - version
+              properties:
+                entry_points:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - group
+                    - name
+                    - value
+                    properties:
+                      group:
+                        type: string
+                        example: pandas_plotting_backends
+                      name:
+                        type: string
+                        example: matplotlib
+                      value:
+                        type: string
+                        example: pandas.plotting._matplotlib
+                files:
+                  type: array
+                  description: Files shipped with the Python package
+                  example:
+                    hash:
+                      mode: sha256
+                      value: aX-7A9PosUb6vSa8tNbfjhZTOtr99gSCyjl1q9bN2WU
+                    path: pandas-1.1.4.dist-info/METADATA
+                    size: 4729
+                metadata:
+                  type: object
+                  description: Core Python packaging metadata extracted
+                  example:
+                    Classifier:
+                    - "Development Status :: 5 - Production/Stable"
+                    - "Environment :: Console"
+                    - "Operating System :: OS Independent"
+                    - "Intended Audience :: Science/Research"
+                    - "Programming Language :: Python"
+                    - "Programming Language :: Python :: 3"
+                    - "Programming Language :: Python :: 3.6"
+                    - "Programming Language :: Python :: 3.7"
+                    - "Programming Language :: Python :: 3.8"
+                    - "Programming Language :: Python :: 3.9"
+                    - "Programming Language :: Cython"
+                    - "Topic :: Scientific/Engineering"
+                    Home-page: https://pandas.pydata.org
+                    License: BSD
+                    Maintainer: The PyData Development Team
+                    Maintainer-email: pydata@googlegroups.com
+                    Metadata-Version: "2.1"
+                    Name: pandas
+                    Platform:
+                    - any
+                    Project-URL:
+                    - Bug Tracker, https://github.com/pandas-dev/pandas/issues
+                    - Documentation, https://pandas.pydata.org/pandas-docs/stable/
+                    - Source Code, https://github.com/pandas-dev/pandas
+                    Provides-Extra:
+                    - test
+                    Requires-Dist:
+                    - python-dateutil (>=2.7.3)
+                    - pytz (>=2017.2)
+                    - numpy (>=1.15.4)
+                    - pytest (>=4.0.2) ; extra == 'test'
+                    - pytest-xdist ; extra == 'test'
+                    - hypothesis (>=3.58) ; extra == 'test'
+                    Requires-Python: ">=3.6.1"
+                    Summary: Powerful data structures for data analysis, time series, and statistics
+                    Version: 1.1.4
+                requires:
+                  type: array
+                  description: Python requirements of the given package
+                  items:
+                    type: string
+                    example: numpy (>=1.15.4)
+                version:
+                  type: string
+                  description: >
+                    Version of the Python package based on importlib metadata detection
+                  example: 1.1.4
     PythonPackageVersionMetadataResponseError:
       type: object
       required:
-        - error
-        - parameters
+      - error
+      - parameters
       properties:
         error:
           type: string
-          description: Error information for user.
+          description: Error information for user
+          example: Some error message reported back to users
         parameters:
           type: object
-          description: Parameters echoed back to user for debugging.
-
+          description: Parameters echoed back to user for debugging
     PythonPackageMetadataResponse:
       type: object
       required:
-        - metadata
-        - parameters
+      - metadata
+      - parameters
       properties:
         parameters:
           type: object
         metadata:
           type: object
           required:
-            - author
-            - author_email
-            - classifier
-            - download_url
-            - home_page
-            - keywords
-            - license
-            - maintainer
-            - maintainer_email
-            - metadata_version
-            - name
-            - platform
-            - requires_dist
-            - summary
-            - version
-            - requires_python
-            - description_content_type
-            - project_url
-            - provides_extra
+          - author
+          - author_email
+          - classifier
+          - download_url
+          - home_page
+          - keywords
+          - license
+          - maintainer
+          - maintainer_email
+          - metadata_version
+          - name
+          - platform
+          - requires_dist
+          - summary
+          - version
+          - requires_python
+          - description_content_type
+          - project_url
+          - provides_extra
           properties:
             author:
               type: string
               nullable: true
-              description: A string containing the author’s name.
+              description: A string containing the author’s name
             author_email:
               type: string
               nullable: true
-              description: A string containing the author’s e-mail address.
+              description: A string containing the author’s e-mail address
             classifier:
               type: array
               items:
                 type: string
                 nullable: true
-                description: Each entry is a string giving a single classification value for the distribution.
+                description: Each entry is a string giving a single classification value for the distribution
                 example: "Intended Audience :: Developers"
             download_url:
               type: string
               nullable: true
-              description: A string containing the URL from which this version of the distribution can be downloaded.
+              description: A string containing the URL from which this version of the distribution can be downloaded
             home_page:
               type: string
               nullable: true
-              description: A string containing the URL for the distribution’s home page.
+              description: A string containing the URL for the distribution’s home page
             keywords:
               type: string
               nullable: true
               description: >
                 A list of additional keywords to be used to assist
-                searching for the distribution in a larger catalog.
+                searching for the distribution in a larger catalog
             license:
               type: string
               nullable: true
-              description: Text indicating the license covering the distribution.
+              description: Text indicating the license covering the distribution
             maintainer:
               type: string
               nullable: true
               description: >
                 A string containing the maintainer’s name at a minimum;
-                additional contact information may be provided.
+                additional contact information may be provided
             maintainer_email:
               type: string
               nullable: true
-              description: A string containing the maintainer’s e-mail address.
+              description: A string containing the maintainer’s e-mail address
             metadata_version:
               type: string
               nullable: true
-              description: Version of the file format.
+              description: Version of the file format
             name:
               type: string
               nullable: true
-              description: Name of the distribution.
+              description: Name of the distribution
             platform:
               type: array
               nullable: true
               items:
                 type: string
-                description: A Platform specification describing an operating system supported by the distribution.
+                description: A Platform specification describing an operating system supported by the distribution
             requires_dist:
               type: array
               nullable: true
@@ -2237,154 +3489,155 @@ components:
                 type: string
                 description: >
                   Each entry contains a string naming some
-                  other distutils project required by this distribution.
+                  other distutils project required by this distribution
             summary:
               type: string
               nullable: true
-              description: A one-line summary of what the distribution does.
+              description: A one-line summary of what the distribution does
             version:
               type: string
               nullable: true
-              description: version of the distribution.
+              description: version of the distribution
             requires_python:
               type: string
               nullable: true
-              description: Python requirements for the distribution.
+              description: Python requirements for the distribution
             description_content_type:
               type: string
               nullable: true
-              description: Content-Type of description text.
+              description: Content-Type of description text
             project_url:
               type: string
               nullable: true
-              description: URL to project.
+              description: URL to project
             provides_extra:
               type: string
               nullable: true
-              description: Provided extra of the distribution.
-
+              description: Provided extra of the distribution
     PythonPackageNameImportResponse:
       type: object
       required:
-        - package_names
-        - parameters
+      - package_names
+      - parameters
       properties:
         package_names:
           type: array
           items:
             type: object
             required:
-              - package_name
-              - package_version
-              - index_url
-              - package_import
+            - package_name
+            - package_version
+            - index_url
+            - package_import
             properties:
               package_name:
                 type: string
                 nullable: false
-                description: Name of the package.
+                description: Name of the package
                 example: scikit-learn
               package_version:
                 type: string
                 nullable: false
-                description: Version of the package.
-                example: "1.0.1"
+                description: Version of the package
+                example: 1.0.1
               index_url:
                 type: string
                 nullable: false
-                description: Source index URL of the package.
-                example: "https://pypi.org/simple"
+                description: Source index URL of the package
+                example: https://pypi.org/simple
               package_import:
                 type: string
                 nullable: false
-                description: A module import matching the given criteria.
+                description: A module import matching the given criteria
                 example: sklearn.neural_network
         parameters:
           type: object
-
     PythonPackageVersionsResponseError:
       type: object
       required:
-        - error
-        - parameters
+      - error
+      - parameters
       properties:
         error:
           type: string
-          description: Error information for user.
+          description: Error information for user
+          example: Some error message reported back to users
         parameters:
           type: object
-          description: Parameters echoed back to user for debugging.
+          description: Parameters echoed back to user for debugging
     PythonPackageMetadataResponseError:
       type: object
       required:
-        - error
-        - parameters
+      - error
+      - parameters
       properties:
         error:
           type: string
-          description: Error information for user.
+          description: Error information for user
+          example: Some error message reported back to users
         parameters:
           type: object
-          description: Parameters echoed back to user for debugging.
+          description: Parameters echoed back to user for debugging
     PythonPackageNameResponseError:
       type: object
       required:
-        - error
-        - parameters
+      - error
+      - parameters
       properties:
         error:
           type: string
-          description: Error information for user.
+          description: Error information for user
+          example: Some error message reported back to users
         parameters:
           type: object
-          description: Parameters echoed back to user for debugging.
+          description: Parameters echoed back to user for debugging
     KebechetWebhookInput:
       type: object
-      description: Webhook payload from Github event.
+      description: Webhook payload from Github event
     PythonPlatforms:
       type: object
-      description: A listing of available platforms.
+      description: A listing of available platforms
       required:
-        - platform
+      - platform
       properties:
         platform:
           type: array
           items:
             type: string
-            description: Platform information.
+            description: Platform information
             example: linux-x86_64
     PythonEnvironments:
       type: object
-      description: A listing of available environments.
+      description: A listing of available environments
       required:
-        - environment
+      - environment
       properties:
         environment:
           type: array
           items:
             type: object
             required:
-              - os_name
-              - os_version
-              - python_version
+            - os_name
+            - os_version
+            - python_version
             properties:
               os_name:
                 type: string
-                description: Operating system name.
+                description: Operating system name
                 example: rhel
               os_version:
                 type: string
-                description: Operating system version.
-                example: '9'
+                description: Operating system version
+                example: "9"
               python_version:
                 type: string
-                description: Python version.
-                example: '3.9'
+                description: Python version
+                example: "3.9"
     PythonPackageDependencies:
       type: object
       required:
-        - dependencies
-        - parameters
+      - dependencies
+      - parameters
       properties:
         parameters:
           type: object
@@ -2392,12 +3645,12 @@ components:
           type: array
           items:
             type: object
-            description: Dependency information.
+            description: Dependency information
             required:
-              - environment_marker
-              - extra
-              - name
-              - version
+            - environment_marker
+            - extra
+            - name
+            - version
             properties:
               environment_marker:
                 type: string
@@ -2412,18 +3665,19 @@ components:
     PythonPackageDependenciesError:
       type: object
       required:
-        - error
-        - parameters
+      - error
+      - parameters
       properties:
         error:
           type: string
-          description: Error information for user.
+          description: Error information for user
+          example: Some error message reported back to users
         parameters:
           type: object
-          description: Parameters echoed back to user for debugging.
+          description: Parameters echoed back to user for debugging
     KebechetMetadata:
       type: object
-      description: Dict containing kebechet specific metadata for justification.
+      description: Dict containing kebechet specific metadata for justification
       properties:
         message_justification:
           type: integer
@@ -2437,51 +3691,47 @@ components:
         package_index:
           type: string
           nullable: true
-      additionalProperties: true
     StackInfo:
       type: array
       items:
         type: object
         required:
-          - message
-          - type
-          - link
+        - message
+        - type
+        - link
         properties:
           message:
             type: string
+            example: An example justification message
           type:
             type: string
+            enum:
+            - WARNING
+            - INFO
+            - ERROR
+            example: INFO
           link:
             type: string
-        additionalProperties: true
+            example: https://thoth-station.ninja/j/cve
     Justification:
       type: array
       items:
         type: object
         required:
-          - message
-          - type
-          - link
+        - message
+        - type
+        - link
         properties:
           message:
             type: string
+            example: An example justification message
           type:
             type: string
+            enum:
+            - WARNING
+            - INFO
+            - ERROR
+            example: INFO
           link:
             type: string
-        additionalProperties: true
-
-
-  headers:
-    xPage:
-      schema:
-        type: integer
-        description: Current Page
-    xPageSize:
-      schema:
-        type: integer
-        description: Page Size
-    xTotalPages:
-      schema:
-        type: integer
-        description: Total Pages
+            example: https://thoth-station.ninja/j/cve
