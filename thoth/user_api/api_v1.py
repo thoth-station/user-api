@@ -1388,6 +1388,14 @@ def list_python_environments() -> Dict[str, List[Dict[str, str]]]:
     """Get environments available based on solvers installed."""
     result = []
     for solver in _OPENSHIFT.get_solver_names():
-        result.append(_OPENSHIFT.parse_python_solver_name(solver))
+        item = _OPENSHIFT.parse_python_solver_name(solver)
+        result.append(item)
 
+        if item["os_name"] == "rhel":
+            # Duplicate entry as we can also guide on the same UBI environment. UBI and RHEL are binary compatible.
+            other_item = dict(item)
+            other_item["os_name"] = "ubi"
+            result.append(other_item)
+
+    result.sort(key=lambda i: (i.get("os_name"), i.get("os_version"), i.get("python_version")))
     return {"environment": result}
