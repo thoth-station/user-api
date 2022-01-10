@@ -2277,7 +2277,7 @@ components:
               - package_name
               - package_version
               - index_url
-              - import
+              - package_import
             properties:
               package_name:
                 type: string
@@ -2294,7 +2294,7 @@ components:
                 nullable: false
                 description: Source index URL of the package.
                 example: "https://pypi.org/simple"
-              import:
+              package_import:
                 type: string
                 nullable: false
                 description: A module import matching the given criteria.
