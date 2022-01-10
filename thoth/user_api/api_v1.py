@@ -1364,10 +1364,14 @@ def get_package_from_imported_packages(import_name: str) -> Tuple[Dict[str, Any]
     from .openapi_server import GRAPH
 
     try:
+        result = GRAPH.get_python_package_version_import_packages_all(import_name=import_name, distinct=True)
+
+        # Remap "import" to "package_import" as it causes troubles when generating client.
+        for item in result:
+            item["package_import"] = item.pop("import")
+
         return {
-            "package_names": GRAPH.get_python_package_version_import_packages_all(
-                import_name=import_name, distinct=True
-            ),
+            "package_names": result,
             "parameters": parameters,
         }, 200
     except NotFoundError:
