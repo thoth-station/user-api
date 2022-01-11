@@ -18,6 +18,7 @@ thoth-common = "*"
 thoth-python = "*"
 thoth-storages = "*"
 flask-cors = "*"
+openapi-schema-validator = "<0.2.0"
 aiocontextvars = "*"
 sentry-sdk = {extras = ["flask"],version = "*"}
 confluent-kafka = "*"
