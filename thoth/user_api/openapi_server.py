@@ -330,6 +330,9 @@ def apply_headers(response):
     """Add headers to each response."""
     response.headers["X-Thoth-Version"] = __version__
     response.headers["X-User-API-Service-Version"] = __service_version__
+    if "page" in response.headers:
+        # Expose headers to users.
+        response.headers["Access-Control-Expose-Headers"] = "page,entries_count,next,page_count,per_page,prev"
     return response
 
 
