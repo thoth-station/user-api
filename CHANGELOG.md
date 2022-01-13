@@ -1,5 +1,10 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.33.1 (2022-01-13T12:03:43)
+### Features
+* Fix property name
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+
 ## Release 0.33.0 (2022-01-13T08:45:54)
 ### Features
 * Expose access control headers
