@@ -1952,7 +1952,7 @@ components:
             - url
             - warehouse_api_url
             - verify_ssl
-            - only_if_packages_seen
+            - only_if_package_seen
             properties:
               url:
                 type: string
@@ -1967,7 +1967,7 @@ components:
                 type: boolean
                 description: Use secured connection to warehouse
                 example: true
-              only_if_packages_seen:
+              only_if_package_seen:
                 type: boolean
                 description: >
                   The backend is configured to monitor only releases of already seen packages
