@@ -1,5 +1,17 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.33.0 (2022-01-13T08:45:54)
+### Features
+* Expose access control headers
+* State also UBI environments in the environments listing
+* Rename import to package_import as it causes issues on client
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+### Bug Fixes
+* openapi-schema-validator <0.2.0 to fix jsonschema version incompatibility
+### Improvements
+* Update and polish OpenAPI schema
+
 ## Release 0.32.0 (2022-01-05T14:47:59)
 ### Features
 * Implement negative indexing
