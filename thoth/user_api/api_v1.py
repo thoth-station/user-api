@@ -1150,7 +1150,11 @@ def get_python_package_version_metadata(
             version,
             index,
         )
-        return {"parameters": parameters, "error": "Internal error, please contact administrator"}, 500
+        return {
+            "parameters": parameters,
+            "error": "Solver documents are not in sync with database records, please contact administrator "
+            f"with the provided information: {solver_documents[0]}",
+        }, 500
 
     package_name = solver_entry["package_name"]
     package_version = solver_entry["package_version"]
