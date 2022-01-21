@@ -3273,6 +3273,7 @@ components:
               properties:
                 entry_points:
                   type: array
+                  nullable: true
                   items:
                     type: object
                     required:
@@ -3342,6 +3343,7 @@ components:
                 requires:
                   type: array
                   description: Python requirements of the given package
+                  nullable: true
                   items:
                     type: string
                     example: numpy (>=1.15.4)
