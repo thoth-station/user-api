@@ -1193,28 +1193,6 @@ def get_python_package_version_metadata(
     return {"metadata": solver_entry, "parameters": parameters}, 200
 
 
-def get_package_metadata(name: str, version: str, index: str) -> Tuple[Dict[str, Any], int]:
-    """Retrieve metadata for the given package version."""
-    parameters = locals()
-    from .openapi_server import GRAPH
-
-    try:
-        return {
-            "metadata": GRAPH.get_python_package_version_metadata(
-                package_name=name, package_version=version, index_url=index
-            ),
-            "parameters": parameters,
-        }, 200
-    except NotFoundError:
-        return (
-            {
-                "error": f"No metadata records for package {name!r} in version {version!r} from index {index!r} found",
-                "parameters": parameters,
-            },
-            404,
-        )
-
-
 def _construct_status_queued(analysis_id: str) -> Dict[str, Any]:
     """Construct a response for a queued analysis."""
     status = {"finished_at": None, "reason": None, "started_at": None, "state": "pending"}
