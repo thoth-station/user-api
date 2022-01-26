@@ -227,6 +227,10 @@ def list_thoth_container_images(
     python_version: Optional[str] = None,
     cuda_version: Optional[str] = None,
     image_name: Optional[str] = None,
+    library_name: Optional[str] = None,
+    symbol: Optional[str] = None,
+    package_name: Optional[str] = None,
+    rpm_package_name: Optional[str] = None,
 ) -> Tuple[Dict[str, Any], int, Dict[str, Any]]:
     """List registered Thoth container images."""
     per_page = min(per_page, PAGINATION_SIZE_MAX)
@@ -241,6 +245,10 @@ def list_thoth_container_images(
         python_version=python_version,
         cuda_version=cuda_version,
         image_name=image_name,
+        library_name=library_name,
+        symbol=symbol,
+        package_name=package_name,
+        rpm_package_name=rpm_package_name,
     )
 
     page_count = ceil(entries_count / per_page)
@@ -256,6 +264,10 @@ def list_thoth_container_images(
         python_version=python_version,
         cuda_version=cuda_version,
         image_name=image_name,
+        library_name=library_name,
+        symbol=symbol,
+        package_name=package_name,
+        rpm_package_name=rpm_package_name,
     ):
         if item.get("env_image_name") and item.get("env_image_tag"):
             item["thoth_image_name"] = item.pop("env_image_name", None)
