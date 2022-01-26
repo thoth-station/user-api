@@ -1,5 +1,15 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.33.2 (2022-01-26T10:01:33)
+### Features
+* Remove deprecated metadata endpoint
+* Report missing solver document
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Remove unused .thothTemplate.yaml
+### Improvements
+* Allow nullable requires and entry_points
+
 ## Release 0.33.1 (2022-01-13T12:03:43)
 ### Features
 * Fix property name
