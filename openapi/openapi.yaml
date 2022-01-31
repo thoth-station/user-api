@@ -558,6 +558,10 @@ paths:
       - $ref: "#/components/parameters/python_version"
       - $ref: "#/components/parameters/cuda_version"
       - $ref: "#/components/parameters/image_name"
+      - $ref: "#/components/parameters/library_name"
+      - $ref: "#/components/parameters/symbol"
+      - $ref: "#/components/parameters/package_name"
+      - $ref: "#/components/parameters/rpm_package_name"
       responses:
         "200":
           description: A list of available Thoth container images
@@ -1324,6 +1328,34 @@ components:
       description: Filter based on the image name
       schema:
         type: string
+    library_name:
+      name: library_name
+      in: query
+      description: Filter based on library name
+      schema:
+        type: string
+        example: /lib64/ld-2.28.so
+    symbol:
+      name: symbol
+      in: query
+      description: Filter based on symbol
+      schema:
+        type: string
+        example: GLIBC_2.2.5
+    package_name:
+      name: package_name
+      in: query
+      description: Filter based on Python package name
+      schema:
+        type: string
+        example: tensorflow
+    rpm_package_name:
+      name: rpm_package_name
+      in: query
+      description: Filter based on RPM package name
+      schema:
+        type: string
+        example: ghc-srpm-macros-1.4.2-7.el8.noarch
     document_id:
       name: document_id
       in: path
