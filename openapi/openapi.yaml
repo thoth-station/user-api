@@ -1474,7 +1474,7 @@ components:
       schema:
         type: boolean
         nullable: true
-        default: null
+        default: false
     import_name:
       name: import_name
       in: query
