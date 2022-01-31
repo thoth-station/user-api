@@ -1,5 +1,11 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.33.3 (2022-01-31T21:21:53)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Add new query parameters for containerized environments to the api
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+
 ## Release 0.33.2 (2022-01-26T10:01:33)
 ### Features
 * Remove deprecated metadata endpoint
