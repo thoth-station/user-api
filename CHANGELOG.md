@@ -1,5 +1,9 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.34.0 (2022-02-01T09:25:00)
+### Features
+* Add myself to maintainers
+
 ## Release 0.33.4 (2022-02-01T00:09:43)
 ### Bug Fixes
 * openapi parameter schema default value doesnt take null
