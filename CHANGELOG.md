@@ -1,5 +1,9 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.33.4 (2022-02-01T00:09:43)
+### Bug Fixes
+* openapi parameter schema default value doesnt take null
+
 ## Release 0.33.3 (2022-01-31T21:21:53)
 ### Features
 * :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
