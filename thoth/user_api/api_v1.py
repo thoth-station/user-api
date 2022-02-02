@@ -245,10 +245,6 @@ def list_thoth_container_images(
         python_version=python_version,
         cuda_version=cuda_version,
         image_name=image_name,
-        library_name=library_name,
-        symbol=symbol,
-        package_name=package_name,
-        rpm_package_name=rpm_package_name,
     )
 
     page_count = ceil(entries_count / per_page)
