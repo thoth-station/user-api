@@ -112,11 +112,11 @@
         },
         "alembic": {
             "hashes": [
-                "sha256:7c328694a2e68f03ee971e63c3bd885846470373a5b532cf2c9f1601c413b153",
-                "sha256:a9dde941534e3d7573d9644e8ea62a2953541e27bc1793e166f60b777ae098b4"
+                "sha256:6c0c05e9768a896d804387e20b299880fe01bc56484246b0dffe8075d6d3d847",
+                "sha256:ad842f2c3ab5c5d4861232730779c05e33db4ba880a08b85eb505e87c01095bc"
             ],
             "markers": "python_version >= '3.6'",
-            "version": "==1.7.5"
+            "version": "==1.7.6"
         },
         "amun": {
             "hashes": [
@@ -452,11 +452,11 @@
         },
         "google-auth": {
             "hashes": [
-                "sha256:6577bbf990ef342a24e12e0c8e9d364af6642acdf206c9045bdb8e039fb4fec9",
-                "sha256:ee6199b602594c0dcaa00dc3492e62569f24a788f0aca867b989cef444e4a202"
+                "sha256:218ca03d7744ca0c8b6697b6083334be7df49b7bf76a69d555962fd1a7657b5f",
+                "sha256:ad160fc1ea8f19e331a16a14a79f3d643d813a69534ba9611d2c80dc10439dad"
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5'",
-            "version": "==2.5.0"
+            "version": "==2.6.0"
         },
         "grpcio": {
             "hashes": [
@@ -1418,11 +1418,11 @@
         },
         "thoth-storages": {
             "hashes": [
-                "sha256:333488fc26aec44d5baa88b561fe7c9ecaed092603cfbf3e3c01f9da121d3ee5",
-                "sha256:f4463e2e3451060f50ad6014f6517aea55da9a3154275bc786b6e3f7bd104b6c"
+                "sha256:05cf6e021af948cb82b80688414bab514c57a5049b438a98eb33d4d930378733",
+                "sha256:81720bea749277311eadf0c851ad27529971ddbce8c1ee614676d28fbcac873a"
             ],
             "index": "pypi",
-            "version": "==0.68.1"
+            "version": "==0.68.2"
         },
         "toml": {
             "hashes": [
