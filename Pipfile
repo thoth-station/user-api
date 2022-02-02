@@ -16,7 +16,7 @@ requests = "*"
 thoth-analyzer = "*"
 thoth-common = "*"
 thoth-python = "*"
-thoth-storages = "*"
+thoth-storages = {ref = "fix-container-query", git = "https://github.com/mayaCostantini/storages.git"}
 flask-cors = "*"
 openapi-schema-validator = "<0.2.0"
 aiocontextvars = "*"
