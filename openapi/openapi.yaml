@@ -2273,8 +2273,11 @@ components:
                 description: Container image layer SHA
                 example: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
             mercator:
-              type: object
+              type: array
+              nullable: true
               description: Mercator (TM) output
+              items:
+                type: object
             operating-system:
               type: object
               description: Operating System information
