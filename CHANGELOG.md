@@ -1,5 +1,10 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.34.4 (2022-02-07T18:55:39)
+### Features
+* Add missing items in the OpenAPI spec
+* Fix mercator OpenAPI schema
+
 ## Release 0.34.3 (2022-02-04T10:18:17)
 ### Features
 * Update base image version to latest
