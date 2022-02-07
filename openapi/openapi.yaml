@@ -3281,6 +3281,8 @@ components:
                 files:
                   type: array
                   description: Files shipped with the Python package
+                  items:
+                    type: object
                   example:
                     hash:
                       mode: sha256
