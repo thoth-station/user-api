@@ -22,7 +22,7 @@ class UserApiExceptionError(Exception):
     """A base class for user API exceptions."""
 
 
-class NotFoundExceptionnError(UserApiExceptionError):
+class NotFoundExceptionError(UserApiExceptionError):
     """An exception raised if the requested resource could not be found."""
 
 
