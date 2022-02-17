@@ -276,6 +276,22 @@ def list_thoth_container_images(
             item["thoth_image_name"] = item.pop("thoth_s2i_image_name", None)
             item["thoth_image_version"] = item.pop("thoth_s2i_image_version", None)
 
+        if item.get("environment_name"):
+            item["quay_repo_url"] = "https://%s" % item.get("environment_name")
+        else:
+            item["quay_repo_url"] = None
+
+        if item.get("package_extract_document_id"):
+            item["image_analysis_url"] = "https://khemenu.thoth-station.ninja/api/v1/analyze/%s" % item.get(
+                "package_extract_document_id"
+            )
+            item["thoth_search_url"] = "https://thoth-station.ninja/search/image/%s" % item.get(
+                "package_extract_document_id"
+            )
+        else:
+            item["image_analysis_url"] = None
+            item["thoth_search_url"] = None
+
         entries.append(item)
 
     prev_page, next_page = _compute_prev_next_page(page, per_page)
