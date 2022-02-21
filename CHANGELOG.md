@@ -1,5 +1,9 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.34.6 (2022-02-21T17:45:07)
+### Features
+* Modify skopeo OpenAPI schema
+
 ## Release 0.34.5 (2022-02-21T13:24:44)
 ### Features
 * :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
