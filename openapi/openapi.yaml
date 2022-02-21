@@ -1448,7 +1448,7 @@ components:
       description: Name of operating system to consider as environment where package is installed in
       schema:
         type: string
-        example: ubi
+        example: fedora
     os_version_required:
       name: os_version
       in: query
@@ -1456,7 +1456,7 @@ components:
       description: Version of operating system to consider as environment where package is installed in
       schema:
         type: string
-        example: "9"
+        example: "34"
     python_version_required:
       name: python_version
       in: query
