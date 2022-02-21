@@ -1,5 +1,13 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.34.5 (2022-02-21T13:24:44)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Fix NotFoundExceptionError
+### Improvements
+* Change default environment and python version values for package metadata
+
 ## Release 0.34.4 (2022-02-07T18:55:39)
 ### Features
 * Add missing items in the OpenAPI spec
