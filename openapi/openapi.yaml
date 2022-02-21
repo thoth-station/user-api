@@ -1777,56 +1777,54 @@ components:
       type: object
       description: Response information with image metadata as extracted by Skopeo
       properties:
-        name:
-          type: string
-          description: Name of the image with optional tag
-          example: fedora
-        tag:
-          type: string
-          description: Tag of the image
-          example: latest
-        digest:
-          type: string
-          description: Digest of the image
-          example: sha256:cfd8f071bf8da7a466748f522406f7ae5908d002af1b1a1c0dcf893e183e5b32''
-        repo_tags:
-          type: array
-          items:
-            type: string
-            description: Tags available in the registry repository
-        created:
-          type: string
-          description: Image creation date and time
-          example: "2016-03-04T18:40:02.92155334Z"
-        docker_version:
-          type: string
-          description: Version of Docker
-          example: 1.9.1
-        labels:
-          type: object
-          description: Image labels
-        architecture:
+        Architecure:
           type: string
           description: Target architecture of image
           example: amd64
-        os:
+        Created:
           type: string
-          description: Operating system identifier
-        layers:
+          description: Image creation date and time
+          example: "2016-03-04T18:40:02.92155334Z"
+        Digest:
+          type: string
+          description: Digest of the image
+          example: sha256:cfd8f071bf8da7a466748f522406f7ae5908d002af1b1a1c0dcf893e183e5b32''
+        DockerVersion:
+          type: string
+          description: Version of Docker
+          example: 1.9.1
+        Env:
+          type: array
+          description: Environment variables from analyzed image
+          items:
+            type: string
+            description: Environment variable
+        Labels:
+          type: object
+          description: Image labels
+        Layers:
           type: array
           items:
             type: string
             description: Digests of image layers
+        Os:
+          type: string
+          description: Operating system identifier
+          example: linux
+        RepoTags:
+          type: array
+          items:
+            type: string
+            description: Tags available in the registry repository
       required:
-      - architecture
-      - created
-      - digest
-      - docker_version
-      - labels
-      - layers
-      - name
-      - os
-      - repo_tags
+      - Architecture
+      - Created
+      - Digest
+      - DockerVersion
+      - Labels
+      - Layers
+      - Os
+      - RepoTags
     BuildAnalysisResponse:
       type: object
       description: Response for a submitted build analysis
