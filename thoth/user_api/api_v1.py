@@ -282,15 +282,9 @@ def list_thoth_container_images(
             item["quay_repo_url"] = None
 
         if item.get("package_extract_document_id"):
-            item["image_analysis_url"] = "https://khemenu.thoth-station.ninja/api/v1/analyze/%s" % item.get(
-                "package_extract_document_id"
-            )
-            item["thoth_search_url"] = "https://thoth-station.ninja/search/image/%s" % item.get(
-                "package_extract_document_id"
-            )
+            item["image_analysis_url"] = f"{request.script_root}/analyze/{item.get('package_extract_document_id')}"
         else:
             item["image_analysis_url"] = None
-            item["thoth_search_url"] = None
 
         entries.append(item)
 

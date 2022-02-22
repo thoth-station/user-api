@@ -3036,7 +3036,6 @@ components:
             - datetime
             - quay_repo_url
             - image_analysis_url
-            - thoth_search_url
             properties:
               environment_name:
                 type: string
@@ -3097,11 +3096,7 @@ components:
               image_analysis_url:
                 type: string
                 nullable: true
-                example: https://khemenu.thoth-station.ninja/api/v1/analyze/package-extract-220106085109-984feaa8a3862285
-              thoth_search_url:
-                type: string
-                nullable: true
-                example: https://thoth-station.ninja/search/image/package-extract-220106085109-984feaa8a3862285
+                example: /api/v1/analyze/package-extract-220106085109-984feaa8a3862285
         parameters:
           type: object
           required:
