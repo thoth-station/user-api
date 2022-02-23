@@ -276,7 +276,7 @@ def list_thoth_container_images(
             item["thoth_image_name"] = item.pop("thoth_s2i_image_name", None)
             item["thoth_image_version"] = item.pop("thoth_s2i_image_version", None)
 
-        if item.get("environment_name"):
+        if item.get("environment_name") and item["environment_name"].startswith("quay.io"):
             item["quay_repo_url"] = "https://%s" % item.get("environment_name")
         else:
             item["quay_repo_url"] = None
