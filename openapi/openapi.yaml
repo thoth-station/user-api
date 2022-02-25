@@ -3033,6 +3033,8 @@ components:
             - environment_type
             - package_extract_document_id
             - datetime
+            - quay_repo_url
+            - image_analysis_url
             properties:
               environment_name:
                 type: string
@@ -3086,6 +3088,14 @@ components:
               datetime:
                 type: string
                 example: 2021-02-23T09:29:45.254525
+              quay_repo_url:
+                type: string
+                nullable: true
+                example: https://quay.io/thoth-station/s2i-custom-notebook:v0.2.0
+              image_analysis_url:
+                type: string
+                nullable: true
+                example: /api/v1/analyze/package-extract-220106085109-984feaa8a3862285
         parameters:
           type: object
           required:
