@@ -1821,6 +1821,7 @@ components:
       - Created
       - Digest
       - DockerVersion
+      - Env
       - Labels
       - Layers
       - Os
