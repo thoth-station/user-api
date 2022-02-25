@@ -803,6 +803,37 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+  /repo-init:
+    post:
+      tags: [Kebechet]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: thoth_initialize_repo
+      summary: Initialize the user's provided repository.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            x-body-name: body
+            $ref: "#/components/schemas/RepoInitInput"
+      responses:
+        "202":
+          description: Repository initialization has been scheduled
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
+          content:
+            name: status
+            description: Status of workflow which is running repo initialization for provided url.
+        "400":
+          description: Invalid
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
+
   /build-analysis:
     post:
       tags: [Build Analysis]
@@ -1636,6 +1667,14 @@ components:
           enum:
           - pipenv
           example: pipenv
+    RepoInitInput:
+      type: object
+      description: Input for repo-init workflow
+      properties:
+        project_url:
+          type: str
+          nullable: false
+          example: https://github.com/foo/bar
     RuntimeEnvironment:
       type: object
       description: Runtime environment description, see Thamos configuration for more info
