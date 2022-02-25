@@ -1777,7 +1777,7 @@ components:
       type: object
       description: Response information with image metadata as extracted by Skopeo
       properties:
-        Architecure:
+        Architecture:
           type: string
           description: Target architecture of image
           example: amd64
