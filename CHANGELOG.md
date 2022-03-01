@@ -1,5 +1,14 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.34.9 (2022-03-01T18:09:31)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* add endpoint for repo-init workflow
+* Update thoth/user_api/api_v1.py
+* added url return params
+### Improvements
+* removed search url and updated image url
+
 ## Release 0.34.8 (2022-02-25T09:10:56)
 ### Features
 * Add Env to required properties
