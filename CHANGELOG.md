@@ -1,5 +1,11 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.34.10 (2022-03-02T16:50:29)
+### Features
+* Replace yaml anchor with standard swagger property ref
+### Improvements
+* Fix the openapi properties for repo-init bit
+
 ## Release 0.34.9 (2022-03-01T18:09:31)
 ### Features
 * :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
