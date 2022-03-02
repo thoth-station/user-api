@@ -1607,57 +1607,165 @@ components:
                       description: >
                         Contains all particulars about the build log
                       example: apiVersion:build.openshift.io/v1
+    UnitDef:
+      type: object
+      required:
+      - name
+      - configuration
+      - unit_run
+      properties:
+        name:
+          type: string
+          example: SomeUnit
+        configuration:
+          type: object
+        unit_run:
+          type: boolean
+          description: >
+            Flag set to true if the pipeline unit was run during the
+            resolution process
+    ProjectDef:
+      type: object
+      required:
+      - constraints
+      - requirements
+      - requirements_locked
+      - runtime_environment
+      properties:
+        constraints:
+          type: array
+          items:
+            type: object
+            required:
+            - name
+            - version
+            - markers
+            properties:
+              name:
+                type: string
+                example: flask
+                description: Name of the package that was constrained
+              version:
+                type: string
+                example: ~=2.0.0
+                description: Version range specifier for the constrain
+              markers:
+                type: string
+                description: An environment marker used with the version constrain
+                example: python_version >= "3.8"
+        requirements:
+          type: object
+          description: >
+            Requirements stating direct dependencies of the project, the format
+            is compatible with Pipenv
+          example:
+            dev-packages: {}
+            packages:
+              numpy:
+                index: pypi
+                version: "*"
+            requires:
+              python_version: "3.9"
+            source:
+            - name: pypi
+              url: https://pypi.org/simple
+              verify_ssl: true
+            thoth:
+              allow_prereleases: {}
+              disable_index_adjustment: false
+        requirements_locked:
+          type: object
+          description: >
+            A lock file stating all the dependencies pinned to a specific version
+            togher with an explicit Python package index configuration
+          example:
+            _meta:
+              hash:
+                sha256: f6dd619becbaf7a5c233150a889ef85fbfdf8aa260d182f0874e3234f06ad2b5
+              pipfile-spec: 6
+              requires:
+                python_version: "3.9"
+              sources:
+              - name: pypi
+                url: https://pypi.org/simple
+                verify_ssl: true
+            default:
+              numpy:
+                hashes:
+                - sha256:b1cca51512299841bf69add3b75361779962f9cee7d9ee3bb446d5982e925b69
+                - sha256:c9591886fc9cbe5532d5df85cb8e0cc3b44ba8ce4367bd4cf1b93dc19713da72
+                index: pypi-org-simple
+                version: ==1.3.0
+        runtime_environment:
+          nullable: true
+          $ref: "#/components/schemas/RuntimeEnvironment"
+    DebDependencyItem:
+      type: object
+      required:
+      - name
+      - version
+      properties:
+        name:
+          type: string
+          description: Dependency name
+        version:
+          type: string
+          description: Dependency version
+    RequirementsDef:
+      type: string
+      minLength: 1
+      description: Direct dependencies for the application stack
+      example: |
+        [[source]]
+        url = "https://pypi.python.org/simple"
+        verify_ssl = true
+        name = "pypi"
+
+        [packages]
+        daiquiri = "*"
+
+        [dev-packages]
+    RequirementsLockDef:
+      type: string
+      description: Fully pinned down dependency stack
+      example: >
+        {
+        "_meta": {
+        "hash": {
+        "sha256": "fecd8a66514e1129f796d7a45a1f5b2f7733e3ae0ead487ca63752da680ab8e4"
+        },
+        "pipfile-spec": 6,
+        "requires": {},
+        "sources": [
+        {
+        "name": "pypi",
+        "url": "https://pypi.python.org/simple",
+        "verify_ssl": true
+        }
+        ]
+        },
+        "default": {
+        "daiquiri": {
+        "hashes": [
+        "sha256:1c4942ef0d40920100162ede6024edd43734e40b8dca9b13ebaf4b52ea198457",
+        "sha256:eb300dfddae43dfdb157938a854b1387298b8fb340d6ecb7b5ae867283af763e"
+        ],
+        "index": "pypi",
+        "version": "==1.4.0"
+        }
+        },
+        "develop": {}
+        }
     PythonStack:
       type: object
       required:
       - requirements
       - requirements_lock
       properties:
-        requirements: &requirements_def
-          type: string
-          minLength: 1
-          description: Direct dependencies for the application stack
-          example: |
-            [[source]]
-            url = "https://pypi.python.org/simple"
-            verify_ssl = true
-            name = "pypi"
-
-            [packages]
-            daiquiri = "*"
-
-            [dev-packages]
-        requirements_lock: &requirements_lock_def
-          type: string
-          description: Fully pinned down dependency stack
-          example: >
-            {
-            "_meta": {
-            "hash": {
-            "sha256": "fecd8a66514e1129f796d7a45a1f5b2f7733e3ae0ead487ca63752da680ab8e4"
-            },
-            "pipfile-spec": 6,
-            "requires": {},
-            "sources": [
-            {
-            "name": "pypi",
-            "url": "https://pypi.python.org/simple",
-            "verify_ssl": true
-            }
-            ]
-            },
-            "default": {
-            "daiquiri": {
-            "hashes": [
-            "sha256:1c4942ef0d40920100162ede6024edd43734e40b8dca9b13ebaf4b52ea198457",
-            "sha256:eb300dfddae43dfdb157938a854b1387298b8fb340d6ecb7b5ae867283af763e"
-            ],
-            "index": "pypi",
-            "version": "==1.4.0"
-            }
-            },
-            "develop": {}
-            }
+        requirements:
+          $ref: "#/components/schemas/RequirementsDef"
+        requirements_lock:
+          $ref: "#/components/schemas/RequirementsLockDef"
         requirements_format:
           type: string
           description: >
@@ -2230,10 +2338,10 @@ components:
               properties:
                 requirements:
                   nullable: true
-                  <<: *requirements_def
+                  $ref: "#/components/schemas/RequirementsDef"
                 requirements_lock:
                   nullable: true
-                  <<: *requirements_lock_def
+                  $ref: "#/components/schemas/RequirementsLockDef"
             cuda-version:
               type: object
               description: >
@@ -2282,22 +2390,12 @@ components:
                   epoch:
                     type: string
                     description: Debian package epoch
-                  depends: &deb_dependency_item
-                    type: object
-                    required:
-                    - name
-                    - version
-                    properties:
-                      name:
-                        type: string
-                        description: Dependency name
-                      version:
-                        type: string
-                        description: Dependency version
+                  depends:
+                    $ref: "#/components/schemas/DebDependencyItem"
                   pre-depends:
-                    <<: *deb_dependency_item
+                    $ref: "#/components/schemas/DebDependencyItem"
                   replaces:
-                    <<: *deb_dependency_item
+                    $ref: "#/components/schemas/DebDependencyItem"
             image_size:
               type: integer
               description: Size of the container image in bytes
@@ -2415,7 +2513,7 @@ components:
                   src: false,
                   version": 50.3.2
             skopeo-inspect:
-              <<: *image_metadata_skopeo
+              $ref: "#/components/schemas/ImageMetadataResponse"
             system-symbols:
               type: object
               description: >
@@ -2613,81 +2711,8 @@ components:
                     type: string
                     description: A Python Simple API repository URL
                     example: https://pypi.org/simple
-                project: &project_def
-                  type: object
-                  required:
-                  - constraints
-                  - requirements
-                  - requirements_locked
-                  - runtime_environment
-                  properties:
-                    constraints:
-                      type: array
-                      items:
-                        type: object
-                        required:
-                        - name
-                        - version
-                        - markers
-                        properties:
-                          name:
-                            type: string
-                            example: flask
-                            description: Name of the package that was constrained
-                          version:
-                            type: string
-                            example: ~=2.0.0
-                            description: Version range specifier for the constrain
-                          markers:
-                            type: string
-                            description: An environment marker used with the version constrain
-                            example: python_version >= "3.8"
-                    requirements:
-                      type: object
-                      description: >
-                        Requirements stating direct dependencies of the project, the format
-                        is compatible with Pipenv
-                      example:
-                        dev-packages: {}
-                        packages:
-                          numpy:
-                            index: pypi
-                            version: "*"
-                        requires:
-                          python_version: "3.9"
-                        source:
-                        - name: pypi
-                          url: https://pypi.org/simple
-                          verify_ssl: true
-                        thoth:
-                          allow_prereleases: {}
-                          disable_index_adjustment: false
-                    requirements_locked:
-                      type: object
-                      description: >
-                        A lock file stating all the dependencies pinned to a specific version
-                        togher with an explicit Python package index configuration
-                      example:
-                        _meta:
-                          hash:
-                            sha256: f6dd619becbaf7a5c233150a889ef85fbfdf8aa260d182f0874e3234f06ad2b5
-                          pipfile-spec: 6
-                          requires:
-                            python_version: "3.9"
-                          sources:
-                          - name: pypi
-                            url: https://pypi.org/simple
-                            verify_ssl: true
-                        default:
-                          numpy:
-                            hashes:
-                            - sha256:b1cca51512299841bf69add3b75361779962f9cee7d9ee3bb446d5982e925b69
-                            - sha256:c9591886fc9cbe5532d5df85cb8e0cc3b44ba8ce4367bd4cf1b93dc19713da72
-                            index: pypi-org-simple
-                            version: ==1.3.0
-                    runtime_environment:
-                      nullable: true
-                      $ref: "#/components/schemas/RuntimeEnvironment"
+                project:
+                  $ref: "#/components/schemas/ProjectDef"
             report:
               type: array
               description: A provenance check report
@@ -2895,53 +2920,38 @@ components:
                       type: array
                       description: >
                         Boot pipeline unit types registered to the resolution process
-                      items: &unit_def
-                        type: object
-                        required:
-                        - name
-                        - configuration
-                        - unit_run
-                        properties:
-                          name:
-                            type: string
-                            example: SomeUnit
-                          configuration:
-                            type: object
-                          unit_run:
-                            type: boolean
-                            description: >
-                              Flag set to true if the pipeline unit was run during the
-                              resolution process
+                      items:
+                        $ref: "#/components/schemas/UnitDef"
                     pseudonyms:
                       type: array
                       description: >
                         Pseudonym pipeline unit types registered to the resolution process
                       items:
-                        <<: *unit_def
+                        $ref: "#/components/schemas/UnitDef"
                     sieves:
                       type: array
                       description: >
                         Sieve pipeline unit types registered to the resolution process
                       items:
-                        <<: *unit_def
+                        $ref: "#/components/schemas/UnitDef"
                     steps:
                       type: array
                       description: >
                         Step pipeline unit types registered to the resolution process
                       items:
-                        <<: *unit_def
+                        $ref: "#/components/schemas/UnitDef"
                     strides:
                       type: array
                       description: >
                         Stride pipeline unit types registered to the resolution process
                       items:
-                        <<: *unit_def
+                        $ref: "#/components/schemas/UnitDef"
                     wraps:
                       type: array
                       description: >
                         Wrap pipeline unit types registered to the resolution process
                       items:
-                        <<: *unit_def
+                        $ref: "#/components/schemas/UnitDef"
                 products:
                   type: array
                   description: >
@@ -2994,7 +3004,7 @@ components:
                       justification:
                         $ref: "#/components/schemas/Justification"
                       project:
-                        <<: *project_def
+                        $ref: "#/components/schemas/ProjectDef"
                       score:
                         type: number
                         format: float
