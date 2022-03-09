@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 attrs = "*"
 connexion = {extras = ["swagger-ui"],version = "*"}
-flask = "==1.1.4"
+flask = "<=1.0.0"
 flask-script = "*"
 grpcio = "<1.28"
 grpcio-tools = "<1.28"
