@@ -1,5 +1,11 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.34.11 (2022-03-09T06:55:47)
+### Features
+* Use pipenv to get latest versions
+* Fix pre-commit
+* Downgrade flask to '<=1.0.0'
+
 ## Release 0.34.10 (2022-03-02T16:50:29)
 ### Features
 * Replace yaml anchor with standard swagger property ref
