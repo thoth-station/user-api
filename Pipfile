@@ -1,51 +1,35 @@
 [[source]]
-url = "https://pypi.org/simple"
+url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-[[source]]
-url = "https://pypi.org/simple"
-verify_ssl = true
-name = "pypi-org-simple"
-
 [packages]
-aiocontextvars = "*"
 attrs = "*"
-confluent-kafka = "*"
+connexion = {extras = ["swagger-ui"],version = "*"}
 flask = "<=1.0.0"
-flask-cors = "*"
 flask-script = "*"
 grpcio = "<1.28"
 grpcio-tools = "<1.28"
 gunicorn = "*"
 markupsafe = "<2.1.0"
-openapi-schema-validator = "<0.2.0"
 prometheus-flask-exporter = "*"
 requests = "*"
 thoth-analyzer = "*"
 thoth-common = "*"
-thoth-messaging = "*"
 thoth-python = "*"
 thoth-storages = "*"
+flask-cors = "*"
+openapi-schema-validator = "<0.2.0"
+aiocontextvars = "*"
+sentry-sdk = {extras = ["flask"],version = "*"}
+confluent-kafka = "*"
+thoth-messaging = "*"
 werkzeug = "==1.0.1"
-
-[dev-packages]
 
 [pipenv]
 allow_prereleases = false
 
+[dev-packages]
+
 [requires]
 python_version = "3.8"
-
-[thoth]
-disable_index_adjustment = false
-
-[packages.connexion]
-extras = [ "swagger-ui",]
-version = "*"
-
-[packages.sentry-sdk]
-extras = [ "flask",]
-version = "*"
-
-[thoth.allow_prereleases]
