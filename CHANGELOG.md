@@ -1,5 +1,11 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.34.12 (2022-03-11T23:41:58)
+### Features
+* Fix initialize_repo operationId in schema
+### Improvements
+* Document how to run User API locally
+
 ## Release 0.34.11 (2022-03-09T06:55:47)
 ### Features
 * Use pipenv to get latest versions
