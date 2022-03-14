@@ -2885,8 +2885,7 @@ components:
               type: object
               nullable: true
               description: Report with results computed
-              required:
-              - stack_info
+              required: []
               properties:
                 ERROR:
                   type: string
@@ -2971,6 +2970,8 @@ components:
                         items:
                           type: array
                           description: A change that was advised
+                          items:
+                            type: object
                       advised_runtime_environment:
                         nullable: true
                         $ref: "#/components/schemas/RuntimeEnvironment"
