@@ -1,5 +1,11 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.34.13 (2022-03-15T16:43:00)
+### Features
+* Removed the deprecated flask_script
+### Bug Fixes
+* Adjust OpenAPI spec to fix serialization issues
+
 ## Release 0.34.12 (2022-03-11T23:41:58)
 ### Features
 * Fix initialize_repo operationId in schema
