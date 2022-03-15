@@ -6,8 +6,7 @@ name = "pypi"
 [packages]
 attrs = "*"
 connexion = {extras = ["swagger-ui"],version = "*"}
-flask = "<=1.0.0"
-flask-script = "*"
+flask = "*"
 grpcio = "<1.28"
 grpcio-tools = "<1.28"
 gunicorn = "*"
@@ -24,7 +23,6 @@ aiocontextvars = "*"
 sentry-sdk = {extras = ["flask"],version = "*"}
 confluent-kafka = "*"
 thoth-messaging = "*"
-werkzeug = "==1.0.1"
 
 [pipenv]
 allow_prereleases = false

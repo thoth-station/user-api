@@ -2885,7 +2885,6 @@ components:
               type: object
               nullable: true
               description: Report with results computed
-              required: []
               properties:
                 ERROR:
                   type: string

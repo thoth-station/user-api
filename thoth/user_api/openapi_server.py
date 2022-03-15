@@ -29,7 +29,6 @@ import connexion
 from connexion.resolver import RestyResolver
 
 from flask import redirect, jsonify, request, make_response, abort
-from flask_script import Manager
 from prometheus_flask_exporter import PrometheusMetrics
 from flask_cors import CORS
 
@@ -85,7 +84,7 @@ app.add_api(
 
 application = app.app
 
-# create metrics and manager
+# create metrics
 metrics = PrometheusMetrics(
     application,
     group_by="endpoint",
@@ -96,7 +95,6 @@ metrics = PrometheusMetrics(
         "/api/v1/openapi",
     ],
 )
-manager = Manager(application)
 
 # Needed for session.
 application.secret_key = Configuration.APP_SECRET_KEY
