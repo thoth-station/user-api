@@ -1,5 +1,10 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.34.14 (2022-03-23T17:02:59)
+### Features
+* Apply search ui url header to each response
+* Add Thoth Search UI URL to response headers
+
 ## Release 0.34.13 (2022-03-15T16:43:00)
 ### Features
 * Removed the deprecated flask_script
