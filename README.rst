@@ -39,3 +39,23 @@ Installation and deployment
 The service is built using OpenShift Source-to-Image and deployed automatically
 with Thoth's deployment available in the `thoth-station/thoth-application
 repository <https://github.com/thoth-station/thoth-application>`__.
+
+Running User API locally
+########################
+
+User API can be run locally in a mode when it still talks to the cluster.
+To run User API locally, create ``.env`` file out out ``.env.template``
+and adjust environment variable values as desired (see `thoth-station/storages
+<https://github.com/thoth-station/storages/>`__ for more info):
+
+.. code-block:: console
+
+  cp .env.template .env
+  vim .env
+
+Once the environment is properly setup, you can run User API locally:
+
+.. code-block:: console
+
+  pipenv install
+  pipenv run gunicorn thoth.user_api.openapi_server:app --config gunicorn.conf.py

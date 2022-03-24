@@ -1,5 +1,68 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.34.14 (2022-03-23T17:02:59)
+### Features
+* Apply search ui url header to each response
+* Add Thoth Search UI URL to response headers
+
+## Release 0.34.13 (2022-03-15T16:43:00)
+### Features
+* Removed the deprecated flask_script
+### Bug Fixes
+* Adjust OpenAPI spec to fix serialization issues
+
+## Release 0.34.12 (2022-03-11T23:41:58)
+### Features
+* Fix initialize_repo operationId in schema
+### Improvements
+* Document how to run User API locally
+
+## Release 0.34.11 (2022-03-09T06:55:47)
+### Features
+* Use pipenv to get latest versions
+* Fix pre-commit
+* Downgrade flask to '<=1.0.0'
+
+## Release 0.34.10 (2022-03-02T16:50:29)
+### Features
+* Replace yaml anchor with standard swagger property ref
+### Improvements
+* Fix the openapi properties for repo-init bit
+
+## Release 0.34.9 (2022-03-01T18:09:31)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* add endpoint for repo-init workflow
+* Update thoth/user_api/api_v1.py
+* added url return params
+### Improvements
+* removed search url and updated image url
+
+## Release 0.34.8 (2022-02-25T09:10:56)
+### Features
+* Add Env to required properties
+### Improvements
+* Fix typo in OpenAPI schema
+
+## Release 0.34.7 (2022-02-24T16:29:26)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Fix advised_manifest_changes type in OpenAPI schema
+* Downgrade markupsafe
+* Update markupsafe dependency to latest version
+
+## Release 0.34.6 (2022-02-21T17:45:07)
+### Features
+* Modify skopeo OpenAPI schema
+
+## Release 0.34.5 (2022-02-21T13:24:44)
+### Features
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* Fix NotFoundExceptionError
+### Improvements
+* Change default environment and python version values for package metadata
+
 ## Release 0.34.4 (2022-02-07T18:55:39)
 ### Features
 * Add missing items in the OpenAPI spec

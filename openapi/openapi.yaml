@@ -24,6 +24,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -73,6 +75,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -104,6 +108,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -210,6 +216,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -252,6 +260,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -482,6 +492,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -518,6 +530,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -570,6 +584,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
             page:
               $ref: "#/components/headers/page"
             per_page:
@@ -613,6 +629,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -655,6 +673,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -698,6 +718,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -803,6 +825,35 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+  /repo-init:
+    post:
+      tags: [Kebechet]
+      x-openapi-router-controller: thoth.user_api.api_v1
+      operationId: initialize_repo
+      summary: Initialize the user's provided repository.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              x-body-name: body
+              $ref: "#/components/schemas/RepoInitInput"
+      responses:
+        "202":
+          description: Repository initialization has been scheduled
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
+        "400":
+          description: Invalid
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
+
   /build-analysis:
     post:
       tags: [Build Analysis]
@@ -865,6 +916,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -883,6 +936,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -912,6 +967,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -947,6 +1004,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
             page:
               $ref: "#/components/headers/page"
             per_page:
@@ -983,6 +1042,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -1016,6 +1077,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -1041,6 +1104,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-search-ui-url:
+              $ref: "#/components/headers/x-thoth-search-ui-url"
           content:
             application/json:
               schema:
@@ -1061,7 +1126,7 @@ paths:
       tags: [PythonPackages]
       x-openapi-router-controller: thoth.user_api.api_v1
       operationId: get_package_from_imported_packages
-      summary: List imported packages' (name, version, index)
+      summary: List imported packages (name, version, index)
       parameters:
       - $ref: "#/components/parameters/import_name"
       responses:
@@ -1445,7 +1510,7 @@ components:
       description: Name of operating system to consider as environment where package is installed in
       schema:
         type: string
-        example: ubi
+        example: fedora
     os_version_required:
       name: os_version
       in: query
@@ -1453,7 +1518,7 @@ components:
       description: Version of operating system to consider as environment where package is installed in
       schema:
         type: string
-        example: "9"
+        example: "34"
     python_version_required:
       name: python_version
       in: query
@@ -1492,6 +1557,11 @@ components:
       schema:
         type: string
         example: 1.0.0+messaging.1.1.0.storages.1.2.0.common.1.3.0.python.1.4.0
+    x-thoth-search-ui-url:
+      description: Thoth Search UI URL
+      schema:
+        type: string
+        example: https://thoth-station.ninja/search/
     page:
       description: Current page
       schema:
@@ -1573,57 +1643,165 @@ components:
                       description: >
                         Contains all particulars about the build log
                       example: apiVersion:build.openshift.io/v1
+    UnitDef:
+      type: object
+      required:
+      - name
+      - configuration
+      - unit_run
+      properties:
+        name:
+          type: string
+          example: SomeUnit
+        configuration:
+          type: object
+        unit_run:
+          type: boolean
+          description: >
+            Flag set to true if the pipeline unit was run during the
+            resolution process
+    ProjectDef:
+      type: object
+      required:
+      - constraints
+      - requirements
+      - requirements_locked
+      - runtime_environment
+      properties:
+        constraints:
+          type: array
+          items:
+            type: object
+            required:
+            - name
+            - version
+            - markers
+            properties:
+              name:
+                type: string
+                example: flask
+                description: Name of the package that was constrained
+              version:
+                type: string
+                example: ~=2.0.0
+                description: Version range specifier for the constrain
+              markers:
+                type: string
+                description: An environment marker used with the version constrain
+                example: python_version >= "3.8"
+        requirements:
+          type: object
+          description: >
+            Requirements stating direct dependencies of the project, the format
+            is compatible with Pipenv
+          example:
+            dev-packages: {}
+            packages:
+              numpy:
+                index: pypi
+                version: "*"
+            requires:
+              python_version: "3.9"
+            source:
+            - name: pypi
+              url: https://pypi.org/simple
+              verify_ssl: true
+            thoth:
+              allow_prereleases: {}
+              disable_index_adjustment: false
+        requirements_locked:
+          type: object
+          description: >
+            A lock file stating all the dependencies pinned to a specific version
+            togher with an explicit Python package index configuration
+          example:
+            _meta:
+              hash:
+                sha256: f6dd619becbaf7a5c233150a889ef85fbfdf8aa260d182f0874e3234f06ad2b5
+              pipfile-spec: 6
+              requires:
+                python_version: "3.9"
+              sources:
+              - name: pypi
+                url: https://pypi.org/simple
+                verify_ssl: true
+            default:
+              numpy:
+                hashes:
+                - sha256:b1cca51512299841bf69add3b75361779962f9cee7d9ee3bb446d5982e925b69
+                - sha256:c9591886fc9cbe5532d5df85cb8e0cc3b44ba8ce4367bd4cf1b93dc19713da72
+                index: pypi-org-simple
+                version: ==1.3.0
+        runtime_environment:
+          nullable: true
+          $ref: "#/components/schemas/RuntimeEnvironment"
+    DebDependencyItem:
+      type: object
+      required:
+      - name
+      - version
+      properties:
+        name:
+          type: string
+          description: Dependency name
+        version:
+          type: string
+          description: Dependency version
+    RequirementsDef:
+      type: string
+      minLength: 1
+      description: Direct dependencies for the application stack
+      example: |
+        [[source]]
+        url = "https://pypi.python.org/simple"
+        verify_ssl = true
+        name = "pypi"
+
+        [packages]
+        daiquiri = "*"
+
+        [dev-packages]
+    RequirementsLockDef:
+      type: string
+      description: Fully pinned down dependency stack
+      example: >
+        {
+        "_meta": {
+        "hash": {
+        "sha256": "fecd8a66514e1129f796d7a45a1f5b2f7733e3ae0ead487ca63752da680ab8e4"
+        },
+        "pipfile-spec": 6,
+        "requires": {},
+        "sources": [
+        {
+        "name": "pypi",
+        "url": "https://pypi.python.org/simple",
+        "verify_ssl": true
+        }
+        ]
+        },
+        "default": {
+        "daiquiri": {
+        "hashes": [
+        "sha256:1c4942ef0d40920100162ede6024edd43734e40b8dca9b13ebaf4b52ea198457",
+        "sha256:eb300dfddae43dfdb157938a854b1387298b8fb340d6ecb7b5ae867283af763e"
+        ],
+        "index": "pypi",
+        "version": "==1.4.0"
+        }
+        },
+        "develop": {}
+        }
     PythonStack:
       type: object
       required:
       - requirements
       - requirements_lock
       properties:
-        requirements: &requirements_def
-          type: string
-          minLength: 1
-          description: Direct dependencies for the application stack
-          example: |
-            [[source]]
-            url = "https://pypi.python.org/simple"
-            verify_ssl = true
-            name = "pypi"
-
-            [packages]
-            daiquiri = "*"
-
-            [dev-packages]
-        requirements_lock: &requirements_lock_def
-          type: string
-          description: Fully pinned down dependency stack
-          example: >
-            {
-            "_meta": {
-            "hash": {
-            "sha256": "fecd8a66514e1129f796d7a45a1f5b2f7733e3ae0ead487ca63752da680ab8e4"
-            },
-            "pipfile-spec": 6,
-            "requires": {},
-            "sources": [
-            {
-            "name": "pypi",
-            "url": "https://pypi.python.org/simple",
-            "verify_ssl": true
-            }
-            ]
-            },
-            "default": {
-            "daiquiri": {
-            "hashes": [
-            "sha256:1c4942ef0d40920100162ede6024edd43734e40b8dca9b13ebaf4b52ea198457",
-            "sha256:eb300dfddae43dfdb157938a854b1387298b8fb340d6ecb7b5ae867283af763e"
-            ],
-            "index": "pypi",
-            "version": "==1.4.0"
-            }
-            },
-            "develop": {}
-            }
+        requirements:
+          $ref: "#/components/schemas/RequirementsDef"
+        requirements_lock:
+          $ref: "#/components/schemas/RequirementsLockDef"
         requirements_format:
           type: string
           description: >
@@ -1633,6 +1811,14 @@ components:
           enum:
           - pipenv
           example: pipenv
+    RepoInitInput:
+      type: object
+      description: Input for repo-init workflow
+      properties:
+        project_url:
+          type: string
+          nullable: false
+          example: https://github.com/foo/bar
     RuntimeEnvironment:
       type: object
       description: Runtime environment description, see Thamos configuration for more info
@@ -1774,56 +1960,55 @@ components:
       type: object
       description: Response information with image metadata as extracted by Skopeo
       properties:
-        name:
-          type: string
-          description: Name of the image with optional tag
-          example: fedora
-        tag:
-          type: string
-          description: Tag of the image
-          example: latest
-        digest:
-          type: string
-          description: Digest of the image
-          example: sha256:cfd8f071bf8da7a466748f522406f7ae5908d002af1b1a1c0dcf893e183e5b32''
-        repo_tags:
-          type: array
-          items:
-            type: string
-            description: Tags available in the registry repository
-        created:
-          type: string
-          description: Image creation date and time
-          example: "2016-03-04T18:40:02.92155334Z"
-        docker_version:
-          type: string
-          description: Version of Docker
-          example: 1.9.1
-        labels:
-          type: object
-          description: Image labels
-        architecture:
+        Architecture:
           type: string
           description: Target architecture of image
           example: amd64
-        os:
+        Created:
           type: string
-          description: Operating system identifier
-        layers:
+          description: Image creation date and time
+          example: "2016-03-04T18:40:02.92155334Z"
+        Digest:
+          type: string
+          description: Digest of the image
+          example: sha256:cfd8f071bf8da7a466748f522406f7ae5908d002af1b1a1c0dcf893e183e5b32''
+        DockerVersion:
+          type: string
+          description: Version of Docker
+          example: 1.9.1
+        Env:
+          type: array
+          description: Environment variables from analyzed image
+          items:
+            type: string
+            description: Environment variable
+        Labels:
+          type: object
+          description: Image labels
+        Layers:
           type: array
           items:
             type: string
             description: Digests of image layers
+        Os:
+          type: string
+          description: Operating system identifier
+          example: linux
+        RepoTags:
+          type: array
+          items:
+            type: string
+            description: Tags available in the registry repository
       required:
-      - architecture
-      - created
-      - digest
-      - docker_version
-      - labels
-      - layers
-      - name
-      - os
-      - repo_tags
+      - Architecture
+      - Created
+      - Digest
+      - DockerVersion
+      - Env
+      - Labels
+      - Layers
+      - Os
+      - RepoTags
     BuildAnalysisResponse:
       type: object
       description: Response for a submitted build analysis
@@ -2189,10 +2374,10 @@ components:
               properties:
                 requirements:
                   nullable: true
-                  <<: *requirements_def
+                  $ref: "#/components/schemas/RequirementsDef"
                 requirements_lock:
                   nullable: true
-                  <<: *requirements_lock_def
+                  $ref: "#/components/schemas/RequirementsLockDef"
             cuda-version:
               type: object
               description: >
@@ -2241,22 +2426,12 @@ components:
                   epoch:
                     type: string
                     description: Debian package epoch
-                  depends: &deb_dependency_item
-                    type: object
-                    required:
-                    - name
-                    - version
-                    properties:
-                      name:
-                        type: string
-                        description: Dependency name
-                      version:
-                        type: string
-                        description: Dependency version
+                  depends:
+                    $ref: "#/components/schemas/DebDependencyItem"
                   pre-depends:
-                    <<: *deb_dependency_item
+                    $ref: "#/components/schemas/DebDependencyItem"
                   replaces:
-                    <<: *deb_dependency_item
+                    $ref: "#/components/schemas/DebDependencyItem"
             image_size:
               type: integer
               description: Size of the container image in bytes
@@ -2374,7 +2549,7 @@ components:
                   src: false,
                   version": 50.3.2
             skopeo-inspect:
-              <<: *image_metadata_skopeo
+              $ref: "#/components/schemas/ImageMetadataResponse"
             system-symbols:
               type: object
               description: >
@@ -2572,81 +2747,8 @@ components:
                     type: string
                     description: A Python Simple API repository URL
                     example: https://pypi.org/simple
-                project: &project_def
-                  type: object
-                  required:
-                  - constraints
-                  - requirements
-                  - requirements_locked
-                  - runtime_environment
-                  properties:
-                    constraints:
-                      type: array
-                      items:
-                        type: object
-                        required:
-                        - name
-                        - version
-                        - markers
-                        properties:
-                          name:
-                            type: string
-                            example: flask
-                            description: Name of the package that was constrained
-                          version:
-                            type: string
-                            example: ~=2.0.0
-                            description: Version range specifier for the constrain
-                          markers:
-                            type: string
-                            description: An environment marker used with the version constrain
-                            example: python_version >= "3.8"
-                    requirements:
-                      type: object
-                      description: >
-                        Requirements stating direct dependencies of the project, the format
-                        is compatible with Pipenv
-                      example:
-                        dev-packages: {}
-                        packages:
-                          numpy:
-                            index: pypi
-                            version: "*"
-                        requires:
-                          python_version: "3.9"
-                        source:
-                        - name: pypi
-                          url: https://pypi.org/simple
-                          verify_ssl: true
-                        thoth:
-                          allow_prereleases: {}
-                          disable_index_adjustment: false
-                    requirements_locked:
-                      type: object
-                      description: >
-                        A lock file stating all the dependencies pinned to a specific version
-                        togher with an explicit Python package index configuration
-                      example:
-                        _meta:
-                          hash:
-                            sha256: f6dd619becbaf7a5c233150a889ef85fbfdf8aa260d182f0874e3234f06ad2b5
-                          pipfile-spec: 6
-                          requires:
-                            python_version: "3.9"
-                          sources:
-                          - name: pypi
-                            url: https://pypi.org/simple
-                            verify_ssl: true
-                        default:
-                          numpy:
-                            hashes:
-                            - sha256:b1cca51512299841bf69add3b75361779962f9cee7d9ee3bb446d5982e925b69
-                            - sha256:c9591886fc9cbe5532d5df85cb8e0cc3b44ba8ce4367bd4cf1b93dc19713da72
-                            index: pypi-org-simple
-                            version: ==1.3.0
-                    runtime_environment:
-                      nullable: true
-                      $ref: "#/components/schemas/RuntimeEnvironment"
+                project:
+                  $ref: "#/components/schemas/ProjectDef"
             report:
               type: array
               description: A provenance check report
@@ -2821,8 +2923,6 @@ components:
               type: object
               nullable: true
               description: Report with results computed
-              required:
-              - stack_info
               properties:
                 ERROR:
                   type: string
@@ -2854,53 +2954,38 @@ components:
                       type: array
                       description: >
                         Boot pipeline unit types registered to the resolution process
-                      items: &unit_def
-                        type: object
-                        required:
-                        - name
-                        - configuration
-                        - unit_run
-                        properties:
-                          name:
-                            type: string
-                            example: SomeUnit
-                          configuration:
-                            type: object
-                          unit_run:
-                            type: boolean
-                            description: >
-                              Flag set to true if the pipeline unit was run during the
-                              resolution process
+                      items:
+                        $ref: "#/components/schemas/UnitDef"
                     pseudonyms:
                       type: array
                       description: >
                         Pseudonym pipeline unit types registered to the resolution process
                       items:
-                        <<: *unit_def
+                        $ref: "#/components/schemas/UnitDef"
                     sieves:
                       type: array
                       description: >
                         Sieve pipeline unit types registered to the resolution process
                       items:
-                        <<: *unit_def
+                        $ref: "#/components/schemas/UnitDef"
                     steps:
                       type: array
                       description: >
                         Step pipeline unit types registered to the resolution process
                       items:
-                        <<: *unit_def
+                        $ref: "#/components/schemas/UnitDef"
                     strides:
                       type: array
                       description: >
                         Stride pipeline unit types registered to the resolution process
                       items:
-                        <<: *unit_def
+                        $ref: "#/components/schemas/UnitDef"
                     wraps:
                       type: array
                       description: >
                         Wrap pipeline unit types registered to the resolution process
                       items:
-                        <<: *unit_def
+                        $ref: "#/components/schemas/UnitDef"
                 products:
                   type: array
                   description: >
@@ -2920,8 +3005,10 @@ components:
                         nullable: true
                         description: Advised changes to manifest files
                         items:
-                          type: object
+                          type: array
                           description: A change that was advised
+                          items:
+                            type: object
                       advised_runtime_environment:
                         nullable: true
                         $ref: "#/components/schemas/RuntimeEnvironment"
@@ -2953,7 +3040,7 @@ components:
                       justification:
                         $ref: "#/components/schemas/Justification"
                       project:
-                        <<: *project_def
+                        $ref: "#/components/schemas/ProjectDef"
                       score:
                         type: number
                         format: float
@@ -3031,6 +3118,8 @@ components:
             - environment_type
             - package_extract_document_id
             - datetime
+            - quay_repo_url
+            - image_analysis_url
             properties:
               environment_name:
                 type: string
@@ -3084,6 +3173,14 @@ components:
               datetime:
                 type: string
                 example: 2021-02-23T09:29:45.254525
+              quay_repo_url:
+                type: string
+                nullable: true
+                example: https://quay.io/thoth-station/s2i-custom-notebook:v0.2.0
+              image_analysis_url:
+                type: string
+                nullable: true
+                example: /api/v1/analyze/package-extract-220106085109-984feaa8a3862285
         parameters:
           type: object
           required:

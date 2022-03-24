@@ -29,7 +29,6 @@ import connexion
 from connexion.resolver import RestyResolver
 
 from flask import redirect, jsonify, request, make_response, abort
-from flask_script import Manager
 from prometheus_flask_exporter import PrometheusMetrics
 from flask_cors import CORS
 
@@ -67,6 +66,7 @@ _LOGGER.debug("DEBUG mode is enabled!")
 _THOTH_API_HTTPS = bool(int(os.getenv("THOTH_API_HTTPS", 1)))
 _REPORT_EXCEPTIONS = bool(int(os.getenv("THOTH_API_REPORT_EXCEPTIONS", 0)))
 _MAX_POST_CONTENT_LENGTH = int(os.getenv("THOTH_MAX_POST_CONTENT_LENGTH", 3 * 1024 * 1024))  # 3MiB by default.
+THOTH_SEARCH_UI_URL = os.getenv("THOTH_SEARCH_UI_URL", "https://thoth-station.ninja/search/")
 
 # Expose for uWSGI.
 app = connexion.FlaskApp(__name__, specification_dir=Configuration.SWAGGER_YAML_PATH, debug=True)
@@ -85,7 +85,7 @@ app.add_api(
 
 application = app.app
 
-# create metrics and manager
+# create metrics
 metrics = PrometheusMetrics(
     application,
     group_by="endpoint",
@@ -96,7 +96,6 @@ metrics = PrometheusMetrics(
         "/api/v1/openapi",
     ],
 )
-manager = Manager(application)
 
 # Needed for session.
 application.secret_key = Configuration.APP_SECRET_KEY
@@ -330,6 +329,7 @@ def apply_headers(response):
     """Add headers to each response."""
     response.headers["X-Thoth-Version"] = __version__
     response.headers["X-User-API-Service-Version"] = __service_version__
+    response.headers["X-Thoth-Search-Ui-Url"] = THOTH_SEARCH_UI_URL
     if "page" in response.headers:
         # Expose headers to users.
         response.headers["Access-Control-Expose-Headers"] = "page,entries_count,next,page_count,per_page,prev"
