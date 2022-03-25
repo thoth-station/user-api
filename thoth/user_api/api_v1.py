@@ -466,8 +466,6 @@ def get_provenance_python_status(analysis_id: str) -> Tuple[Dict[str, Any], int]
 def post_advise_python(
     input: Dict[str, Any],
     recommendation_type: Optional[str] = None,
-    count: Optional[int] = None,
-    limit: Optional[int] = None,
     source_type: Optional[str] = None,
     debug: bool = False,
     force: bool = False,
@@ -541,8 +539,6 @@ def post_advise_python(
         cached_document_id = _compute_digest_params(
             dict(
                 **project.to_dict(),
-                count=parameters["count"],
-                limit=parameters["limit"],
                 library_usage=parameters["library_usage"],
                 recommendation_type=recommendation_type,
                 origin=origin,
@@ -557,8 +553,6 @@ def post_advise_python(
         cached_document_id = _compute_digest_params(
             dict(
                 **project.to_dict(),
-                count=parameters["count"],
-                limit=parameters["limit"],
                 library_usage=parameters["library_usage"],
                 recommendation_type=recommendation_type,
                 dev=dev,

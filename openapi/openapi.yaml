@@ -514,8 +514,6 @@ paths:
               $ref: "#/components/schemas/AdviseInput"
       parameters:
       - $ref: "#/components/parameters/recommendation_type"
-      - $ref: "#/components/parameters/count"
-      - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/origin_py"
       - $ref: "#/components/parameters/source_type"
       - $ref: "#/components/parameters/dev"
@@ -1312,20 +1310,6 @@ components:
         - performance
         - security
         default: latest
-    count:
-      name: count
-      in: query
-      description: Number of software stacks that should be returned
-      schema:
-        type: integer
-      required: false
-    limit:
-      name: limit
-      in: query
-      description: Limit number of software stacks scored
-      schema:
-        type: integer
-      required: false
     source_type:
       name: source_type
       in: query
