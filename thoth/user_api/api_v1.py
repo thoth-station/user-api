@@ -1181,7 +1181,7 @@ def get_python_package_version_metadata(
 
     for solver_entry in solver_document["result"]["tree"]:
         if (
-            solver_entry["package_name"] == name
+            PackageVersion.normalize_python_package_name(solver_entry["package_name"]) == name
             and solver_entry["package_version"] == version
             and solver_entry["index_url"] == index
         ):
