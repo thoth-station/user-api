@@ -1169,7 +1169,15 @@ def get_python_package_version_metadata(
 
     solver_store = SolverResultsStore()
     solver_store.connect()
-    solver_document = solver_store.retrieve_document(solver_documents[0])
+    try:
+        solver_document = solver_store.retrieve_document(solver_documents[0])
+    except NotFoundError:
+        return {
+            "parameters": parameters,
+            "error": "Solver document not found - solver documents are not in sync with database records, "
+            f"please contact administrator with the provided information: {solver_documents[0]}",
+        }, 500
+
     solver_name = "-".join(solver_document["metadata"]["document_id"].split("-")[:4])
     solver = OpenShift.parse_python_solver_name(solver_name)
 
