@@ -1,5 +1,9 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.34.15 (2022-03-29T10:08:32)
+### Features
+* 1615c40 Remove limit and count from the advise endpoint
+
 ## Release 0.34.14 (2022-03-23T17:02:59)
 ### Features
 * Apply search ui url header to each response
