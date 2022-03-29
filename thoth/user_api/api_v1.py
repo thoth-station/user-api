@@ -113,11 +113,11 @@ def _compute_prev_next_page(page: int, page_count: int) -> Tuple[Optional[str], 
     """Compute next and prev returned in headers for paginated endpoints."""
     next_page, prev_page = None, None
     if page != 0:
-        prev_parameters = dict(request.args)
+        prev_parameters: Dict[str, Any] = dict(request.args)
         prev_parameters["page"] = min(page - 1, page_count - 1)
         prev_page = f"{request.path}?{url_parse.urlencode(prev_parameters)}"
     if page < page_count - 1:
-        next_parameters = dict(request.args)
+        next_parameters: Dict[str, Any] = dict(request.args)
         next_parameters["page"] = min(page + 1, page_count - 1)
         next_page = f"{request.path}?{url_parse.urlencode(next_parameters)}"
 
