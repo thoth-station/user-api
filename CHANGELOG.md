@@ -1,5 +1,14 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.35.0 (2022-03-30T10:03:10)
+### Features
+* 50b6237 Fix pre-commit typing complains
+* e732d37 added ordering to python versions endpoint
+### Bug Fixes
+* 42f0762 Report an error if solver document is missing
+### Improvements
+* 2d17f7b Normalize package name when checking solver entries
+
 ## Release 0.34.15 (2022-03-29T10:08:32)
 ### Features
 * 1615c40 Remove limit and count from the advise endpoint
