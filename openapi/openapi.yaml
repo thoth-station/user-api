@@ -1027,8 +1027,7 @@ paths:
       operationId: list_python_package_versions
       summary: List versions of the given Python package
       parameters:
-      - $ref: "#/components/parameters/page"
-      - $ref: "#/components/parameters/per_page"
+      - $ref: "#/components/parameters/order_by"
       - $ref: "#/components/parameters/name"
       - $ref: "#/components/parameters/os_name"
       - $ref: "#/components/parameters/os_version"
@@ -1043,18 +1042,6 @@ paths:
               $ref: "#/components/headers/x-user-api-service-version"
             x-thoth-search-ui-url:
               $ref: "#/components/headers/x-thoth-search-ui-url"
-            page:
-              $ref: "#/components/headers/page"
-            per_page:
-              $ref: "#/components/headers/per_page"
-            page_count:
-              $ref: "#/components/headers/page_count"
-            entries_count:
-              $ref: "#/components/headers/entries_count"
-            next:
-              $ref: "#/components/headers/next"
-            prev:
-              $ref: "#/components/headers/prev"
           content:
             application/json:
               schema:
@@ -1208,6 +1195,16 @@ components:
       description: An identifier of the requested analysis
       schema:
         type: string
+    order_by:
+      name: order_by
+      in: query
+      required: false
+      description: Sort the response list
+      schema:
+        type: string
+        enum:
+        - ASC
+        - DESC
     page:
       name: page
       in: query

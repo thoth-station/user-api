@@ -713,14 +713,12 @@ def list_python_packages(
 
 def list_python_package_versions(
     name: str,
-    page: int = 0,
-    per_page: int = PAGINATION_SIZE_DEFAULT,
+    order_by: Optional[str] = None,
     os_name: Optional[str] = None,
     os_version: Optional[str] = None,
     python_version: Optional[str] = None,
-) -> Tuple[Dict[str, Any], int, Dict[str, Any]]:
+) -> Tuple[Dict[str, Any], int]:
     """Get information about versions available."""
-    per_page = min(per_page, PAGINATION_SIZE_MAX)
     parameters = locals()
 
     from .openapi_server import GRAPH
@@ -734,38 +732,29 @@ def list_python_package_versions(
         python_version=python_version,
     )
 
-    page_count = ceil(entries_count / per_page)
-    start_offset = _compute_offset(page=page, per_page=per_page, page_count=page_count)
-
     try:
         query_result = GRAPH.get_solved_python_package_versions_all(
             package_name=name,
             distinct=True,
             is_missing=False,
-            start_offset=start_offset,
-            count=per_page,
+            start_offset=0,
+            count=None,
             os_name=os_name,
             os_version=os_version,
             python_version=python_version,
         )
     except NotFoundError:
-        return {"error": f"Package {name!r} not found", "parameters": parameters}, 404, {}
+        return {"error": f"Package {name!r} not found", "parameters": parameters}, 404
 
-    prev_page, next_page = _compute_prev_next_page(page, page_count)
+    if order_by and order_by in ["ASC", "DESC"]:
+        query_result.sort(key=lambda x: PackageVersion.parse_semantic_version(x[1]), reverse=order_by == "DESC")
+
     return (
         {
             "versions": [{"package_name": i[0], "package_version": i[1], "index_url": i[2]} for i in query_result],
             "parameters": parameters,
         },
         200,
-        {
-            "page": page,
-            "per_page": per_page,
-            "page_count": page_count,
-            "entries_count": entries_count,
-            "next": next_page,
-            "prev": prev_page,
-        },
     )
 
 
