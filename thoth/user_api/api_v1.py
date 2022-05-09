@@ -732,19 +732,19 @@ def list_python_package_versions(
         python_version=python_version,
     )
 
-    try:
-        query_result = GRAPH.get_solved_python_package_versions_all(
-            package_name=name,
-            distinct=True,
-            is_missing=False,
-            start_offset=0,
-            count=None,
-            os_name=os_name,
-            os_version=os_version,
-            python_version=python_version,
-        )
-    except NotFoundError:
+    if entries_count == 0:
         return {"error": f"Package {name!r} not found", "parameters": parameters}, 404
+
+    query_result = GRAPH.get_solved_python_package_versions_all(
+        package_name=name,
+        distinct=True,
+        is_missing=False,
+        start_offset=0,
+        count=None,
+        os_name=os_name,
+        os_version=os_version,
+        python_version=python_version,
+    )
 
     if order_by and order_by in ["ASC", "DESC"]:
         query_result.sort(key=lambda x: PackageVersion.parse_semantic_version(x[1]), reverse=order_by == "DESC")
