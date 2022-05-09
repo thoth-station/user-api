@@ -1529,7 +1529,7 @@ components:
         Names of the Python Packages (name, version, index) for the given import package name
       schema:
         type: string
-        example: sklearn.cluster.MiniBatchKMeans
+        example: sklearn.neural_network
   headers:
     x-thoth-version:
       description: Thoth User API version identifier
