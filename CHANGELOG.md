@@ -1,5 +1,18 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.35.1 (2022-05-09T19:28:45)
+### Features
+* 210deea :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* c99d6f4 Fix default value for imported packages
+* b829890 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* d062ff6 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 3807512 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 6a4d9a6 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+### Bug Fixes
+* 871b4aa Return 400 error when no package found
+### Improvements
+* d557ec9 :ship: Bump up base image initialized in CI. (#1747)
+
 ## Release 0.35.0 (2022-03-30T10:03:10)
 ### Features
 * 50b6237 Fix pre-commit typing complains
