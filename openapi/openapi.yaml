@@ -1840,7 +1840,7 @@ components:
               nullable: true
         python_version:
           type: string
-          example: "3.6"
+          example: "3.8"
           description: Python version on which the application runs on
           nullable: true
         cuda_version:
@@ -2049,7 +2049,7 @@ components:
           type: string
           description: >
             An id of submitted analysis for checking its status and its results
-          example: package-extract-220106085109-984feaa8a3862285
+          example: adviser-220106085109-984feaa8a3862285
         parameters:
           type: object
           description: >
