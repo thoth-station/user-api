@@ -1520,7 +1520,7 @@ components:
       schema:
         type: boolean
         nullable: true
-        default: false
+        default: null
     import_name:
       name: import_name
       in: query
