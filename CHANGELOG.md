@@ -1,5 +1,14 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.35.2 (2022-05-18T10:14:38)
+### Features
+* 46dcfd5 Fix default marker_evaluation_result value in package dependencies endpoint
+* 54ac644 Fix default advise python version and example analysis_id
+* e90ece4 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+### Improvements
+* bb1e11b :ship: Bump up base image initialized in CI. (#1754)
+* 689ecb6 :ship: Bump up base image initialized in CI.
+
 ## Release 0.35.1 (2022-05-09T19:28:45)
 ### Features
 * 210deea :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
