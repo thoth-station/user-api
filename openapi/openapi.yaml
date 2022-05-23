@@ -994,6 +994,7 @@ paths:
       - $ref: "#/components/parameters/os_name"
       - $ref: "#/components/parameters/os_version"
       - $ref: "#/components/parameters/python_version"
+      - $ref: "#/components/parameters/starts_with"
       responses:
         "200":
           description: Listing of available Python packages
@@ -1205,6 +1206,14 @@ components:
         enum:
         - ASC
         - DESC
+    starts_with:
+      name: starts_with
+      in: query
+      required: false
+      description: Filter Python package name by starting string
+      schema:
+        type: string
+        example: pandas
     page:
       name: page
       in: query
