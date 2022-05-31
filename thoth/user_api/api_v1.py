@@ -669,7 +669,7 @@ def list_python_packages(
     os_name: Optional[str] = None,
     os_version: Optional[str] = None,
     python_version: Optional[str] = None,
-    like: Optional[str] = None
+    like: Optional[str] = None,
 ) -> Tuple[Dict[str, Any], int, Dict[str, Any]]:
     """Get listing of solved package names."""
     per_page = min(per_page, PAGINATION_SIZE_MAX)
