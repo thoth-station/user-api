@@ -669,7 +669,7 @@ def list_python_packages(
     os_name: Optional[str] = None,
     os_version: Optional[str] = None,
     python_version: Optional[str] = None,
-    starts_with: Optional[str] = None
+    like: Optional[str] = None
 ) -> Tuple[Dict[str, Any], int, Dict[str, Any]]:
     """Get listing of solved package names."""
     per_page = min(per_page, PAGINATION_SIZE_MAX)
@@ -682,7 +682,7 @@ def list_python_packages(
         os_version=os_version,
         python_version=python_version,
         distinct=True,
-        starts_with=starts_with,
+        like=like,
     )
 
     page_count = ceil(entries_count / per_page)
@@ -696,7 +696,7 @@ def list_python_packages(
         os_name=os_name,
         os_version=os_version,
         python_version=python_version,
-        starts_with=starts_with,
+        like=like,
     )
 
     prev_page, next_page = _compute_prev_next_page(page, page_count)

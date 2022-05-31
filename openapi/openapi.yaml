@@ -1207,13 +1207,13 @@ components:
         - ASC
         - DESC
     starts_with:
-      name: starts_with
+      name: like
       in: query
       required: false
-      description: Filter Python package name by starting string
+      description: Filter Python package name by string. (wildcard characters "%" and "_" are supported)
       schema:
         type: string
-        example: pandas
+        example: pa%
     page:
       name: page
       in: query
