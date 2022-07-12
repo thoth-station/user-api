@@ -1,5 +1,18 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.35.3 (2022-07-12T00:54:02)
+### Features
+* 404d57d :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 1d1fe6d :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 01ea202 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 6524097 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 75aba62 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 3896b61 added option for starts_with filter on /python/package
+### Bug Fixes
+* 896b42b fixed format
+### Improvements
+* a55357b changed query to use `like`
+
 ## Release 0.35.2 (2022-05-18T10:14:38)
 ### Features
 * 46dcfd5 Fix default marker_evaluation_result value in package dependencies endpoint
