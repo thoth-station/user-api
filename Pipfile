@@ -4,24 +4,25 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+aiocontextvars = "*"
 attrs = "*"
+confluent-kafka = "*"
 connexion = {extras = ["swagger-ui"],version = "*"}
-flask = "*"
+flask = "<=2.1.3"
+flask-cors = "*"
 grpcio = "<1.28"
 grpcio-tools = "<1.28"
 gunicorn = "*"
+openapi-schema-validator = "<0.2.0"
 prometheus-flask-exporter = "*"
 requests = "*"
+sentry-sdk = {extras = ["flask"],version = "*"}
 thoth-analyzer = "*"
 thoth-common = "*"
+thoth-messaging = "*"
 thoth-python = "*"
 thoth-storages = "*"
-flask-cors = "*"
-openapi-schema-validator = "<0.2.0"
-aiocontextvars = "*"
-sentry-sdk = {extras = ["flask"],version = "*"}
-confluent-kafka = "*"
-thoth-messaging = "*"
+werkzeug = "<=2.0.3"
 
 [pipenv]
 allow_prereleases = false
