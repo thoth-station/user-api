@@ -1,5 +1,11 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.35.5 (2022-08-23T05:18:07)
+### Features
+* 433fd35 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment (#1795)
+### Bug Fixes
+* 9ab072f Pinned down werkzeug 2.0.3 version to get sentry warning fixed (#1793)
+
 ## Release 0.35.4 (2022-08-17T04:49:41)
 ### Features
 * e4eaaf7 Update the dependency manually (#1788)
