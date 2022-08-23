@@ -227,7 +227,7 @@ def post_analyze(
     origin: Optional[str] = None,
     verify_tls: bool = True,
     force: bool = False,
-) -> Tuple[Dict[str, Any], int]:
+) -> Union[Tuple[Dict[str, Any], int, Dict[str, Any]], Tuple[Dict[str, Any], int]]:
     """Run an analyzer in a restricted namespace."""
     parameters = locals()
     force = parameters.pop("force", None)
@@ -251,6 +251,7 @@ def post_analyze(
     cache = AnalysesCacheStore()
     cache.connect()
     cached_document_id = metadata["digest"] + "+" + parameters_digest
+    cache_ttl = cache.retrieve_document_ttl(cached_document_id)
 
     if not force:
         try:
@@ -261,6 +262,7 @@ def post_analyze(
                     "parameters": parameters,
                 },
                 202,
+                {"x-thoth-cached-document-ttl": cache_ttl},
             )
         except CacheMiss:
             pass
@@ -433,7 +435,7 @@ def post_provenance_python(
     force: bool = False,
     origin: Optional[str] = None,
     token: Optional[str] = None,
-) -> Tuple[Dict[str, Any], int]:
+) -> Union[Tuple[Dict[str, Any], int, Dict[str, Any]], Tuple[Dict[str, Any], int]]:
     """Check provenance for the given application stack."""
     parameters = locals()
     # Translate request body parameters.
@@ -486,6 +488,7 @@ def post_provenance_python(
     if not force:
         try:
             cache_record = cache.retrieve_document_record(cached_document_id)
+            cache_ttl = cache.retrieve_document_ttl(cached_document_id)
             if cache_record["timestamp"] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
                 return (
                     {
@@ -495,6 +498,7 @@ def post_provenance_python(
                         "parameters": parameters,
                     },
                     202,
+                    {"x-thoth-cached-document-ttl": cache_ttl},
                 )
         except CacheMiss:
             pass
@@ -558,7 +562,7 @@ def post_advise_python(
     dev: bool = False,
     origin: Optional[str] = None,
     token: Optional[str] = None,
-) -> Tuple[Dict[str, Any], int]:
+) -> Union[Tuple[Dict[str, Any], int, Dict[str, Any]], Tuple[Dict[str, Any], int]]:
     """Compute results for the given package or package stack using adviser."""
     parameters = locals()
     # Translate request body parameters.
@@ -651,6 +655,7 @@ def post_advise_python(
     if not force:
         try:
             cache_record = adviser_cache.retrieve_document_record(cached_document_id)
+            cache_ttl = adviser_cache.retrieve_document_ttl(cached_document_id)
             if cache_record["timestamp"] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
                 if parameters["callback_info"]:
                     result, status_code = _get_document(
@@ -682,6 +687,7 @@ def post_advise_python(
                         "parameters": parameters,
                     },
                     202,
+                    {"x-thoth-cached-document-ttl": cache_ttl},
                 )
 
         except CacheMiss:
@@ -1002,7 +1008,7 @@ def post_build(
     environment_type: Optional[str] = None,
     force: bool = False,
     origin: Optional[str] = None,
-) -> Tuple[Dict[str, Any], int]:
+) -> Union[Tuple[Dict[str, Any], int, Dict[str, Any]], Tuple[Dict[str, Any], int]]:
     """Run analysis on a build."""
     output_image = build_detail.get("output_image")
     base_image = build_detail.get("base_image")
@@ -1157,6 +1163,7 @@ def post_build(
         buildlogs_cache = BuildLogsAnalysesCacheStore()
         buildlogs_cache.connect()
         cached_document_id = _compute_digest_params(build_log)
+        cache_ttl = buildlogs_cache.retrieve_document_ttl(cached_document_id)
         buildlogs_cache.store_document_record(
             cached_document_id, {"analysis_id": message_parameters["buildlog_parser_id"]}
         )
@@ -1180,6 +1187,7 @@ def post_build(
             "buildlog_document_id": buildlog_document_id,
         },
         202,
+        {"x-thoth-cached-document-ttl": cache_ttl},
     )
 
 

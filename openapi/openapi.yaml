@@ -77,6 +77,8 @@ paths:
               $ref: "#/components/headers/x-user-api-service-version"
             x-thoth-search-ui-url:
               $ref: "#/components/headers/x-thoth-search-ui-url"
+            x-thoth-cached-document-ttl:
+              $ref: "#/components/headers/x-thoth-cached-document-ttl"
           content:
             application/json:
               schema:
@@ -315,6 +317,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-cached-document-ttl:
+              $ref: "#/components/headers/x-thoth-cached-document-ttl"
           content:
             application/json:
               schema:
@@ -530,6 +534,8 @@ paths:
               $ref: "#/components/headers/x-user-api-service-version"
             x-thoth-search-ui-url:
               $ref: "#/components/headers/x-thoth-search-ui-url"
+            x-thoth-cached-document-ttl:
+              $ref: "#/components/headers/x-thoth-cached-document-ttl"
           content:
             application/json:
               schema:
@@ -1577,6 +1583,11 @@ components:
       schema:
         type: string
         example: https://thoth-station.ninja/search/
+    x-thoth-cached-document-ttl:
+      description: Thoth cached document Time To Live
+      schema:
+        type: integer
+        example: 7200
     page:
       description: Current page
       schema:
