@@ -1362,14 +1362,14 @@ components:
       description: Version of the operating system to consider
       schema:
         type: string
-        example: "9"
+        example: "8"
     python_version:
       name: python_version
       in: query
       description: Version of Python interpreter provided
       schema:
         type: string
-        example: "3.9"
+        example: "3.8"
     cuda_version:
       name: cuda_version
       in: query
