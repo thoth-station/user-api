@@ -189,7 +189,7 @@ def post_analyze(
     )
     analysis_by_digest_store = AnalysisByDigest()
     analysis_by_digest_store.connect()
-    analysis_by_digest_store.store_document(metadata["digest"], response)
+    analysis_by_digest_store.store_document(response, metadata["digest"])
 
     if status_code == 202:
         cache.store_document_record(cached_document_id, {"analysis_id": response["analysis_id"]})
@@ -964,7 +964,7 @@ def post_build(
 
         analysis_by_digest_store = AnalysisByDigest()
         analysis_by_digest_store.connect()
-        analysis_by_digest_store.store_document(base_image_metadata["digest"], base_image_analysis)
+        analysis_by_digest_store.store_document(base_image_analysis, base_image_metadata["digest"])
 
     # Handle output ("resulting") container image used during the build process.
     output_image_analysis = None
@@ -1010,7 +1010,7 @@ def post_build(
 
         analysis_by_digest_store = AnalysisByDigest()
         analysis_by_digest_store.connect()
-        analysis_by_digest_store.store_document(output_image_metadata["digest"], output_image_analysis)
+        analysis_by_digest_store.store_document(output_image_analysis, output_image_metadata["digest"])
 
     message_parameters["base_image_analysis_id"] = base_image_analysis_id if not base_image_analysis_cached else None
     message_parameters["output_image_analysis_id"] = (
