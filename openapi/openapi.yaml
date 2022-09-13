@@ -1069,6 +1069,17 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PythonPackageVersionsResponseError"
+        "400":
+          description: On an invalid request
+          headers:
+            x-thoth-version:
+              $ref: "#/components/headers/x-thoth-version"
+            x-user-api-service-version:
+              $ref: "#/components/headers/x-user-api-service-version"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalysisResponseError"
   /python/package/version/environments:
     get:
       tags: [PythonPackages]
