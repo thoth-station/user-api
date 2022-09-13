@@ -1,5 +1,16 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.35.6 (2022-09-13T12:25:28)
+### Features
+* c7b3b8c Add 400 response for api   /python/package/versions on Invalid request (#1806)
+* ab32cad Add 404 error description for   /container-images endpoint (#1802)
+* 8425671 feat: add callbackurl to advise endpoint (#1759)
+* 9683209 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 78da3e2 :turtle: Adjusted the default values as per data availability (#1799)
+* f4b8afe :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment (#1801)
+### Improvements
+* 17e4dfe :guardsman: Update the OWNERS for user-api maintenance
+
 ## Release 0.35.5 (2022-08-23T05:18:07)
 ### Features
 * 433fd35 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment (#1795)
