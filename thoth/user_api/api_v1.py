@@ -33,8 +33,13 @@ from typing import Optional
 from typing import Tuple
 from typing import Type
 from typing import Union
+import random
+import string
+import base64
 
 from flask import request
+from kubernetes import kubernetes as k8
+import requests
 
 from thoth.common.exceptions import NotFoundExceptionError as OpenShiftNotFound
 from thoth.common import OpenShift
@@ -102,6 +107,83 @@ _ADVISE_PROTECTED_FIELDS = frozenset(
 )
 
 _PROVENANCE_CHECK_PROTECTED_FIELDS = frozenset({"kebechet_metadata"})
+
+k8.config.load_kube_config()
+k8_core_api = k8.client.CoreV1Api()
+CALLBACK_SECRET_NAME_TEMPLATE = "callback-{document_id}"
+
+
+def _add_entry_or_create_callback_secret(
+    document_id: str, callbackurl: str, auth_header: Optional[str] = None, client_data: Optional[dict] = None
+):
+    if _callback_secret_exists(document_id=document_id):
+        _add_item_to_callback_secret_entry(
+            document_id=document_id,
+            callbackurl=callbackurl,
+            auth_header=auth_header,
+            client_data=client_data,
+        )
+    else:
+        _create_initial_callback_secret(
+            document_id=document_id,
+            callbackurl=callbackurl,
+            auth_header=auth_header,
+            client_data=client_data,
+        )
+
+
+def _add_item_to_callback_secret_entry(
+    document_id: str, callbackurl: str, auth_header: Optional[str] = None, client_data: Optional[dict] = None
+):
+    entry_name, value = _gen_callback_secret_entry(callbackurl, auth_header, client_data)
+    body = [{"op": "add", "path": f"/data/{entry_name}", "value": value}]
+    k8_core_api.patch_namespaced_secret(
+        name=CALLBACK_SECRET_NAME_TEMPLATE.format(document_id=document_id),
+        namespace=Configuration.THOTH_BACKEND_NAMESPACE,
+        body=body,
+    )
+
+
+def _callback_secret_exists(document_id):
+    try:
+        k8_core_api.read_namespaced_secret(
+            name=CALLBACK_SECRET_NAME_TEMPLATE.format(document_id=document_id),
+            namespace=Configuration.THOTH_BACKEND_NAMESPACE,
+        )
+    except k8.client.rest.ApiException as e:
+        if e.status == 404:
+            return False
+        raise e  # all other status are reraised
+    return True
+
+
+def _gen_callback_secret_entry(callbackurl, auth_header, client_data):
+    value = base64.b64encode(
+        json.dumps({"callbackurl": callbackurl, "Authorization": auth_header, "client_data": client_data}).encode(
+            "ascii"
+        )
+    )
+    value = str(value, "ascii")
+    entry_name = "".join(random.choices(string.ascii_letters, k=16))
+    return entry_name, value
+
+
+def _create_initial_callback_secret(document_id, callbackurl, auth_header, client_data):
+    meta = k8.client.V1ObjectMeta(
+        name=CALLBACK_SECRET_NAME_TEMPLATE.format(document_id=document_id),
+    )
+    entry_name, value = _gen_callback_secret_entry(
+        callbackurl=callbackurl, auth_header=auth_header, client_data=client_data
+    )
+    k8_core_api.create_namespaced_secret(
+        namespace=Configuration.THOTH_BACKEND_NAMESPACE,
+        body=k8.client.V1Secret(
+            api_version="v1",
+            data={entry_name: value},
+            type="Opaque",
+            metadata=meta,
+        ),
+    )
 
 
 def _compute_digest_params(parameters: Dict[Any, Any]) -> str:
@@ -481,6 +563,7 @@ def post_advise_python(
     parameters["stack_info"] = parameters["input"].pop("stack_info", None)
     parameters["kebechet_metadata"] = parameters["input"].pop("kebechet_metadata", None)
     parameters["labels"] = parameters["input"].pop("labels", None)
+    parameters["callback_info"] = parameters["input"].pop("callback_info", None)
 
     token = parameters.pop("token", None)
 
@@ -565,6 +648,28 @@ def post_advise_python(
         try:
             cache_record = adviser_cache.retrieve_document_record(cached_document_id)
             if cache_record["timestamp"] + Configuration.THOTH_CACHE_EXPIRATION > timestamp_now:
+                if parameters["callback_info"]:
+                    result, status_code = _get_document(
+                        AdvisersResultsStore,
+                        cache_record["analysis_id"],
+                        name_prefix="adviser-",
+                        namespace=Configuration.THOTH_BACKEND_NAMESPACE,
+                    )
+                    if status_code == 202:  # workflow scheduled/in progress
+                        _add_entry_or_create_callback_secret(
+                            document_id=cache_record["analysis_id"],
+                            callbackurl=parameters["callback_info"]["url"],
+                            auth_header=parameters["callback_info"].get("authorization"),
+                            client_data=parameters["callback_info"].get("client_data"),
+                        )
+                    else:
+                        if status_code == 200:
+                            result["metadata"]["arguments"]["thoth-adviser"].pop("metadata", None)  # rmv sensitive data
+                        body = {"result": result, "client_data": parameters["callback_info"].get("client_data")}
+                        headers = dict()
+                        if auth := parameters["callback_info"].get("authorization"):
+                            headers["Authorization"] = auth
+                        requests.post(url=parameters["callback_info"]["url"], data=body, headers=headers)
                 return (
                     {
                         "analysis_id": cache_record.pop("analysis_id"),
@@ -574,6 +679,7 @@ def post_advise_python(
                     },
                     202,
                 )
+
         except CacheMiss:
             pass
 
@@ -596,6 +702,14 @@ def post_advise_python(
         adviser_cache.store_document_record(
             cached_document_id, {"analysis_id": response["analysis_id"], "timestamp": timestamp_now}
         )
+
+        if parameters["callback_info"]:
+            _create_initial_callback_secret(
+                document_id=response["analysis_id"],
+                callbackurl=parameters["callback_info"]["url"],
+                auth_header=parameters["callback_info"].get("authorization"),
+                client_data=parameters["callback_info"].get("client_data"),
+            )
 
         # Store the request for traceability.
         store = AdvisersResultsStore()

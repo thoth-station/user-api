@@ -1949,6 +1949,8 @@ components:
           $ref: "#/components/schemas/Justification"
         stack_info:
           $ref: "#/components/schemas/StackInfo"
+        callback_info:
+          $ref: "#/components/schemas/CallbackInfo"
     ImageMetadataResponse: &image_metadata_skopeo
       type: object
       description: Response information with image metadata as extracted by Skopeo
@@ -3650,3 +3652,25 @@ components:
           link:
             type: string
             example: https://thoth-station.ninja/j/cve
+    CallbackInfo:
+      type: object
+      description: foobar
+      required:
+      - url
+      properties:
+        url:
+          type: string
+          description: url to post results to upon request completion
+          example: https://client-url.com
+          nullable: false
+        authorization:
+          type: string
+          example: Basic xxxxxxxxxxx
+          description: string to be passed as auth header to client webhook url
+          nullable: true
+        client_data:
+          type: object
+          example: |
+            {"some": "arbitrary", "json": "object"}
+          description: arbitrary json that is passed back to the user upon request completion
+          nullable: true
