@@ -108,7 +108,17 @@ _ADVISE_PROTECTED_FIELDS = frozenset(
 
 _PROVENANCE_CHECK_PROTECTED_FIELDS = frozenset({"kebechet_metadata"})
 
-k8.config.load_kube_config()
+try:
+    k8.config.load_kube_config()
+except Exception as exc:
+    # load_kube_config throws if there is no config,
+    # but does not document what it throws,
+    # so I can't rely on any particular type here
+    _LOGGER.warning(
+        "Failed to load kube config, fallback to incluster config: %s",
+        str(exc),
+    )
+    k8.config.load_incluster_config()
 k8_core_api = k8.client.CoreV1Api()
 CALLBACK_SECRET_NAME_TEMPLATE = "callback-{document_id}"
 
