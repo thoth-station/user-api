@@ -902,6 +902,8 @@ paths:
               $ref: "#/components/headers/x-thoth-version"
             x-user-api-service-version:
               $ref: "#/components/headers/x-user-api-service-version"
+            x-thoth-cached-document-ttl:
+              $ref: "#/components/headers/x-thoth-cached-document-ttl"
           content:
             application/json:
               schema:
