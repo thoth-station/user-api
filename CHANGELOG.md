@@ -1,5 +1,9 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.35.7 (2022-09-14T15:08:57)
+### Features
+* 0188543 Include fallback option for load of kube-config
+
 ## Release 0.35.6 (2022-09-13T12:25:28)
 ### Features
 * c7b3b8c Add 400 response for api   /python/package/versions on Invalid request (#1806)
