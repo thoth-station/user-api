@@ -1,5 +1,12 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.35.8 (2022-09-21T19:46:19)
+### Features
+* 370a511 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 19d50c0 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+### Improvements
+* 1fc3af4 :ship: Bump up base image initialized in CI.
+
 ## Release 0.35.7 (2022-09-14T15:08:57)
 ### Features
 * 0188543 Include fallback option for load of kube-config
