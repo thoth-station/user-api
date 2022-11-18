@@ -44,7 +44,7 @@ repos:
         additional_dependencies: ["types-requests"]
 
   - repo: https://github.com/psf/black
-    rev: 22.8.0
+    rev: 22.10.0
     hooks:
       - id: black
         additional_dependencies: ['click==8.0.4']
@@ -60,8 +60,8 @@ repos:
   #   hooks:
   #     - id: check-manifest
 
-  - repo: https://gitlab.com/PyCQA/flake8
-    rev: "3.9.2"
+  - repo: https://github.com/PyCQA/flake8
+    rev: "5.0.4"
     hooks:
       - id: flake8
         additional_dependencies: ["pep8-naming"]
@@ -70,7 +70,7 @@ repos:
           ["--ignore", "E2,W5", "--select", "E,W,F,N", "--max-line-length=120"]
 
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.27.1
+    rev: v1.28.0
     hooks:
     - id: yamllint
       args: [-c=.yamllint]
