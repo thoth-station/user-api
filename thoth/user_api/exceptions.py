@@ -44,3 +44,7 @@ class ImageAuthenticationRequiredError(ImageError):
 
 class ImageInvalidCredentialsError(ImageError):
     """An exception raised if the given username/password provided to access the image is invalid."""
+
+
+class ImageInvalidReferenceFormatError(ImageError):
+    """An exception raised if the given image reference could not be parsed by Skopeo."""
