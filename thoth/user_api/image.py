@@ -27,6 +27,7 @@ from .exceptions import ImageError
 from .exceptions import ImageBadRequestError
 from .exceptions import ImageManifestUnknownError
 from .exceptions import ImageAuthenticationRequiredError
+from .exceptions import ImageInvalidReferenceFormatError
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -87,6 +88,9 @@ def get_image_metadata(
         raise ImageInvalidCredentialsError(
             "There was an error accessing the image as the username/password provided was invalid"
         )
+
+    elif "invalid reference format" in result.stderr:
+        raise ImageInvalidReferenceFormatError("The image reference format specified is invalid.")
 
     _LOGGER.error("An unhandled error occurred during extraction of image %r: %s", image_name, result.stderr)
     raise ImageError(
