@@ -41,7 +41,7 @@ from thoth.python import __version__ as __python__version__
 from thoth.messaging import __version__ as __messaging__version__
 import thoth.messaging.producer as producer
 from thoth.storages import GraphDatabase
-from thoth.storages.exceptions import DatabaseNotInitialized
+from thoth.storages.exceptions import DatabaseNotInitializedError
 from thoth.user_api import __version__
 from thoth.user_api.configuration import Configuration
 from thoth.user_api.metrics import MetricsValues
@@ -185,7 +185,7 @@ def before_request_callback():
     if method == "GET" and path == "/metrics":
         try:
             _API_GAUGE_METRIC.set(int(GRAPH.is_schema_up2date()))
-        except DatabaseNotInitialized as exc:
+        except DatabaseNotInitializedError as exc:
             # This can happen if database is erased after the service has been started as we
             # have passed readiness probe with this check.
             _LOGGER.exception("Cannot determine database schema as database is not initialized: %s", str(exc))
