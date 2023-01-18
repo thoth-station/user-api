@@ -1,5 +1,19 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.35.9 (2023-01-18T21:38:25)
+### Features
+* fc09cd6 ':arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment'
+* d1d5415 ':arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment'
+* fb58c64 Fix the DatabaseNotInitializedError exception from thoth-storages
+* d7691da ':arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment'
+* dc614b7 Update pre-commit configuration
+* fefb866 Handle image invalid reference format in analyze endpoint
+* 45a0280 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* c1a2450 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+* 7570005 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
+### Improvements
+* bf8c418 :ship: Bump up base image initialized in CI.
+
 ## Release 0.35.8 (2022-09-21T19:46:19)
 ### Features
 * 370a511 :arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment
