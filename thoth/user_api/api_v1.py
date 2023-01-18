@@ -50,7 +50,7 @@ from thoth.python.exceptions import ThothPythonExceptionError
 from thoth.python import Constraints
 from thoth.python import Project
 from thoth.python import PackageVersion
-from thoth.storages.exceptions import CacheMiss
+from thoth.storages.exceptions import CacheMissError
 from thoth.storages.exceptions import NotFoundError
 from thoth.storages import AdvisersCacheStore
 from thoth.storages import AdvisersResultsStore
@@ -272,7 +272,7 @@ def post_analyze(
                 },
                 202,
             )
-        except CacheMiss:
+        except CacheMissError:
             pass
 
     parameters["job_id"] = _OPENSHIFT.generate_id("package-extract")
@@ -506,7 +506,7 @@ def post_provenance_python(
                     },
                     202,
                 )
-        except CacheMiss:
+        except CacheMissError:
             pass
 
     parameters["job_id"] = _OPENSHIFT.generate_id("provenance-checker")
@@ -694,7 +694,7 @@ def post_advise_python(
                     202,
                 )
 
-        except CacheMiss:
+        except CacheMissError:
             pass
 
     # Enum type is checked on thoth-common side to avoid serialization issue in user-api side when providing response
@@ -1076,7 +1076,7 @@ def post_build(
             try:
                 base_image_analysis_id = cache.retrieve_document_record(base_cached_document_id).pop("analysis_id")
                 base_image_analysis_cached = True
-            except CacheMiss:
+            except CacheMissError:
                 pass
 
         base_image_analysis = {
@@ -1122,7 +1122,7 @@ def post_build(
             try:
                 output_image_analysis_id = cache.retrieve_document_record(output_cached_document_id).pop("analysis_id")
                 output_image_analysis_cached = True
-            except CacheMiss:
+            except CacheMissError:
                 pass
 
         output_image_analysis = {
@@ -1204,7 +1204,7 @@ def _store_build_log(build_log: Dict[str, Any], force: bool = False) -> Tuple[st
         try:
             cache_record = cache.retrieve_document_record(cached_document_id)
             buildlog_analysis_id = cache_record.pop("analysis_id")
-        except CacheMiss:
+        except CacheMissError:
             pass
 
     adapter = BuildLogsStore()
