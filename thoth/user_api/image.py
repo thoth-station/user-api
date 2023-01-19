@@ -20,6 +20,7 @@
 import logging
 import shlex
 
+from typing import Optional
 from thoth.analyzer import run_command
 
 from .exceptions import ImageInvalidCredentialsError
@@ -49,7 +50,11 @@ _TRANSLATION_TABLE = {
 
 
 def get_image_metadata(
-    image_name: str, *, registry_user: str = None, registry_password: str = None, verify_tls: bool = True
+    image_name: str,
+    *,
+    registry_user: Optional[str] = None,
+    registry_password: Optional[str] = None,
+    verify_tls: bool = True,
 ) -> dict:
     """Get metadata for the given image and image repository."""
     cmd = "skopeo inspect "
