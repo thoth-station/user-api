@@ -1,5 +1,12 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.35.10 (2023-01-19T18:26:52)
+### Features
+* 0732fa1 Update exception from thoth storage CacheMissError
+* c9cabc6 ':arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment'
+### Improvements
+* 2c86b62 :recycle: HouseKeeping: Updated pre-commit and OWNERS
+
 ## Release 0.35.9 (2023-01-18T21:38:25)
 ### Features
 * fc09cd6 ':arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment'
