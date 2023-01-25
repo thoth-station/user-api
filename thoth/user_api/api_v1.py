@@ -384,9 +384,6 @@ def list_thoth_container_images(
 
     prev_page, next_page = _compute_prev_next_page(page, per_page)
 
-    if len(entries) == 0:
-        return ({"error": "No Image found", "parameters": parameters}, 404, {})
-
     return (
         {
             "container_images": entries,
