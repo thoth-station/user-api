@@ -1,5 +1,11 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.35.11 (2023-01-26T08:18:11)
+### Features
+* 7a88b8d Fix AnalysisByDigest.store_document usage
+### Bug Fixes
+* d344123 removed 404 error on list query
+
 ## Release 0.35.10 (2023-01-19T18:26:52)
 ### Features
 * 0732fa1 Update exception from thoth storage CacheMissError
