@@ -1,5 +1,9 @@
 # Changelog for Thoth's User API Service
 
+## Release 0.35.12 (2023-01-26T13:38:05)
+### Features
+* 7465f22 ':arrow_up: Automatic update of dependencies by Kebechet for the ubi8 environment'
+
 ## Release 0.35.11 (2023-01-26T08:18:11)
 ### Features
 * 7a88b8d Fix AnalysisByDigest.store_document usage
