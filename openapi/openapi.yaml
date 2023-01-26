@@ -611,17 +611,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ContainerImagesResponseError"
-        "404":
-          description: No Thoth container images with the given Image found
-          headers:
-            x-thoth-version:
-              $ref: "#/components/headers/x-thoth-version"
-            x-user-api-service-version:
-              $ref: "#/components/headers/x-user-api-service-version"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ContainerImagesResponseError"
   /advise/python/{analysis_id}/log:
     get:
       tags: [Advise]
