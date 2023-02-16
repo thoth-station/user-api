@@ -22,7 +22,7 @@ thoth-common = "*"
 thoth-messaging = "*"
 thoth-python = "*"
 thoth-storages = "*"
-werkzeug = "<=2.0.3"
+werkzeug = "<2.2.4"
 
 [pipenv]
 allow_prereleases = false
