@@ -1450,7 +1450,6 @@ def _send_schedule_message(
     message = content(**message_contents)
     producer.publish_to_topic(PRODUCER, message_type, message)
     if "job_id" in message_contents:
-
         if with_authentication:
             return (
                 {
