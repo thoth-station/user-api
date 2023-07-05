@@ -10,7 +10,7 @@ confluent-kafka = "*"
 connexion = {extras = ["swagger-ui"],version = "*"}
 flask = "<=2.2.5"
 flask-cors = "*"
-grpcio = "<1.28"
+grpcio = "<1.54"
 grpcio-tools = "<1.28"
 gunicorn = "*"
 openapi-schema-validator = "<0.2.0"
